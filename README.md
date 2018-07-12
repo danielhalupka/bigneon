@@ -2,15 +2,11 @@
 
 ## Running in development
 
-Download the example [or clone the repo](https://github.com/big-neon/bn-web):
+Clone and run:
 
 ```bash
+git clone https://github.com/big-neon/bn-web.git
 cd bn-web
-```
-
-Install it and run:
-
-```bash
 npm install
 npm run start
 ```
