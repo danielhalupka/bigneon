@@ -1,9 +1,6 @@
 {
 	"editor.formatOnSave": true, // THIS WILL TRIGGER PRETTIER ON SAVE
 	"prettier.eslintIntegration": true, // THIS WILL MAKE IT COMMUNICATE WITH ESLINT
-	// "eslint.options": {
-	// 	"configFile": ".eslintrc"
-	// },
 	"editor.insertSpaces": false,
 	"editor.detectIndentation": true,
 	"todohighlight.isEnable": true,

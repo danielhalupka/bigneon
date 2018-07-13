@@ -1,16 +1,10 @@
 import React, { Component } from "react";
-import { Typography } from "@material-ui/core";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import withRoot from "./withRoot";
 import Container from "../common/Container";
 import NotFound from "../common/NotFound";
-
-const Dashboard = () => (
-	<div>
-		<Typography>Dashboard</Typography>
-	</div>
-);
+import Dashboard from "../pages/dashboard/Index";
 
 class Routes extends Component {
 	render() {
