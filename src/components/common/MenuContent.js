@@ -19,7 +19,9 @@ import FansIcon from "@material-ui/icons/People";
 import ArtistsIcon from "@material-ui/icons/MusicNote";
 import MarketingIcon from "@material-ui/icons/Notifications";
 import OrganizationIcon from "@material-ui/icons/GroupWork";
-import Button from "@material-ui/core/Button";
+//import Button from "@material-ui/core/Button";
+
+import Button from "./Button";
 
 const drawerWidth = 260;
 
@@ -112,6 +114,7 @@ class MenuContent extends Component {
 				<img
 					style={{ width: "100%", padding: 5 }}
 					src="/images/bn-logo-text.png"
+					alt="Logo"
 				/>
 				<div
 					style={{
@@ -126,7 +129,11 @@ class MenuContent extends Component {
 							textDecoration: "none"
 						}}
 					>
-						<Button onClick={toggleDrawer} style={{ width: "100%" }}>
+						<Button
+							customClassName="callToAction"
+							onClick={toggleDrawer}
+							style={{ width: "100%" }}
+						>
 							Create new event
 						</Button>
 					</Link>
