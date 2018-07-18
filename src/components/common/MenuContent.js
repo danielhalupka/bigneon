@@ -19,7 +19,6 @@ import FansIcon from "@material-ui/icons/People";
 import ArtistsIcon from "@material-ui/icons/MusicNote";
 import MarketingIcon from "@material-ui/icons/Notifications";
 import OrganizationIcon from "@material-ui/icons/GroupWork";
-//import Button from "@material-ui/core/Button";
 
 import Button from "./Button";
 

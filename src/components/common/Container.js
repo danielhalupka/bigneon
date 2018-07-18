@@ -65,8 +65,27 @@ class Container extends React.Component {
 		this.setState(state => ({ mobileOpen: !state.mobileOpen }));
 	}
 
-	render() {
+	renderContent(toolBarSpace = true) {
 		const { classes, children } = this.props;
+
+		return (
+			<main className={classes.content}>
+				{toolBarSpace ? <div className={classes.toolbar} /> : null}
+				{children}
+			</main>
+		);
+	}
+
+	render() {
+		const { classes } = this.props;
+
+		//TODO this will come from an observable
+		const isAuthenticated = true;
+
+		//If they're not logged in don't render menus yet
+		if (!isAuthenticated) {
+			return this.renderContent(false);
+		}
 
 		const drawer = (
 			<div>
@@ -90,6 +109,7 @@ class Container extends React.Component {
 						<div style={{ flex: 1 }}>
 							<Hidden mdUp implementation="css">
 								<img
+									alt="Header logo"
 									className={classes.headerImage}
 									src="/images/bn-logo-text.png"
 								/>
@@ -126,10 +146,7 @@ class Container extends React.Component {
 						{drawer}
 					</Drawer>
 				</Hidden>
-				<main className={classes.content}>
-					<div className={classes.toolbar} />
-					{children}
-				</main>
+				{this.renderContent()}
 			</div>
 		);
 	}

@@ -25,18 +25,6 @@ const theme = createMuiTheme({
 		}
 	},
 	overrides: {
-		// TODO overrride subtle details here like shadows
-		// MuiButton: {
-		// 	// Name of the rule
-		// 	root: {
-		// 		background: `linear-gradient(45deg, ${textColorSecondary} 10%, ${primaryHex} 30%, ${secondaryHex} 90%)`,
-		// 		borderRadius: 3,
-		// 		border: 0,
-		// 		color: "white",
-		// 		padding: "0 30px",
-		// 		boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)"
-		// 	}
-		// },
 		MuiAppBar: {
 			root: {
 				background: `linear-gradient(45deg, #FFF 30%, #FFF 90%)`,
