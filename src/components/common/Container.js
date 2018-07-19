@@ -1,5 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react";
+import { withRouter } from "react-router-dom";
+import DevTools from "mobx-react-devtools";
+
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -10,6 +14,9 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 import MenuContent from "./MenuContent";
 import RightHeaderMenu from "./RightHeaderMenu";
+import AuthenticateDialog from "../common/AuthenticateDialog";
+
+import user from "../../stores/user";
 
 const drawerWidth = 240;
 
@@ -52,6 +59,7 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class Container extends React.Component {
 	constructor(props) {
 		super(props);
@@ -68,10 +76,21 @@ class Container extends React.Component {
 	renderContent(toolBarSpace = true) {
 		const { classes, children } = this.props;
 
+		//Check if we're on one of the authentication pages so if we're not logged in an need to be, a pop up shows
+		const authPages = ["/login", "/sign-up"];
+		let requiresAuth = !user.isAuthenticated;
+
+		if (authPages.indexOf(window.location.pathname) > -1) {
+			requiresAuth = false;
+		}
+
 		return (
 			<main className={classes.content}>
 				{toolBarSpace ? <div className={classes.toolbar} /> : null}
-				{children}
+				<DevTools />
+				<AuthenticateDialog open={requiresAuth} />
+
+				{!requiresAuth ? children : null}
 			</main>
 		);
 	}
@@ -79,11 +98,8 @@ class Container extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		//TODO this will come from an observable
-		const isAuthenticated = true;
-
 		//If they're not logged in don't render menus yet
-		if (!isAuthenticated) {
+		if (!user.isAuthenticated) {
 			return this.renderContent(false);
 		}
 
@@ -157,4 +173,4 @@ Container.propTypes = {
 	children: PropTypes.element.isRequired
 };
 
-export default withStyles(styles)(Container);
+export default withStyles(styles)(withRouter(Container));

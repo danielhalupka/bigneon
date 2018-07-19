@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -7,18 +8,18 @@ import CardContent from "@material-ui/core/CardContent";
 import InputGroup from "../../common/form/InputGroup";
 import Button from "../../common/Button";
 import Container from "./Container";
+import user from "../../../stores/user";
 
 const styles = theme => ({});
 
+@observer
 class Login extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			firstName: "",
-			lastName: "",
-			email: "",
-			password: "",
+			email: "", //"jason@test.com",
+			password: "", // "Jason123",
 			confirmPassword: "",
 			isSubmitting: false,
 			errors: {}
@@ -72,8 +73,9 @@ class Login extends Component {
 
 		//TODO remove
 		setTimeout(() => {
+			user.setId(`new-id${new Date().getTime()}`);
 			this.props.history.push("/dashboard");
-		}, 2000);
+		}, 1000);
 	}
 
 	render() {

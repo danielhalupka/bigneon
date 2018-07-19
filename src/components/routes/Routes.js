@@ -8,6 +8,8 @@ import Dashboard from "../pages/dashboard/Index";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 
+//import user from "../../stores/User";
+
 class Routes extends Component {
 	render() {
 		return (
