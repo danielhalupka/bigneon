@@ -9,7 +9,7 @@ import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
 
-const styles = theme => ({});
+const styles = () => ({});
 
 class Signup extends Component {
 	constructor(props) {

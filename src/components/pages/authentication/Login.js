@@ -10,16 +10,17 @@ import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
 
-const styles = theme => ({});
+const styles = () => ({});
 
 @observer
 class Login extends Component {
 	constructor(props) {
 		super(props);
+		console.log(process.env.NODE_ENV);
 
 		this.state = {
-			email: "", //"jason@test.com",
-			password: "", // "Jason123",
+			email: process.env.NODE_ENV === "development" ? "tes@test.com" : "",
+			password: process.env.NODE_ENV === "development" ? "Test123" : "",
 			confirmPassword: "",
 			isSubmitting: false,
 			errors: {}

@@ -5,11 +5,12 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
-const styles = theme => ({
+const styles = () => ({
 	formControl: {
 		width: "100%"
 	}
 });
+
 const InputGroup = props => {
 	const {
 		error,
