@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { Typography, withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -16,9 +17,9 @@ class Signup extends Component {
 		super(props);
 
 		this.state = {
-			firstName: "",
-			lastName: "",
+			name: "",
 			email: "",
+			phone: "",
 			password: "",
 			confirmPassword: "",
 			isSubmitting: false,
@@ -32,26 +33,20 @@ class Signup extends Component {
 			return true;
 		}
 
-		const {
-			firstName,
-			lastName,
-			email,
-			password,
-			confirmPassword
-		} = this.state;
+		const { name, email, phone, password, confirmPassword } = this.state;
 
 		const errors = {};
 
-		if (!firstName) {
-			errors.firstName = "Missing first name.";
-		}
-
-		if (!lastName) {
-			errors.lastName = "Missing last name.";
+		if (!name) {
+			errors.name = "Missing name.";
 		}
 
 		if (!email) {
 			errors.email = "Missing email.";
+		}
+
+		if (!phone) {
+			errors.phone = "Missing phone number.";
 		}
 
 		if (!password) {
@@ -76,7 +71,7 @@ class Signup extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { firstName, lastName, email, password } = this.state;
+		const { name, email, phone, password } = this.state;
 
 		this.submitAttempted = true;
 
@@ -87,24 +82,40 @@ class Signup extends Component {
 		this.setState({ isSubmitting: true });
 
 		console.log({
-			firstName,
-			lastName,
+			name,
 			email,
+			phone,
 			password
 		});
 
-		//TODO remove
-		setTimeout(() => {
-			user.setId(`new-id${new Date().getTime()}`);
-			this.props.history.push("/dashboard");
-		}, 1000);
+		axios
+			.get("https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/login", {
+				params: {
+					email
+				}
+			})
+			.then(response => {
+				console.log(response);
+
+				user.setDetails({
+					id: `new-id${new Date().getTime()}`,
+					name,
+					email,
+					phone
+				});
+				this.props.history.push("/dashboard");
+			})
+			.catch(error => {
+				console.log(error);
+				alert("Login error."); //TODO replace with something better looking
+			});
 	}
 
 	render() {
 		const {
-			firstName,
-			lastName,
+			name,
 			email,
+			phone,
 			password,
 			confirmPassword,
 			isSubmitting,
@@ -120,21 +131,12 @@ class Signup extends Component {
 						</Typography>
 
 						<InputGroup
-							error={errors.firstName}
-							value={firstName}
-							name="firstName"
-							label="First name"
+							error={errors.name}
+							value={name}
+							name="name"
+							label="Name"
 							type="text"
-							onChange={e => this.setState({ firstName: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
-						<InputGroup
-							error={errors.lastName}
-							value={lastName}
-							name="lastName"
-							label="Last name"
-							type="text"
-							onChange={e => this.setState({ lastName: e.target.value })}
+							onChange={e => this.setState({ name: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup
@@ -144,6 +146,15 @@ class Signup extends Component {
 							label="Email address"
 							type="text"
 							onChange={e => this.setState({ email: e.target.value })}
+							onBlur={this.validateFields.bind(this)}
+						/>
+						<InputGroup
+							error={errors.phone}
+							value={phone}
+							name="phone"
+							label="Phone number"
+							type="text"
+							onChange={e => this.setState({ phone: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup

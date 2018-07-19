@@ -1,16 +1,27 @@
 import { observable, computed, action } from "mobx";
 
 class User {
-	@observable userId = null;
+	@observable id = null;
+	@observable name = "";
+	@observable email = "";
+	@observable phone = "";
 
 	@action
-	setId(userId) {
-		this.userId = userId;
+	setDetails({ id, name, email, phone }) {
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.phone = phone;
+	}
+
+	@action
+	logout() {
+		this.id = null;
 	}
 
 	@computed
 	get isAuthenticated() {
-		return !!this.userId;
+		return !!this.id;
 	}
 }
 
