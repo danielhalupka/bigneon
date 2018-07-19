@@ -87,7 +87,7 @@ class Container extends React.Component {
 		return (
 			<main className={classes.content}>
 				{toolBarSpace ? <div className={classes.toolbar} /> : null}
-				<DevTools />
+				{process.env.NODE_ENV === "development" ? <DevTools /> : null}
 				<AuthenticateDialog open={requiresAuth} />
 
 				{!requiresAuth ? children : null}
