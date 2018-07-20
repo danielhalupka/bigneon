@@ -9,6 +9,7 @@ import InputGroup from "../../common/form/InputGroup";
 import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
+import notifications from "../../../stores/notifications";
 
 const styles = () => ({});
 
@@ -89,11 +90,14 @@ class Signup extends Component {
 		});
 
 		axios
-			.get("https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/login", {
-				params: {
-					email
+			.get(
+				"https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/signup",
+				{
+					params: {
+						email
+					}
 				}
-			})
+			)
 			.then(response => {
 				console.log(response);
 
@@ -106,8 +110,12 @@ class Signup extends Component {
 				this.props.history.push("/dashboard");
 			})
 			.catch(error => {
-				console.log(error);
-				alert("Login error."); //TODO replace with something better looking
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Sign up failed.", //TODO add more details here
+					variant: "error"
+				});
 			});
 	}
 
@@ -183,7 +191,7 @@ class Signup extends Component {
 							style={{ marginRight: 10 }}
 							customClassName="callToAction"
 						>
-							{isSubmitting ? "Submitting..." : "Sign up"}
+							{isSubmitting ? "Submitting..." : <span>Sign&nbsp;up</span>}
 						</Button>
 
 						<Link to={"/login"} style={{ textDecoration: "none" }}>

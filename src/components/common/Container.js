@@ -15,6 +15,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import MenuContent from "./MenuContent";
 import RightHeaderMenu from "./RightHeaderMenu";
 import AuthenticateDialog from "../common/AuthenticateDialog";
+import Notification from "../common/Notification";
 
 import user from "../../stores/user";
 
@@ -89,6 +90,7 @@ class Container extends React.Component {
 				{toolBarSpace ? <div className={classes.toolbar} /> : null}
 				{process.env.NODE_ENV === "development" ? <DevTools /> : null}
 				<AuthenticateDialog open={requiresAuth} />
+				<Notification />
 
 				{!requiresAuth ? children : null}
 			</main>

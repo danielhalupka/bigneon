@@ -10,6 +10,7 @@ import InputGroup from "../../common/form/InputGroup";
 import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
+import notifications from "../../../stores/notifications";
 
 const styles = () => ({});
 
@@ -17,10 +18,9 @@ const styles = () => ({});
 class Login extends Component {
 	constructor(props) {
 		super(props);
-		console.log(process.env.NODE_ENV);
 
 		this.state = {
-			email: process.env.NODE_ENV === "development" ? "tes@test.com" : "",
+			email: process.env.NODE_ENV === "development" ? "test@test.com" : "",
 			password: process.env.NODE_ENV === "development" ? "Test123" : "",
 			confirmPassword: "",
 			isSubmitting: false,
@@ -91,8 +91,12 @@ class Login extends Component {
 				this.props.history.push("/dashboard");
 			})
 			.catch(error => {
-				console.log(error);
-				alert("Login error."); //TODO replace with something better looking
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Login failed.", //TODO add more details here
+					variant: "error"
+				});
 			});
 	}
 
