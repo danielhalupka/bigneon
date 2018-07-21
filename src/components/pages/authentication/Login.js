@@ -11,6 +11,7 @@ import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
+import { validEmail } from "../../../validators";
 
 const styles = () => ({});
 
@@ -39,7 +40,11 @@ class Login extends Component {
 		const errors = {};
 
 		if (!email) {
-			errors.email = "Missing email.";
+			errors.email = "Missing email address.";
+		}
+
+		if (!validEmail(email)) {
+			errors.email = "Invalid email address.";
 		}
 
 		if (!password) {
@@ -73,12 +78,17 @@ class Login extends Component {
 			password
 		});
 
+		//http://0.0.0.0:9000/login
 		axios
-			.get("https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/login", {
-				params: {
-					email
+			.post(
+				"https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/login",
+				{
+					params: {
+						email,
+						password
+					}
 				}
-			})
+			)
 			.then(response => {
 				console.log(response);
 

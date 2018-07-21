@@ -10,6 +10,7 @@ import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
+import { validEmail, validPhone } from "../../../validators";
 
 const styles = () => ({});
 
@@ -44,10 +45,14 @@ class Signup extends Component {
 
 		if (!email) {
 			errors.email = "Missing email.";
+		} else if (!validEmail(email)) {
+			errors.email = "Invalid email address.";
 		}
 
 		if (!phone) {
 			errors.phone = "Missing phone number.";
+		} else if (!validPhone(phone)) {
+			errors.phone = "Invalid phone number.";
 		}
 
 		if (!password) {
@@ -89,9 +94,10 @@ class Signup extends Component {
 			password
 		});
 
+		//http://0.0.0.0:9000/login
 		axios
-			.get(
-				"https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/signup",
+			.post(
+				"https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/login",
 				{
 					params: {
 						email
