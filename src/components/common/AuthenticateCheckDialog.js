@@ -13,35 +13,38 @@ const styles = theme => {
 	};
 };
 
-class AuthenticateDialog extends React.Component {
+class AuthenticateCheckDialog extends React.Component {
 	render() {
-		const { classes } = this.props;
+		const { classes, isLoading, open } = this.props;
 
 		return (
 			<Dialog
 				aria-labelledby="please-authenticate"
-				{...this.props}
+				open={open}
 				className={classes.root}
 			>
 				<DialogTitle id="please-authenticate">
-					Authentication required
+					{isLoading ? "Loading..." : "Authentication required"}
 				</DialogTitle>
-				<div>
-					<Link to={"/sign-up"} style={{ textDecoration: "none" }}>
-						<Button>Sign up</Button>
-					</Link>
-					<Link to={"/login"} style={{ textDecoration: "none" }}>
-						<Button>Login</Button>
-					</Link>
-				</div>
+				{!isLoading ? (
+					<div>
+						<Link to={"/sign-up"} style={{ textDecoration: "none" }}>
+							<Button>Sign up</Button>
+						</Link>
+						<Link to={"/login"} style={{ textDecoration: "none" }}>
+							<Button>Login</Button>
+						</Link>
+					</div>
+				) : null}
 			</Dialog>
 		);
 	}
 }
 
-AuthenticateDialog.propTypes = {
+AuthenticateCheckDialog.propTypes = {
 	classes: PropTypes.object.isRequired,
-	open: PropTypes.bool.isRequired
+	open: PropTypes.bool.isRequired,
+	isLoading: PropTypes.bool.isRequired
 };
 
-export default withStyles(styles)(AuthenticateDialog);
+export default withStyles(styles)(AuthenticateCheckDialog);

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import DevTools from "mobx-react-devtools";
+import axios from "axios";
 
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -14,9 +15,9 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 import MenuContent from "./MenuContent";
 import RightHeaderMenu from "./RightHeaderMenu";
-import AuthenticateDialog from "../common/AuthenticateDialog";
+import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import Notification from "../common/Notification";
-
+import notifications from "../../stores/notifications";
 import user from "../../stores/user";
 
 const drawerWidth = 240;
@@ -70,6 +71,35 @@ class Container extends React.Component {
 		};
 	}
 
+	componentDidMount() {
+		const token = localStorage.getItem("token");
+
+		//TODO: Waiting for custom route
+		//Check if we still have a valid token.
+		axios
+			.get("http://0.0.0.0:9000/artists", {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
+			.then(response => {
+				console.log(response.data);
+
+				user.onLogin({
+					token,
+					id: `new-id${new Date().getTime()}`,
+					name: "TODO-name",
+					email: "TODO-email",
+					phone: "TODO-phone"
+				});
+			})
+			.catch(error => {
+				user.onLogout();
+				console.log("error 3 " + error);
+				notifications.show({ message: error.message, variant: "error" });
+			});
+	}
+
 	handleDrawerToggle() {
 		this.setState(state => ({ mobileOpen: !state.mobileOpen }));
 	}
@@ -89,7 +119,10 @@ class Container extends React.Component {
 			<main className={classes.content}>
 				{toolBarSpace ? <div className={classes.toolbar} /> : null}
 				{process.env.NODE_ENV === "development" ? <DevTools /> : null}
-				<AuthenticateDialog open={requiresAuth} />
+				<AuthenticateCheckDialog
+					open={requiresAuth}
+					isLoading={user.isAuthenticated === null}
+				/>
 				<Notification />
 
 				{!requiresAuth ? children : null}
@@ -98,7 +131,7 @@ class Container extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, history } = this.props;
 
 		//If they're not logged in don't render menus yet
 		if (!user.isAuthenticated) {
@@ -134,7 +167,7 @@ class Container extends React.Component {
 							</Hidden>
 						</div>
 
-						<RightHeaderMenu />
+						<RightHeaderMenu history={history} />
 					</Toolbar>
 				</AppBar>
 				<Hidden mdUp>

@@ -21,8 +21,9 @@ class Login extends Component {
 		super(props);
 
 		this.state = {
-			email: process.env.NODE_ENV === "development" ? "test@test.com" : "",
-			password: process.env.NODE_ENV === "development" ? "Test123" : "",
+			email:
+				process.env.NODE_ENV === "development" ? "superadmin@test.com" : "",
+			password: process.env.NODE_ENV === "development" ? "password" : "",
 			confirmPassword: "",
 			isSubmitting: false,
 			errors: {}
@@ -78,27 +79,34 @@ class Login extends Component {
 			password
 		});
 
-		//http://0.0.0.0:9000/login
 		axios
-			.post(
-				"https://ce8b7607-3c4d-4e2e-ada0-7b9e3167d03b.mock.pstmn.io/login",
-				{
-					params: {
-						email,
-						password
-					}
-				}
-			)
+			.post("http://0.0.0.0:9000/auth/token", {
+				username: email,
+				password
+			})
 			.then(response => {
-				console.log(response);
+				this.setState({ isSubmitting: false });
 
-				user.setDetails({
-					id: `new-id${new Date().getTime()}`,
-					name: "TODO-name",
-					email: "TODO-email",
-					phone: "TODO-phone"
-				});
-				this.props.history.push("/dashboard");
+				const { token } = response.data;
+				if (token) {
+					localStorage.setItem("token", token);
+					console.log(token);
+
+					//TODO get these details back from the api
+					user.onLogin({
+						token,
+						id: `new-id${new Date().getTime()}`,
+						name: "TODO-name",
+						email: "TODO-email",
+						phone: "TODO-phone"
+					});
+					this.props.history.push("/dashboard");
+				} else {
+					notifications.show({
+						message: "Missing token.",
+						variant: "error"
+					});
+				}
 			})
 			.catch(error => {
 				console.error(error);

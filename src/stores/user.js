@@ -2,26 +2,39 @@ import { observable, computed, action } from "mobx";
 
 class User {
 	@observable id = null;
+	@observable token = null;
 	@observable name = "";
 	@observable email = "";
 	@observable phone = "";
 
+	//After login
 	@action
-	setDetails({ id, name, email, phone }) {
+	onLogin({ token, id, name, email, phone }) {
+		this.token = token;
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
 	}
 
+	//After logout
 	@action
-	logout() {
+	onLogout() {
+		this.token = false;
 		this.id = null;
+		this.name = name;
+		this.email = "";
+		this.phone = "";
+
+		localStorage.removeItem("token");
 	}
 
 	@computed
 	get isAuthenticated() {
-		return !!this.id;
+		//If the token is set, return 'true'.
+		//If it's not set yet been checked it's 'null'.
+		//If it has been checked but not authed then it's 'false'
+		return this.token ? !!this.token : this.token;
 	}
 }
 
