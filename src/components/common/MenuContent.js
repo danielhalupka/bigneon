@@ -19,6 +19,7 @@ import FansIcon from "@material-ui/icons/People";
 import ArtistsIcon from "@material-ui/icons/MusicNote";
 import MarketingIcon from "@material-ui/icons/Notifications";
 import OrganizationIcon from "@material-ui/icons/GroupWork";
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 import Button from "./Button";
 
@@ -33,6 +34,57 @@ const styles = theme => ({
 		paddingLeft: theme.spacing.unit * 4
 	}
 });
+
+const MenuItem = ({
+	to = null,
+	children,
+	icon,
+	toggleDrawer,
+	onClick = null,
+	expandIcon = null
+}) => {
+	const listItem = (
+		<ListItem button onClick={onClick || toggleDrawer}>
+			<ListItemIcon>{icon}</ListItemIcon>
+			<ListItemText inset primary={children} />
+			{expandIcon}
+		</ListItem>
+	);
+
+	if (to) {
+		return (
+			<Link to={to} style={{ textDecoration: "none" }}>
+				{listItem}
+			</Link>
+		);
+	}
+
+	return listItem;
+};
+
+const SubMenuItems = ({ isExpanded, classes, items, toggleDrawer }) => {
+	return (
+		<Collapse in={isExpanded} timeout="auto" unmountOnExit>
+			<List component="div" disablePadding>
+				{Object.keys(items).map(label => (
+					<Link
+						key={label}
+						to={items[label]}
+						style={{ textDecoration: "none" }}
+					>
+						<ListItem button className={classes.nested} onClick={toggleDrawer}>
+							<ListItemIcon>
+								<SubMenuIcon />
+							</ListItemIcon>
+							<ListItemText inset primary={label} />
+						</ListItem>
+					</Link>
+				))}
+			</List>
+			<Divider />
+		</Collapse>
+	);
+};
 
 class MenuContent extends Component {
 	constructor(props) {
@@ -50,63 +102,53 @@ class MenuContent extends Component {
 		});
 	}
 
+	renderAdmin() {
+		//TODO skip this if they don't belong to this role
+		const { openMenuItem } = this.state;
+		const { classes, toggleDrawer } = this.props;
+
+		return (
+			<div>
+				<Divider />
+				<ListSubheader>System admin</ListSubheader>
+				<MenuItem
+					icon={<EventsIcon />}
+					onClick={() => this.changeOpenMenu("admin-organizations")}
+					expandIcon={
+						openMenuItem === "admin-organizations" ? (
+							<ExpandLess />
+						) : (
+							<ExpandMore />
+						)
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Organizations
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-organizations"}
+					classes={classes}
+					items={{
+						All: "/admin/organizations",
+						Create: "/admin/organizations/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
+
+				{/* <MenuItem
+					to="/organization/create"
+					icon={<OrganizationIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					Create organization
+				</MenuItem> */}
+			</div>
+		);
+	}
+
 	render() {
 		const { classes, toggleDrawer } = this.props;
 		const { openMenuItem } = this.state;
-
-		const MenuItem = ({
-			to = null,
-			children,
-			icon,
-			onClick = null,
-			expandIcon = null
-		}) => {
-			const listItem = (
-				<ListItem button onClick={onClick || toggleDrawer}>
-					<ListItemIcon>{icon}</ListItemIcon>
-					<ListItemText inset primary={children} />
-					{expandIcon}
-				</ListItem>
-			);
-
-			if (to) {
-				return (
-					<Link to={to} style={{ textDecoration: "none" }}>
-						{listItem}
-					</Link>
-				);
-			}
-
-			return listItem;
-		};
-
-		const SubMenuItems = ({ isExpanded, classes, items }) => {
-			return (
-				<Collapse in={isExpanded} timeout="auto" unmountOnExit>
-					<List component="div" disablePadding>
-						{Object.keys(items).map(label => (
-							<Link
-								key={label}
-								to={items[label]}
-								style={{ textDecoration: "none" }}
-							>
-								<ListItem
-									button
-									className={classes.nested}
-									onClick={toggleDrawer}
-								>
-									<ListItemIcon>
-										<SubMenuIcon />
-									</ListItemIcon>
-									<ListItemText inset primary={label} />
-								</ListItem>
-							</Link>
-						))}
-					</List>
-					<Divider />
-				</Collapse>
-			);
-		};
 
 		return (
 			<List component="nav">
@@ -137,22 +179,24 @@ class MenuContent extends Component {
 						</Button>
 					</Link>
 				</div>
-
 				<Divider />
-				<MenuItem to="/dashboard" icon={<SendIcon />}>
+				<MenuItem
+					to="/dashboard"
+					icon={<SendIcon />}
+					toggleDrawer={toggleDrawer}
+				>
 					Dashboard
 				</MenuItem>
-
 				<MenuItem
 					icon={<EventsIcon />}
 					onClick={() => this.changeOpenMenu("events")}
 					expandIcon={
 						openMenuItem === "events" ? <ExpandLess /> : <ExpandMore />
 					}
+					toggleDrawer={toggleDrawer}
 				>
 					Events
 				</MenuItem>
-
 				<SubMenuItems
 					isExpanded={openMenuItem === "events"}
 					classes={classes}
@@ -161,26 +205,31 @@ class MenuContent extends Component {
 						"Past events": "/events/past",
 						"Saved drafts": "/events/drafts"
 					}}
+					toggleDrawer={toggleDrawer}
 				/>
-
-				<MenuItem to="/reports" icon={<ChartIcon />}>
+				<MenuItem
+					to="/reports"
+					icon={<ChartIcon />}
+					toggleDrawer={toggleDrawer}
+				>
 					Reports
 				</MenuItem>
-				<MenuItem to="/fans" icon={<FansIcon />}>
+				<MenuItem to="/fans" icon={<FansIcon />} toggleDrawer={toggleDrawer}>
 					Fans
 				</MenuItem>
-				<MenuItem icon={<ArtistsIcon />}>Artists</MenuItem>
-
+				<MenuItem icon={<ArtistsIcon />} toggleDrawer={toggleDrawer}>
+					Artists
+				</MenuItem>
 				<MenuItem
 					icon={<MarketingIcon />}
 					onClick={() => this.changeOpenMenu("marketing")}
 					expandIcon={
 						openMenuItem === "marketing" ? <ExpandLess /> : <ExpandMore />
 					}
+					toggleDrawer={toggleDrawer}
 				>
 					Marketing
 				</MenuItem>
-
 				<SubMenuItems
 					isExpanded={openMenuItem === "marketing"}
 					classes={classes}
@@ -191,9 +240,17 @@ class MenuContent extends Component {
 						Website: "/marketing/website",
 						"Event API": "/marketing/event-api"
 					}}
+					toggleDrawer={toggleDrawer}
 				/>
+				<MenuItem
+					to="/organization"
+					icon={<OrganizationIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					Organization
+				</MenuItem>
 
-				<MenuItem icon={<OrganizationIcon />}>Organization</MenuItem>
+				{this.renderAdmin()}
 			</List>
 		);
 	}

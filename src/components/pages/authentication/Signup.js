@@ -105,8 +105,6 @@ class Signup extends Component {
 				const { token } = response.data;
 				if (token) {
 					localStorage.setItem("token", token);
-					console.log(token);
-
 					//TODO get these details back from the api
 					user.onLogin({
 						token,

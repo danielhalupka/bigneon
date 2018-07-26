@@ -4,6 +4,9 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
 
 const styles = () => ({
 	formControl: {
@@ -11,52 +14,54 @@ const styles = () => ({
 	}
 });
 
-const InputGroup = props => {
-	const {
-		error,
-		value,
-		name,
-		label,
-		type = "text",
-		onChange,
-		onBlur,
-		onFocus
-	} = props;
+const SelectGroup = props => {
+	const { value, items, error, name, label, onChange, onBlur, onFocus } = props;
 
 	const { classes } = props;
+
+	console.log(items);
 
 	return (
 		<FormControl
 			className={classes.formControl}
-			error
+			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
-			<TextField
-				error={!!error}
-				id={name}
-				label={label}
-				type={type}
+			<InputLabel htmlFor={name}>{label}</InputLabel>
+			<Select
 				value={value}
 				onChange={onChange}
-				margin="normal"
-				onBlur={onBlur}
-				onFocus={onFocus}
-			/>
+				inputProps={{
+					name,
+					id: name,
+					onBlur,
+					onFocus
+				}}
+			>
+				{/* <MenuItem>
+					<em>{label}</em>
+				</MenuItem> */}
+				{Object.keys(items).map(key => (
+					<MenuItem key={key} value={key}>
+						{items[key]}
+					</MenuItem>
+				))}
+			</Select>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
 		</FormControl>
 	);
 };
 
-InputGroup.propTypes = {
+SelectGroup.propTypes = {
+	items: PropTypes.object.isRequired,
 	error: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
-	type: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func
 };
 
-export default withStyles(styles)(InputGroup);
+export default withStyles(styles)(SelectGroup);

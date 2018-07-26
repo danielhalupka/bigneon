@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import DevTools from "mobx-react-devtools";
 import axios from "axios";
-
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -19,6 +18,7 @@ import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import Notification from "../common/Notification";
 import notifications from "../../stores/notifications";
 import user from "../../stores/user";
+import decodeJWT from "../../helpers/decodeJWT";
 
 const drawerWidth = 240;
 
@@ -83,11 +83,15 @@ class Container extends React.Component {
 				}
 			})
 			.then(response => {
-				console.log(response.data);
+				const jwtData = decodeJWT(token);
+				const {
+					roles,
+					sub //UserId
+				} = jwtData;
 
 				user.onLogin({
 					token,
-					id: `new-id${new Date().getTime()}`,
+					id: sub,
 					name: "TODO-name",
 					email: "TODO-email",
 					phone: "TODO-phone"

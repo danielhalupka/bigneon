@@ -12,6 +12,7 @@ import Container from "./Container";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
 import { validEmail } from "../../../validators";
+import decodeJWT from "../../../helpers/decodeJWT";
 
 const styles = () => ({});
 
@@ -90,12 +91,17 @@ class Login extends Component {
 				const { token } = response.data;
 				if (token) {
 					localStorage.setItem("token", token);
-					console.log(token);
 
-					//TODO get these details back from the api
+					const jwtData = decodeJWT(token);
+
+					const {
+						roles,
+						sub //UserId
+					} = jwtData;
+
 					user.onLogin({
 						token,
-						id: `new-id${new Date().getTime()}`,
+						id: sub,
 						name: "TODO-name",
 						email: "TODO-email",
 						phone: "TODO-phone"
