@@ -124,7 +124,7 @@ class OrganizationsCreate extends Component {
 				<Typography variant="display3">Create organization</Typography>
 
 				<Grid container spacing={24}>
-					<Grid item xs={12} sm={6} lg={3}>
+					<Grid item xs={12} sm={6} lg={6}>
 						<Card className={classes.paper}>
 							<form
 								noValidate

@@ -70,7 +70,7 @@ class OrganizationsView extends Component {
 					state,
 					zip
 				}) => (
-					<Grid key={id} item xs={12} sm={6} lg={3}>
+					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<Card className={classes.paper}>
 							<Typography variant="display1">{name}</Typography>
 						</Card>
