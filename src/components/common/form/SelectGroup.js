@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -16,10 +15,7 @@ const styles = () => ({
 
 const SelectGroup = props => {
 	const { value, items, error, name, label, onChange, onBlur, onFocus } = props;
-
 	const { classes } = props;
-
-	console.log(items);
 
 	return (
 		<FormControl
@@ -38,9 +34,6 @@ const SelectGroup = props => {
 					onFocus
 				}}
 			>
-				{/* <MenuItem>
-					<em>{label}</em>
-				</MenuItem> */}
 				{Object.keys(items).map(key => (
 					<MenuItem key={key} value={key}>
 						{items[key]}
