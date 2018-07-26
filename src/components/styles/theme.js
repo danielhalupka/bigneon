@@ -29,8 +29,13 @@ const theme = createMuiTheme({
 			root: {
 				background: `linear-gradient(45deg, #FFF 30%, #FFF 90%)`,
 				color: textColorPrimary,
-				//	height: 48,
 				boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)"
+			}
+		},
+		MuiInput: {
+			root: {
+				fontFamily: "Oswald, arial",
+				fontSize: 17
 			}
 		}
 	}
