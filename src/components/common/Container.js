@@ -72,36 +72,8 @@ class Container extends React.Component {
 	}
 
 	componentDidMount() {
-		const token = localStorage.getItem("token");
-
-		//TODO: Waiting for custom route
-		//Check if we still have a valid token.
-		axios
-			.get("http://0.0.0.0:9000/artists", {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
-			.then(response => {
-				const jwtData = decodeJWT(token);
-				const {
-					roles,
-					sub //UserId
-				} = jwtData;
-
-				user.onLogin({
-					token,
-					id: sub,
-					name: "TODO-name",
-					email: "TODO-email",
-					phone: "TODO-phone"
-				});
-			})
-			.catch(error => {
-				user.onLogout();
-				console.log("error 3 " + error);
-				notifications.show({ message: error.message, variant: "error" });
-			});
+		//This component mounts every time the browser is refreshed, so we need to check we still have a valid token
+		user.refreshUser();
 	}
 
 	handleDrawerToggle() {

@@ -5,6 +5,7 @@ import withRoot from "./withRoot";
 import Container from "../common/Container";
 import NotFound from "../common/NotFound";
 import Dashboard from "../pages/dashboard/Index";
+import Profile from "../pages/profile/Index";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 
@@ -23,6 +24,7 @@ class Routes extends Component {
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/dashboard" component={Dashboard} />
+						<Route exact path="/profile" component={Profile} />
 
 						{/* System admin routes TODO hide these if they don't blong */}
 						<Route

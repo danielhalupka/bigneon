@@ -104,16 +104,9 @@ class Signup extends Component {
 
 				const { token } = response.data;
 				if (token) {
-					localStorage.setItem("token", token);
-					//TODO get these details back from the api
-					user.onLogin({
-						token,
-						id: `new-id${new Date().getTime()}`,
-						name: "TODO-name",
-						email: "TODO-email",
-						phone: "TODO-phone"
+					user.refreshUser(() => {
+						this.props.history.push("/dashboard");
 					});
-					this.props.history.push("/dashboard");
 				} else {
 					notifications.show({
 						message: "Missing token.",

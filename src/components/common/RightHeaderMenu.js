@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -66,8 +68,13 @@ class RightHeaderMenu extends React.Component {
 					open={open}
 					onClose={this.handleClose.bind(this)}
 				>
-					<MenuItem onClick={this.handleClose.bind(this)}>Profile</MenuItem>
-					<MenuItem onClick={this.handleClose.bind(this)}>My account</MenuItem>
+					<Link
+						to="/profile"
+						style={{ textDecoration: "none", outline: "none" }}
+					>
+						<MenuItem onClick={this.handleClose.bind(this)}>Profile</MenuItem>
+					</Link>
+
 					<MenuItem
 						onClick={() => {
 							user.onLogout();

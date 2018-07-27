@@ -91,22 +91,10 @@ class Login extends Component {
 				const { token } = response.data;
 				if (token) {
 					localStorage.setItem("token", token);
-
-					const jwtData = decodeJWT(token);
-
-					const {
-						roles,
-						sub //UserId
-					} = jwtData;
-
-					user.onLogin({
-						token,
-						id: sub,
-						name: "TODO-name",
-						email: "TODO-email",
-						phone: "TODO-phone"
+					//Pull user data with our new token
+					user.refreshUser(() => {
+						this.props.history.push("/dashboard");
 					});
-					this.props.history.push("/dashboard");
 				} else {
 					notifications.show({
 						message: "Missing token.",
