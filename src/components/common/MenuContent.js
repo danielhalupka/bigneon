@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -21,6 +22,7 @@ import MarketingIcon from "@material-ui/icons/Notifications";
 import OrganizationIcon from "@material-ui/icons/GroupWork";
 import ListSubheader from "@material-ui/core/ListSubheader";
 
+import user from "../../stores/user";
 import Button from "./Button";
 
 const drawerWidth = 260;
@@ -86,6 +88,7 @@ const SubMenuItems = ({ isExpanded, classes, items, toggleDrawer }) => {
 	);
 };
 
+@observer
 class MenuContent extends Component {
 	constructor(props) {
 		super(props);
@@ -103,7 +106,6 @@ class MenuContent extends Component {
 	}
 
 	renderAdmin() {
-		//TODO skip this if they don't belong to this role
 		const { openMenuItem } = this.state;
 		const { classes, toggleDrawer } = this.props;
 
@@ -146,47 +148,12 @@ class MenuContent extends Component {
 		);
 	}
 
-	render() {
-		const { classes, toggleDrawer } = this.props;
+	renderOrgOwnMenu() {
 		const { openMenuItem } = this.state;
+		const { classes, toggleDrawer } = this.props;
 
 		return (
-			<List component="nav">
-				<img
-					style={{ width: "100%", padding: 5 }}
-					src="/images/bn-logo-text.png"
-					alt="Logo"
-				/>
-				<div
-					style={{
-						width: "100%",
-						textAlign: "center",
-						padding: 15
-					}}
-				>
-					<Link
-						to={"/events/create"}
-						style={{
-							textDecoration: "none"
-						}}
-					>
-						<Button
-							customClassName="callToAction"
-							onClick={toggleDrawer}
-							style={{ width: "100%" }}
-						>
-							Create new event
-						</Button>
-					</Link>
-				</div>
-				<Divider />
-				<MenuItem
-					to="/dashboard"
-					icon={<SendIcon />}
-					toggleDrawer={toggleDrawer}
-				>
-					Dashboard
-				</MenuItem>
+			<div>
 				<MenuItem
 					icon={<EventsIcon />}
 					onClick={() => this.changeOpenMenu("events")}
@@ -249,8 +216,57 @@ class MenuContent extends Component {
 				>
 					Organization
 				</MenuItem>
+			</div>
+		);
+	}
 
-				{this.renderAdmin()}
+	render() {
+		const { isAdmin, isOrgOwner } = user;
+
+		const { classes, toggleDrawer } = this.props;
+		const { openMenuItem } = this.state;
+
+		return (
+			<List component="nav">
+				<img
+					style={{ width: "100%", padding: 5 }}
+					src="/images/bn-logo-text.png"
+					alt="Logo"
+				/>
+				<div
+					style={{
+						width: "100%",
+						textAlign: "center",
+						padding: 15
+					}}
+				>
+					<Link
+						to={"/events/create"}
+						style={{
+							textDecoration: "none"
+						}}
+					>
+						<Button
+							customClassName="callToAction"
+							onClick={toggleDrawer}
+							style={{ width: "100%" }}
+						>
+							Create new event
+						</Button>
+					</Link>
+				</div>
+				<Divider />
+				<MenuItem
+					to="/dashboard"
+					icon={<SendIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					Dashboard
+				</MenuItem>
+
+				{isOrgOwner ? this.renderOrgOwnMenu() : null}
+
+				{isAdmin ? this.renderAdmin() : null}
 			</List>
 		);
 	}

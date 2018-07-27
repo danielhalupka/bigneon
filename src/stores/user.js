@@ -9,6 +9,7 @@ class User {
 	@observable name = "";
 	@observable email = "";
 	@observable phone = "";
+	@observable roles = [];
 
 	@action
 	refreshUser(onResult = null) {
@@ -33,11 +34,14 @@ class User {
 					sub //UserId
 				} = jwtData;
 
+				const roleArray = roles.split(",");
+
 				this.token = token;
 				this.id = id;
 				this.name = name;
 				this.email = email;
 				this.phone = phone;
+				this.roles = roleArray;
 
 				if (onResult) {
 					onResult({ id, name, email, phone });
@@ -65,6 +69,7 @@ class User {
 		this.name = name;
 		this.email = "";
 		this.phone = "";
+		this.roles = [];
 
 		localStorage.removeItem("token");
 	}
@@ -75,6 +80,31 @@ class User {
 		//If it's not set yet been checked it's 'null'.
 		//If it has been checked but not authed then it's 'false'
 		return this.token ? !!this.token : this.token;
+	}
+
+	@computed
+	get isAdmin() {
+		return this.roles.indexOf("Admin") > -1;
+	}
+
+	@computed
+	get isOrgOwner() {
+		return this.roles.indexOf("OrgOwner") > -1;
+	}
+
+	@computed
+	get isOrgMember() {
+		return this.roles.indexOf("OrgMember") > -1;
+	}
+
+	@computed
+	get isUser() {
+		return this.roles.indexOf("User") > -1;
+	}
+
+	@computed
+	get isGuest() {
+		return !!this.token;
 	}
 }
 
