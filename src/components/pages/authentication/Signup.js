@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, {Component} from "react";
+import {Link} from "react-router-dom";
 import axios from "axios";
-import { Typography, withStyles } from "@material-ui/core";
+import {Typography, withStyles} from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 
@@ -10,7 +10,8 @@ import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
-import { validEmail, validPhone } from "../../../validators";
+import {validEmail, validPhone} from "../../../validators";
+import api from "../../../helpers/api";
 
 const styles = () => ({});
 
@@ -35,7 +36,7 @@ class Signup extends Component {
 			return true;
 		}
 
-		const { name, email, phone, password, confirmPassword } = this.state;
+		const {name, email, phone, password, confirmPassword} = this.state;
 
 		const errors = {};
 
@@ -65,7 +66,7 @@ class Signup extends Component {
 			errors.confirmPassword = "Make sure the passwords match.";
 		}
 
-		this.setState({ errors });
+		this.setState({errors});
 
 		if (Object.keys(errors).length > 0) {
 			return false;
@@ -77,7 +78,7 @@ class Signup extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { name, email, phone, password } = this.state;
+		const {name, email, phone, password} = this.state;
 
 		this.submitAttempted = true;
 
@@ -85,7 +86,7 @@ class Signup extends Component {
 			return false;
 		}
 
-		this.setState({ isSubmitting: true });
+		this.setState({isSubmitting: true});
 
 		console.log({
 			name,
@@ -93,16 +94,16 @@ class Signup extends Component {
 			phone,
 			password
 		});
-
-		axios
-			.post("http://0.0.0.0:9000/auth/token", {
-				username: email,
-				password
-			})
+		api.post("/users/register", {
+			name,
+			email,
+			phone,
+			password
+		})
 			.then(response => {
 				console.log(response);
 
-				const { token } = response.data;
+				const {token} = response.data;
 				if (token) {
 					user.refreshUser(() => {
 						this.props.history.push("/dashboard");
@@ -116,7 +117,7 @@ class Signup extends Component {
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({ isSubmitting: false });
+				this.setState({isSubmitting: false});
 				notifications.show({
 					message: "Sign up failed.", //TODO add more details here
 					variant: "error"
@@ -149,7 +150,7 @@ class Signup extends Component {
 							name="name"
 							label="Name"
 							type="text"
-							onChange={e => this.setState({ name: e.target.value })}
+							onChange={e => this.setState({name: e.target.value})}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup
@@ -158,7 +159,7 @@ class Signup extends Component {
 							name="email"
 							label="Email address"
 							type="text"
-							onChange={e => this.setState({ email: e.target.value })}
+							onChange={e => this.setState({email: e.target.value})}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup
@@ -167,7 +168,7 @@ class Signup extends Component {
 							name="phone"
 							label="Phone number"
 							type="text"
-							onChange={e => this.setState({ phone: e.target.value })}
+							onChange={e => this.setState({phone: e.target.value})}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup
@@ -176,7 +177,7 @@ class Signup extends Component {
 							name="password"
 							label="Password"
 							type="password"
-							onChange={e => this.setState({ password: e.target.value })}
+							onChange={e => this.setState({password: e.target.value})}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup
@@ -185,7 +186,7 @@ class Signup extends Component {
 							name="confirmPassword"
 							label="Confirm password"
 							type="password"
-							onChange={e => this.setState({ confirmPassword: e.target.value })}
+							onChange={e => this.setState({confirmPassword: e.target.value})}
 							onBlur={this.validateFields.bind(this)}
 						/>
 					</CardContent>
@@ -193,13 +194,13 @@ class Signup extends Component {
 						<Button
 							disabled={isSubmitting}
 							type="submit"
-							style={{ marginRight: 10 }}
+							style={{marginRight: 10}}
 							customClassName="callToAction"
 						>
 							{isSubmitting ? "Submitting..." : <span>Sign&nbsp;up</span>}
 						</Button>
 
-						<Link to={"/login"} style={{ textDecoration: "none" }}>
+						<Link to={"/login"} style={{textDecoration: "none"}}>
 							<Button disabled={isSubmitting}>I already have an account</Button>
 						</Link>
 					</CardActions>
