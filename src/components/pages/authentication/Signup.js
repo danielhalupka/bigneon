@@ -11,6 +11,7 @@ import Container from "./Container";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
 import { validEmail, validPhone } from "../../../validators";
+import api from "../../../helpers/api";
 
 const styles = () => ({});
 
@@ -93,10 +94,11 @@ class Signup extends Component {
 			phone,
 			password
 		});
-
-		axios
-			.post("http://0.0.0.0:9000/auth/token", {
-				username: email,
+		api
+			.post("/users/register", {
+				name,
+				email,
+				phone,
 				password
 			})
 			.then(response => {
