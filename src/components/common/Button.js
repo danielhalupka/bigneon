@@ -15,7 +15,10 @@ const styles = {
 	root: {
 		borderRadius: 3,
 		border: 0,
-		padding: "0 30px",
+		paddingLeft: 30,
+		paddingRight: 30,
+		paddingTop: 5,
+		paddingBottom: 5,
 		boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)",
 		textDecoration: "none"
 	},
@@ -48,10 +51,9 @@ const CustomButton = props => {
 		onClick,
 		style,
 		type,
-		disabled
+		disabled,
+		size
 	} = props;
-
-	//console.log(children, " = customClassName: ", customClassName);
 
 	return (
 		<Button
@@ -68,6 +70,7 @@ const CustomButton = props => {
 			style={style}
 			type={type}
 			disabled={disabled}
+			size={size}
 		>
 			{children}
 		</Button>
@@ -77,11 +80,16 @@ const CustomButton = props => {
 CustomButton.propTypes = {
 	classes: PropTypes.object.isRequired,
 	//children: PropTypes.string.isRequired,
-	children: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
-		.isRequired,
+	disabled: PropTypes.bool,
+	children: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.element,
+		PropTypes.array
+	]).isRequired,
 	onClick: PropTypes.func,
 	style: PropTypes.object,
-	type: PropTypes.string
+	type: PropTypes.string,
+	size: PropTypes.string
 };
 
 export default withStyles(styles)(CustomButton);
