@@ -76,11 +76,6 @@ class Login extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		console.log({
-			email,
-			password
-		});
-
 		api({
 			auth: false
 		})
@@ -106,7 +101,6 @@ class Login extends Component {
 				}
 			})
 			.catch(error => {
-				console.log("Error");
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({

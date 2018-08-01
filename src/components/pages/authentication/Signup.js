@@ -75,6 +75,42 @@ class Signup extends Component {
 		return true;
 	}
 
+	onSignupSuccess({ email, password }) {
+		//Successful signup, now get a token
+		api({
+			auth: false
+		})
+			.post("/auth/token", {
+				username: email,
+				password
+			})
+			.then(response => {
+				this.setState({ isSubmitting: false });
+
+				const { token } = response.data;
+				if (token) {
+					localStorage.setItem("token", token);
+					//Pull user data with our new token
+					user.refreshUser(() => {
+						this.props.history.push("/dashboard");
+					});
+				} else {
+					notifications.show({
+						message: "Missing token.",
+						variant: "error"
+					});
+				}
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Login failed.", //TODO add more details here
+					variant: "error"
+				});
+			});
+	}
+
 	onSubmit(e) {
 		e.preventDefault();
 
@@ -88,13 +124,6 @@ class Signup extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		console.log({
-			name,
-			email,
-			phone,
-			password
-		});
-
 		api({
 			auth: false
 		})
@@ -105,19 +134,7 @@ class Signup extends Component {
 				password
 			})
 			.then(response => {
-				console.log(response);
-
-				const { token } = response.data;
-				if (token) {
-					user.refreshUser(() => {
-						this.props.history.push("/dashboard");
-					});
-				} else {
-					notifications.show({
-						message: "Missing token.",
-						variant: "error"
-					});
-				}
+				this.onSignupSuccess({ email, password });
 			})
 			.catch(error => {
 				console.error(error);
