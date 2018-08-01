@@ -10,6 +10,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
+import api from "../../../../helpers/api";
 
 const styles = theme => ({
 	paper: {
@@ -28,14 +29,8 @@ class OrganizationsView extends Component {
 	}
 
 	componentDidMount() {
-		const token = localStorage.getItem("token");
-
-		axios
-			.get("http://0.0.0.0:9000/organizations", {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
+		api
+			.get("/organizations")
 			.then(response => {
 				const { data } = response;
 				this.setState({ organizations: data });

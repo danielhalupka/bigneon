@@ -2,6 +2,7 @@ import { observable, computed, action } from "mobx";
 import axios from "axios";
 import decodeJWT from "../helpers/decodeJWT";
 import notifications from "./notifications";
+import api from "../helpers/api";
 
 class User {
 	@observable id = null;
@@ -19,12 +20,8 @@ class User {
 			return;
 		}
 
-		axios
-			.get("http://0.0.0.0:9000/users/me", {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
+		api()
+			.get("/users/me")
 			.then(response => {
 				const { data } = response;
 				const { id, name, email, phone } = data;

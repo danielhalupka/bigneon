@@ -94,7 +94,10 @@ class Signup extends Component {
 			phone,
 			password
 		});
-		api
+
+		api({
+			auth: false
+		})
 			.post("/users/register", {
 				name,
 				email,
