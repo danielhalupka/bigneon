@@ -12,6 +12,7 @@ import SelectGroup from "../../../common/form/SelectGroup";
 import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
+import api from "../../../../helpers/api";
 
 const styles = theme => ({
 	paper: {
@@ -80,21 +81,11 @@ class OrganizationsCreate extends Component {
 
 		const { name, userId } = this.state;
 
-		const token = localStorage.getItem("token");
-
-		axios
-			.post(
-				"http://0.0.0.0:9000/organizations",
-				{
-					name,
-					owner_user_id: userId
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`
-					}
-				}
-			)
+		api()
+			.post("/organizations", {
+				name,
+				owner_user_id: userId
+			})
 			.then(response => {
 				this.setState({ isSubmitting: false });
 

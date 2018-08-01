@@ -13,6 +13,7 @@ import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
 import { validEmail } from "../../../validators";
 import decodeJWT from "../../../helpers/decodeJWT";
+import api from "../../../helpers/api";
 
 const styles = () => ({});
 
@@ -80,8 +81,10 @@ class Login extends Component {
 			password
 		});
 
-		axios
-			.post("http://0.0.0.0:9000/auth/token", {
+		api({
+			auth: false
+		})
+			.post("/auth/token", {
 				username: email,
 				password
 			})
@@ -103,6 +106,7 @@ class Login extends Component {
 				}
 			})
 			.catch(error => {
+				console.log("Error");
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
