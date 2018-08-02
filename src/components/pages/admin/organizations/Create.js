@@ -84,24 +84,20 @@ class OrganizationsCreate extends Component {
 
 		const { name, email } = this.state;
 
-		//TODO get the userId first from API, then submit
-		//users
-
 		api()
-			.get("/users", {
-				email
+			.get(`/users`, {
+				params: {
+					email
+				}
 			})
 			.then(response => {
-				console.log(response);
-				//TODO test this. Just assuming this works, API isn't availale to test yet.
-
-				const { owner_user_id } = response.data;
+				const { id, name } = response.data;
 
 				//Got the userID, now create the organization
 				api()
 					.post("/organizations", {
 						name,
-						owner_user_id
+						owner_user_id: id
 					})
 					.then(response => {
 						this.setState({ isSubmitting: false });
