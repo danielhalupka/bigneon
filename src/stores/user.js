@@ -25,24 +25,22 @@ class User {
 			.then(response => {
 				const { data } = response;
 
-				console.log(data);
-
-				const { id, name, email, phone } = data;
+				const {
+					user: { id, name, email, phone },
+					roles
+				} = data;
 				const jwtData = decodeJWT(token);
 
 				const {
-					roles,
 					sub //UserId
 				} = jwtData;
-
-				const roleArray = roles ? roles.split(",") : ["User"]; //TODO right now the roles are missing so adding default user
 
 				this.token = token;
 				this.id = id;
 				this.name = name;
 				this.email = email;
 				this.phone = phone;
-				this.roles = roleArray;
+				this.roles = roles;
 
 				if (onResult) {
 					onResult({ id, name, email, phone });
@@ -87,6 +85,7 @@ class User {
 
 	@computed
 	get isAdmin() {
+		//console.log(this.roles);
 		return this.roles.indexOf("Admin") > -1;
 	}
 
