@@ -24,14 +24,18 @@ class User {
 			.get("/users/me")
 			.then(response => {
 				const { data } = response;
+
+				console.log(data);
+
 				const { id, name, email, phone } = data;
 				const jwtData = decodeJWT(token);
+
 				const {
 					roles,
 					sub //UserId
 				} = jwtData;
 
-				const roleArray = roles.split(",");
+				const roleArray = roles ? roles.split(",") : ["User"]; //TODO right now the roles are missing so adding default user
 
 				this.token = token;
 				this.id = id;
@@ -45,7 +49,9 @@ class User {
 				}
 			})
 			.catch(error => {
-				//If there's no repsonse status, assume the pre flight failed because the token is invalid
+				console.error(error);
+				//If there's no repsonse status, assume the pre flight failed because the token is invalid.
+				//Idealy the api should still return a status in the response when this happens
 				if (!error.response || error.response.status == undefined) {
 					console.log("Unauthorized, logging out.");
 					notifications.show({ message: "Session expired", variant: "info" });

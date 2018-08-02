@@ -25,8 +25,7 @@ class Login extends Component {
 		super(props);
 
 		this.state = {
-			email:
-				process.env.NODE_ENV === "development" ? "superadmin@test.com" : "",
+			email: process.env.NODE_ENV === "development" ? "superuser@test.com" : "",
 			password: process.env.NODE_ENV === "development" ? "password" : "",
 			confirmPassword: "",
 			isSubmitting: false,
@@ -88,9 +87,10 @@ class Login extends Component {
 			.then(response => {
 				this.setState({ isSubmitting: false });
 
-				const { token } = response.data;
-				if (token) {
-					localStorage.setItem("token", token);
+				console.log(response.data);
+				const { access_token } = response.data;
+				if (access_token) {
+					localStorage.setItem("token", access_token);
 					//Pull user data with our new token
 					user.refreshUser(() => {
 						this.props.history.push("/dashboard");
