@@ -13,6 +13,7 @@ import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
+import { validEmail } from "../../../../validators";
 
 const styles = theme => ({
 	paper: {
@@ -27,7 +28,7 @@ class OrganizationsCreate extends Component {
 
 		this.state = {
 			name: "",
-			userId: "", //: userId ? userId : "",
+			email: "",
 			errors: {},
 			isSubmitting: false,
 			orgRoleUsers: { hi: "Yo", hey: "hi" }
@@ -49,7 +50,7 @@ class OrganizationsCreate extends Component {
 			return true;
 		}
 
-		const { name, userId } = this.state;
+		const { name, email } = this.state;
 
 		const errors = {};
 
@@ -57,8 +58,10 @@ class OrganizationsCreate extends Component {
 			errors.name = "Missing organization name.";
 		}
 
-		if (!userId) {
-			errors.userId = "Missing organization owner user.";
+		if (!email) {
+			errors.email = "Missing organization owner email address.";
+		} else if (!validEmail(email)) {
+			errors.email = "Invalid email address.";
 		}
 
 		this.setState({ errors });
@@ -79,35 +82,58 @@ class OrganizationsCreate extends Component {
 			return false;
 		}
 
-		const { name, userId } = this.state;
+		const { name, email } = this.state;
+
+		//TODO get the userId first from API, then submit
+		//users
 
 		api()
-			.post("/organizations", {
-				name,
-				owner_user_id: userId
+			.get("/users", {
+				email
 			})
 			.then(response => {
-				this.setState({ isSubmitting: false });
+				console.log(response);
+				//TODO test this. Just assuming this works, API isn't availale to test yet.
 
-				notifications.show({
-					message: "Organization created",
-					variant: "success"
-				});
+				const { owner_user_id } = response.data;
 
-				this.props.history.push("/admin/organizations");
+				//Got the userID, now create the organization
+				api()
+					.post("/organizations", {
+						name,
+						owner_user_id
+					})
+					.then(response => {
+						this.setState({ isSubmitting: false });
+
+						notifications.show({
+							message: "Organization created",
+							variant: "success"
+						});
+
+						this.props.history.push("/admin/organizations");
+					})
+					.catch(error => {
+						console.error(error);
+						this.setState({ isSubmitting: false });
+						notifications.show({
+							message: "Create failed.", //TODO add more details here
+							variant: "error"
+						});
+					});
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Create failed.", //TODO add more details here
+					message: "Failed to locate user with that email address.",
 					variant: "error"
 				});
 			});
 	}
 
 	render() {
-		const { name, userId, orgRoleUsers, errors, isSubmitting } = this.state;
+		const { name, email, orgRoleUsers, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
 
 		return (
@@ -147,14 +173,24 @@ class OrganizationsCreate extends Component {
 										onBlur={this.validateFields.bind(this)}
 									/> */}
 
-									<SelectGroup
+									<InputGroup
+										error={errors.email}
+										value={email}
+										name="email"
+										label="Organization owner email address"
+										type="email"
+										onChange={e => this.setState({ email: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+
+									{/* <SelectGroup
 										items={orgRoleUsers}
 										value={userId}
 										error={errors.userId}
 										onChange={e => this.setState({ userId: e.target.value })}
 										name="user"
 										label="Organization owner"
-									/>
+									/> */}
 								</CardContent>
 								<CardActions>
 									<Button

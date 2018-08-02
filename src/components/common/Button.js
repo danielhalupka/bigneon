@@ -79,7 +79,6 @@ const CustomButton = props => {
 
 CustomButton.propTypes = {
 	classes: PropTypes.object.isRequired,
-	//children: PropTypes.string.isRequired,
 	disabled: PropTypes.bool,
 	children: PropTypes.oneOfType([
 		PropTypes.string,

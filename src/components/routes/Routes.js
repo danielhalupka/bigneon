@@ -9,6 +9,9 @@ import Profile from "../pages/profile/Index";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 
+//Unauthenticated pages
+import Home from "../pages/landing/Index";
+
 //Admin
 import AdminOrganizationsView from "../pages/admin/organizations/View";
 import AdminOrganizationsCreate from "../pages/admin/organizations/Create";
@@ -21,6 +24,8 @@ class Routes extends Component {
 			<Router>
 				<Container>
 					<Switch>
+						<Route exact path="/" component={Home} />
+
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/dashboard" component={Dashboard} />

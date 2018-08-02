@@ -82,7 +82,7 @@ class Login extends Component {
 			auth: false
 		})
 			.post("/auth/token", {
-				username: email,
+				email,
 				password
 			})
 			.then(response => {

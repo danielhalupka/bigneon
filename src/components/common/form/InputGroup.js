@@ -5,11 +5,17 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
-const styles = () => ({
-	formControl: {
-		width: "100%"
-	}
-});
+const styles = theme => {
+	return {
+		formControl: {
+			width: "100%"
+		},
+		search: {
+			textAlign: "center",
+			fontSize: theme.typography.body1.fontSize
+		}
+	};
+};
 
 const InputGroup = props => {
 	const {
@@ -17,13 +23,20 @@ const InputGroup = props => {
 		value,
 		name,
 		label,
+		placeholder,
 		type = "text",
+		isSearch,
 		onChange,
 		onBlur,
 		onFocus
 	} = props;
 
 	const { classes } = props;
+
+	let inputPropClasses = {};
+	if (isSearch) {
+		inputPropClasses = { ...inputPropClasses, input: classes.search };
+	}
 
 	return (
 		<FormControl
@@ -41,6 +54,10 @@ const InputGroup = props => {
 				margin="normal"
 				onBlur={onBlur}
 				onFocus={onFocus}
+				InputProps={{
+					classes: inputPropClasses
+				}}
+				placeholder={placeholder}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -52,8 +69,10 @@ InputGroup.propTypes = {
 	error: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
+	placeholder: PropTypes.string,
 	type: PropTypes.string,
+	isSearch: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func

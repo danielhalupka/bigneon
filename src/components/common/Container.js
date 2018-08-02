@@ -82,8 +82,16 @@ class Container extends React.Component {
 	renderContent(toolBarSpace = true) {
 		const { classes, children } = this.props;
 
+		//TODO find a better place to put this
 		//Check if we're on one of the authentication pages so if we're not logged in an need to be, a pop up shows
-		const authPages = ["/login", "/sign-up"];
+		const authPages = [
+			"/login",
+			"/sign-up",
+			"/",
+			"/events",
+			"/artists",
+			"/venues"
+		];
 		let requiresAuth = !user.isAuthenticated;
 
 		if (authPages.indexOf(window.location.pathname) > -1) {
@@ -108,14 +116,8 @@ class Container extends React.Component {
 	render() {
 		const { classes, history } = this.props;
 
-		//If they're not logged in don't render menus yet
-		if (!user.isAuthenticated) {
-			return this.renderContent(false);
-		}
-
 		const drawer = (
 			<div>
-				{/* <div className={classes.toolbar} /> */}
 				<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)} />
 			</div>
 		);
