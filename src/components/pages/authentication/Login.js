@@ -14,6 +14,8 @@ import notifications from "../../../stores/notifications";
 import { validEmail } from "../../../validators";
 import decodeJWT from "../../../helpers/decodeJWT";
 import api from "../../../helpers/api";
+import FacebookButton from "./social/FacebookButton";
+import Divider from "../../common/Divider";
 
 const styles = () => ({});
 
@@ -120,6 +122,14 @@ class Login extends Component {
 						<Typography gutterBottom variant="headline" component="h2">
 							Login
 						</Typography>
+
+						<FacebookButton
+							onSuccess={() => this.props.history.push("/dashboard")}
+						>
+							Login with Facebook
+						</FacebookButton>
+
+						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
 
 						<InputGroup
 							error={errors.email}
