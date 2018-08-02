@@ -89,9 +89,9 @@ class Signup extends Component {
 			.then(response => {
 				this.setState({ isSubmitting: false });
 
-				const { token } = response.data;
-				if (token) {
-					localStorage.setItem("token", token);
+				const { access_token } = response.data;
+				if (access_token) {
+					localStorage.setItem("token", access_token);
 					//Pull user data with our new token
 					user.refreshUser(() => {
 						this.props.history.push("/dashboard");
