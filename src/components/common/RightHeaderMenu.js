@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
@@ -16,6 +17,7 @@ const styles = {
 	}
 };
 
+@observer
 class RightHeaderMenu extends React.Component {
 	constructor(props) {
 		super(props);
@@ -43,6 +45,8 @@ class RightHeaderMenu extends React.Component {
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 
+		const { isAuthenticated } = user;
+
 		return (
 			<div>
 				<IconButton
@@ -68,22 +72,44 @@ class RightHeaderMenu extends React.Component {
 					open={open}
 					onClose={this.handleClose.bind(this)}
 				>
-					<Link
-						to="/profile"
-						style={{ textDecoration: "none", outline: "none" }}
-					>
-						<MenuItem onClick={this.handleClose.bind(this)}>Profile</MenuItem>
-					</Link>
+					{isAuthenticated ? (
+						<Link
+							to="/profile"
+							style={{ textDecoration: "none", outline: "none" }}
+						>
+							<MenuItem onClick={this.handleClose.bind(this)}>Profile</MenuItem>
+						</Link>
+					) : null}
 
-					<MenuItem
-						onClick={() => {
-							user.onLogout();
-							this.handleClose();
-							this.props.history.push("/login");
-						}}
-					>
-						Logout
-					</MenuItem>
+					{!isAuthenticated ? (
+						<Link
+							to="/login"
+							style={{ textDecoration: "none", outline: "none" }}
+						>
+							<MenuItem onClick={this.handleClose.bind(this)}>Login</MenuItem>
+						</Link>
+					) : null}
+
+					{!isAuthenticated ? (
+						<Link
+							to="/sign-up"
+							style={{ textDecoration: "none", outline: "none" }}
+						>
+							<MenuItem onClick={this.handleClose.bind(this)}>Sign up</MenuItem>
+						</Link>
+					) : null}
+
+					{isAuthenticated ? (
+						<MenuItem
+							onClick={() => {
+								user.onLogout();
+								this.handleClose();
+								this.props.history.push("/login");
+							}}
+						>
+							Logout
+						</MenuItem>
+					) : null}
 				</Menu>
 			</div>
 		);

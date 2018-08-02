@@ -103,7 +103,7 @@ class User {
 	get isGuest() {
 		//If they haven't signed in or they're simply an end user.
 		//This might change
-		return !!this.token || this.roles.indexOf("User") > -1;
+		return !this.token || this.roles.indexOf("User") > -1;
 	}
 }
 

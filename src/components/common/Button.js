@@ -51,8 +51,6 @@ const CustomButton = props => {
 		disabled
 	} = props;
 
-	//console.log(children, " = customClassName: ", customClassName);
-
 	return (
 		<Button
 			classes={{
@@ -76,7 +74,6 @@ const CustomButton = props => {
 
 CustomButton.propTypes = {
 	classes: PropTypes.object.isRequired,
-	//children: PropTypes.string.isRequired,
 	children: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
 		.isRequired,
 	onClick: PropTypes.func,
