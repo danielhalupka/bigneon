@@ -29,7 +29,7 @@ class OrganizationsView extends Component {
 	}
 
 	componentDidMount() {
-		api
+		api()
 			.get("/organizations")
 			.then(response => {
 				const { data } = response;
