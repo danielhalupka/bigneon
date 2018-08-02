@@ -83,7 +83,7 @@ class Signup extends Component {
 			auth: false
 		})
 			.post("/auth/token", {
-				username: email,
+				email,
 				password
 			})
 			.then(response => {
