@@ -159,6 +159,26 @@ class MenuContent extends Component {
 					}}
 					toggleDrawer={toggleDrawer}
 				/>
+
+				<MenuItem
+					icon={<VenueIcon />}
+					onClick={() => this.changeOpenMenu("admin-venues")}
+					expandIcon={
+						openMenuItem === "admin-venues" ? <ExpandLess /> : <ExpandMore />
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Venues
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-venues"}
+					classes={classes}
+					items={{
+						All: "/admin/venues",
+						Create: "/admin/venues/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
 			</div>
 		);
 	}
