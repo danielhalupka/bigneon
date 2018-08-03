@@ -95,6 +95,39 @@ class VenuesCreate extends Component {
 		return true;
 	}
 
+	createNewVenue(params, onSuccess) {
+		api()
+			.post("/venues", params)
+			.then(response => {
+				const { id } = response.data;
+				onSuccess(id);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Create venue failed.",
+					variant: "error"
+				});
+			});
+	}
+
+	updateVenue(id, params, onSuccess) {
+		api()
+			.put(`/venues/${id}`, { ...params, id })
+			.then(() => {
+				onSuccess(id);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Update venue failed.",
+					variant: "error"
+				});
+			});
+	}
+
 	onSubmit(e) {
 		e.preventDefault();
 
@@ -128,26 +161,50 @@ class VenuesCreate extends Component {
 			place_id
 		};
 
-		api()
-			.post("/venues", venueDetails)
-			.then(response => {
-				this.setState({ isSubmitting: false });
-
+		this.createNewVenue(venueDetails, id => {
+			this.updateVenue(id, venueDetails, id => {
 				notifications.show({
 					message: "Venue created",
 					variant: "success"
 				});
 
 				this.props.history.push("/admin/venues");
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({ isSubmitting: false });
-				notifications.show({
-					message: "Create venue failed.", //TODO add more details here
-					variant: "error"
-				});
 			});
+		});
+
+		// api()
+		// 	.post("/venues", venueDetails)
+		// 	.then(response => {
+		// 		const { id } = response.data;
+		// 		api()
+		// 			.post(`/venues/${id}`, venueDetails)
+		// 			.then(() => {
+		// 				this.setState({ isSubmitting: false });
+
+		// 				notifications.show({
+		// 					message: "Venue created",
+		// 					variant: "success"
+		// 				});
+
+		// 				this.props.history.push("/admin/venues");
+		// 			})
+		// 			.catch(error => {
+		// 				console.error(error);
+		// 				this.setState({ isSubmitting: false });
+		// 				notifications.show({
+		// 					message: "Create venue failed.", //TODO add more details here
+		// 					variant: "error"
+		// 				});
+		// 			});
+		// 	})
+		// 	.catch(error => {
+		// 		console.error(error);
+		// 		this.setState({ isSubmitting: false });
+		// 		notifications.show({
+		// 			message: "Create venue failed.", //TODO add more details here
+		// 			variant: "error"
+		// 		});
+		// 	});
 	}
 
 	renderOrganizations() {
