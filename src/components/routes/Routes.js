@@ -32,6 +32,7 @@ class Routes extends Component {
 						<Route exact path="/profile" component={Profile} />
 
 						{/* System admin routes TODO hide these if they don't blong */}
+						<Route exact path="/admin/dashboard" component={Dashboard} />
 						<Route
 							exact
 							path="/admin/organizations"
