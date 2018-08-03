@@ -13,75 +13,65 @@ const styles = theme => ({
 	}
 });
 
-class OrganizationsView extends Component {
+class VenuesView extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			organizations: null
+			venues: null
 		};
 	}
 
 	componentDidMount() {
 		api()
-			.get("/organizations")
+			.get("/venues")
 			.then(response => {
 				const { data } = response;
-				this.setState({ organizations: data });
+				this.setState({ venues: data });
+				console.log(data);
 			})
 			.catch(error => {
 				console.error(error);
 				notifications.show({
-					message: "Loading organizations failed.",
+					message: "Loading venues failed.",
 					variant: "error"
 				});
 			});
 	}
 
-	renderOrganizations() {
-		const { organizations } = this.state;
+	renderVenues() {
+		const { venues } = this.state;
 		const { classes } = this.props;
 
-		if (organizations === null) {
+		if (venues === null) {
 			return <Typography variant="body1">Loading...</Typography>;
 		}
 
-		if (organizations) {
-			return organizations.map(
-				({
-					id,
-					owner_user_id,
-					address,
-					city,
-					country,
-					name,
-					phone,
-					state,
-					zip
-				}) => (
-					<Grid key={id} item xs={12} sm={12} lg={12}>
-						<Card className={classes.paper}>
-							<Typography variant="display1">{name}</Typography>
-						</Card>
-					</Grid>
-				)
-			);
+		if (venues) {
+			return venues.map(({ id, name, address }) => (
+				<Grid key={id} item xs={12} sm={12} lg={12}>
+					<Card className={classes.paper}>
+						<Typography variant="display1">{name}</Typography>
+						<Typography variant="subheading">{address}</Typography>
+					</Card>
+				</Grid>
+			));
 		} else {
-			return <Typography variant="body1">No organizations yet</Typography>;
+			return <Typography variant="body1">No venues yet</Typography>;
 		}
 	}
 
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">Organizations</Typography>
+				<Typography variant="display3">Venues</Typography>
 
 				<Grid container spacing={24}>
-					{this.renderOrganizations()}
+					{this.renderVenues()}
 				</Grid>
 			</div>
 		);
 	}
 }
 
-export default withStyles(styles)(OrganizationsView);
+export default withStyles(styles)(VenuesView);

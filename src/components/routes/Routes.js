@@ -15,10 +15,20 @@ import Home from "../pages/landing/Index";
 //Admin
 import AdminOrganizationsView from "../pages/admin/organizations/View";
 import AdminOrganizationsCreate from "../pages/admin/organizations/Create";
+import AdminVenuesView from "../pages/admin/venues/View";
+import AdminVenuesCreate from "../pages/admin/venues/Create";
 
 //import user from "../../stores/User";
 
 class Routes extends Component {
+	componentDidMount() {
+		//Load the google API here because we need the a .env var
+		const apiKey = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
+		const script = document.createElement("script");
+
+		script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+		document.head.append(script);
+	}
 	render() {
 		return (
 			<Router>
@@ -42,6 +52,12 @@ class Routes extends Component {
 							exact
 							path="/admin/organizations/create"
 							component={AdminOrganizationsCreate}
+						/>
+						<Route exact path="/admin/venues" component={AdminVenuesView} />
+						<Route
+							exact
+							path="/admin/venues/create"
+							component={AdminVenuesCreate}
 						/>
 						<Route component={NotFound} />
 					</Switch>

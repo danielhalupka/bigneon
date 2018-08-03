@@ -30,18 +30,8 @@ class OrganizationsCreate extends Component {
 			name: "",
 			email: "",
 			errors: {},
-			isSubmitting: false,
-			orgRoleUsers: { hi: "Yo", hey: "hi" }
+			isSubmitting: false
 		};
-	}
-
-	componentDidMount() {
-		//TODO load users from api when available
-		//Right just loading in current user
-		const orgRoleUsers = {};
-		orgRoleUsers[user.id] = user.name;
-
-		this.setState({ orgRoleUsers });
 	}
 
 	validateFields() {
@@ -91,7 +81,7 @@ class OrganizationsCreate extends Component {
 				}
 			})
 			.then(response => {
-				const { id, name } = response.data;
+				const { id } = response.data;
 
 				//Got the userID, now create the organization
 				api()
@@ -129,7 +119,7 @@ class OrganizationsCreate extends Component {
 	}
 
 	render() {
-		const { name, email, orgRoleUsers, errors, isSubmitting } = this.state;
+		const { name, email, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
 
 		return (
@@ -145,10 +135,6 @@ class OrganizationsCreate extends Component {
 								onSubmit={this.onSubmit.bind(this)}
 							>
 								<CardContent>
-									{/* <Typography gutterBottom variant="headline" component="h2">
-										Details
-									</Typography> */}
-
 									<InputGroup
 										error={errors.name}
 										value={name}
@@ -159,16 +145,6 @@ class OrganizationsCreate extends Component {
 										onBlur={this.validateFields.bind(this)}
 									/>
 
-									{/* <InputGroup
-										error={errors.userId}
-										value={userId}
-										name="userId"
-										label="User ID (Will change to select)"
-										type="text"
-										onChange={e => this.setState({ userId: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/> */}
-
 									<InputGroup
 										error={errors.email}
 										value={email}
@@ -178,15 +154,6 @@ class OrganizationsCreate extends Component {
 										onChange={e => this.setState({ email: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
-
-									{/* <SelectGroup
-										items={orgRoleUsers}
-										value={userId}
-										error={errors.userId}
-										onChange={e => this.setState({ userId: e.target.value })}
-										name="user"
-										label="Organization owner"
-									/> */}
 								</CardContent>
 								<CardActions>
 									<Button

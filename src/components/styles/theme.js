@@ -37,6 +37,11 @@ const theme = createMuiTheme({
 				fontFamily: "Oswald, arial",
 				fontSize: 17
 			}
+		},
+		MuiFormHelperText: {
+			root: {
+				//paddingBottom: 20
+			}
 		}
 	}
 });

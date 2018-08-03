@@ -45,6 +45,7 @@
 		"it": false,
 		"_": false,
 		"alert": false,
-		"fetch": false
+		"fetch": false,
+		"google": false
 	}
 }
