@@ -110,16 +110,31 @@ class MenuContent extends Component {
 
 		return (
 			<div>
+				<div
+					style={{
+						width: "100%",
+						textAlign: "center",
+						padding: 15
+					}}
+				>
+					<Link
+						to={"/admin/dashboard"}
+						style={{
+							textDecoration: "none"
+						}}
+					>
+						<Button
+							customClassName="callToAction"
+							onClick={toggleDrawer}
+							style={{ width: "100%" }}
+						>
+							Admin dashboard
+						</Button>
+					</Link>
+				</div>
+
 				<Divider />
 				<ListSubheader>System admin</ListSubheader>
-
-				<MenuItem
-					to="/admin/dashboard"
-					icon={<SendIcon />}
-					toggleDrawer={toggleDrawer}
-				>
-					Admin dashboard
-				</MenuItem>
 
 				<MenuItem
 					icon={<EventsIcon />}
@@ -258,9 +273,32 @@ class MenuContent extends Component {
 
 		return (
 			<div>
-				<MenuItem to="/" icon={<HomeIcon />} toggleDrawer={toggleDrawer}>
+				<div
+					style={{
+						width: "100%",
+						textAlign: "center",
+						padding: 15
+					}}
+				>
+					<Link
+						to={"/"}
+						style={{
+							textDecoration: "none"
+						}}
+					>
+						<Button
+							customClassName="callToAction"
+							onClick={toggleDrawer}
+							style={{ width: "100%" }}
+						>
+							Discover
+						</Button>
+					</Link>
+				</div>
+				<Divider />
+				{/* <MenuItem to="/" icon={<HomeIcon />} toggleDrawer={toggleDrawer}>
 					Home
-				</MenuItem>
+				</MenuItem> */}
 
 				<MenuItem
 					to="/events"
@@ -299,11 +337,12 @@ class MenuContent extends Component {
 					alt="Logo"
 				/>
 
-				{isGuest ? this.renderUnauthenticatedMenu() : null}
-
-				{isOrgOwner ? this.renderOrgOwnMenu() : null}
-
+				{/* If they're admin, just show those menu options */}
 				{isAdmin ? this.renderAdmin() : null}
+
+				{!isAdmin && isGuest ? this.renderUnauthenticatedMenu() : null}
+
+				{!isAdmin && isOrgOwner ? this.renderOrgOwnMenu() : null}
 			</List>
 		);
 	}
