@@ -8,7 +8,7 @@ import api from "../../../../helpers/api";
 
 const styles = theme => ({
 	paper: {
-		padding: theme.spacing.unit,
+		padding: theme.spacing.unit * 3,
 		marginBottom: theme.spacing.unit
 	}
 });
@@ -28,7 +28,6 @@ class VenuesView extends Component {
 			.then(response => {
 				const { data } = response;
 				this.setState({ venues: data });
-				console.log(data);
 			})
 			.catch(error => {
 				console.error(error);
@@ -48,14 +47,20 @@ class VenuesView extends Component {
 		}
 
 		if (venues) {
-			return venues.map(({ id, name, address }) => (
-				<Grid key={id} item xs={12} sm={12} lg={12}>
-					<Card className={classes.paper}>
-						<Typography variant="display1">{name}</Typography>
-						<Typography variant="subheading">{address}</Typography>
-					</Card>
-				</Grid>
-			));
+			return venues.map(venue => {
+				const { id, name, address, phone } = venue;
+
+				return (
+					<Grid key={id} item xs={12} sm={12} lg={12}>
+						<Card className={classes.paper}>
+							<Typography variant="display1">{name}</Typography>
+							<Typography variant="subheading">
+								{address || "*Missing address"}
+							</Typography>
+						</Card>
+					</Grid>
+				);
+			});
 		} else {
 			return <Typography variant="body1">No venues yet</Typography>;
 		}
