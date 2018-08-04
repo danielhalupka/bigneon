@@ -18,7 +18,7 @@ import AdminOrganizationsCreate from "../pages/admin/organizations/Create";
 import AdminVenuesView from "../pages/admin/venues/View";
 import AdminVenuesCreate from "../pages/admin/venues/Create";
 
-//import user from "../../stores/User";
+import user from "../../stores/user";
 
 class Routes extends Component {
 	componentDidMount() {
@@ -28,7 +28,19 @@ class Routes extends Component {
 
 		script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
 		document.head.append(script);
+
+		//Check the user details every now and then so we know when a token has expired
+		this.interval = setInterval(() => {
+			user.refreshUser();
+		}, 5 * 60 * 1000); //every 5min
 	}
+
+	componentWillUnmount() {
+		if (this.interval) {
+			clearInterval(this.interval);
+		}
+	}
+
 	render() {
 		return (
 			<Router>

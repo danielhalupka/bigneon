@@ -1,5 +1,4 @@
 import { observable, computed, action } from "mobx";
-import axios from "axios";
 import decodeJWT from "../helpers/decodeJWT";
 import notifications from "./notifications";
 import api from "../helpers/api";
