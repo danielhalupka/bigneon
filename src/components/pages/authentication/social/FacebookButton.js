@@ -38,7 +38,7 @@ class FacebookButton extends Component {
 			api({
 				auth: false
 			})
-				.post("/users/register/facebook", authResponse)
+				.post("/external/facebook/web_login", authResponse)
 				.then(response => {
 					this.setState({ isAuthenticating: false });
 
