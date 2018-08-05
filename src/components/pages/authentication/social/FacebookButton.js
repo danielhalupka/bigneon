@@ -42,9 +42,9 @@ class FacebookButton extends Component {
 				.then(response => {
 					this.setState({ isAuthenticating: false });
 
-					const { token } = response.data;
-					if (token) {
-						localStorage.setItem("token", token);
+					const { access_token } = response.data;
+					if (access_token) {
+						localStorage.setItem("token", access_token);
 						//Pull user data with our new token
 						user.refreshUser(() => {
 							this.props.onSuccess();
@@ -75,7 +75,7 @@ class FacebookButton extends Component {
 
 	componentDidMount() {
 		//Setup facebook auth
-		window.fbAsyncInit = function() {
+		window.fbAsyncInit = function () {
 			window.FB.init({
 				appId: process.env.REACT_APP_FACEBOOK_APP_ID,
 				xfbml: true,
@@ -86,7 +86,7 @@ class FacebookButton extends Component {
 			window.FB.getLoginStatus(this.onFBSignIn.bind(this));
 		}.bind(this);
 
-		(function(d, s, id) {
+		(function (d, s, id) {
 			var js,
 				fjs = d.getElementsByTagName(s)[0];
 			if (d.getElementById(id)) {
