@@ -76,6 +76,11 @@ class Routes extends Component {
 							path="/admin/venues/create"
 							component={AdminVenuesCreate}
 						/>
+						<Route
+							exact
+							path="/admin/venues/:id"
+							component={AdminVenuesCreate}
+						/>
 						<Route component={NotFound} />
 					</Switch>
 				</Container>

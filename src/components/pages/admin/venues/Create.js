@@ -26,7 +26,14 @@ class VenuesCreate extends Component {
 	constructor(props) {
 		super(props);
 
+		//Check if we're editing an existing organization
+		let venueId = null;
+		if (props.match && props.match.params && props.match.params.id) {
+			venueId = props.match.params.id;
+		}
+
 		this.state = {
+			venueId,
 			name: "",
 			address: "",
 			city: "",
@@ -43,6 +50,43 @@ class VenuesCreate extends Component {
 	}
 
 	componentDidMount() {
+		const { venueId } = this.state;
+
+		if (venueId) {
+			api()
+				.get(`/venues/${venueId}`)
+				.then(response => {
+					const {
+						name,
+						address,
+						city,
+						country,
+						state,
+						zip,
+						phone
+					} = response.data;
+
+					console.log(response.data);
+					this.setState({
+						name: name || "",
+						address: address || "",
+						city: city || "",
+						country: country || "",
+						state: state || "",
+						zip: zip || "",
+						phone: phone || ""
+					});
+				})
+				.catch(error => {
+					console.error(error);
+					this.setState({ isSubmitting: false });
+					notifications.show({
+						message: "Loading venue details failed.",
+						variant: "error"
+					});
+				});
+		}
+
 		api()
 			.get("/organizations")
 			.then(response => {
@@ -64,7 +108,7 @@ class VenuesCreate extends Component {
 			return null;
 		}
 
-		const { name, address, organizationId, phone } = this.state;
+		const { name, address, organizationId, phone, venueId } = this.state;
 
 		const errors = {};
 
@@ -76,8 +120,10 @@ class VenuesCreate extends Component {
 			errors.address = "Missing address.";
 		}
 
-		if (!organizationId) {
-			errors.organizationId = "Select and organization.";
+		if (!venueId) {
+			if (!organizationId) {
+				errors.organizationId = "Select and organization.";
+			}
 		}
 
 		if (!phone) {
@@ -138,6 +184,7 @@ class VenuesCreate extends Component {
 		}
 
 		const {
+			venueId,
 			name,
 			organizationId,
 			phone,
@@ -151,7 +198,6 @@ class VenuesCreate extends Component {
 
 		const venueDetails = {
 			name,
-			organization_id: organizationId,
 			phone,
 			address,
 			city,
@@ -161,16 +207,33 @@ class VenuesCreate extends Component {
 			place_id
 		};
 
-		this.createNewVenue(venueDetails, id => {
-			this.updateVenue(id, venueDetails, id => {
+		//If we're updating an existing venue
+		if (venueId) {
+			this.updateVenue(venueId, venueDetails, id => {
 				notifications.show({
-					message: "Venue created",
+					message: "Venue updated",
 					variant: "success"
 				});
 
 				this.props.history.push("/admin/venues");
 			});
-		});
+
+			return;
+		}
+
+		this.createNewVenue(
+			{ ...venueDetails, organization_id: organizationId },
+			id => {
+				this.updateVenue(id, venueDetails, id => {
+					notifications.show({
+						message: "Venue created",
+						variant: "success"
+					});
+
+					this.props.history.push("/admin/venues");
+				});
+			}
+		);
 
 		// api()
 		// 	.post("/venues", venueDetails)
@@ -233,6 +296,7 @@ class VenuesCreate extends Component {
 
 	render() {
 		const {
+			venueId,
 			name,
 			address,
 			phone,
@@ -244,7 +308,9 @@ class VenuesCreate extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">Create venue</Typography>
+				<Typography variant="display3">
+					{venueId ? "Update" : "Create"} venue
+				</Typography>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={10} lg={8}>
@@ -265,7 +331,7 @@ class VenuesCreate extends Component {
 										onBlur={this.validateFields.bind(this)}
 									/>
 
-									{this.renderOrganizations()}
+									{!venueId ? this.renderOrganizations() : null}
 
 									<InputGroup
 										error={errors.phone}
