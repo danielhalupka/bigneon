@@ -294,7 +294,7 @@ class VenuesCreate extends Component {
 										}}
 										onFullResult={result => {
 											console.log(result);
-											const { address_components, place_id } = result;
+											const { place_id } = result;
 											const city = addressTypeFromGoogleResult(
 												result,
 												"locality"

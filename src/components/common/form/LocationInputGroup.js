@@ -16,6 +16,7 @@ import { primaryHex } from "../../styles/theme";
 const styles = theme => {
 	return {
 		formControl: {
+			marginTop: theme.spacing.unit * 2,
 			width: "100%"
 		}
 	};
@@ -47,7 +48,6 @@ class LocationInputGroup extends React.Component {
 		const {
 			address,
 			placeholder,
-			searchTypes,
 			onAddressChange,
 			error,
 			onError,
@@ -59,17 +59,13 @@ class LocationInputGroup extends React.Component {
 			return false;
 		}
 
-		const options = {
-			types: searchTypes || ["address"],
-			language: "en" // language of the results
-		};
-
 		return (
-			<div style={{ width: "100%" }}>
+			<div>
 				<PlacesAutocomplete
 					value={address}
 					onChange={onAddressChange}
 					onSelect={this.onSelect.bind(this)}
+					onError={onError}
 				>
 					{({
 						getInputProps,

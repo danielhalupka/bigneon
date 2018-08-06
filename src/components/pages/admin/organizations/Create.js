@@ -13,7 +13,9 @@ import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
-import { validEmail } from "../../../../validators";
+import { validEmail, validPhone } from "../../../../validators";
+import LocationInputGroup from "../../../common/form/LocationInputGroup";
+import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 
 const styles = theme => ({
 	paper: {
@@ -29,6 +31,12 @@ class OrganizationsCreate extends Component {
 		this.state = {
 			name: "",
 			email: "",
+			phone: "",
+			address: "",
+			city: "",
+			state: "",
+			country: "",
+			zip: "",
 			errors: {},
 			isSubmitting: false
 		};
@@ -40,7 +48,7 @@ class OrganizationsCreate extends Component {
 			return true;
 		}
 
-		const { name, email } = this.state;
+		const { name, email, address, phone } = this.state;
 
 		const errors = {};
 
@@ -54,6 +62,16 @@ class OrganizationsCreate extends Component {
 			errors.email = "Invalid email address.";
 		}
 
+		if (!address) {
+			errors.address = "Missing address.";
+		}
+
+		if (!phone) {
+			errors.phone = "Missing phone number.";
+		} else if (!validPhone(phone)) {
+			errors.phone = "Invalid phone number.";
+		}
+
 		this.setState({ errors });
 
 		if (Object.keys(errors).length > 0) {
@@ -61,6 +79,39 @@ class OrganizationsCreate extends Component {
 		}
 
 		return true;
+	}
+
+	createNewOrganization(params, onSuccess) {
+		api()
+			.post("/organizations", params)
+			.then(response => {
+				const { id } = response.data;
+				onSuccess(id);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Create organization failed.",
+					variant: "error"
+				});
+			});
+	}
+
+	updateOrganization(id, params, onSuccess) {
+		api()
+			.put(`/organizations/${id}`, { ...params, id })
+			.then(() => {
+				onSuccess(id);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Update organization failed.",
+					variant: "error"
+				});
+			});
 	}
 
 	onSubmit(e) {
@@ -72,7 +123,16 @@ class OrganizationsCreate extends Component {
 			return false;
 		}
 
-		const { name, email } = this.state;
+		const {
+			name,
+			email,
+			phone,
+			address,
+			city,
+			state,
+			country,
+			zip
+		} = this.state;
 
 		api()
 			.get(`/users`, {
@@ -82,14 +142,21 @@ class OrganizationsCreate extends Component {
 			})
 			.then(response => {
 				const { id } = response.data;
+				//Got the user ID, now create the organization
 
-				//Got the userID, now create the organization
-				api()
-					.post("/organizations", {
-						name,
-						owner_user_id: id
-					})
-					.then(response => {
+				const orgDetails = {
+					name,
+					phone,
+					address,
+					city,
+					state,
+					country,
+					zip,
+					owner_user_id: id
+				};
+
+				this.createNewOrganization(orgDetails, organizationId => {
+					this.updateOrganization(organizationId, orgDetails, () => {
 						this.setState({ isSubmitting: false });
 
 						notifications.show({
@@ -98,15 +165,8 @@ class OrganizationsCreate extends Component {
 						});
 
 						this.props.history.push("/admin/organizations");
-					})
-					.catch(error => {
-						console.error(error);
-						this.setState({ isSubmitting: false });
-						notifications.show({
-							message: "Create failed.", //TODO add more details here
-							variant: "error"
-						});
 					});
+				});
 			})
 			.catch(error => {
 				console.error(error);
@@ -119,7 +179,7 @@ class OrganizationsCreate extends Component {
 	}
 
 	render() {
-		const { name, email, errors, isSubmitting } = this.state;
+		const { name, email, address, phone, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
 
 		return (
@@ -127,7 +187,7 @@ class OrganizationsCreate extends Component {
 				<Typography variant="display3">Create organization</Typography>
 
 				<Grid container spacing={24}>
-					<Grid item xs={12} sm={6} lg={6}>
+					<Grid item xs={12} sm={10} lg={8}>
 						<Card className={classes.paper}>
 							<form
 								noValidate
@@ -153,6 +213,54 @@ class OrganizationsCreate extends Component {
 										type="email"
 										onChange={e => this.setState({ email: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
+									/>
+
+									<InputGroup
+										error={errors.phone}
+										value={phone}
+										name="phone"
+										label="Phone number"
+										type="text"
+										onChange={e => this.setState({ phone: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+
+									<LocationInputGroup
+										error={errors.address}
+										label="Organization address"
+										address={address}
+										onError={error => {
+											console.error("error");
+											notifications.show({
+												message: `Google API error: ${error}`, //TODO add more details here
+												variant: "error"
+											});
+										}}
+										onAddressChange={address => this.setState({ address })}
+										onLatLngResult={latLng => {
+											console.log("latLng", latLng);
+										}}
+										onFullResult={result => {
+											const city = addressTypeFromGoogleResult(
+												result,
+												"locality"
+											);
+											const state = addressTypeFromGoogleResult(
+												result,
+												"administrative_area_level_1"
+											);
+											const country = addressTypeFromGoogleResult(
+												result,
+												"country"
+											);
+
+											const zip = addressTypeFromGoogleResult(
+												result,
+												"postal_code"
+											);
+
+											this.setState({ city, state, country, zip });
+										}}
 									/>
 								</CardContent>
 								<CardActions>
