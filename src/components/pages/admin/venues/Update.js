@@ -4,18 +4,16 @@ import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
-import axios from "axios";
 
 import InputGroup from "../../../common/form/InputGroup";
+import LocationInputGroup from "../../../common/form/LocationInputGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
 
 import Button from "../../../common/Button";
-import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
-import { validEmail, validPhone } from "../../../../validators";
-import LocationInputGroup from "../../../common/form/LocationInputGroup";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
+import { validPhone } from "../../../../validators";
 
 const styles = theme => ({
 	paper: {
@@ -24,99 +22,108 @@ const styles = theme => ({
 	}
 });
 
-class OrganizationsCreate extends Component {
+class VenuesUpdate extends Component {
 	constructor(props) {
 		super(props);
 
 		//Check if we're editing an existing organization
-		let organizationId = null;
+		let venueId = null;
 		if (props.match && props.match.params && props.match.params.id) {
-			organizationId = props.match.params.id;
+			venueId = props.match.params.id;
 		}
 
 		this.state = {
-			organizationId,
+			venueId,
 			name: "",
-			email: "",
-			owner_user_id: "",
-			phone: "",
 			address: "",
 			city: "",
 			state: "",
 			country: "",
 			zip: "",
+			place_id: "",
+			phone: "",
+			organizationId: "",
+			organizations: null,
 			errors: {},
 			isSubmitting: false
 		};
 	}
 
 	componentDidMount() {
-		//If we're editing an existing org then load the current details
-		//"/organizations/{id}"
+		const { venueId } = this.state;
 
-		const { organizationId } = this.state;
-
-		if (organizationId) {
+		if (venueId) {
 			api()
-				.get(`/organizations/${organizationId}`)
+				.get(`/venues/${venueId}`)
 				.then(response => {
 					const {
-						owner_user_id,
 						name,
-						phone,
 						address,
 						city,
-						state,
 						country,
-						zip
+						state,
+						zip,
+						phone
 					} = response.data;
 
+					console.log(response.data);
 					this.setState({
 						name: name || "",
-						owner_user_id: owner_user_id || "",
-						phone: phone || "",
 						address: address || "",
 						city: city || "",
-						state: state || "",
 						country: country || "",
-						zip: zip || ""
+						state: state || "",
+						zip: zip || "",
+						phone: phone || ""
 					});
 				})
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
 					notifications.show({
-						message: "Loading organization details failed.",
+						message: "Loading venue details failed.",
 						variant: "error"
 					});
 				});
 		}
+
+		api()
+			.get("/organizations")
+			.then(response => {
+				const { data } = response;
+				this.setState({ organizations: data });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.show({
+					message: "Loading organizations failed.",
+					variant: "error"
+				});
+			});
 	}
 
 	validateFields() {
 		//Don't validate every field if the user has not tried to submit at least once
 		if (!this.submitAttempted) {
-			return true;
+			return null;
 		}
 
-		const { organizationId, name, email, address, phone } = this.state;
+		const { name, address, organizationId, phone, venueId } = this.state;
 
 		const errors = {};
 
 		if (!name) {
-			errors.name = "Missing organization name.";
-		}
-
-		if (!organizationId) {
-			if (!email) {
-				errors.email = "Missing organization owner email address.";
-			} else if (!validEmail(email)) {
-				errors.email = "Invalid email address.";
-			}
+			errors.name = "Missing venue name.";
 		}
 
 		if (!address) {
 			errors.address = "Missing address.";
+		}
+
+		if (!venueId) {
+			if (!organizationId) {
+				errors.organizationId = "Select and organization.";
+			}
 		}
 
 		if (!phone) {
@@ -134,9 +141,9 @@ class OrganizationsCreate extends Component {
 		return true;
 	}
 
-	createNewOrganization(params, onSuccess) {
+	createNewVenue(params, onSuccess) {
 		api()
-			.post("/organizations", params)
+			.post("/venues", params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -145,20 +152,15 @@ class OrganizationsCreate extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Create organization failed.",
+					message: "Create venue failed.",
 					variant: "error"
 				});
 			});
 	}
 
-	updateOrganization(id, params, onSuccess) {
-		console.log(`/organizations/${id}`);
-		console.log(JSON.stringify({ ...params, id }));
-
-		//TODO REMOVE ID
-		//Remove owner_user_id
+	updateVenue(id, params, onSuccess) {
 		api()
-			.patch(`/organizations/${id}`, { ...params })
+			.put(`/venues/${id}`, { ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})
@@ -166,7 +168,7 @@ class OrganizationsCreate extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Update organization failed.",
+					message: "Update venue failed.",
 					variant: "error"
 				});
 			});
@@ -182,104 +184,132 @@ class OrganizationsCreate extends Component {
 		}
 
 		const {
-			organizationId,
-			owner_user_id,
+			venueId,
 			name,
-			email,
+			organizationId,
 			phone,
 			address,
 			city,
 			state,
 			country,
+			place_id,
 			zip
 		} = this.state;
 
-		let orgDetails = {
+		const venueDetails = {
 			name,
 			phone,
 			address,
 			city,
 			state,
 			country,
-			zip
+			zip,
+			place_id
 		};
 
-		//If we're updating an existing org
-		if (organizationId) {
-			//orgDetails = { ...orgDetails, owner_user_id };
-
-			this.updateOrganization(organizationId, orgDetails, () => {
-				this.setState({ isSubmitting: false });
-
+		//If we're updating an existing venue
+		if (venueId) {
+			this.updateVenue(venueId, venueDetails, id => {
 				notifications.show({
-					message: "Organization updated",
+					message: "Venue updated",
 					variant: "success"
 				});
 
-				this.props.history.push("/admin/organizations");
+				this.props.history.push("/admin/venues");
 			});
 
 			return;
 		}
 
-		//If we're creating an org, we need to lookup the users ID with their email address
-		api()
-			.get(`/users`, {
-				params: {
-					email
-				}
-			})
-			.then(response => {
-				const { id } = response.data;
-				//Got the user ID, now create the organization
-				//orgDetails = { ...orgDetails, owner_user_id: id };
+		this.createNewVenue(
+			{ ...venueDetails, organization_id: organizationId },
+			id => {
+				this.updateVenue(id, venueDetails, id => {
+					notifications.show({
+						message: "Venue created",
+						variant: "success"
+					});
 
-				this.createNewOrganization(
-					{ ...orgDetails, owner_user_id: id },
-					organizationId => {
-						this.updateOrganization(organizationId, orgDetails, () => {
-							this.setState({ isSubmitting: false });
-
-							notifications.show({
-								message: "Organization created",
-								variant: "success"
-							});
-
-							this.props.history.push("/admin/organizations");
-						});
-					}
-				);
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({ isSubmitting: false });
-				notifications.show({
-					message: "Failed to locate user with that email address.",
-					variant: "error"
+					this.props.history.push("/admin/venues");
 				});
-			});
+			}
+		);
+
+		// api()
+		// 	.post("/venues", venueDetails)
+		// 	.then(response => {
+		// 		const { id } = response.data;
+		// 		api()
+		// 			.post(`/venues/${id}`, venueDetails)
+		// 			.then(() => {
+		// 				this.setState({ isSubmitting: false });
+
+		// 				notifications.show({
+		// 					message: "Venue created",
+		// 					variant: "success"
+		// 				});
+
+		// 				this.props.history.push("/admin/venues");
+		// 			})
+		// 			.catch(error => {
+		// 				console.error(error);
+		// 				this.setState({ isSubmitting: false });
+		// 				notifications.show({
+		// 					message: "Create venue failed.", //TODO add more details here
+		// 					variant: "error"
+		// 				});
+		// 			});
+		// 	})
+		// 	.catch(error => {
+		// 		console.error(error);
+		// 		this.setState({ isSubmitting: false });
+		// 		notifications.show({
+		// 			message: "Create venue failed.", //TODO add more details here
+		// 			variant: "error"
+		// 		});
+		// 	});
+	}
+
+	renderOrganizations() {
+		const { organizationId, organizations, errors } = this.state;
+		if (organizations === null) {
+			return <Typography variant="body1">Loading organizations...</Typography>;
+		}
+
+		const organizationsObj = {};
+
+		organizations.forEach(organization => {
+			organizationsObj[organization.id] = organization.name;
+		});
+
+		return (
+			<SelectGroup
+				value={organizationId}
+				items={organizationsObj}
+				error={errors.organizationId}
+				name={"organization"}
+				label={"Organization"}
+				onChange={e => this.setState({ organizationId: e.target.value })}
+			/>
+		);
 	}
 
 	render() {
 		const {
-			organizationId,
-			owner_user_id,
+			venueId,
 			name,
-			email,
 			address,
 			phone,
+			organizations,
 			errors,
 			isSubmitting
 		} = this.state;
 		const { classes } = this.props;
 
-		//If a OrgOwner is editing his own organization don't allow him to change the owner email
-		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
-
 		return (
 			<div>
 				<Typography variant="display3">
-					{organizationId ? "Update" : "Create"} organization
+					{venueId ? "Update" : "Create"} venue
 				</Typography>
 
 				<Grid container spacing={24}>
@@ -295,23 +325,13 @@ class OrganizationsCreate extends Component {
 										error={errors.name}
 										value={name}
 										name="name"
-										label="Organization name"
+										label="Venue name"
 										type="text"
 										onChange={e => this.setState({ name: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
 
-									{!isCurrentOwner ? (
-										<InputGroup
-											error={errors.email}
-											value={email}
-											name="email"
-											label="Organization owner email address"
-											type="email"
-											onChange={e => this.setState({ email: e.target.value })}
-											onBlur={this.validateFields.bind(this)}
-										/>
-									) : null}
+									{!venueId ? this.renderOrganizations() : null}
 
 									<InputGroup
 										error={errors.phone}
@@ -325,10 +345,10 @@ class OrganizationsCreate extends Component {
 
 									<LocationInputGroup
 										error={errors.address}
-										label="Organization address"
+										label="Venue location"
 										address={address}
 										onError={error => {
-											console.error("error");
+											console.error(error);
 											notifications.show({
 												message: `Google API error: ${error}`, //TODO add more details here
 												variant: "error"
@@ -339,6 +359,8 @@ class OrganizationsCreate extends Component {
 											console.log("latLng", latLng);
 										}}
 										onFullResult={result => {
+											console.log(result);
+											const { place_id } = result;
 											const city = addressTypeFromGoogleResult(
 												result,
 												"locality"
@@ -357,10 +379,11 @@ class OrganizationsCreate extends Component {
 												"postal_code"
 											);
 
-											this.setState({ city, state, country, zip });
+											this.setState({ city, state, country, zip, place_id });
 										}}
 									/>
 								</CardContent>
+
 								<CardActions>
 									<Button
 										disabled={isSubmitting}
@@ -380,4 +403,4 @@ class OrganizationsCreate extends Component {
 	}
 }
 
-export default withStyles(styles)(OrganizationsCreate);
+export default withStyles(styles)(VenuesUpdate);

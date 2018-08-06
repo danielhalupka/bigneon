@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
@@ -9,8 +11,9 @@ import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
 
 const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit * 3,
+	paper: {},
+	cardContent: {
+		padding: theme.spacing.unit * 2,
 		marginBottom: theme.spacing.unit
 	}
 });
@@ -52,8 +55,6 @@ class VenuesView extends Component {
 			);
 		}
 
-		console.log(venues);
-
 		if (venues && venues.length > 0) {
 			return venues.map(venue => {
 				const { id, name, address, phone } = venue;
@@ -61,10 +62,27 @@ class VenuesView extends Component {
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<Card className={classes.paper}>
-							<Typography variant="display1">{name}</Typography>
-							<Typography variant="subheading">
-								{address || "*Missing address"}
-							</Typography>
+							<CardContent className={classes.cardContent}>
+								<Typography variant="display1">{name}</Typography>
+								<Typography variant="body1">
+									{address || "*Missing address"}
+								</Typography>
+							</CardContent>
+
+							<CardActions>
+								<Link
+									to={`/admin/venues/${id}`}
+									style={{ textDecoration: "none" }}
+								>
+									<Button customClassName="primary">Edit details</Button>
+								</Link>
+								<Link
+									to={`/organizations/venues/${id}`}
+									style={{ textDecoration: "none" }}
+								>
+									<Button customClassName="secondary">Events</Button>
+								</Link>
+							</CardActions>
 						</Card>
 					</Grid>
 				);

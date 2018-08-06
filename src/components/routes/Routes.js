@@ -14,9 +14,9 @@ import Home from "../pages/landing/Index";
 
 //Admin
 import AdminOrganizationsView from "../pages/admin/organizations/View";
-import AdminOrganizationsCreate from "../pages/admin/organizations/Create";
+import AdminOrganizationsUpdate from "../pages/admin/organizations/Update";
 import AdminVenuesView from "../pages/admin/venues/View";
-import AdminVenuesCreate from "../pages/admin/venues/Create";
+import AdminVenuesUpdate from "../pages/admin/venues/Update";
 
 import user from "../../stores/user";
 
@@ -63,18 +63,23 @@ class Routes extends Component {
 						<Route
 							exact
 							path="/admin/organizations/create"
-							component={AdminOrganizationsCreate}
+							component={AdminOrganizationsUpdate}
 						/>
 						<Route
 							exact
 							path="/admin/organizations/:id"
-							component={AdminOrganizationsCreate}
+							component={AdminOrganizationsUpdate}
 						/>
 						<Route exact path="/admin/venues" component={AdminVenuesView} />
 						<Route
 							exact
 							path="/admin/venues/create"
-							component={AdminVenuesCreate}
+							component={AdminVenuesUpdate}
+						/>
+						<Route
+							exact
+							path="/admin/venues/:id"
+							component={AdminVenuesUpdate}
 						/>
 						<Route component={NotFound} />
 					</Switch>
