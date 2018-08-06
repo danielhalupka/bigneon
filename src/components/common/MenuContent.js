@@ -104,7 +104,7 @@ class MenuContent extends Component {
 		});
 	}
 
-	renderAdmin() {
+	renderAdminMenu() {
 		const { openMenuItem } = this.state;
 		const { classes, toggleDrawer } = this.props;
 
@@ -277,11 +277,11 @@ class MenuContent extends Component {
 					toggleDrawer={toggleDrawer}
 				/>
 				<MenuItem
-					to="/organization"
+					to="/admin/organizations"
 					icon={<OrganizationIcon />}
 					toggleDrawer={toggleDrawer}
 				>
-					Organization
+					My organizations
 				</MenuItem>
 			</div>
 		);
@@ -357,10 +357,15 @@ class MenuContent extends Component {
 					alt="Logo"
 				/>
 
-				{/* If they're admin, just show those menu options */}
-				{isAdmin ? this.renderAdmin() : null}
+				{/* 
+					If they're admin, just show those menu options
+					TODO maybe render this using an if/else render function
+			 	*/}
+				{isAdmin ? this.renderAdminMenu() : null}
 
-				{!isAdmin && isGuest ? this.renderUnauthenticatedMenu() : null}
+				{!isAdmin && isGuest && !isOrgOwner
+					? this.renderUnauthenticatedMenu()
+					: null}
 
 				{!isAdmin && isOrgOwner ? this.renderOrgOwnMenu() : null}
 			</List>

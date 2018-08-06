@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
+import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
 
 const styles = theme => ({
 	paper: {
-		padding: theme.spacing.unit,
+		padding: theme.spacing.unit * 2,
 		marginBottom: theme.spacing.unit
 	}
 });
@@ -31,6 +32,7 @@ class OrganizationsView extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+				this.setState({ organizations: false });
 				notifications.show({
 					message: "Loading organizations failed.",
 					variant: "error"
@@ -43,7 +45,11 @@ class OrganizationsView extends Component {
 		const { classes } = this.props;
 
 		if (organizations === null) {
-			return <Typography variant="body1">Loading...</Typography>;
+			return (
+				<Grid item xs={12} sm={12} lg={12}>
+					<Typography variant="body1">Loading...</Typography>
+				</Grid>
+			);
 		}
 
 		if (organizations) {
@@ -60,14 +66,26 @@ class OrganizationsView extends Component {
 					zip
 				}) => (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
-						<Card className={classes.paper}>
-							<Typography variant="display1">{name}</Typography>
-						</Card>
+						<Link
+							to={`/admin/organizations/${id}`}
+							style={{ textDecoration: "none" }}
+						>
+							<Card className={classes.paper}>
+								<Typography variant="display1">{name}</Typography>
+								<Typography variant="body1">
+									{address || "*Missing address"}
+								</Typography>
+							</Card>
+						</Link>
 					</Grid>
 				)
 			);
 		} else {
-			return <Typography variant="body1">No organizations yet</Typography>;
+			return (
+				<Grid item xs={12} sm={12} lg={12}>
+					<Typography variant="body1">No organizations found</Typography>
+				</Grid>
+			);
 		}
 	}
 
