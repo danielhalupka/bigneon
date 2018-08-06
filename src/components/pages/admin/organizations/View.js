@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
+import Button from "../../../common/Button";
 
 const styles = theme => ({
 	paper: {
@@ -52,7 +53,7 @@ class OrganizationsView extends Component {
 			);
 		}
 
-		if (organizations) {
+		if (organizations && organizations.length > 0) {
 			return organizations.map(
 				({
 					id,
@@ -84,6 +85,13 @@ class OrganizationsView extends Component {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">No organizations found</Typography>
+
+					<Link
+						to={"/admin/organizations/create"}
+						style={{ textDecoration: "none" }}
+					>
+						<Button customClassName="callToAction">Create organization</Button>
+					</Link>
 				</Grid>
 			);
 		}
