@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
+import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
+import Button from "../../../common/Button";
 
 const styles = theme => ({
 	paper: {
@@ -43,10 +45,16 @@ class VenuesView extends Component {
 		const { classes } = this.props;
 
 		if (venues === null) {
-			return <Typography variant="body1">Loading...</Typography>;
+			return (
+				<Grid item xs={12} sm={12} lg={12}>
+					<Typography variant="body1">Loading...</Typography>
+				</Grid>
+			);
 		}
 
-		if (venues) {
+		console.log(venues);
+
+		if (venues && venues.length > 0) {
 			return venues.map(venue => {
 				const { id, name, address, phone } = venue;
 
@@ -62,7 +70,14 @@ class VenuesView extends Component {
 				);
 			});
 		} else {
-			return <Typography variant="body1">No venues yet</Typography>;
+			return (
+				<Grid item xs={12} sm={12} lg={12}>
+					<Typography variant="body1">No venues yet</Typography>
+					<Link to={"/admin/venues/create"} style={{ textDecoration: "none" }}>
+						<Button customClassName="callToAction">Create venue</Button>
+					</Link>
+				</Grid>
+			);
 		}
 	}
 
