@@ -119,9 +119,9 @@ class Login extends Component {
 			<Container>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
-						<Typography gutterBottom variant="headline" component="h2">
+						{/* <Typography gutterBottom variant="headline" component="h2">
 							Login
-						</Typography>
+						</Typography> */}
 
 						<FacebookButton
 							onSuccess={() => this.props.history.push("/dashboard")}
