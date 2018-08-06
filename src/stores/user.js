@@ -72,6 +72,15 @@ class User {
 		this.roles = [];
 
 		localStorage.removeItem("token");
+
+		//If they logged in with facebook, kill that session also
+		if (window.FB) {
+			window.FB.getLoginStatus(({ status }) => {
+				if (status === "connected") {
+					window.FB.logout(() => {});
+				}
+			});
+		}
 	}
 
 	@computed

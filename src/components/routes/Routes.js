@@ -65,6 +65,11 @@ class Routes extends Component {
 							path="/admin/organizations/create"
 							component={AdminOrganizationsCreate}
 						/>
+						<Route
+							exact
+							path="/admin/organizations/:id"
+							component={AdminOrganizationsCreate}
+						/>
 						<Route exact path="/admin/venues" component={AdminVenuesView} />
 						<Route
 							exact

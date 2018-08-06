@@ -28,9 +28,17 @@ class OrganizationsCreate extends Component {
 	constructor(props) {
 		super(props);
 
+		//Check if we're editing an existing organization
+		let organizationId = null;
+		if (props.match && props.match.params && props.match.params.id) {
+			organizationId = props.match.params.id;
+		}
+
 		this.state = {
+			organizationId,
 			name: "",
 			email: "",
+			owner_user_id: "",
 			phone: "",
 			address: "",
 			city: "",
@@ -42,13 +50,56 @@ class OrganizationsCreate extends Component {
 		};
 	}
 
+	componentDidMount() {
+		//If we're editing an existing org then load the current details
+		//"/organizations/{id}"
+
+		const { organizationId } = this.state;
+
+		if (organizationId) {
+			api()
+				.get(`/organizations/${organizationId}`)
+				.then(response => {
+					const {
+						owner_user_id,
+						name,
+						phone,
+						address,
+						city,
+						state,
+						country,
+						zip
+					} = response.data;
+
+					this.setState({
+						name: name || "",
+						owner_user_id: owner_user_id || "",
+						phone: phone || "",
+						address: address || "",
+						city: city || "",
+						state: state || "",
+						country: country || "",
+						zip: zip || ""
+					});
+				})
+				.catch(error => {
+					console.error(error);
+					this.setState({ isSubmitting: false });
+					notifications.show({
+						message: "Loading organization details failed.",
+						variant: "error"
+					});
+				});
+		}
+	}
+
 	validateFields() {
 		//Don't validate every field if the user has not tried to submit at least once
 		if (!this.submitAttempted) {
 			return true;
 		}
 
-		const { name, email, address, phone } = this.state;
+		const { organizationId, name, email, address, phone } = this.state;
 
 		const errors = {};
 
@@ -56,10 +107,12 @@ class OrganizationsCreate extends Component {
 			errors.name = "Missing organization name.";
 		}
 
-		if (!email) {
-			errors.email = "Missing organization owner email address.";
-		} else if (!validEmail(email)) {
-			errors.email = "Invalid email address.";
+		if (!organizationId) {
+			if (!email) {
+				errors.email = "Missing organization owner email address.";
+			} else if (!validEmail(email)) {
+				errors.email = "Invalid email address.";
+			}
 		}
 
 		if (!address) {
@@ -99,8 +152,13 @@ class OrganizationsCreate extends Component {
 	}
 
 	updateOrganization(id, params, onSuccess) {
+		console.log(`/organizations/${id}`);
+		console.log(JSON.stringify({ ...params, id }));
+
+		//TODO REMOVE ID
+		//Remove owner_user_id
 		api()
-			.put(`/organizations/${id}`, { ...params, id })
+			.patch(`/organizations/${id}`, { ...params })
 			.then(() => {
 				onSuccess(id);
 			})
@@ -124,6 +182,8 @@ class OrganizationsCreate extends Component {
 		}
 
 		const {
+			organizationId,
+			owner_user_id,
 			name,
 			email,
 			phone,
@@ -134,6 +194,35 @@ class OrganizationsCreate extends Component {
 			zip
 		} = this.state;
 
+		let orgDetails = {
+			name,
+			phone,
+			address,
+			city,
+			state,
+			country,
+			zip
+		};
+
+		//If we're updating an existing org
+		if (organizationId) {
+			//orgDetails = { ...orgDetails, owner_user_id };
+
+			this.updateOrganization(organizationId, orgDetails, () => {
+				this.setState({ isSubmitting: false });
+
+				notifications.show({
+					message: "Organization updated",
+					variant: "success"
+				});
+
+				this.props.history.push("/admin/organizations");
+			});
+
+			return;
+		}
+
+		//If we're creating an org, we need to lookup the users ID with their email address
 		api()
 			.get(`/users`, {
 				params: {
@@ -143,30 +232,23 @@ class OrganizationsCreate extends Component {
 			.then(response => {
 				const { id } = response.data;
 				//Got the user ID, now create the organization
+				//orgDetails = { ...orgDetails, owner_user_id: id };
 
-				const orgDetails = {
-					name,
-					phone,
-					address,
-					city,
-					state,
-					country,
-					zip,
-					owner_user_id: id
-				};
+				this.createNewOrganization(
+					{ ...orgDetails, owner_user_id: id },
+					organizationId => {
+						this.updateOrganization(organizationId, orgDetails, () => {
+							this.setState({ isSubmitting: false });
 
-				this.createNewOrganization(orgDetails, organizationId => {
-					this.updateOrganization(organizationId, orgDetails, () => {
-						this.setState({ isSubmitting: false });
+							notifications.show({
+								message: "Organization created",
+								variant: "success"
+							});
 
-						notifications.show({
-							message: "Organization created",
-							variant: "success"
+							this.props.history.push("/admin/organizations");
 						});
-
-						this.props.history.push("/admin/organizations");
-					});
-				});
+					}
+				);
 			})
 			.catch(error => {
 				console.error(error);
@@ -179,12 +261,26 @@ class OrganizationsCreate extends Component {
 	}
 
 	render() {
-		const { name, email, address, phone, errors, isSubmitting } = this.state;
+		const {
+			organizationId,
+			owner_user_id,
+			name,
+			email,
+			address,
+			phone,
+			errors,
+			isSubmitting
+		} = this.state;
 		const { classes } = this.props;
+
+		//If a OrgOwner is editing his own organization don't allow him to change the owner email
+		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
 
 		return (
 			<div>
-				<Typography variant="display3">Create organization</Typography>
+				<Typography variant="display3">
+					{organizationId ? "Update" : "Create"} organization
+				</Typography>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={10} lg={8}>
@@ -205,15 +301,17 @@ class OrganizationsCreate extends Component {
 										onBlur={this.validateFields.bind(this)}
 									/>
 
-									<InputGroup
-										error={errors.email}
-										value={email}
-										name="email"
-										label="Organization owner email address"
-										type="email"
-										onChange={e => this.setState({ email: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
+									{!isCurrentOwner ? (
+										<InputGroup
+											error={errors.email}
+											value={email}
+											name="email"
+											label="Organization owner email address"
+											type="email"
+											onChange={e => this.setState({ email: e.target.value })}
+											onBlur={this.validateFields.bind(this)}
+										/>
+									) : null}
 
 									<InputGroup
 										error={errors.phone}
