@@ -87,7 +87,6 @@ class Login extends Component {
 			.then(response => {
 				this.setState({ isSubmitting: false });
 
-				console.log(response.data);
 				const { access_token } = response.data;
 				if (access_token) {
 					localStorage.setItem("token", access_token);
