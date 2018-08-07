@@ -4,10 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
-import axios from "axios";
 
 import InputGroup from "../../../common/form/InputGroup";
-import SelectGroup from "../../../common/form/SelectGroup";
 
 import Button from "../../../common/Button";
 import user from "../../../../stores/user";
