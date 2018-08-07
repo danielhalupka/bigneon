@@ -137,7 +137,7 @@ class MenuContent extends Component {
 				<ListSubheader>System admin</ListSubheader>
 
 				<MenuItem
-					icon={<EventsIcon />}
+					icon={<OrganizationIcon />}
 					onClick={() => this.changeOpenMenu("admin-organizations")}
 					expandIcon={
 						openMenuItem === "admin-organizations" ? (
@@ -176,6 +176,26 @@ class MenuContent extends Component {
 					items={{
 						All: "/admin/venues",
 						Create: "/admin/venues/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
+
+				<MenuItem
+					icon={<EventsIcon />}
+					onClick={() => this.changeOpenMenu("admin-events")}
+					expandIcon={
+						openMenuItem === "admin-events" ? <ExpandLess /> : <ExpandMore />
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Events
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-events"}
+					classes={classes}
+					items={{
+						All: "/admin/events",
+						Create: "/admin/events/create"
 					}}
 					toggleDrawer={toggleDrawer}
 				/>

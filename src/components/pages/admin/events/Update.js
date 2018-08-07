@@ -4,16 +4,15 @@ import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
+import moment from "moment";
 
 import InputGroup from "../../../common/form/InputGroup";
-import LocationInputGroup from "../../../common/form/LocationInputGroup";
+import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
 
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
-import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
-import { validPhone } from "../../../../validators";
 
 const styles = theme => ({
 	paper: {
@@ -22,59 +21,45 @@ const styles = theme => ({
 	}
 });
 
-class VenuesUpdate extends Component {
+class EventsUpdate extends Component {
 	constructor(props) {
 		super(props);
 
-		//Check if we're editing an existing venue
-		let venueId = null;
+		//Check if we're editing an existing event
+		let eventId = null;
 		if (props.match && props.match.params && props.match.params.id) {
-			venueId = props.match.params.id;
+			eventId = props.match.params.id;
 		}
 
+		// pub name: String,
+		// pub organization_id: Uuid,
+		// pub venue_id: Uuid,
+		// pub event_start: NaiveDateTime,
 		this.state = {
-			venueId,
+			eventId,
 			name: "",
-			address: "",
-			city: "",
-			state: "",
-			country: "",
-			zip: "",
-			place_id: "",
-			phone: "",
-			organizationId: "",
+			eventDate: null,
 			organizations: null,
+			organizationId: "",
+			venues: [],
+			venueId: "",
 			errors: {},
 			isSubmitting: false
 		};
 	}
 
 	componentDidMount() {
-		const { venueId } = this.state;
+		const { eventId } = this.state;
 
-		if (venueId) {
+		if (eventId) {
+			//TODO get all fields required, not just name
 			api()
-				.get(`/venues/${venueId}`)
+				.get(`/events/${eventId}`)
 				.then(response => {
-					const {
-						name,
-						address,
-						city,
-						country,
-						state,
-						zip,
-						phone
-					} = response.data;
+					const { name } = response.data;
 
-					console.log(response.data);
 					this.setState({
-						name: name || "",
-						address: address || "",
-						city: city || "",
-						country: country || "",
-						state: state || "",
-						zip: zip || "",
-						phone: phone || ""
+						name: name || ""
 					});
 				})
 				.catch(error => {
@@ -102,35 +87,54 @@ class VenuesUpdate extends Component {
 			});
 	}
 
+	loadVenues(organizationId) {
+		this.setState({ venues: null }, () => {
+			//TODO use the org id once an admin can assign a venue to an org
+			//TODO use `/venues/organizations/${organizationId}`
+			api()
+				.get(`/venues`)
+				.then(response => {
+					const { data } = response;
+					console.log("venues: ", data);
+					this.setState({ venues: data });
+				})
+				.catch(error => {
+					console.error(error);
+					notifications.show({
+						message: "Updating venues failed.",
+						variant: "error"
+					});
+				});
+		});
+	}
+
 	validateFields() {
 		//Don't validate every field if the user has not tried to submit at least once
 		if (!this.submitAttempted) {
 			return null;
 		}
 
-		const { name, address, organizationId, phone, venueId } = this.state;
+		const { name, eventDate, organizationId, venueId } = this.state;
 
 		const errors = {};
 
 		if (!name) {
-			errors.name = "Missing venue name.";
+			errors.name = "Missing event name.";
 		}
 
-		if (!address) {
-			errors.address = "Missing address.";
+		if (!organizationId) {
+			errors.organizationId = "Choose an organization.";
 		}
 
 		if (!venueId) {
-			if (!organizationId) {
-				errors.organizationId = "Select and organization.";
-			}
+			errors.venueId = "Choose venue.";
 		}
 
-		if (!phone) {
-			errors.phone = "Missing phone number.";
-		} else if (!validPhone(phone)) {
-			errors.phone = "Invalid phone number.";
+		if (!eventDate) {
+			errors.eventDate = "Specify the event date.";
 		}
+
+		//TODO validte additional fields
 
 		this.setState({ errors });
 
@@ -141,9 +145,10 @@ class VenuesUpdate extends Component {
 		return true;
 	}
 
-	createNewVenue(params, onSuccess) {
+	createNewEvent(params, onSuccess) {
+		console.log(JSON.stringify(params));
 		api()
-			.post("/venues", params)
+			.post("/events", params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -152,15 +157,15 @@ class VenuesUpdate extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Create venue failed.",
+					message: "Create event failed.",
 					variant: "error"
 				});
 			});
 	}
 
-	updateVenue(id, params, onSuccess) {
+	updateEvent(id, params, onSuccess) {
 		api()
-			.put(`/venues/${id}`, { ...params, id })
+			.put(`/events/${id}`, { ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})
@@ -168,7 +173,7 @@ class VenuesUpdate extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Update venue failed.",
+					message: "Update event failed.",
 					variant: "error"
 				});
 			});
@@ -183,54 +188,38 @@ class VenuesUpdate extends Component {
 			return false;
 		}
 
-		const {
-			venueId,
-			name,
-			organizationId,
-			phone,
-			address,
-			city,
-			state,
-			country,
-			place_id,
-			zip
-		} = this.state;
+		const { eventId, name, eventDate, organizationId, venueId } = this.state;
 
-		const venueDetails = {
+		const eventDetails = {
 			name,
-			phone,
-			address,
-			city,
-			state,
-			country,
-			zip,
-			place_id
+			venue_id: venueId,
+			event_start: moment.utc(eventDate).format()
 		};
 
 		//If we're updating an existing venue
-		if (venueId) {
-			this.updateVenue(venueId, venueDetails, id => {
+		if (eventId) {
+			this.updateEvent(eventId, eventDetails, id => {
 				notifications.show({
-					message: "Venue updated",
+					message: "Event updated",
 					variant: "success"
 				});
 
-				this.props.history.push("/admin/venues");
+				this.props.history.push("/admin/events");
 			});
 
 			return;
 		}
 
-		this.createNewVenue(
-			{ ...venueDetails, organization_id: organizationId },
+		this.createNewEvent(
+			{ ...eventDetails, organization_id: organizationId }, //TODO add orgId here
 			id => {
-				this.updateVenue(id, venueDetails, id => {
+				this.updateVenue(id, eventDetails, id => {
 					notifications.show({
-						message: "Venue created",
+						message: "Event created",
 						variant: "success"
 					});
 
-					this.props.history.push("/admin/venues");
+					this.props.history.push("/admin/events");
 				});
 			}
 		);
@@ -255,27 +244,58 @@ class VenuesUpdate extends Component {
 				error={errors.organizationId}
 				name={"organization"}
 				label={"Organization"}
-				onChange={e => this.setState({ organizationId: e.target.value })}
+				onChange={e => {
+					const organizationId = e.target.value;
+					this.setState({ organizationId });
+					//Reload venues belonging to this org
+					this.loadVenues(organizationId);
+				}}
+				onBlur={this.validateFields.bind(this)}
+			/>
+		);
+	}
+
+	renderVenues() {
+		const { venueId, venues, errors } = this.state;
+
+		const venuesObj = {};
+
+		let lable = "";
+
+		if (venues !== null) {
+			venues.forEach(venue => {
+				venuesObj[venue.id] = venue.name;
+			});
+			lable = "Venue";
+		} else {
+			lable = "Loading venues...";
+		}
+
+		return (
+			<SelectGroup
+				value={venueId}
+				items={venuesObj}
+				error={errors.venueId}
+				name={"venues"}
+				missingItemsLabel={"No available venues"}
+				label={lable}
+				onChange={e => {
+					const venueId = e.target.value;
+					this.setState({ venueId });
+				}}
+				onBlur={this.validateFields.bind(this)}
 			/>
 		);
 	}
 
 	render() {
-		const {
-			venueId,
-			name,
-			address,
-			phone,
-			organizations,
-			errors,
-			isSubmitting
-		} = this.state;
+		const { eventId, name, eventDate, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
 
 		return (
 			<div>
 				<Typography variant="display3">
-					{venueId ? "Update" : "Create"} venue
+					{eventId ? "Update" : "Create"} event
 				</Typography>
 
 				<Grid container spacing={24}>
@@ -291,63 +311,24 @@ class VenuesUpdate extends Component {
 										error={errors.name}
 										value={name}
 										name="name"
-										label="Venue name"
+										label="Event name"
 										type="text"
 										onChange={e => this.setState({ name: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
 
-									{!venueId ? this.renderOrganizations() : null}
-
-									<InputGroup
-										error={errors.phone}
-										value={phone}
-										name="phone"
-										label="Phone number"
-										type="text"
-										onChange={e => this.setState({ phone: e.target.value })}
+									<DateTimePickerGroup
+										error={errors.eventDate}
+										value={eventDate}
+										name="eventDate"
+										label="Event date"
+										onChange={eventDate => this.setState({ eventDate })}
 										onBlur={this.validateFields.bind(this)}
 									/>
 
-									<LocationInputGroup
-										error={errors.address}
-										label="Venue location"
-										address={address}
-										onError={error => {
-											console.error(error);
-											notifications.show({
-												message: `Google API error: ${error}`, //TODO add more details here
-												variant: "error"
-											});
-										}}
-										onAddressChange={address => this.setState({ address })}
-										onLatLngResult={latLng => {
-											console.log("latLng", latLng);
-										}}
-										onFullResult={result => {
-											console.log(result);
-											const { place_id } = result;
-											const city = addressTypeFromGoogleResult(
-												result,
-												"locality"
-											);
-											const state = addressTypeFromGoogleResult(
-												result,
-												"administrative_area_level_1"
-											);
-											const country = addressTypeFromGoogleResult(
-												result,
-												"country"
-											);
+									{!eventId ? this.renderOrganizations() : null}
 
-											const zip = addressTypeFromGoogleResult(
-												result,
-												"postal_code"
-											);
-
-											this.setState({ city, state, country, zip, place_id });
-										}}
-									/>
+									{this.renderVenues()}
 								</CardContent>
 
 								<CardActions>
@@ -369,4 +350,4 @@ class VenuesUpdate extends Component {
 	}
 }
 
-export default withStyles(styles)(VenuesUpdate);
+export default withStyles(styles)(EventsUpdate);

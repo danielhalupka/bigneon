@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 // import DevTools from "mobx-react-devtools";
+import MuiPickersUtilsProvider from "material-ui-pickers/utils/MuiPickersUtilsProvider";
+import MomentUtils from "material-ui-pickers/utils/moment-utils";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -123,59 +125,61 @@ class Container extends React.Component {
 		);
 
 		return (
-			<div className={classes.root}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							onClick={this.handleDrawerToggle.bind(this)}
-							className={classes.navIconHide}
-						>
-							<MenuIcon color="action" />
-						</IconButton>
-						<div style={{ flex: 1 }}>
-							<Hidden mdUp implementation="css">
-								<img
-									alt="Header logo"
-									className={classes.headerImage}
-									src="/images/bn-logo-text.png"
-								/>
-							</Hidden>
-						</div>
+			<MuiPickersUtilsProvider utils={MomentUtils}>
+				<div className={classes.root}>
+					<AppBar className={classes.appBar}>
+						<Toolbar>
+							<IconButton
+								color="inherit"
+								aria-label="open drawer"
+								onClick={this.handleDrawerToggle.bind(this)}
+								className={classes.navIconHide}
+							>
+								<MenuIcon color="action" />
+							</IconButton>
+							<div style={{ flex: 1 }}>
+								<Hidden mdUp implementation="css">
+									<img
+										alt="Header logo"
+										className={classes.headerImage}
+										src="/images/bn-logo-text.png"
+									/>
+								</Hidden>
+							</div>
 
-						<RightHeaderMenu history={history} />
-					</Toolbar>
-				</AppBar>
-				<Hidden mdUp>
-					<Drawer
-						variant="temporary"
-						anchor={"left"}
-						open={this.state.mobileOpen}
-						onClose={this.handleDrawerToggle.bind(this)}
-						classes={{
-							paper: classes.drawerPaper
-						}}
-						ModalProps={{
-							keepMounted: true // Better open performance on mobile.
-						}}
-					>
-						{drawer}
-					</Drawer>
-				</Hidden>
-				<Hidden smDown implementation="css">
-					<Drawer
-						variant="permanent"
-						open
-						classes={{
-							paper: classes.drawerPaper
-						}}
-					>
-						{drawer}
-					</Drawer>
-				</Hidden>
-				{this.renderContent()}
-			</div>
+							<RightHeaderMenu history={history} />
+						</Toolbar>
+					</AppBar>
+					<Hidden mdUp>
+						<Drawer
+							variant="temporary"
+							anchor={"left"}
+							open={this.state.mobileOpen}
+							onClose={this.handleDrawerToggle.bind(this)}
+							classes={{
+								paper: classes.drawerPaper
+							}}
+							ModalProps={{
+								keepMounted: true // Better open performance on mobile.
+							}}
+						>
+							{drawer}
+						</Drawer>
+					</Hidden>
+					<Hidden smDown implementation="css">
+						<Drawer
+							variant="permanent"
+							open
+							classes={{
+								paper: classes.drawerPaper
+							}}
+						>
+							{drawer}
+						</Drawer>
+					</Hidden>
+					{this.renderContent()}
+				</div>
+			</MuiPickersUtilsProvider>
 		);
 	}
 }
