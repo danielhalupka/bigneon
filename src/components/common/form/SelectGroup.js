@@ -7,15 +7,37 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 
-const styles = () => ({
+const styles = theme => ({
 	formControl: {
-		width: "100%"
+		width: "100%",
+		marginBottom: theme.spacing.unit
 	}
 });
 
 const SelectGroup = props => {
-	const { value, items, error, name, label, onChange, onBlur, onFocus } = props;
+	const {
+		value,
+		items,
+		error,
+		name,
+		label,
+		onChange,
+		onBlur,
+		onFocus,
+		missingItemsLabel
+	} = props;
 	const { classes } = props;
+
+	const keys = Object.keys(items);
+
+	let content = <MenuItem disabled>{missingItemsLabel || "No items"}</MenuItem>;
+	if (keys.length > 0) {
+		content = keys.map(key => (
+			<MenuItem key={key} value={key}>
+				{items[key]}
+			</MenuItem>
+		));
+	}
 
 	return (
 		<FormControl
@@ -34,11 +56,7 @@ const SelectGroup = props => {
 					onFocus
 				}}
 			>
-				{Object.keys(items).map(key => (
-					<MenuItem key={key} value={key}>
-						{items[key]}
-					</MenuItem>
-				))}
+				{content}
 			</Select>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -50,6 +68,7 @@ SelectGroup.propTypes = {
 	items: PropTypes.object.isRequired,
 	error: PropTypes.string,
 	value: PropTypes.string.isRequired,
+	missingItemsLabel: PropTypes.string, //If there are no items, the text you want to display
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired,
