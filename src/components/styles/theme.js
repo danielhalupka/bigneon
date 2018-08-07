@@ -40,7 +40,7 @@ const theme = createMuiTheme({
 		},
 		MuiFormHelperText: {
 			root: {
-				//paddingBottom: 20
+				paddingBottom: 20
 			}
 		}
 	}
