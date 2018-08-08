@@ -2,7 +2,7 @@
 //Enable: Geolocation API, Maps JavaScript API, Places API for Web, Geocoding API
 import React from "react";
 import PropTypes from "prop-types";
-import { Typography, withStyles } from "@material-ui/core";
+import {Typography, withStyles} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
@@ -10,8 +10,9 @@ import PlacesAutocomplete, {
 	geocodeByAddress,
 	getLatLng
 } from "react-places-autocomplete";
+import InputGroup from "../../common/form/InputGroup";
 
-import { primaryHex } from "../../styles/theme";
+import {primaryHex} from "../../styles/theme";
 
 const styles = theme => {
 	return {
@@ -44,7 +45,30 @@ class LocationInputGroup extends React.Component {
 			.catch(error => onError(error));
 	}
 
-	render() {
+	MissingGoogle() {
+		const {
+			address,
+			placeholder,
+			onAddressChange,
+			error,
+			onError,
+			label,
+			classes
+		} = this.props;
+		return (
+			<div>
+				<InputGroup
+					value={address}
+					name="name"
+					label="Address"
+					type="text"
+					onChange={e => onAddressChange(e.target.value)}
+				/>
+			</div>
+		);
+	}
+
+	Google() {
 		const {
 			address,
 			placeholder,
@@ -58,7 +82,7 @@ class LocationInputGroup extends React.Component {
 		if (window.google === undefined) {
 			return false;
 		}
-
+		/* eslint-disable no-mixed-spaces-and-tabs */
 		return (
 			<div>
 				<PlacesAutocomplete
@@ -67,12 +91,13 @@ class LocationInputGroup extends React.Component {
 					onSelect={this.onSelect.bind(this)}
 					onError={onError}
 				>
+
 					{({
-						getInputProps,
-						suggestions,
-						getSuggestionItemProps,
-						loading
-					}) => (
+						  getInputProps,
+						  suggestions,
+						  getSuggestionItemProps,
+						  loading
+					  }) => (
 						<div>
 							<FormControl
 								className={classes.formControl}
@@ -95,7 +120,7 @@ class LocationInputGroup extends React.Component {
 
 							<div className="autocomplete-dropdown-container">
 								{loading && (
-									<div style={{ marginTop: 5, marginBottom: 5 }}>
+									<div style={{marginTop: 5, marginBottom: 5}}>
 										<Typography variant="caption">Loading...</Typography>
 									</div>
 								)}
@@ -105,8 +130,8 @@ class LocationInputGroup extends React.Component {
 										: "suggestion-item";
 									// inline style for demonstration purpose
 									const style = suggestion.active
-										? { backgroundColor: primaryHex, cursor: "pointer" }
-										: { backgroundColor: "transparent", cursor: "pointer" };
+										? {backgroundColor: primaryHex, cursor: "pointer"}
+										: {backgroundColor: "transparent", cursor: "pointer"};
 									return (
 										<div
 											{...getSuggestionItemProps(suggestion, {
@@ -121,9 +146,9 @@ class LocationInputGroup extends React.Component {
 									);
 								})}
 
-								<div style={{ textAlign: "center" }}>
+								<div style={{textAlign: "center"}}>
 									<img
-										style={{ width: "25%", paddingTop: 5 }}
+										style={{width: "25%", paddingTop: 5}}
 										src="https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3_hdpi.png"
 									/>
 								</div>
@@ -133,6 +158,13 @@ class LocationInputGroup extends React.Component {
 				</PlacesAutocomplete>
 			</div>
 		);
+	}
+
+	render() {
+		if (process.env.REACT_APP_GOOGLE_PLACES_API_KEY) {
+			return this.Google();
+		}
+		return this.MissingGoogle();
 	}
 }
 
