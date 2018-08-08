@@ -6,7 +6,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 import InputGroup from "../../../common/form/InputGroup";
-
 import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
@@ -366,7 +365,13 @@ class OrganizationsUpdate extends Component {
 										style={{ marginRight: 10 }}
 										customClassName="callToAction"
 									>
-										{isSubmitting ? "Creating..." : "Create"}
+										{isSubmitting
+											? organizationId
+												? "Creating..."
+												: "Updating..."
+											: organizationId
+												? "Update"
+												: "Create"}
 									</Button>
 								</CardActions>
 							</form>

@@ -9,7 +9,6 @@ import moment from "moment";
 import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
-
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
@@ -339,7 +338,13 @@ class EventsUpdate extends Component {
 										style={{ marginRight: 10 }}
 										customClassName="callToAction"
 									>
-										{isSubmitting ? "Creating..." : "Create"}
+										{isSubmitting
+											? eventId
+												? "Creating..."
+												: "Updating..."
+											: eventId
+												? "Update"
+												: "Create"}
 									</Button>
 								</CardActions>
 							</form>
