@@ -193,7 +193,10 @@ class EventsUpdate extends Component {
 		const eventDetails = {
 			name,
 			venue_id: venueId,
-			event_start: moment.utc(eventDate).format()
+			event_start: moment
+				.utc(eventDate)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //This format --> "2018-09-18T23:56:04"
+			organization_id: organizationId
 		};
 
 		//If we're updating an existing venue
@@ -210,19 +213,14 @@ class EventsUpdate extends Component {
 			return;
 		}
 
-		this.createNewEvent(
-			{ ...eventDetails, organization_id: organizationId }, //TODO add orgId here
-			id => {
-				this.updateVenue(id, eventDetails, id => {
-					notifications.show({
-						message: "Event created",
-						variant: "success"
-					});
+		this.createNewEvent(eventDetails, id => {
+			notifications.show({
+				message: "Event created",
+				variant: "success"
+			});
 
-					this.props.history.push("/admin/events");
-				});
-			}
-		);
+			this.props.history.push("/admin/events");
+		});
 	}
 
 	renderOrganizations() {
