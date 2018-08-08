@@ -53,13 +53,26 @@ class EventsUpdate extends Component {
 
 		if (eventId) {
 			//TODO get all fields required, not just name
+
 			api()
 				.get(`/events/${eventId}`)
 				.then(response => {
-					const { name } = response.data;
+					const {
+						name,
+						event_start,
+						venue_id,
+						organization_id
+					} = response.data;
+
+					this.loadVenues(organization_id);
 
 					this.setState({
-						name: name || ""
+						name: name || "",
+						eventDate: event_start
+							? moment(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+							: null,
+						venueId: venue_id ? venue_id : "",
+						organizationId: organization_id ? organization_id : ""
 					});
 				})
 				.catch(error => {
