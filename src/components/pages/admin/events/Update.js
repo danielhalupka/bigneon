@@ -31,10 +31,6 @@ class EventsUpdate extends Component {
 			eventId = props.match.params.id;
 		}
 
-		// pub name: String,
-		// pub organization_id: Uuid,
-		// pub venue_id: Uuid,
-		// pub event_start: NaiveDateTime,
 		this.state = {
 			eventId,
 			name: "",
@@ -53,13 +49,26 @@ class EventsUpdate extends Component {
 
 		if (eventId) {
 			//TODO get all fields required, not just name
+
 			api()
 				.get(`/events/${eventId}`)
 				.then(response => {
-					const { name } = response.data;
+					const {
+						name,
+						event_start,
+						venue_id,
+						organization_id
+					} = response.data;
+
+					this.loadVenues(organization_id);
 
 					this.setState({
-						name: name || ""
+						name: name || "",
+						eventDate: event_start
+							? moment(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+							: null,
+						venueId: venue_id ? venue_id : "",
+						organizationId: organization_id ? organization_id : ""
 					});
 				})
 				.catch(error => {
@@ -95,7 +104,6 @@ class EventsUpdate extends Component {
 				.get(`/venues`)
 				.then(response => {
 					const { data } = response;
-					console.log("venues: ", data);
 					this.setState({ venues: data });
 				})
 				.catch(error => {
@@ -146,7 +154,6 @@ class EventsUpdate extends Component {
 	}
 
 	createNewEvent(params, onSuccess) {
-		console.log(JSON.stringify(params));
 		api()
 			.post("/events", params)
 			.then(response => {
@@ -193,7 +200,10 @@ class EventsUpdate extends Component {
 		const eventDetails = {
 			name,
 			venue_id: venueId,
-			event_start: moment.utc(eventDate).format()
+			event_start: moment
+				.utc(eventDate)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //This format --> "2018-09-18T23:56:04"
+			organization_id: organizationId
 		};
 
 		//If we're updating an existing venue
@@ -210,19 +220,14 @@ class EventsUpdate extends Component {
 			return;
 		}
 
-		this.createNewEvent(
-			{ ...eventDetails, organization_id: organizationId }, //TODO add orgId here
-			id => {
-				this.updateVenue(id, eventDetails, id => {
-					notifications.show({
-						message: "Event created",
-						variant: "success"
-					});
+		this.createNewEvent(eventDetails, id => {
+			notifications.show({
+				message: "Event created",
+				variant: "success"
+			});
 
-					this.props.history.push("/admin/events");
-				});
-			}
-		);
+			this.props.history.push("/admin/events");
+		});
 	}
 
 	renderOrganizations() {

@@ -90,6 +90,12 @@ class Routes extends Component {
 							path="/admin/events/create"
 							component={AdminEventsUpdate}
 						/>
+						<Route
+							exact
+							path="/admin/events/:id"
+							component={AdminEventsUpdate}
+						/>
+
 						<Route component={NotFound} />
 					</Switch>
 				</Container>
