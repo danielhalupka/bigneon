@@ -190,6 +190,8 @@ class EventsUpdate extends Component {
 			return false;
 		}
 
+		this.setState({ isSubmitting: true });
+
 		const { eventId, name, eventDate, organizationId, venueId } = this.state;
 
 		const eventDetails = {
