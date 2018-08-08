@@ -48,8 +48,6 @@ class EventsUpdate extends Component {
 		const { eventId } = this.state;
 
 		if (eventId) {
-			//TODO get all fields required, not just name
-
 			api()
 				.get(`/events/${eventId}`)
 				.then(response => {
@@ -141,8 +139,6 @@ class EventsUpdate extends Component {
 		if (!eventDate) {
 			errors.eventDate = "Specify the event date.";
 		}
-
-		//TODO validte additional fields
 
 		this.setState({ errors });
 
