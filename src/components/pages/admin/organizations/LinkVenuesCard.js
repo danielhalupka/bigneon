@@ -37,7 +37,11 @@ class LinkVenuesCard extends Component {
 	}
 
 	componentDidMount() {
-		const { organizationId } = this.props;
+		this.loadAllVenues();
+		this.loadLinkedVenues();
+	}
+
+	loadAllVenues() {
 		api()
 			.get(`/venues`)
 			.then(response => {
@@ -51,6 +55,10 @@ class LinkVenuesCard extends Component {
 					variant: "error"
 				});
 			});
+	}
+
+	loadLinkedVenues() {
+		const { organizationId } = this.props;
 
 		api()
 			.get(`/venues/organizations/${organizationId}`)
@@ -116,6 +124,8 @@ class LinkVenuesCard extends Component {
 					message: "Venue linked to organization.",
 					variant: "success"
 				});
+
+				this.loadLinkedVenues();
 			})
 			.catch(error => {
 				console.error(error);
@@ -170,7 +180,7 @@ class LinkVenuesCard extends Component {
 					<CardContent>
 						{this.renderVenues()}
 
-						{linkedVenues.map((id, name) => (
+						{linkedVenues.map(({ id, name }) => (
 							<Typography key={id} variant="body1">
 								{name}
 							</Typography>
