@@ -5,8 +5,8 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
+import LinkVenuesCard from "./LinkVenuesCard";
 import InputGroup from "../../../common/form/InputGroup";
-
 import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
@@ -366,12 +366,24 @@ class OrganizationsUpdate extends Component {
 										style={{ marginRight: 10 }}
 										customClassName="callToAction"
 									>
-										{isSubmitting ? "Creating..." : "Create"}
+										{isSubmitting
+											? organizationId
+												? "Creating..."
+												: "Updating..."
+											: organizationId
+												? "Update"
+												: "Create"}
 									</Button>
 								</CardActions>
 							</form>
 						</Card>
 					</Grid>
+
+					{organizationId ? (
+						<Grid item xs={12} sm={10} lg={8}>
+							<LinkVenuesCard organizationId={organizationId} />
+						</Grid>
+					) : null}
 				</Grid>
 			</div>
 		);

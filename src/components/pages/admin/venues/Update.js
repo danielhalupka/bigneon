@@ -8,7 +8,6 @@ import Card from "@material-ui/core/Card";
 import InputGroup from "../../../common/form/InputGroup";
 import LocationInputGroup from "../../../common/form/LocationInputGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
-
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
@@ -357,7 +356,13 @@ class VenuesUpdate extends Component {
 										style={{ marginRight: 10 }}
 										customClassName="callToAction"
 									>
-										{isSubmitting ? "Creating..." : "Create"}
+										{isSubmitting
+											? venueId
+												? "Creating..."
+												: "Updating..."
+											: venueId
+												? "Update"
+												: "Create"}
 									</Button>
 								</CardActions>
 							</form>

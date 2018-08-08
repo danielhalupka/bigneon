@@ -24,6 +24,8 @@ const styles = theme => {
 
 class LocationInputGroup extends React.Component {
 	onSelect(address) {
+		console.log("address");
+		console.log(address);
 		const {
 			onAddressChange,
 			onLatLngResult,
@@ -35,6 +37,8 @@ class LocationInputGroup extends React.Component {
 
 		geocodeByAddress(address)
 			.then(results => {
+				console.log("results");
+				console.log(results);
 				onFullResult(results[0]);
 				return getLatLng(results[0]);
 			})
