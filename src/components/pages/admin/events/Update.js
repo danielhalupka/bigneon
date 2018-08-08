@@ -31,10 +31,6 @@ class EventsUpdate extends Component {
 			eventId = props.match.params.id;
 		}
 
-		// pub name: String,
-		// pub organization_id: Uuid,
-		// pub venue_id: Uuid,
-		// pub event_start: NaiveDateTime,
 		this.state = {
 			eventId,
 			name: "",
@@ -108,7 +104,6 @@ class EventsUpdate extends Component {
 				.get(`/venues`)
 				.then(response => {
 					const { data } = response;
-					console.log("venues: ", data);
 					this.setState({ venues: data });
 				})
 				.catch(error => {
@@ -159,7 +154,6 @@ class EventsUpdate extends Component {
 	}
 
 	createNewEvent(params, onSuccess) {
-		console.log(JSON.stringify(params));
 		api()
 			.post("/events", params)
 			.then(response => {
