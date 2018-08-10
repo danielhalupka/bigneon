@@ -8,7 +8,7 @@ Clone and run:
 git clone https://github.com/big-neon/bn-web.git
 cd bn-web
 npm install
-cp sample.env .env
+cp env.sample .env
 npm run start
 ```
 
