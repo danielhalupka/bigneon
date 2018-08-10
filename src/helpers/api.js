@@ -6,7 +6,7 @@ export default (options = {}) => {
 
 	//If they didn't specify to use the token, assume true
 	if (auth || auth === undefined) {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("access_token");
 		if (token) {
 			headers = {
 				Authorization: `Bearer ${token}`

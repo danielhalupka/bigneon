@@ -13,7 +13,7 @@ class User {
 
 	@action
 	refreshUser(onResult = null) {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("access_token");
 		if (!token) {
 			this.onLogout();
 			return;
@@ -47,17 +47,36 @@ class User {
 			})
 			.catch(error => {
 				console.error(error);
-				//If there's no repsonse status, assume the pre flight failed because the token is invalid.
-				//Idealy the api should still return a status in the response when this happens
-				if (!error.response || error.response.status == undefined) {
+				//TODO if we get a 401, try refresh the token and then try this all again. But don't create a recursive loop.
+				//If we get a 401, assume the token expired
+				if (error.response && error.response.status === 401) {
 					console.log("Unauthorized, logging out.");
 					notifications.show({ message: "Session expired", variant: "info" });
+					this.onLogout();
 				} else {
-					console.log("refreshUser");
-					console.error(error);
 					notifications.show({ message: error.message, variant: "error" });
 				}
-				this.onLogout();
+			});
+	}
+
+	@action
+	refreshToken(onSuccess, onError) {
+		const refresh_token = localStorage.getItem("access_token");
+		if (!refresh_token) {
+			onError("Missing refresh token.");
+			return;
+		}
+
+		api({ auth: false })
+			.post("/auth/token/refresh", { refresh_token })
+			.then(response => {
+				const { access_token, refresh_token } = response.data;
+				console.log(response.data);
+				onSuccess();
+			})
+			.catch(error => {
+				console.error(error);
+				onError(error);
 			});
 	}
 
@@ -71,7 +90,7 @@ class User {
 		this.phone = "";
 		this.roles = [];
 
-		localStorage.removeItem("token");
+		localStorage.removeItem("access_token");
 
 		//If they logged in with facebook, kill that session also
 		if (window.FB) {
