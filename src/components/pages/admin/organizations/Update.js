@@ -274,7 +274,6 @@ class OrganizationsUpdate extends Component {
 		//If a OrgOwner is editing his own organization don't allow him to change the owner email
 		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
 
-		const buttonText = organizationId ? {action: 'Update', acting: 'Updating...'} :{action: 'Create', acting: 'Creating...'}
 		return (
 			<div>
 				<Typography variant="display3">
