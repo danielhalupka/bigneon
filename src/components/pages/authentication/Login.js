@@ -86,10 +86,11 @@ class Login extends Component {
 			})
 			.then(response => {
 				this.setState({ isSubmitting: false });
-
-				const { access_token } = response.data;
+				const { access_token, refresh_token } = response.data;
 				if (access_token) {
-					localStorage.setItem("token", access_token);
+					localStorage.setItem("access_token", access_token);
+					localStorage.setItem("refresh_token", refresh_token);
+
 					//Pull user data with our new token
 					user.refreshUser(() => {
 						this.props.history.push("/dashboard");
