@@ -25,7 +25,8 @@
 		"react/jsx-no-undef": "error"
 	},
 	"env": {
-		"browser": true
+		"browser": true,
+		"es6": true
 	},
 	"globals": {
 		"__DEV__": true,
