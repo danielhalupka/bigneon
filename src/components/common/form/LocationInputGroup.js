@@ -11,7 +11,7 @@ import PlacesAutocomplete, {
 	getLatLng
 } from "react-places-autocomplete";
 import InputGroup from "../../common/form/InputGroup";
-
+import AddressBlock from "../../common/form/AddressBlock";
 import {primaryHex} from "../../styles/theme";
 
 const styles = theme => {
@@ -32,20 +32,32 @@ class LocationInputGroup extends React.Component {
 			onError
 		} = this.props;
 
-		onAddressChange(address);
 
-		geocodeByAddress(address)
-			.then(results => {
-				onFullResult(results[0]);
-				return getLatLng(results[0]);
-			})
-			.then(latLng => {
-				onLatLngResult(latLng);
-			})
-			.catch(error => onError(error));
+
+		if (process.env.REACT_APP_GOOGLE_PLACES_API_KEY) {
+			onAddressChange(address);
+			geocodeByAddress(address)
+				.then(results => {
+					onFullResult(results[0]);
+					return getLatLng(results[0]);
+				})
+				.then(latLng => {
+					onLatLngResult(latLng);
+				})
+				.catch(error => onError(error));
+		} else {
+			onAddressChange(address.address);
+			onFullResult([address]);
+			onLatLngResult({
+				lat: address.latitude,
+				lng: address.longitude
+			});
+		}
+
 	}
 
 	MissingGoogle() {
+		const addressBlock = {};
 		const {
 			address,
 			placeholder,
@@ -57,13 +69,11 @@ class LocationInputGroup extends React.Component {
 		} = this.props;
 		return (
 			<div>
-				<InputGroup
-					value={address}
-					name="name"
-					label="Address"
-					type="text"
-					onChange={e => onAddressChange(e.target.value)}
+				<AddressBlock
+					address={addressBlock}
+					onAddressChange={this.onSelect.bind(this)}
 				/>
+				{JSON.stringify(addressBlock)}
 			</div>
 		);
 	}
@@ -163,8 +173,10 @@ class LocationInputGroup extends React.Component {
 	render() {
 		if (process.env.REACT_APP_GOOGLE_PLACES_API_KEY) {
 			return this.Google();
+		} else {
+			return this.MissingGoogle();
 		}
-		return this.MissingGoogle();
+
 	}
 }
 
