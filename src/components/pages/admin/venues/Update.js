@@ -65,7 +65,6 @@ class VenuesUpdate extends Component {
 						phone
 					} = response.data;
 
-					console.log(response.data);
 					this.setState({
 						name: name || "",
 						address: address || "",
@@ -223,14 +222,12 @@ class VenuesUpdate extends Component {
 		this.createNewVenue(
 			{ ...venueDetails, organization_id: organizationId },
 			id => {
-				this.updateVenue(id, venueDetails, id => {
-					notifications.show({
-						message: "Venue created",
-						variant: "success"
-					});
-
-					this.props.history.push("/admin/venues");
+				notifications.show({
+					message: "Venue created",
+					variant: "success"
 				});
+
+				this.props.history.push("/admin/venues");
 			}
 		);
 	}
