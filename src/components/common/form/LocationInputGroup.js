@@ -2,7 +2,7 @@
 //Enable: Geolocation API, Maps JavaScript API, Places API for Web, Geocoding API
 import React from "react";
 import PropTypes from "prop-types";
-import { Typography, withStyles } from "@material-ui/core";
+import {Typography, withStyles} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
@@ -10,8 +10,9 @@ import PlacesAutocomplete, {
 	geocodeByAddress,
 	getLatLng
 } from "react-places-autocomplete";
+import AddressBlock from "../../common/form/AddressBlock";
+import {primaryHex} from "../../styles/theme";
 
-import { primaryHex } from "../../styles/theme";
 
 const styles = theme => {
 	return {
@@ -23,9 +24,8 @@ const styles = theme => {
 };
 
 class LocationInputGroup extends React.Component {
-	onSelect(address) {
-		console.log("address");
-		console.log(address);
+
+	onSelect(address, addressBlock) {
 		const {
 			onAddressChange,
 			onLatLngResult,
@@ -33,12 +33,16 @@ class LocationInputGroup extends React.Component {
 			onError
 		} = this.props;
 
-		onAddressChange(address);
 
-		geocodeByAddress(address)
+		let usingGoogleMaps = !!process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
+		let geocodeByAddressPromise = usingGoogleMaps ? geocodeByAddress :
+			(address) => new Promise((resolve, reject) => {
+				resolve(addressBlock);
+			}) ;
+
+		onAddressChange(address);
+		geocodeByAddressPromise(address)
 			.then(results => {
-				console.log("results");
-				console.log(results);
 				onFullResult(results[0]);
 				return getLatLng(results[0]);
 			})
@@ -46,9 +50,27 @@ class LocationInputGroup extends React.Component {
 				onLatLngResult(latLng);
 			})
 			.catch(error => onError(error));
+
 	}
 
-	render() {
+
+	renderMissingGoogle() {
+		const {
+			addressBlock,
+		} = this.props;
+		return (
+			<div>
+				<AddressBlock
+					address={addressBlock}
+					onChange={this.onSelect.bind(this)}
+					returnGoogleObject={true}
+				/>
+			</div>
+		);
+	}
+
+	renderGoogle() {
+
 		const {
 			address,
 			placeholder,
@@ -62,7 +84,6 @@ class LocationInputGroup extends React.Component {
 		if (window.google === undefined) {
 			return false;
 		}
-
 		return (
 			<div>
 				<PlacesAutocomplete
@@ -71,12 +92,12 @@ class LocationInputGroup extends React.Component {
 					onSelect={this.onSelect.bind(this)}
 					onError={onError}
 				>
+
 					{({
 						getInputProps,
 						suggestions,
 						getSuggestionItemProps,
-						loading
-					}) => (
+						loading}) => (
 						<div>
 							<FormControl
 								className={classes.formControl}
@@ -99,7 +120,7 @@ class LocationInputGroup extends React.Component {
 
 							<div className="autocomplete-dropdown-container">
 								{loading && (
-									<div style={{ marginTop: 5, marginBottom: 5 }}>
+									<div style={{marginTop: 5, marginBottom: 5}}>
 										<Typography variant="caption">Loading...</Typography>
 									</div>
 								)}
@@ -109,8 +130,8 @@ class LocationInputGroup extends React.Component {
 										: "suggestion-item";
 									// inline style for demonstration purpose
 									const style = suggestion.active
-										? { backgroundColor: primaryHex, cursor: "pointer" }
-										: { backgroundColor: "transparent", cursor: "pointer" };
+										? {backgroundColor: primaryHex, cursor: "pointer"}
+										: {backgroundColor: "transparent", cursor: "pointer"};
 									return (
 										<div
 											{...getSuggestionItemProps(suggestion, {
@@ -125,9 +146,9 @@ class LocationInputGroup extends React.Component {
 									);
 								})}
 
-								<div style={{ textAlign: "center" }}>
+								<div style={{textAlign: "center"}}>
 									<img
-										style={{ width: "25%", paddingTop: 5 }}
+										style={{width: "25%", paddingTop: 5}}
 										src="https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3_hdpi.png"
 									/>
 								</div>
@@ -138,12 +159,22 @@ class LocationInputGroup extends React.Component {
 			</div>
 		);
 	}
+
+	render() {
+		if (process.env.REACT_APP_GOOGLE_PLACES_API_KEY) {
+			return  this.renderGoogle();
+		} else {
+			return this.renderMissingGoogle();
+		}
+
+	}
 }
 
 LocationInputGroup.propTypes = {
 	label: PropTypes.string,
 	error: PropTypes.string,
 	address: PropTypes.string.isRequired,
+	addressBlock: PropTypes.object,
 	placeholder: PropTypes.string,
 	searchTypes: PropTypes.array,
 	onError: PropTypes.func.isRequired,
