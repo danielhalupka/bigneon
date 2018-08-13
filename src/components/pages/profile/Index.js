@@ -25,7 +25,8 @@ class Profile extends Component {
 		super(props);
 
 		this.state = {
-			name: "",
+			firstName: "",
+			lastName: "",
 			email: "",
 			phone: "",
 			isSubmitting: false,
@@ -36,15 +37,17 @@ class Profile extends Component {
 	componentDidMount() {
 		//Initially load from current store
 		this.setState({
-			name: user.name,
+			firstName: user.firstName,
+			lastName: user.lastName,
 			email: user.email,
 			phone: user.phone
 		});
 
 		//Then load from API for the freshest data
-		user.refreshUser(({ name, email, phone }) =>
+		user.refreshUser(({ firstName, lastName, email, phone }) =>
 			this.setState({
-				name: user.name,
+				firstName: user.firstName,
+				lastName: user.lastName,
 				email: user.email,
 				phone: user.phone
 			})
@@ -57,12 +60,16 @@ class Profile extends Component {
 			return true;
 		}
 
-		const { name, email, phone } = this.state;
+		const { firstName, lastName, email, phone } = this.state;
 
 		const errors = {};
 
-		if (!name) {
-			errors.name = "Missing name.";
+		if (!firstName) {
+			errors.firstName = "Missing first name.";
+		}
+
+		if (!lastName) {
+			errors.lastName = "Missing last name.";
 		}
 
 		if (!email) {
@@ -89,7 +96,7 @@ class Profile extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { name, email, phone } = this.state;
+		const { firstName, lastName, email, phone } = this.state;
 
 		this.submitAttempted = true;
 
@@ -106,7 +113,14 @@ class Profile extends Component {
 	render() {
 		const { classes } = this.props;
 
-		const { name, email, phone, errors, isSubmitting } = this.state;
+		const {
+			firstName,
+			lastName,
+			email,
+			phone,
+			errors,
+			isSubmitting
+		} = this.state;
 
 		return (
 			<div>
@@ -122,12 +136,21 @@ class Profile extends Component {
 							>
 								<CardContent>
 									<InputGroup
-										error={errors.name}
-										value={name}
-										name="name"
-										label="Name"
+										error={errors.firstName}
+										value={firstName}
+										name="firstName"
+										label="First name"
 										type="text"
-										onChange={e => this.setState({ name: e.target.value })}
+										onChange={e => this.setState({ firstName: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+									<InputGroup
+										error={errors.lastName}
+										value={lastName}
+										name="lastName"
+										label="Last name"
+										type="text"
+										onChange={e => this.setState({ lastName: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
 									<InputGroup

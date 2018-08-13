@@ -22,7 +22,8 @@ class Signup extends Component {
 		super(props);
 
 		this.state = {
-			name: "",
+			firstName: "",
+			lastName: "",
 			email: "",
 			phone: "",
 			password: "",
@@ -38,12 +39,23 @@ class Signup extends Component {
 			return true;
 		}
 
-		const { name, email, phone, password, confirmPassword } = this.state;
+		const {
+			firstName,
+			lastName,
+			email,
+			phone,
+			password,
+			confirmPassword
+		} = this.state;
 
 		const errors = {};
 
-		if (!name) {
-			errors.name = "Missing name.";
+		if (!firstName) {
+			errors.firstName = "Missing first name.";
+		}
+
+		if (!lastName) {
+			errors.lastName = "Missing last name.";
 		}
 
 		if (!email) {
@@ -118,7 +130,7 @@ class Signup extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { name, email, phone, password } = this.state;
+		const { firstName, lastName, email, phone, password } = this.state;
 
 		this.submitAttempted = true;
 
@@ -132,7 +144,8 @@ class Signup extends Component {
 			auth: false
 		})
 			.post("/users/register", {
-				name,
+				first_name: firstName,
+				last_name: lastName,
 				email,
 				phone,
 				password
@@ -152,7 +165,8 @@ class Signup extends Component {
 
 	render() {
 		const {
-			name,
+			firstName,
+			lastName,
 			email,
 			phone,
 			password,
@@ -176,12 +190,21 @@ class Signup extends Component {
 						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
 
 						<InputGroup
-							error={errors.name}
-							value={name}
-							name="name"
-							label="Name"
+							error={errors.firstName}
+							value={firstName}
+							name="firstName"
+							label="First name"
 							type="text"
-							onChange={e => this.setState({ name: e.target.value })}
+							onChange={e => this.setState({ firstName: e.target.value })}
+							onBlur={this.validateFields.bind(this)}
+						/>
+						<InputGroup
+							error={errors.lastName}
+							value={lastName}
+							name="lastName"
+							label="Last name"
+							type="text"
+							onChange={e => this.setState({ lastName: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
 						/>
 						<InputGroup
