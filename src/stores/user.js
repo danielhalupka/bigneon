@@ -19,49 +19,61 @@ class User {
 			return;
 		}
 
-		api()
-			.get("/users/me")
-			.then(response => {
-				const { data } = response;
+		//Every time the user is loaded, refresh the token first. This is always called on the first load.
+		//There could be a better way, open to suggestions.
+		this.refreshToken(
+			() => {
+				api()
+					.get("/users/me")
+					.then(response => {
+						const { data } = response;
 
-				const {
-					user: { id, name, email, phone },
-					roles
-				} = data;
-				const jwtData = decodeJWT(token);
+						const {
+							user: { id, name, email, phone },
+							roles
+						} = data;
+						const jwtData = decodeJWT(token);
 
-				const {
-					sub //UserId
-				} = jwtData;
+						const {
+							sub //UserId
+						} = jwtData;
 
-				this.token = token;
-				this.id = id;
-				this.name = name;
-				this.email = email;
-				this.phone = phone;
-				this.roles = roles;
+						this.token = token;
+						this.id = id;
+						this.name = name;
+						this.email = email;
+						this.phone = phone;
+						this.roles = roles;
 
-				if (onResult) {
-					onResult({ id, name, email, phone });
-				}
-			})
-			.catch(error => {
-				console.error(error);
-				//TODO if we get a 401, try refresh the token and then try this all again. But don't create a recursive loop.
-				//If we get a 401, assume the token expired
-				if (error.response && error.response.status === 401) {
-					console.log("Unauthorized, logging out.");
-					notifications.show({ message: "Session expired", variant: "info" });
-					this.onLogout();
-				} else {
-					notifications.show({ message: error.message, variant: "error" });
-				}
-			});
+						if (onResult) {
+							onResult({ id, name, email, phone });
+						}
+					})
+					.catch(error => {
+						console.error(error);
+						//TODO if we get a 401, try refresh the token and then try this all again. But don't create a recursive loop.
+						//If we get a 401, assume the token expired
+						if (error.response && error.response.status === 401) {
+							console.log("Unauthorized, logging out.");
+							notifications.show({
+								message: "Session expired",
+								variant: "info"
+							});
+							this.onLogout();
+						} else {
+							notifications.show({ message: error.message, variant: "error" });
+						}
+					});
+			},
+			e => {
+				console.log(e);
+			}
+		);
 	}
 
 	@action
 	refreshToken(onSuccess, onError) {
-		const refresh_token = localStorage.getItem("access_token");
+		const refresh_token = localStorage.getItem("refresh_token");
 		if (!refresh_token) {
 			onError("Missing refresh token.");
 			return;
@@ -71,7 +83,6 @@ class User {
 			.post("/auth/token/refresh", { refresh_token })
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
-				console.log(response.data);
 				onSuccess();
 			})
 			.catch(error => {
