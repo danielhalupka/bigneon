@@ -83,7 +83,6 @@ class User {
 			.post("/auth/token/refresh", { refresh_token })
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
-				console.log(response.data);
 				onSuccess();
 			})
 			.catch(error => {
