@@ -6,7 +6,8 @@ import api from "../helpers/api";
 class User {
 	@observable id = null;
 	@observable token = null;
-	@observable name = "";
+	@observable firstName = "";
+	@observable lastName = "";
 	@observable email = "";
 	@observable phone = "";
 	@observable roles = [];
@@ -29,7 +30,7 @@ class User {
 						const { data } = response;
 
 						const {
-							user: { id, name, email, phone },
+							user: { id, first_name, last_name, email, phone },
 							roles
 						} = data;
 						const jwtData = decodeJWT(token);
@@ -40,13 +41,20 @@ class User {
 
 						this.token = token;
 						this.id = id;
-						this.name = name;
+						this.firstName = first_name;
+						this.lastName = last_name;
 						this.email = email;
 						this.phone = phone;
 						this.roles = roles;
 
 						if (onResult) {
-							onResult({ id, name, email, phone });
+							onResult({
+								id,
+								firstName: first_name,
+								lastName: last_name,
+								email,
+								phone
+							});
 						}
 					})
 					.catch(error => {
@@ -96,7 +104,8 @@ class User {
 	onLogout() {
 		this.token = false;
 		this.id = null;
-		this.name = name;
+		this.firstName = "";
+		this.lastName = "";
 		this.email = "";
 		this.phone = "";
 		this.roles = [];
