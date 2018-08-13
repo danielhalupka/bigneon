@@ -91,6 +91,8 @@ class User {
 			.post("/auth/token/refresh", { refresh_token })
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
+				localStorage.setItem("access_token", access_token);
+				localStorage.setItem("refresh_token", refresh_token);
 				onSuccess();
 			})
 			.catch(error => {
