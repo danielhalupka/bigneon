@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Typography, withStyles} from "@material-ui/core";
+import React, { Component } from "react";
+import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -11,7 +11,7 @@ import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
-import {validEmail, validPhone} from "../../../../validators";
+import { validEmail, validPhone } from "../../../../validators";
 import LocationInputGroup from "../../../common/form/LocationInputGroup";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 
@@ -52,7 +52,7 @@ class OrganizationsUpdate extends Component {
 		//If we're editing an existing org then load the current details
 		//"/organizations/{id}"
 
-		const {organizationId} = this.state;
+		const { organizationId } = this.state;
 
 		if (organizationId) {
 			api()
@@ -82,7 +82,7 @@ class OrganizationsUpdate extends Component {
 				})
 				.catch(error => {
 					console.error(error);
-					this.setState({isSubmitting: false});
+					this.setState({ isSubmitting: false });
 					notifications.show({
 						message: "Loading organization details failed.",
 						variant: "error"
@@ -97,7 +97,7 @@ class OrganizationsUpdate extends Component {
 			return true;
 		}
 
-		const {organizationId, name, email, address, phone} = this.state;
+		const { organizationId, name, email, address, phone } = this.state;
 
 		const errors = {};
 
@@ -123,7 +123,7 @@ class OrganizationsUpdate extends Component {
 			errors.phone = "Invalid phone number.";
 		}
 
-		this.setState({errors});
+		this.setState({ errors });
 
 		if (Object.keys(errors).length > 0) {
 			return false;
@@ -136,12 +136,12 @@ class OrganizationsUpdate extends Component {
 		api()
 			.post("/organizations", params)
 			.then(response => {
-				const {id} = response.data;
+				const { id } = response.data;
 				onSuccess(id);
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({isSubmitting: false});
+				this.setState({ isSubmitting: false });
 				notifications.show({
 					message: "Create organization failed.",
 					variant: "error"
@@ -151,18 +151,18 @@ class OrganizationsUpdate extends Component {
 
 	updateOrganization(id, params, onSuccess) {
 		console.log(`/organizations/${id}`);
-		console.log(JSON.stringify({...params, id}));
+		console.log(JSON.stringify({ ...params, id }));
 
 		//TODO REMOVE ID
 		//Remove owner_user_id
 		api()
-			.patch(`/organizations/${id}`, {...params})
+			.patch(`/organizations/${id}`, { ...params })
 			.then(() => {
 				onSuccess(id);
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({isSubmitting: false});
+				this.setState({ isSubmitting: false });
 				notifications.show({
 					message: "Update organization failed.",
 					variant: "error"
@@ -204,10 +204,8 @@ class OrganizationsUpdate extends Component {
 
 		//If we're updating an existing org
 		if (organizationId) {
-			//orgDetails = { ...orgDetails, owner_user_id };
-
 			this.updateOrganization(organizationId, orgDetails, () => {
-				this.setState({isSubmitting: false});
+				this.setState({ isSubmitting: false });
 
 				notifications.show({
 					message: "Organization updated",
@@ -228,29 +226,25 @@ class OrganizationsUpdate extends Component {
 				}
 			})
 			.then(response => {
-				const {id} = response.data;
+				const { id } = response.data;
 				//Got the user ID, now create the organization
-				//orgDetails = { ...orgDetails, owner_user_id: id };
-
 				this.createNewOrganization(
-					{...orgDetails, owner_user_id: id},
+					{ ...orgDetails, owner_user_id: id },
 					organizationId => {
-						this.updateOrganization(organizationId, orgDetails, () => {
-							this.setState({isSubmitting: false});
+						this.setState({ isSubmitting: false });
 
-							notifications.show({
-								message: "Organization created",
-								variant: "success"
-							});
-
-							this.props.history.push("/admin/organizations");
+						notifications.show({
+							message: "Organization created",
+							variant: "success"
 						});
+
+						this.props.history.push("/admin/organizations");
 					}
 				);
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({isSubmitting: false});
+				this.setState({ isSubmitting: false });
 				notifications.show({
 					message: "Failed to locate user with that email address.",
 					variant: "error"
@@ -264,13 +258,13 @@ class OrganizationsUpdate extends Component {
 			owner_user_id,
 			name,
 			email,
-			address = '',
-			city = '',
-			state = '',
-			country = '',
-			zip = '',
-			latitude = '',
-			longitude = '',
+			address = "",
+			city = "",
+			state = "",
+			country = "",
+			zip = "",
+			latitude = "",
+			longitude = "",
 			phone,
 			errors,
 			isSubmitting
@@ -282,9 +276,9 @@ class OrganizationsUpdate extends Component {
 			country,
 			zip,
 			latitude,
-			longitude,
+			longitude
 		};
-		const {classes} = this.props;
+		const { classes } = this.props;
 
 		//If a OrgOwner is editing his own organization don't allow him to change the owner email
 		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
@@ -310,7 +304,7 @@ class OrganizationsUpdate extends Component {
 										name="name"
 										label="Organization name"
 										type="text"
-										onChange={e => this.setState({name: e.target.value})}
+										onChange={e => this.setState({ name: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
 
@@ -321,7 +315,7 @@ class OrganizationsUpdate extends Component {
 											name="email"
 											label="Organization owner email address"
 											type="email"
-											onChange={e => this.setState({email: e.target.value})}
+											onChange={e => this.setState({ email: e.target.value })}
 											onBlur={this.validateFields.bind(this)}
 										/>
 									) : null}
@@ -332,7 +326,7 @@ class OrganizationsUpdate extends Component {
 										name="phone"
 										label="Phone number"
 										type="text"
-										onChange={e => this.setState({phone: e.target.value})}
+										onChange={e => this.setState({ phone: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
 
@@ -348,7 +342,7 @@ class OrganizationsUpdate extends Component {
 												variant: "error"
 											});
 										}}
-										onAddressChange={address => this.setState({address})}
+										onAddressChange={address => this.setState({ address })}
 										onLatLngResult={latLng => {
 											console.log("latLng", latLng);
 											this.setState({
@@ -375,7 +369,7 @@ class OrganizationsUpdate extends Component {
 												"postal_code"
 											);
 
-											this.setState({city, state, country, zip});
+											this.setState({ city, state, country, zip });
 										}}
 									/>
 								</CardContent>
@@ -383,7 +377,7 @@ class OrganizationsUpdate extends Component {
 									<Button
 										disabled={isSubmitting}
 										type="submit"
-										style={{marginRight: 10}}
+										style={{ marginRight: 10 }}
 										customClassName="callToAction"
 									>
 										{isSubmitting
@@ -401,7 +395,7 @@ class OrganizationsUpdate extends Component {
 
 					{organizationId ? (
 						<Grid item xs={12} sm={10} lg={8}>
-							<LinkVenuesCard organizationId={organizationId}/>
+							<LinkVenuesCard organizationId={organizationId} />
 						</Grid>
 					) : null}
 				</Grid>
