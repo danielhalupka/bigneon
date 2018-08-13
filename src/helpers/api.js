@@ -6,10 +6,10 @@ export default (options = {}) => {
 
 	//If they didn't specify to use the token, assume true
 	if (auth || auth === undefined) {
-		const token = localStorage.getItem("access_token");
-		if (token) {
+		const accessToken = localStorage.getItem("access_token");
+		if (accessToken) {
 			headers = {
-				Authorization: `Bearer ${token}`
+				Authorization: `Bearer ${accessToken}`
 			};
 		}
 		//TODO if the token is missing find a way to gracefully throw an error globally without adding a try/catch to each api call
