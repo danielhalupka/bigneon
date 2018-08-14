@@ -173,7 +173,7 @@ class Artist extends Component {
 		return (
 			<div>
 				<Typography variant="display3">
-					{artistId ? "Update" : "Create"} artist
+					{artistId ? "Update" : "New"} artist
 				</Typography>
 
 				<Grid container spacing={24}>
