@@ -30,11 +30,7 @@ class NotificationList extends React.Component {
 		};
 		this.buttonRef = React.createRef();
 	}
-	componentDidMount() {
-		console.log(this.state.id);
-		const eleme = document.getElementById(this.state.id);
-		console.log(eleme);
-	}
+	componentDidMount() {}
 
 	handleMenu(event) {
 		this.setState({ anchorEl: event.currentTarget });
@@ -56,7 +52,7 @@ class NotificationList extends React.Component {
 	}
 
 	render() {
-		const { classes, icon, color = "default", startOpen, id } = this.props;
+		const { classes, icon, color = "default" } = this.props;
 
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
@@ -68,20 +64,6 @@ class NotificationList extends React.Component {
 					aria-owns={open ? "menu-appbar" : null}
 					aria-haspopup="true"
 					onClick={this.handleMenu.bind(this)}
-					key={id}
-					// component={c => {
-					// 	console.log(c);
-					// 	if (startOpen) {
-					// 		// c.onClick();
-					// 	}
-					// 	return c;
-					// }}
-					action={event => {
-						console.log("ads");
-						if (startOpen) {
-							console.log(event);
-						}
-					}}
 					color={color}
 				>
 					{icon}
@@ -111,8 +93,7 @@ NotificationList.propTypes = {
 	classes: PropTypes.object.isRequired,
 	items: PropTypes.array.isRequired,
 	icon: PropTypes.any,
-	color: PropTypes.string,
-	startOpen: PropTypes.bool
+	color: PropTypes.string
 };
 
 export default withStyles(styles)(NotificationList);

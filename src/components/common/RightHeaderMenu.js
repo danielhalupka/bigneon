@@ -66,16 +66,16 @@ class RightHeaderMenu extends React.Component {
 			});
 			if (items.length) {
 				items.unshift("Missing Environment keys");
+				return (
+					<NotificationList
+						icon={<Warning />}
+						items={items}
+						classes={classes}
+						color={"secondary"}
+					/>
+				);
 			}
-			return (
-				<NotificationList
-					icon={<Warning />}
-					items={items}
-					classes={classes}
-					color={"secondary"}
-					startOpen={true}
-				/>
-			);
+			
 		}
 		return null;
 	}
