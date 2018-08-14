@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import EventCard from "./Event";
+import api from "../../../../helpers/api";
+import notifications from "../../../../stores/notifications";
 
 const styles = theme => ({
 	subHeading: {
@@ -26,6 +28,20 @@ class Results extends Component {
 	}
 
 	componentDidMount() {
+		api({ auth: false })
+			.get(`/events`)
+			.then(response => {
+				console.log(response.data);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Loading events failed.",
+					variant: "error"
+				});
+			});
+
 		const events = [
 			{
 				id: "1234",

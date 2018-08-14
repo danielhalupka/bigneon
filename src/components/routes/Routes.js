@@ -13,12 +13,12 @@ import Login from "../pages/authentication/Login";
 import Home from "../pages/landing/Index";
 
 //Admin
-import AdminOrganizationsView from "../pages/admin/organizations/View";
-import AdminOrganizationsUpdate from "../pages/admin/organizations/Update";
-import AdminVenuesView from "../pages/admin/venues/View";
-import AdminVenuesUpdate from "../pages/admin/venues/Update";
-import AdminEventsView from "../pages/admin/events/View";
-import AdminEventsUpdate from "../pages/admin/events/Update";
+import AdminOrganizationsList from "../pages/admin/organizations/List";
+import AdminOrganization from "../pages/admin/organizations/Organization";
+import AdminVenuesList from "../pages/admin/venues/List";
+import AdminVenue from "../pages/admin/venues/Venue";
+import AdminEventsList from "../pages/admin/events/List";
+import AdminEvent from "../pages/admin/events/Event";
 
 import user from "../../stores/user";
 
@@ -68,41 +68,25 @@ class Routes extends Component {
 						<Route
 							exact
 							path="/admin/organizations"
-							component={AdminOrganizationsView}
+							component={AdminOrganizationsList}
 						/>
 						<Route
 							exact
 							path="/admin/organizations/create"
-							component={AdminOrganizationsUpdate}
+							component={AdminOrganization}
 						/>
 						<Route
 							exact
 							path="/admin/organizations/:id"
-							component={AdminOrganizationsUpdate}
+							component={AdminOrganization}
 						/>
-						<Route exact path="/admin/venues" component={AdminVenuesView} />
-						<Route
-							exact
-							path="/admin/venues/create"
-							component={AdminVenuesUpdate}
-						/>
-						<Route
-							exact
-							path="/admin/venues/:id"
-							component={AdminVenuesUpdate}
-						/>
+						<Route exact path="/admin/venues" component={AdminVenuesList} />
+						<Route exact path="/admin/venues/create" component={AdminVenue} />
+						<Route exact path="/admin/venues/:id" component={AdminVenue} />
 
-						<Route exact path="/admin/events" component={AdminEventsView} />
-						<Route
-							exact
-							path="/admin/events/create"
-							component={AdminEventsUpdate}
-						/>
-						<Route
-							exact
-							path="/admin/events/:id"
-							component={AdminEventsUpdate}
-						/>
+						<Route exact path="/admin/events" component={AdminEventsList} />
+						<Route exact path="/admin/events/create" component={AdminEvent} />
+						<Route exact path="/admin/events/:id" component={AdminEvent} />
 
 						<Route component={NotFound} />
 					</Switch>
