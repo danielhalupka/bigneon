@@ -181,6 +181,26 @@ class MenuContent extends Component {
 				/>
 
 				<MenuItem
+					icon={<ArtistsIcon />}
+					onClick={() => this.changeOpenMenu("admin-artists")}
+					expandIcon={
+						openMenuItem === "admin-artists" ? <ExpandLess /> : <ExpandMore />
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Artists
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-artists"}
+					classes={classes}
+					items={{
+						All: "/admin/artists",
+						Create: "/admin/artists/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
+
+				<MenuItem
 					icon={<EventsIcon />}
 					onClick={() => this.changeOpenMenu("admin-events")}
 					expandIcon={
