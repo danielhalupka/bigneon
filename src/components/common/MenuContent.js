@@ -371,11 +371,13 @@ class MenuContent extends Component {
 
 		return (
 			<List component="nav">
-				<img
-					style={{ width: "100%", padding: 5 }}
-					src="/images/bn-logo-text.png"
-					alt="Logo"
-				/>
+				<Link to={"/"}>
+					<img
+						style={{ width: "100%", padding: 5 }}
+						src="/images/bn-logo-text.png"
+						alt="Logo"
+					/>
+				</Link>
 
 				{/* 
 					If they're admin, just show those menu options

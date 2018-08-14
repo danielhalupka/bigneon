@@ -4,13 +4,14 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import { Link } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import Button from "../../../common/Button";
 
 const styles = theme => ({
 	card: {
-		maxWidth: 345
+		maxWidth: 400
 	},
 	media: {
 		height: 0,
@@ -18,20 +19,22 @@ const styles = theme => ({
 	}
 });
 
-const EventCard = ({ classes, imgSrc, title, description }) => {
+const EventCard = ({ classes, id, imgSrc, name, description }) => {
 	return (
 		<Card className={classes.card}>
-			<CardMedia className={classes.media} image={imgSrc} title={title} />
+			<CardMedia className={classes.media} image={imgSrc} title={name} />
 			<CardContent>
 				<Typography gutterBottom variant="headline" component="h2">
-					{title}
+					{name}
 				</Typography>
 				<Typography component="p">{description}</Typography>
 			</CardContent>
 			<CardActions>
-				<Button style={{ marginRight: 4 }} customClassName="primary">
-					Details
-				</Button>
+				<Link style={{ textDecoration: "none" }} to={`/events/${id}`}>
+					<Button style={{ marginRight: 4 }} customClassName="primary">
+						Details
+					</Button>
+				</Link>
 
 				<Button customClassName="callToAction">Book now</Button>
 			</CardActions>
@@ -41,7 +44,7 @@ const EventCard = ({ classes, imgSrc, title, description }) => {
 
 EventCard.propTypes = {
 	imgSrc: PropTypes.string.isRequired,
-	title: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired
 };
 
