@@ -260,12 +260,27 @@ class VenuesUpdate extends Component {
 		const {
 			venueId,
 			name,
-			address,
 			phone,
 			organizations,
 			errors,
-			isSubmitting
+			isSubmitting,
+			address = "",
+			city = "",
+			state = "",
+			country = "",
+			zip = "",
+			latitude = "",
+			longitude = ""
 		} = this.state;
+		const addressBlock = {
+			address,
+			city,
+			state,
+			country,
+			zip,
+			latitude,
+			longitude
+		};
 		const { classes } = this.props;
 
 		return (
@@ -309,6 +324,7 @@ class VenuesUpdate extends Component {
 										error={errors.address}
 										label="Venue location"
 										address={address}
+										addressBlock={addressBlock}
 										onError={error => {
 											console.error(error);
 											notifications.show({
@@ -319,6 +335,10 @@ class VenuesUpdate extends Component {
 										onAddressChange={address => this.setState({ address })}
 										onLatLngResult={latLng => {
 											console.log("latLng", latLng);
+											this.setState({
+												latitude: latLng.lat,
+												longitude: latLng.lng
+											});
 										}}
 										onFullResult={result => {
 											console.log(result);
