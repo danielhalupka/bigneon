@@ -15,8 +15,13 @@ import Home from "../pages/landing/Index";
 //Admin
 import AdminOrganizationsList from "../pages/admin/organizations/List";
 import AdminOrganization from "../pages/admin/organizations/Organization";
+
 import AdminVenuesList from "../pages/admin/venues/List";
 import AdminVenue from "../pages/admin/venues/Venue";
+
+import AdminArtistsList from "../pages/admin/artists/List";
+import AdminArtist from "../pages/admin/artists/Artist";
+
 import AdminEventsList from "../pages/admin/events/List";
 import AdminEvent from "../pages/admin/events/Event";
 
@@ -83,6 +88,10 @@ class Routes extends Component {
 						<Route exact path="/admin/venues" component={AdminVenuesList} />
 						<Route exact path="/admin/venues/create" component={AdminVenue} />
 						<Route exact path="/admin/venues/:id" component={AdminVenue} />
+
+						<Route exact path="/admin/artists" component={AdminArtistsList} />
+						<Route exact path="/admin/artists/create" component={AdminArtist} />
+						<Route exact path="/admin/artists/:id" component={AdminArtist} />
 
 						<Route exact path="/admin/events" component={AdminEventsList} />
 						<Route exact path="/admin/events/create" component={AdminEvent} />

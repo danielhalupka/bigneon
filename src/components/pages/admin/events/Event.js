@@ -207,7 +207,7 @@ class Event extends Component {
 		if (eventId) {
 			this.updateEvent(eventId, eventDetails, id => {
 				notifications.show({
-					message: "Event updated",
+					message: "Event updated.",
 					variant: "success"
 				});
 
@@ -219,7 +219,7 @@ class Event extends Component {
 
 		this.createNewEvent(eventDetails, id => {
 			notifications.show({
-				message: "Event created",
+				message: "Event created.",
 				variant: "success"
 			});
 
