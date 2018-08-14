@@ -1,24 +1,35 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
-import moment from "moment";
+import IconButton from "@material-ui/core/IconButton";
+import RemoveIcon from "@material-ui/icons/RemoveCircleOutline";
 
 import InputGroup from "../../../common/form/InputGroup";
-import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
-import SelectGroup from "../../../common/form/SelectGroup";
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
+import { validUrl } from "../../../../validators";
 
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	artistImage: {
+		width: "100%",
+		height: 300,
+		borderRadius: theme.shape.borderRadius
 	}
 });
+
+const SubHeading = ({ children }) => (
+	<Grid item xs={12} sm={12} lg={12} style={{ marginTop: 40 }}>
+		<Typography variant="display1">{children}</Typography>
+	</Grid>
+);
 
 class Artist extends Component {
 	constructor(props) {
@@ -33,7 +44,14 @@ class Artist extends Component {
 		this.state = {
 			artistId,
 			name: "",
-			//TODO add rest of fields when it's added to the model
+			bio: "",
+			website: "",
+			facebookUsername: "",
+			instagramUsername: "",
+			snapchatUsername: "",
+			soundcloud: "",
+			bandcamp: "",
+			youtubeVideos: [""],
 			errors: {},
 			isSubmitting: false
 		};
@@ -47,12 +65,28 @@ class Artist extends Component {
 				.get(`/artists/${artistId}`)
 				.then(response => {
 					const {
-						name
-						//TODO add rest of fields
+						name,
+						bio,
+						website,
+						facebookUsername,
+						instagramUsername,
+						snapchatUsername,
+						soundcloud,
+						bandcamp,
+						youtubeVideos
+						//TODO check what the fields are named when they come from the backend
 					} = response.data;
 
 					this.setState({
-						name: name || ""
+						name: name || "",
+						bio: bio || "",
+						website: website || "",
+						facebookUsername: facebookUsername || "",
+						instagramUsername: instagramUsername || "",
+						snapchatUsername: snapchatUsername || "",
+						soundcloud: soundcloud || "",
+						bandcamp: bandcamp || "",
+						youtubeVideos: youtubeVideos || [""]
 					});
 				})
 				.catch(error => {
@@ -72,7 +106,17 @@ class Artist extends Component {
 			return null;
 		}
 
-		const { name } = this.state;
+		const {
+			name,
+			bio,
+			website,
+			facebookUsername,
+			instagramUsername,
+			snapchatUsername,
+			soundcloud,
+			bandcamp,
+			youtubeVideos
+		} = this.state;
 
 		const errors = {};
 
@@ -80,7 +124,41 @@ class Artist extends Component {
 			errors.name = "Missing artist name.";
 		}
 
-		//TODO add rest of fields
+		if (!bio) {
+			errors.bio = "Missing artist bio.";
+		}
+
+		if (website) {
+			if (!validUrl(website)) {
+				errors.website = "Please enter a valid URL.";
+			}
+		}
+
+		if (soundcloud) {
+			if (!validUrl(soundcloud)) {
+				errors.soundcloud = "Please enter a valid URL.";
+			}
+		}
+
+		if (bandcamp) {
+			if (!validUrl(bandcamp)) {
+				errors.bandcamp = "Please enter a valid URL.";
+			}
+		}
+
+		for (let index = 0; index < youtubeVideos.length; index++) {
+			const url = youtubeVideos[index];
+
+			if (url) {
+				if (!validUrl(url)) {
+					let youtubeVideosErrors = errors.youtubeVideos
+						? errors.youtubeVideos
+						: [];
+					youtubeVideosErrors[index] = "Please enter a valid URL.";
+					errors.youtubeVideos = youtubeVideosErrors;
+				}
+			}
+		}
 
 		this.setState({ errors });
 
@@ -135,12 +213,30 @@ class Artist extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		const { artistId, name } = this.state;
+		const {
+			artistId,
+			name,
+			bio,
+			website,
+			facebookUsername,
+			instagramUsername,
+			snapchatUsername,
+			soundcloud,
+			bandcamp,
+			youtubeVideos
+		} = this.state;
 
 		const artistDetails = {
-			name
+			name,
+			bio,
+			website,
+			facebookUsername,
+			instagramUsername,
+			snapchatUsername,
+			soundcloud,
+			bandcamp,
+			youtubeVideos
 		};
-		//TODO add rest of fields
 
 		//If we're updating an existing venue
 		if (artistId) {
@@ -167,36 +263,222 @@ class Artist extends Component {
 	}
 
 	render() {
-		const { artistId, name, errors, isSubmitting } = this.state;
+		const {
+			artistId,
+			name,
+			bio,
+			website,
+			facebookUsername,
+			instagramUsername,
+			snapchatUsername,
+			soundcloud,
+			bandcamp,
+			youtubeVideos,
+			errors,
+			isSubmitting
+		} = this.state;
 		const { classes } = this.props;
 
 		return (
 			<div>
 				<Typography variant="display3">
-					{artistId ? "Update" : "Create"} artist
+					{artistId ? "Update" : "New"} artist
 				</Typography>
 
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={10} lg={8}>
-						<Card className={classes.paper}>
-							<form
-								noValidate
-								autoComplete="off"
-								onSubmit={this.onSubmit.bind(this)}
-							>
-								<CardContent>
+				<Card className={classes.paper}>
+					<form
+						noValidate
+						autoComplete="off"
+						onSubmit={this.onSubmit.bind(this)}
+					>
+						<CardContent>
+							<Grid container spacing={24}>
+								<Grid item xs={12} sm={4} lg={4}>
+									<CardMedia
+										className={classes.artistImage}
+										image="https://picsum.photos/300/300/?random&blur"
+										title={name}
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={8} lg={8}>
 									<InputGroup
 										error={errors.name}
 										value={name}
 										name="name"
-										label="Artist name"
+										label="Artist"
 										type="text"
 										onChange={e => this.setState({ name: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
-								</CardContent>
 
-								<CardActions>
+									<InputGroup
+										error={errors.bio}
+										value={bio}
+										name="bio"
+										label="Bio"
+										type="text"
+										onChange={e => this.setState({ bio: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+										multiline
+									/>
+								</Grid>
+
+								<SubHeading>Social</SubHeading>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.website}
+										value={website}
+										name="website"
+										label="Website"
+										type="text"
+										onChange={e => this.setState({ website: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+										placeholder="https://artistwebsite.com/"
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.facebookUsername}
+										value={facebookUsername}
+										name="facebookUsername"
+										label="Facebook username"
+										type="text"
+										onChange={e =>
+											this.setState({ facebookUsername: e.target.value })
+										}
+										onBlur={this.validateFields.bind(this)}
+										placeholder="@Facebook"
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.instagramUsername}
+										value={instagramUsername}
+										name="instagramUsername"
+										label="Instagram username"
+										type="text"
+										onChange={e =>
+											this.setState({ instagramUsername: e.target.value })
+										}
+										onBlur={this.validateFields.bind(this)}
+										placeholder="@Instagram"
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.snapchatUsername}
+										value={snapchatUsername}
+										name="snapchatUsername"
+										label="Snapchat username"
+										type="text"
+										onChange={e =>
+											this.setState({ snapchatUsername: e.target.value })
+										}
+										onBlur={this.validateFields.bind(this)}
+										placeholder="@Snapchat"
+									/>
+								</Grid>
+
+								<SubHeading>Music</SubHeading>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.soundcloud}
+										value={soundcloud}
+										name="soundcloud"
+										label="Soundcloud URL"
+										type="text"
+										onChange={e =>
+											this.setState({ soundcloud: e.target.value })
+										}
+										onBlur={this.validateFields.bind(this)}
+										placeholder="https://soundcloud.com/artist"
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.bandcamp}
+										value={bandcamp}
+										name="bandcamp"
+										label="Bandcamp URL"
+										type="text"
+										onChange={e => this.setState({ bandcamp: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+										placeholder="https://artist.bandcamp.com/"
+									/>
+								</Grid>
+
+								<SubHeading>Media</SubHeading>
+
+								{youtubeVideos.map((youtubeUrl, index) => {
+									return (
+										<Grid key={index} item xs={12} sm={6} lg={6}>
+											<div style={{ display: "flex" }}>
+												<InputGroup
+													error={
+														errors.youtubeVideos
+															? errors.youtubeVideos[index]
+															: null
+													}
+													value={youtubeUrl}
+													name={`youtubeUrl-${index}`}
+													label="Youtube video"
+													type="text"
+													onChange={e => {
+														const url = e.target.value;
+														this.setState(currentState => {
+															currentState.youtubeVideos[index] = url;
+															return {
+																youtubeVideos: currentState.youtubeVideos
+															};
+														});
+													}}
+													onBlur={this.validateFields.bind(this)}
+													placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+												/>
+
+												<IconButton
+													style={{ marginTop: 20 }}
+													aria-label="Remove link"
+													onClick={() => {
+														this.setState(currentState => {
+															//Remove just that link
+															currentState.youtubeVideos.splice(index, 1);
+															return {
+																youtubeVideos: currentState.youtubeVideos
+															};
+														}, this.validateFields.bind(this));
+													}}
+												>
+													<RemoveIcon />
+												</IconButton>
+											</div>
+										</Grid>
+									);
+								})}
+								<Grid item xs={12} sm={12} lg={12}>
+									<Button
+										onClick={() => {
+											this.setState(currentState => {
+												const newIndex = currentState.youtubeVideos.length + 1;
+												currentState.youtubeVideos[newIndex] = "";
+												return {
+													youtubeVideos: currentState.youtubeVideos
+												};
+											}, this.validateFields.bind(this));
+										}}
+									>
+										Add another youtube video
+									</Button>
+								</Grid>
+
+								<Grid item xs={12} sm={12} lg={12} style={{ marginTop: 40 }}>
 									<Button
 										disabled={isSubmitting}
 										type="submit"
@@ -209,13 +491,13 @@ class Artist extends Component {
 												: "Updating..."
 											: artistId
 												? "Update"
-												: "Create"}
+												: "Create new artist"}
 									</Button>
-								</CardActions>
-							</form>
-						</Card>
-					</Grid>
-				</Grid>
+								</Grid>
+							</Grid>
+						</CardContent>
+					</form>
+				</Card>
 			</div>
 		);
 	}

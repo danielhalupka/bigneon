@@ -37,7 +37,7 @@ class Organization extends Component {
 		return (
 			<div>
 				<Typography variant="display3">
-					{this.organizationId ? "Update" : "Create"} organization
+					{this.organizationId ? "Update" : "New"} organization
 				</Typography>
 
 				{this.organizationId ? (

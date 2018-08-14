@@ -19,6 +19,7 @@ const styles = theme => {
 
 const InputGroup = props => {
 	const {
+		classes,
 		error,
 		value,
 		name,
@@ -30,8 +31,6 @@ const InputGroup = props => {
 		onBlur,
 		onFocus
 	} = props;
-
-	const { classes } = props;
 
 	let inputPropClasses = {};
 	if (isSearch) {

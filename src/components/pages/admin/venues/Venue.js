@@ -286,7 +286,7 @@ class Venue extends Component {
 		return (
 			<div>
 				<Typography variant="display3">
-					{venueId ? "Update" : "Create"} venue
+					{venueId ? "Update" : "New"} venue
 				</Typography>
 
 				<Grid container spacing={24}>

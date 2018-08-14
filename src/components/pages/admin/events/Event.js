@@ -297,7 +297,7 @@ class Event extends Component {
 		return (
 			<div>
 				<Typography variant="display3">
-					{eventId ? "Update" : "Create"} event
+					{eventId ? "Update" : "New"} event
 				</Typography>
 
 				<Grid container spacing={24}>
