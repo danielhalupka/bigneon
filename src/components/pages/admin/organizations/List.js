@@ -18,36 +18,37 @@ const styles = theme => ({
 	}
 });
 
-class EventsView extends Component {
+class OrganizationsList extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			events: null
+			organizations: null
 		};
 	}
 
 	componentDidMount() {
 		api()
-			.get("/events")
+			.get("/organizations")
 			.then(response => {
 				const { data } = response;
-				this.setState({ events: data });
+				this.setState({ organizations: data });
 			})
 			.catch(error => {
 				console.error(error);
+				this.setState({ organizations: false });
 				notifications.show({
-					message: "Loading events failed.",
+					message: "Loading organizations failed.",
 					variant: "error"
 				});
 			});
 	}
 
-	renderEvents() {
-		const { events } = this.state;
+	renderOrganizations() {
+		const { organizations } = this.state;
 		const { classes } = this.props;
 
-		if (events === null) {
+		if (organizations === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">Loading...</Typography>
@@ -55,41 +56,56 @@ class EventsView extends Component {
 			);
 		}
 
-		if (events && events.length > 0) {
-			return events.map(event => {
-				const { id, name } = event;
-
-				return (
+		if (organizations && organizations.length > 0) {
+			return organizations.map(
+				({
+					id,
+					owner_user_id,
+					address,
+					city,
+					country,
+					name,
+					phone,
+					state,
+					zip
+				}) => (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<Card className={classes.paper}>
 							<CardContent className={classes.cardContent}>
 								<Typography variant="display1">{name}</Typography>
-								{/* <Typography variant="body1">
+								<Typography variant="body1">
 									{address || "*Missing address"}
-								</Typography> */}
+								</Typography>
 							</CardContent>
 
 							<CardActions>
 								<Link
-									to={`/admin/events/${id}`}
+									to={`/admin/organizations/${id}`}
 									style={{ textDecoration: "none" }}
 								>
 									<Button customClassName="primary">Edit details</Button>
 								</Link>
-								<Link to={`/events/${id}`} style={{ textDecoration: "none" }}>
-									<Button customClassName="secondary">View more</Button>
+								<Link
+									to={`/organizations/events/${id}`}
+									style={{ textDecoration: "none" }}
+								>
+									<Button customClassName="secondary">Events</Button>
 								</Link>
 							</CardActions>
 						</Card>
 					</Grid>
-				);
-			});
+				)
+			);
 		} else {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
-					<Typography variant="body1">No events yet</Typography>
-					<Link to={"/admin/events/create"} style={{ textDecoration: "none" }}>
-						<Button customClassName="callToAction">Create event</Button>
+					<Typography variant="body1">No organizations found</Typography>
+
+					<Link
+						to={"/admin/organizations/create"}
+						style={{ textDecoration: "none" }}
+					>
+						<Button customClassName="callToAction">Create organization</Button>
 					</Link>
 				</Grid>
 			);
@@ -99,14 +115,14 @@ class EventsView extends Component {
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">Events</Typography>
+				<Typography variant="display3">Organizations</Typography>
 
 				<Grid container spacing={24}>
-					{this.renderEvents()}
+					{this.renderOrganizations()}
 				</Grid>
 			</div>
 		);
 	}
 }
 
-export default withStyles(styles)(EventsView);
+export default withStyles(styles)(OrganizationsList);

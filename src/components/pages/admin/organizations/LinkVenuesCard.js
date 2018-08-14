@@ -118,7 +118,7 @@ class LinkVenuesCard extends Component {
 			})
 			.then(response => {
 				const { id } = response.data;
-				this.setState({ isSubmitting: false });
+				this.setState({ isSubmitting: false, venueId: "" });
 
 				notifications.show({
 					message: "Venue linked to organization.",
@@ -181,7 +181,10 @@ class LinkVenuesCard extends Component {
 						{this.renderVenues()}
 
 						{linkedVenues.map(({ id, name }) => (
-							<Typography key={id} variant="body1">
+							<Typography
+								key={`${id}-${Math.floor(Math.random() * 1000)}`} //TODO remove this random number. When inserting duplicate venues fails, it won't throw a duplicate key error
+								variant="body1"
+							>
 								{name}
 							</Typography>
 						))}

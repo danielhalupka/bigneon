@@ -6,6 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 import LinkVenuesCard from "./LinkVenuesCard";
+import InviteUserCard from "./InviteUserCard";
 import InputGroup from "../../../common/form/InputGroup";
 import Button from "../../../common/Button";
 import user from "../../../../stores/user";
@@ -22,18 +23,12 @@ const styles = theme => ({
 	}
 });
 
-class OrganizationsUpdate extends Component {
+class OrganizationUpdateCard extends Component {
 	constructor(props) {
 		super(props);
 
 		//Check if we're editing an existing organization
-		let organizationId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			organizationId = props.match.params.id;
-		}
-
 		this.state = {
-			organizationId,
 			name: "",
 			email: "",
 			owner_user_id: "",
@@ -52,7 +47,7 @@ class OrganizationsUpdate extends Component {
 		//If we're editing an existing org then load the current details
 		//"/organizations/{id}"
 
-		const { organizationId } = this.state;
+		const { organizationId } = this.props;
 
 		if (organizationId) {
 			api()
@@ -97,7 +92,8 @@ class OrganizationsUpdate extends Component {
 			return true;
 		}
 
-		const { organizationId, name, email, address, phone } = this.state;
+		const { name, email, address, phone } = this.state;
+		const { organizationId } = this.props;
 
 		const errors = {};
 
@@ -180,7 +176,6 @@ class OrganizationsUpdate extends Component {
 		}
 
 		const {
-			organizationId,
 			owner_user_id,
 			name,
 			email,
@@ -191,6 +186,7 @@ class OrganizationsUpdate extends Component {
 			country,
 			zip
 		} = this.state;
+		const { organizationId } = this.props;
 
 		let orgDetails = {
 			name,
@@ -254,7 +250,6 @@ class OrganizationsUpdate extends Component {
 
 	render() {
 		const {
-			organizationId,
 			owner_user_id,
 			name,
 			email,
@@ -269,6 +264,9 @@ class OrganizationsUpdate extends Component {
 			errors,
 			isSubmitting
 		} = this.state;
+
+		const { organizationId } = this.props;
+
 		const addressBlock = {
 			address,
 			city,
@@ -284,124 +282,95 @@ class OrganizationsUpdate extends Component {
 		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
 
 		return (
-			<div>
-				<Typography variant="display3">
-					{organizationId ? "Update" : "Create"} organization
-				</Typography>
+			<Card className={classes.paper}>
+				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
+					<CardContent>
+						<InputGroup
+							error={errors.name}
+							value={name}
+							name="name"
+							label="Organization name"
+							type="text"
+							onChange={e => this.setState({ name: e.target.value })}
+							onBlur={this.validateFields.bind(this)}
+						/>
 
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={10} lg={8}>
-						<Card className={classes.paper}>
-							<form
-								noValidate
-								autoComplete="off"
-								onSubmit={this.onSubmit.bind(this)}
-							>
-								<CardContent>
-									<InputGroup
-										error={errors.name}
-										value={name}
-										name="name"
-										label="Organization name"
-										type="text"
-										onChange={e => this.setState({ name: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
+						{!isCurrentOwner ? (
+							<InputGroup
+								error={errors.email}
+								value={email}
+								name="email"
+								label="Organization owner email address"
+								type="email"
+								onChange={e => this.setState({ email: e.target.value })}
+								onBlur={this.validateFields.bind(this)}
+							/>
+						) : null}
 
-									{!isCurrentOwner ? (
-										<InputGroup
-											error={errors.email}
-											value={email}
-											name="email"
-											label="Organization owner email address"
-											type="email"
-											onChange={e => this.setState({ email: e.target.value })}
-											onBlur={this.validateFields.bind(this)}
-										/>
-									) : null}
+						<InputGroup
+							error={errors.phone}
+							value={phone}
+							name="phone"
+							label="Phone number"
+							type="text"
+							onChange={e => this.setState({ phone: e.target.value })}
+							onBlur={this.validateFields.bind(this)}
+						/>
 
-									<InputGroup
-										error={errors.phone}
-										value={phone}
-										name="phone"
-										label="Phone number"
-										type="text"
-										onChange={e => this.setState({ phone: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
+						<LocationInputGroup
+							error={errors.address}
+							label="Organization address"
+							address={address}
+							addressBlock={addressBlock}
+							onError={error => {
+								console.error("error");
+								notifications.show({
+									message: `Google API error: ${error}`, //TODO add more details here
+									variant: "error"
+								});
+							}}
+							onAddressChange={address => this.setState({ address })}
+							onLatLngResult={latLng => {
+								console.log("latLng", latLng);
+								this.setState({
+									latitude: latLng.lat,
+									longitude: latLng.lng
+								});
+							}}
+							onFullResult={result => {
+								const city = addressTypeFromGoogleResult(result, "locality");
+								const state = addressTypeFromGoogleResult(
+									result,
+									"administrative_area_level_1"
+								);
+								const country = addressTypeFromGoogleResult(result, "country");
 
-									<LocationInputGroup
-										error={errors.address}
-										label="Organization address"
-										address={address}
-										addressBlock={addressBlock}
-										onError={error => {
-											console.error("error");
-											notifications.show({
-												message: `Google API error: ${error}`, //TODO add more details here
-												variant: "error"
-											});
-										}}
-										onAddressChange={address => this.setState({ address })}
-										onLatLngResult={latLng => {
-											console.log("latLng", latLng);
-											this.setState({
-												latitude: latLng.lat,
-												longitude: latLng.lng
-											});
-										}}
-										onFullResult={result => {
-											const city = addressTypeFromGoogleResult(
-												result,
-												"locality"
-											);
-											const state = addressTypeFromGoogleResult(
-												result,
-												"administrative_area_level_1"
-											);
-											const country = addressTypeFromGoogleResult(
-												result,
-												"country"
-											);
+								const zip = addressTypeFromGoogleResult(result, "postal_code");
 
-											const zip = addressTypeFromGoogleResult(
-												result,
-												"postal_code"
-											);
-
-											this.setState({ city, state, country, zip });
-										}}
-									/>
-								</CardContent>
-								<CardActions>
-									<Button
-										disabled={isSubmitting}
-										type="submit"
-										style={{ marginRight: 10 }}
-										customClassName="callToAction"
-									>
-										{isSubmitting
-											? organizationId
-												? "Creating..."
-												: "Updating..."
-											: organizationId
-												? "Update"
-												: "Create"}
-									</Button>
-								</CardActions>
-							</form>
-						</Card>
-					</Grid>
-
-					{organizationId ? (
-						<Grid item xs={12} sm={10} lg={8}>
-							<LinkVenuesCard organizationId={organizationId} />
-						</Grid>
-					) : null}
-				</Grid>
-			</div>
+								this.setState({ city, state, country, zip });
+							}}
+						/>
+					</CardContent>
+					<CardActions>
+						<Button
+							disabled={isSubmitting}
+							type="submit"
+							style={{ marginRight: 10 }}
+							customClassName="callToAction"
+						>
+							{isSubmitting
+								? organizationId
+									? "Creating..."
+									: "Updating..."
+								: organizationId
+									? "Update"
+									: "Create"}
+						</Button>
+					</CardActions>
+				</form>
+			</Card>
 		);
 	}
 }
 
-export default withStyles(styles)(OrganizationsUpdate);
+export default withStyles(styles)(OrganizationUpdateCard);
