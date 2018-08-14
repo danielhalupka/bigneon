@@ -4,18 +4,26 @@ import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import user from "../../stores/user";
 
-const styles = {
+import { textColorSecondary, primaryHex } from "../../components/styles/theme";
+
+const styles = theme => ({
 	menuButton: {
+		color: primaryHex
 		//marginLeft: -12,
 		//marginRight: 0
+	},
+	rightIcon: {
+		marginLeft: theme.spacing.unit,
+		marginBottom: 4
 	}
-};
+});
 
 @observer
 class RightHeaderMenu extends React.Component {
@@ -45,11 +53,22 @@ class RightHeaderMenu extends React.Component {
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 
-		const { isAuthenticated } = user;
+		const { isAuthenticated, firstName, lastName } = user;
 
 		return (
 			<div>
-				<IconButton
+				<Button
+					className={classes.menuButton}
+					aria-owns={open ? "menu-appbar" : null}
+					aria-haspopup="true"
+					onClick={this.handleMenu.bind(this)}
+					//color="default"
+				>
+					{isAuthenticated ? `${firstName} ${lastName}` : "Login/Signup"}
+					<AccountCircle className={classes.rightIcon} />
+				</Button>
+
+				{/* <IconButton
 					className={classes.menuButton}
 					aria-owns={open ? "menu-appbar" : null}
 					aria-haspopup="true"
@@ -57,7 +76,8 @@ class RightHeaderMenu extends React.Component {
 					color="default"
 				>
 					<AccountCircle />
-				</IconButton>
+				</IconButton> */}
+
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}
