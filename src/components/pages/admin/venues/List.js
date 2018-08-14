@@ -18,7 +18,7 @@ const styles = theme => ({
 	}
 });
 
-class VenuesView extends Component {
+class VenuesList extends Component {
 	constructor(props) {
 		super(props);
 
@@ -112,4 +112,4 @@ class VenuesView extends Component {
 	}
 }
 
-export default withStyles(styles)(VenuesView);
+export default withStyles(styles)(VenuesList);

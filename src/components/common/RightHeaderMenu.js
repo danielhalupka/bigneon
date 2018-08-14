@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Warning from "@material-ui/icons/Warning";
@@ -11,13 +12,19 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import user from "../../stores/user";
 import NotificationList from "../common/NotificationList";
-const styles = {
+import { textColorSecondary, primaryHex } from "../../components/styles/theme";
+
+const styles = theme => ({
 	menuButton: {
+		color: primaryHex
 		//marginLeft: -12,
 		//marginRight: 0
+	},
+	rightIcon: {
+		marginLeft: theme.spacing.unit,
+		marginBottom: 4
 	}
-};
-
+});
 const customStyle = {
 	menuHolder: {
 		display: "flex"
@@ -75,7 +82,6 @@ class RightHeaderMenu extends React.Component {
 					/>
 				);
 			}
-			
 		}
 		return null;
 	}
@@ -85,13 +91,23 @@ class RightHeaderMenu extends React.Component {
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 
-		const { isAuthenticated } = user;
+		const { isAuthenticated, firstName, lastName } = user;
+
 		const isProduction = process.env.NODE_ENV === "production";
 
 		return (
 			<div style={customStyle.menuHolder}>
 				{this.renderDevelopmentErrors()}
-				<IconButton
+				<Button
+					className={classes.menuButton}
+					aria-owns={open ? "menu-appbar" : null}
+					aria-haspopup="true"
+					onClick={this.handleMenu.bind(this)}
+				>
+					{isAuthenticated ? `${firstName} ${lastName}` : "Login/Signup"}
+					<AccountCircle className={classes.rightIcon} />
+				</Button>
+				{/* <IconButton
 					className={classes.menuButton}
 					aria-owns={open ? "menu-appbar" : null}
 					aria-haspopup="true"
@@ -99,7 +115,7 @@ class RightHeaderMenu extends React.Component {
 					color="default"
 				>
 					<AccountCircle />
-				</IconButton>
+				</IconButton> */}
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}
@@ -122,6 +138,7 @@ class RightHeaderMenu extends React.Component {
 							<MenuItem onClick={this.handleClose.bind(this)}>Profile</MenuItem>
 						</Link>
 					) : null}
+
 					{!isAuthenticated ? (
 						<Link
 							to="/login"
@@ -130,6 +147,7 @@ class RightHeaderMenu extends React.Component {
 							<MenuItem onClick={this.handleClose.bind(this)}>Login</MenuItem>
 						</Link>
 					) : null}
+
 					{!isAuthenticated ? (
 						<Link
 							to="/sign-up"
@@ -138,7 +156,7 @@ class RightHeaderMenu extends React.Component {
 							<MenuItem onClick={this.handleClose.bind(this)}>Sign up</MenuItem>
 						</Link>
 					) : null}
-					}
+
 					{isAuthenticated ? (
 						<MenuItem
 							onClick={() => {

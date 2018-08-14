@@ -181,6 +181,26 @@ class MenuContent extends Component {
 				/>
 
 				<MenuItem
+					icon={<ArtistsIcon />}
+					onClick={() => this.changeOpenMenu("admin-artists")}
+					expandIcon={
+						openMenuItem === "admin-artists" ? <ExpandLess /> : <ExpandMore />
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Artists
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-artists"}
+					classes={classes}
+					items={{
+						All: "/admin/artists",
+						Create: "/admin/artists/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
+
+				<MenuItem
 					icon={<EventsIcon />}
 					onClick={() => this.changeOpenMenu("admin-events")}
 					expandIcon={
@@ -371,11 +391,13 @@ class MenuContent extends Component {
 
 		return (
 			<List component="nav">
-				<img
-					style={{ width: "100%", padding: 5 }}
-					src="/images/bn-logo-text.png"
-					alt="Logo"
-				/>
+				<Link to={"/"}>
+					<img
+						style={{ width: "100%", padding: 5 }}
+						src="/images/bn-logo-text.png"
+						alt="Logo"
+					/>
+				</Link>
 
 				{/* 
 					If they're admin, just show those menu options
