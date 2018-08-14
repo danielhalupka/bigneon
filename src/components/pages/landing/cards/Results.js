@@ -12,7 +12,7 @@ const styles = theme => ({
 });
 
 const EventGrid = ({ children }) => (
-	<Grid item xs={12} sm={4} lg={4}>
+	<Grid item xs={12} sm={6} lg={4}>
 		{children}
 	</Grid>
 );
@@ -28,10 +28,34 @@ class Results extends Component {
 	}
 
 	componentDidMount() {
-		api({ auth: false })
+		api({ auth: true }) //TODO switch auth off when it works
 			.get(`/events`)
 			.then(response => {
-				console.log(response.data);
+				let events = [];
+
+				let demoImageNumber = 100;
+				response.data.forEach(event => {
+					//console.log(event);
+					const {
+						id,
+						event_start,
+						name,
+						organization_id,
+						ticket_sell_date,
+						venue_id
+					} = event;
+
+					events.push({
+						id,
+						name,
+						description:
+							"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut tempor lacus, vitae facilisis nisi. Etiam eleifend eros et odio rhoncus, a pellentesque sapien maximus.",
+						imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`
+					});
+					demoImageNumber++;
+				});
+
+				this.setState({ events });
 			})
 			.catch(error => {
 				console.error(error);
@@ -41,11 +65,17 @@ class Results extends Component {
 					variant: "error"
 				});
 			});
+		// event_start
+		// id
+		// name
+		// organization_id
+		// ticket_sell_date
+		// venue_id
 
 		const events = [
 			{
 				id: "1234",
-				title: "The Beatles",
+				name: "The Beatles",
 				description:
 					"The final and totally real show. The Beatles were an English rock band formed in Liverpool in 1960.",
 				imgSrc:
@@ -53,7 +83,7 @@ class Results extends Component {
 			},
 			{
 				id: "23456",
-				title: "Jimi Hendrix",
+				name: "Jimi Hendrix",
 				description:
 					'James Marshall "Jimi" Hendrix was an American rock guitarist, singer, and songwriter.',
 				imgSrc:
@@ -61,7 +91,7 @@ class Results extends Component {
 			},
 			{
 				id: "345678",
-				title: "Nirvana",
+				name: "Nirvana",
 				description:
 					"Nirvana was an American rock band formed by lead singer and guitarist Kurt Cobain and bassist Krist Novoselic in Aberdeen, Washington, in 1987",
 				imgSrc:
@@ -69,7 +99,7 @@ class Results extends Component {
 			}
 		];
 
-		setTimeout(() => this.setState({ events }), 1000);
+		//setTimeout(() => this.setState({ events }), 1000);
 	}
 
 	renderEvents() {
