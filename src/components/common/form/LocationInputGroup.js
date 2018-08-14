@@ -81,6 +81,7 @@ class LocationInputGroup extends React.Component {
 		return (
 			<div>
 				<PlacesAutocomplete
+					style={{ flex: 1 }}
 					value={address}
 					onChange={onAddressChange}
 					onSelect={this.onSelect.bind(this)}
