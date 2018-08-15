@@ -336,7 +336,11 @@ class Event extends Component {
 					onDelete={ticket => {
 						let tickets = [...this.state.tickets];
 						tickets.splice(index, 1);
-						this.setState({ tickets });
+						this.setState({ tickets }, () => {
+							if (this.state.tickets.length === 0) {
+								this.addTicket();
+							}
+						});
 					}}
 					validateFields={this.validateFields.bind(this)}
 				/>
@@ -386,7 +390,16 @@ class Event extends Component {
 										value={eventDate}
 										name="eventDate"
 										label="Event date"
-										onChange={eventDate => this.setState({ eventDate })}
+										onChange={eventDate => {
+											this.setState({ eventDate });
+											const tickets = this.state.tickets;
+											if (tickets.length > 0) {
+												if (!tickets[0].endDate) {
+													tickets[0].endDate = eventDate;
+													this.setState({ tickets });
+												}
+											}
+										}}
 										onBlur={this.validateFields.bind(this)}
 									/>
 

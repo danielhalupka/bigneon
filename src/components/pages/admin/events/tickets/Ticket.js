@@ -15,6 +15,7 @@ import SelectGroup from "../../../../common/form/SelectGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
 import api from "../../../../../helpers/api";
+import TicketPricing from "./TicketPricing";
 
 const styles = theme => ({
 	paper: {
@@ -43,6 +44,15 @@ class Ticket extends Component {
 		this.setState({ data });
 		this.props.onChange(data);
 	}
+
+	static getDerivedStateFromProps(props, current_state) {
+		if (current_state.data !== props.data) {
+			current_state.data = props.data;
+			return current_state;
+		}
+		return null;
+	}
+
 	validateFields() {
 		const { onError } = this.props;
 		const { data } = this.state;
@@ -178,6 +188,7 @@ class Ticket extends Component {
 								label="Offsale Time"
 								onChange={endDate => this.setField("endDate", endDate)}
 								onBlur={this.validateFields}
+								minDate={false}
 							/>
 						</Grid>
 					</Grid>
