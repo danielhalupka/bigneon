@@ -4,12 +4,15 @@ import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
 import moment from "moment";
 
 import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
 import Button from "../../../common/Button";
+import Ticket from "../tickets/Ticket";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
 
@@ -38,6 +41,7 @@ class Event extends Component {
 			organizationId: "",
 			venues: [],
 			venueId: "",
+			tickets: [],
 			errors: {},
 			isSubmitting: false
 		};
@@ -227,6 +231,10 @@ class Event extends Component {
 		});
 	}
 
+	addTicket() {
+		let { tickets } = this.state;
+	}
+
 	renderOrganizations() {
 		const { organizationId, organizations, errors } = this.state;
 		if (organizations === null) {
@@ -291,9 +299,17 @@ class Event extends Component {
 	}
 
 	render() {
-		const { eventId, name, eventDate, errors, isSubmitting } = this.state;
+		const {
+			eventId,
+			name,
+			eventDate,
+			tickets,
+			errors,
+			isSubmitting
+		} = this.state;
 		const { classes } = this.props;
 
+		const ticketData = {};
 		return (
 			<div>
 				<Typography variant="display3">
@@ -331,6 +347,17 @@ class Event extends Component {
 									{!eventId ? this.renderOrganizations() : null}
 
 									{this.renderVenues()}
+									<div style={{ display: "flex" }}>
+										<Typography variant="display1">Tickets</Typography>
+										<IconButton
+											onClick={this.addTicket.bind(this)}
+											aria-label="Add"
+										>
+											<AddIcon />
+										</IconButton>
+									</div>
+
+									<Ticket ticketData={ticketData} />
 								</CardContent>
 
 								<CardActions>
