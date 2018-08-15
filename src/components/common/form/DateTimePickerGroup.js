@@ -24,7 +24,9 @@ const DateTimePickerGroup = props => {
 		placeholder,
 		onChange,
 		onBlur,
-		onFocus
+		onFocus,
+		minDate = new Date(),
+		format = "YYYY/MM/DD HH:mm"
 	} = props;
 
 	const { classes } = props;
@@ -35,6 +37,11 @@ const DateTimePickerGroup = props => {
 
 	//If there is no date chosen yet and they click it for the first time set it as the current time
 	const onFocusOverride = value ? onFocus : () => onChange(tomorrow);
+
+	const inputProps = {};
+	if (minDate) {
+		inputProps.minDate = minDate;
+	}
 
 	return (
 		<FormControl
@@ -52,10 +59,10 @@ const DateTimePickerGroup = props => {
 				margin="normal"
 				onBlur={onBlur}
 				onFocus={onFocusOverride}
-				placeholder={placeholder || "YYYY/MM/DD HH:mm"}
-				minDate={new Date()} //Default minDate is current day
-				format="YYYY/MM/DD HH:mm"
+				placeholder={placeholder || format}
+				format={format}
 				keyboard
+				{...inputProps}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -71,7 +78,9 @@ DateTimePickerGroup.propTypes = {
 	placeholder: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
-	onFocus: PropTypes.func
+	onFocus: PropTypes.func,
+	minDate: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+	format: PropTypes.string
 };
 
 export default withStyles(styles)(DateTimePickerGroup);
