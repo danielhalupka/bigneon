@@ -9,6 +9,8 @@ import moment from "moment";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
@@ -18,6 +20,9 @@ const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	flex: {
+		flexGrow: 1
 	}
 });
 
@@ -82,6 +87,7 @@ class Ticket extends Component {
 	}
 
 	render() {
+		let { onDelete } = this.props;
 		let { data, errors } = this.state;
 		let {
 			id,
@@ -96,85 +102,87 @@ class Ticket extends Component {
 		} = data;
 
 		return (
-			<Grid container spacing={24}>
-				<Grid item xs={12} sm={12} lg={12}>
-					<Card className={styles.paper}>
-						<CardContent>
-							<Grid container spacing={8}>
-								<Grid item xs={6}>
-									<InputGroup
-										error={errors.name}
-										value={name}
-										name="name"
-										label="Ticket name"
-										placeholder="General Admission"
-										type="text"
-										onChange={e => {
-											this.setField("name", e.target.value);
-										}}
-										onBlur={this.validateFields}
-									/>
-								</Grid>
+			<Card className={styles.paper}>
+				<CardContent>
+					{onDelete ? (
+						<div style={{ display: "flex" }}>
+							<div style={{ flex: 1 }} />
+							<IconButton onClick={e => onDelete(data)} color="inherit">
+								<DeleteIcon />
+							</IconButton>
+						</div>
+					) : null}
+					<Grid container spacing={8}>
+						<Grid item xs={6}>
+							<InputGroup
+								error={errors.name}
+								value={name}
+								name="name"
+								label="Ticket name"
+								placeholder="General Admission"
+								type="text"
+								onChange={e => {
+									this.setField("name", e.target.value);
+								}}
+								onBlur={this.validateFields}
+							/>
+						</Grid>
 
-								<Grid item xs={3}>
-									<InputGroup
-										error={errors.quantity}
-										value={quantity}
-										name="quantity"
-										label="Capacity"
-										placeholder="500"
-										type="number"
-										onChange={e => {
-											this.setField("quantity", e.target.value);
-										}}
-										onBlur={this.validateFields}
-									/>
-								</Grid>
+						<Grid item xs={3}>
+							<InputGroup
+								error={errors.quantity}
+								value={quantity}
+								name="quantity"
+								label="Capacity"
+								placeholder="500"
+								type="number"
+								onChange={e => {
+									this.setField("quantity", e.target.value);
+								}}
+								onBlur={this.validateFields}
+							/>
+						</Grid>
 
-								<Grid item xs={3}>
-									<InputGroup
-										error={errors.limit}
-										value={limit}
-										name="limit"
-										label="Maximum Allowed"
-										placeholder="10"
-										type="number"
-										onChange={e => {
-											this.setField("limit", e.target.value);
-										}}
-										onBlur={this.validateFields}
-									/>
-								</Grid>
+						<Grid item xs={3}>
+							<InputGroup
+								error={errors.limit}
+								value={limit}
+								name="limit"
+								label="Maximum Allowed"
+								placeholder="10"
+								type="number"
+								onChange={e => {
+									this.setField("limit", e.target.value);
+								}}
+								onBlur={this.validateFields}
+							/>
+						</Grid>
 
-								<Grid item xs={6}>
-									<DateTimePickerGroup
-										error={errors.startDate}
-										value={startDate}
-										name="startDate"
-										label="Onsale Time"
-										onChange={startDate =>
-											this.setField("startDate", startDate)
-										}
-										onBlur={this.validateFields}
-										minDate={false}
-									/>
-								</Grid>
+						<Grid item xs={6}>
+							<DateTimePickerGroup
+								error={errors.startDate}
+								value={startDate}
+								name="startDate"
+								label="Onsale Time"
+								onChange={startDate => this.setField("startDate", startDate)}
+								onBlur={this.validateFields}
+								minDate={false}
+							/>
+						</Grid>
 
-								<Grid item xs={6}>
-									<DateTimePickerGroup
-										error={errors.endDate}
-										value={endDate}
-										name="endDate"
-										label="Offsale Time"
-										onChange={endDate => this.setField("endDate", endDate)}
-										onBlur={this.validateFields}
-									/>
-								</Grid>
-							</Grid>
-						</CardContent>
-					</Card>
-				</Grid>
-			</Grid>
+						<Grid item xs={6}>
+							<DateTimePickerGroup
+								error={errors.endDate}
+								value={endDate}
+								name="endDate"
+								label="Offsale Time"
+								onChange={endDate => this.setField("endDate", endDate)}
+								onBlur={this.validateFields}
+							/>
+						</Grid>
+					</Grid>
+				</CardContent>
+			</Card>
 		);
 	}
 }
@@ -182,7 +190,8 @@ class Ticket extends Component {
 Ticket.propTypes = {
 	data: PropTypes.object,
 	onChange: PropTypes.func,
-	onError: PropTypes.func
+	onError: PropTypes.func,
+	onDelete: PropTypes.func
 };
 
 Ticket.Structure = (ticket = {}) => {

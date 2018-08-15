@@ -333,6 +333,11 @@ class Event extends Component {
 							delete this.ticketErrors[index];
 						}
 					}}
+					onDelete={ticket => {
+						let tickets = [...this.state.tickets];
+						tickets.splice(index, 1);
+						this.setState({ tickets });
+					}}
 					validateFields={this.validateFields.bind(this)}
 				/>
 			);

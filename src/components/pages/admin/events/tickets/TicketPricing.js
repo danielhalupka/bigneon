@@ -17,7 +17,14 @@ class TicketPricing extends Component {
 	}
 
 	render() {
-		let { ticketId, name, description, startDate, endDate, value } = this.state;
+		let {
+			ticketId,
+			name,
+			description,
+			startDate,
+			endDate,
+			value
+		} = this.state.data;
 
 		return <div />;
 	}
