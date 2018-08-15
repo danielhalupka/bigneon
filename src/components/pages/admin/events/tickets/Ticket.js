@@ -11,6 +11,7 @@ import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AddIcon from "@material-ui/icons/Add";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
@@ -51,6 +52,12 @@ class Ticket extends Component {
 			return current_state;
 		}
 		return null;
+	}
+
+	componentDidMount() {
+		if (!this.state.data.pricing.length) {
+			this.addPricing();
+		}
 	}
 
 	validateFields() {
@@ -96,6 +103,50 @@ class Ticket extends Component {
 		return !hasErrors;
 	}
 
+	addPricing() {
+		let { data } = this.state;
+		let { pricing, startDate, endDate } = data;
+		pricing.push(
+			TicketPricing.Structure({
+				startDate,
+				endDate
+			})
+		);
+		this.setState({ data });
+	}
+
+	renderTicketPricing() {
+		let ticketPricings = [];
+		this.state.data.pricing.forEach((pricing, index) => {
+			ticketPricings.push(
+				<Grid item xs={12} key={`ticket_pricing_${index}`}>
+					<TicketPricing
+						data={pricing}
+						onChange={ticketPrice => {
+							let pricings = [...this.state.data.pricing];
+							pricings.splice(index, 1, pricing);
+							let data = this.state.data;
+							data.pricing = pricings;
+							this.setState({ data });
+						}}
+						onDelete={ticketPrice => {
+							let pricings = [...this.state.data.pricing];
+							pricings.splice(index, 1);
+							let data = this.state.data;
+							data.pricing = pricings;
+							this.setState({ data }, () => {
+								if (this.state.data.pricing.length === 0) {
+									this.addPricing();
+								}
+							});
+						}}
+					/>
+				</Grid>
+			);
+		});
+		return ticketPricings;
+	}
+
 	render() {
 		let { onDelete } = this.props;
 		let { data, errors } = this.state;
@@ -137,7 +188,6 @@ class Ticket extends Component {
 								onBlur={this.validateFields}
 							/>
 						</Grid>
-
 						<Grid item xs={3}>
 							<InputGroup
 								error={errors.quantity}
@@ -152,7 +202,6 @@ class Ticket extends Component {
 								onBlur={this.validateFields}
 							/>
 						</Grid>
-
 						<Grid item xs={3}>
 							<InputGroup
 								error={errors.limit}
@@ -167,7 +216,6 @@ class Ticket extends Component {
 								onBlur={this.validateFields}
 							/>
 						</Grid>
-
 						<Grid item xs={6}>
 							<DateTimePickerGroup
 								error={errors.startDate}
@@ -179,7 +227,6 @@ class Ticket extends Component {
 								minDate={false}
 							/>
 						</Grid>
-
 						<Grid item xs={6}>
 							<DateTimePickerGroup
 								error={errors.endDate}
@@ -191,6 +238,13 @@ class Ticket extends Component {
 								minDate={false}
 							/>
 						</Grid>
+						<div style={{ display: "flex" }}>
+							<Typography variant="headline">Price Points</Typography>
+							<IconButton onClick={this.addPricing.bind(this)} aria-label="Add">
+								<AddIcon />
+							</IconButton>
+						</div>
+						{this.renderTicketPricing()}
 					</Grid>
 				</CardContent>
 			</Card>
