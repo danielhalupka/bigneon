@@ -12,7 +12,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
 import Button from "../../../common/Button";
-import Ticket from "../tickets/Ticket";
+import Ticket from "./tickets/Ticket";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
 
@@ -45,6 +45,8 @@ class Event extends Component {
 			errors: {},
 			isSubmitting: false
 		};
+
+		this.ticketErrors = {};
 	}
 
 	componentDidMount() {
@@ -80,6 +82,8 @@ class Event extends Component {
 						variant: "error"
 					});
 				});
+		} else {
+			this.addTicket();
 		}
 
 		api()
@@ -145,7 +149,10 @@ class Event extends Component {
 
 		this.setState({ errors });
 
-		if (Object.keys(errors).length > 0) {
+		if (
+			Object.keys(errors).length > 0 ||
+			Object.keys(this.ticketErrors).length > 0
+		) {
 			return false;
 		}
 
@@ -233,6 +240,13 @@ class Event extends Component {
 
 	addTicket() {
 		let { tickets } = this.state;
+		tickets.push(
+			Ticket.Structure({
+				startDate: moment(),
+				endDate: this.state.eventDate
+			})
+		);
+		this.setState({ tickets });
 	}
 
 	renderOrganizations() {
@@ -298,6 +312,34 @@ class Event extends Component {
 		);
 	}
 
+	renderTickets() {
+		let tickets = [];
+		this.state.tickets.forEach((ticket, index) => {
+			tickets.push(
+				<Ticket
+					key={`ticket_${index}`}
+					data={ticket}
+					onChange={ticket => {
+						let tickets = [...this.state.tickets];
+						tickets.splice(index, 1, ticket);
+						this.setState({ tickets });
+					}}
+					onError={errors => {
+						const hasError = Object.keys(errors).length > 0;
+
+						if (hasError) {
+							this.ticketErrors[index] = true;
+						} else {
+							delete this.ticketErrors[index];
+						}
+					}}
+					validateFields={this.validateFields.bind(this)}
+				/>
+			);
+		});
+		return tickets;
+	}
+
 	render() {
 		const {
 			eventId,
@@ -309,7 +351,6 @@ class Event extends Component {
 		} = this.state;
 		const { classes } = this.props;
 
-		const ticketData = {};
 		return (
 			<div>
 				<Typography variant="display3">
@@ -356,8 +397,7 @@ class Event extends Component {
 											<AddIcon />
 										</IconButton>
 									</div>
-
-									<Ticket ticketData={ticketData} />
+									{this.renderTickets()}
 								</CardContent>
 
 								<CardActions>

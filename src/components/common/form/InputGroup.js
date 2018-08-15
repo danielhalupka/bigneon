@@ -5,7 +5,6 @@ import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
-import NumberFormat from "react-number-format";
 
 const styles = theme => {
 	return {
