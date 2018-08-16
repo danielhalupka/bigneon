@@ -120,8 +120,18 @@ class Signup extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Signup failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Login failed.", //TODO add more details here
+					message,
 					variant: "error"
 				});
 			});

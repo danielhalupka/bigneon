@@ -60,8 +60,18 @@ class Results extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Loading events failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading events failed.",
+					message,
 					variant: "error"
 				});
 			});

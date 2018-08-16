@@ -77,9 +77,19 @@ class OrganizationUpdateCard extends Component {
 				})
 				.catch(error => {
 					console.error(error);
+
+					let message = "Loading organization details failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					this.setState({ isSubmitting: false });
 					notifications.show({
-						message: "Loading organization details failed.",
+						message,
 						variant: "error"
 					});
 				});
@@ -138,8 +148,18 @@ class OrganizationUpdateCard extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Create organization failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Create organization failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -159,8 +179,18 @@ class OrganizationUpdateCard extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Update organization failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Update organization failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -227,14 +257,14 @@ class OrganizationUpdateCard extends Component {
 				this.createNewOrganization(
 					{ ...orgDetails, owner_user_id: id },
 					organizationId => {
-						this.setState({ isSubmitting: false });
-
 						notifications.show({
 							message: "Organization created",
 							variant: "success"
 						});
 
-						this.props.history.push("/admin/organizations");
+						this.setState({ isSubmitting: false }, () => {
+							this.props.history.push("/admin/organizations");
+						});
 					}
 				);
 			})

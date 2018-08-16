@@ -85,8 +85,18 @@ class Event extends Component {
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
+
+					let message = "Loading venue details failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Loading venue details failed.",
+						message,
 						variant: "error"
 					});
 				});
@@ -104,8 +114,18 @@ class Event extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+
+				let message = "Loading organizations failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading organizations failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -118,8 +138,18 @@ class Event extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+
+				let message = "Loading artists failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading artists failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -137,8 +167,18 @@ class Event extends Component {
 				})
 				.catch(error => {
 					console.error(error);
+
+					let message = "Loading venues failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Loading venues failed.",
+						message,
 						variant: "error"
 					});
 				});
