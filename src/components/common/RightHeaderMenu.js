@@ -21,7 +21,7 @@ const styles = theme => ({
 		//marginRight: 0
 	},
 	rightIcon: {
-		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit,
 		marginBottom: 4
 	}
 });
@@ -104,8 +104,9 @@ class RightHeaderMenu extends React.Component {
 					aria-haspopup="true"
 					onClick={this.handleMenu.bind(this)}
 				>
-					{isAuthenticated ? `${firstName} ${lastName}` : "Login/Signup"}
 					<AccountCircle className={classes.rightIcon} />
+
+					{isAuthenticated ? `Hi, ${firstName}` : "Login/Signup"}
 				</Button>
 				{/* <IconButton
 					className={classes.menuButton}
