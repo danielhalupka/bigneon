@@ -37,8 +37,18 @@ class OrganizationsList extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ organizations: false });
+
+				let message = "Loading organizations failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading organizations failed.",
+					message,
 					variant: "error"
 				});
 			});

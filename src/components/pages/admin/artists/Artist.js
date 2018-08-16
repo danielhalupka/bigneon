@@ -87,8 +87,18 @@ class Artist extends Component {
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
+
+					let message = "Loading artist details failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Loading artist details failed.",
+						message,
 						variant: "error"
 					});
 				});
@@ -174,8 +184,18 @@ class Artist extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Create artist failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Create artist failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -190,8 +210,18 @@ class Artist extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Update artist failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Update artist failed.",
+					message,
 					variant: "error"
 				});
 			});

@@ -103,10 +103,18 @@ class Login extends Component {
 				}
 			})
 			.catch(error => {
-				console.error(error);
+				let message = "Login failed.";
+
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Login failed.", //TODO add more details here
+					message,
 					variant: "error"
 				});
 			});

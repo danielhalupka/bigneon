@@ -50,8 +50,18 @@ class LinkVenuesCard extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+
+				let message = "Loading available venues failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading available venues failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -68,8 +78,18 @@ class LinkVenuesCard extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+
+				let message = "Loading linked venues failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading linked venues failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -130,8 +150,18 @@ class LinkVenuesCard extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Linking failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Linking failed.",
+					message,
 					variant: "error"
 				});
 			});
