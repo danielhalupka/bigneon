@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import RemoveIcon from "@material-ui/icons/RemoveCircleOutline";
 
 import InputGroup from "../../../common/form/InputGroup";
+import FormSubHeading from "../../../common/FormSubHeading";
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
@@ -24,12 +25,6 @@ const styles = theme => ({
 		borderRadius: theme.shape.borderRadius
 	}
 });
-
-const SubHeading = ({ children }) => (
-	<Grid item xs={12} sm={12} lg={12} style={{ marginTop: 40 }}>
-		<Typography variant="display1">{children}</Typography>
-	</Grid>
-);
 
 class Artist extends Component {
 	constructor(props) {
@@ -92,8 +87,18 @@ class Artist extends Component {
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
+
+					let message = "Loading artist details failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Loading artist details failed.",
+						message,
 						variant: "error"
 					});
 				});
@@ -179,8 +184,18 @@ class Artist extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Create artist failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Create artist failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -195,8 +210,18 @@ class Artist extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Update artist failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Update artist failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -324,7 +349,7 @@ class Artist extends Component {
 									/>
 								</Grid>
 
-								<SubHeading>Social</SubHeading>
+								<FormSubHeading>Social</FormSubHeading>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
@@ -384,7 +409,7 @@ class Artist extends Component {
 									/>
 								</Grid>
 
-								<SubHeading>Music</SubHeading>
+								<FormSubHeading>Music</FormSubHeading>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
@@ -414,7 +439,7 @@ class Artist extends Component {
 									/>
 								</Grid>
 
-								<SubHeading>Media</SubHeading>
+								<FormSubHeading>Media</FormSubHeading>
 
 								{youtubeVideos.map((youtubeUrl, index) => {
 									return (

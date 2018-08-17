@@ -1,13 +1,14 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, InputLabel } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
+import moment from "moment";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
-import moment from "moment";
-
+import EventArtist from "./EventArtist";
+import FormSubHeading from "../../../common/FormSubHeading";
 import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
@@ -20,6 +21,11 @@ const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	promoImage: {
+		width: "100%",
+		height: 300,
+		borderRadius: theme.shape.borderRadius
 	}
 });
 
@@ -35,12 +41,19 @@ class Event extends Component {
 
 		this.state = {
 			eventId,
+			showArtistSelect: true,
 			name: "",
 			eventDate: null,
+			doorTime: null,
+			ageLimit: "",
+			additionalInfo: "",
 			organizations: null,
+			artists: [],
+			availableArtists: [],
 			organizationId: "",
-			venues: [],
+			venues: null,
 			venueId: "",
+			status: "",
 			tickets: [],
 			errors: {},
 			isSubmitting: false
@@ -71,19 +84,32 @@ class Event extends Component {
 							? moment(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 							: null,
 						venueId: venue_id ? venue_id : "",
-						organizationId: organization_id ? organization_id : ""
+						organizationIcd: organization_id ? organization_id : ""
 					});
 				})
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
+
+					let message = "Loading venue details failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Loading venue details failed.",
+						message,
 						variant: "error"
 					});
 				});
 		} else {
 			this.addTicket();
+			//TODO get this org owners org ID so we're not loading all
+			const organization_id = null;
+			this.loadVenues(organization_id);
 		}
 
 		api()
@@ -94,8 +120,42 @@ class Event extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+
+				let message = "Loading organizations failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading organizations failed.",
+					message,
+					variant: "error"
+				});
+			});
+
+		api()
+			.get("/artists")
+			.then(response => {
+				const { data } = response;
+				this.setState({ availableArtists: data });
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = "Loading artists failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
 					variant: "error"
 				});
 			});
@@ -113,8 +173,18 @@ class Event extends Component {
 				})
 				.catch(error => {
 					console.error(error);
+
+					let message = "Loading venues failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Updating venues failed.",
+						message,
 						variant: "error"
 					});
 				});
@@ -127,9 +197,27 @@ class Event extends Component {
 			return null;
 		}
 
-		const { name, eventDate, organizationId, venueId } = this.state;
+		const {
+			name,
+			artists,
+			eventDate,
+			doorTime,
+			ageLimit,
+			organizationId,
+			venueId,
+			additionalInfo,
+			status
+		} = this.state;
 
 		const errors = {};
+
+		errors.artists = {};
+		for (let index = 0; index < artists.length; index++) {
+			const { setTime } = artists[index];
+			if (!setTime) {
+				errors.artists[index] = "Specify the set time.";
+			}
+		}
 
 		if (!name) {
 			errors.name = "Missing event name.";
@@ -145,6 +233,14 @@ class Event extends Component {
 
 		if (!eventDate) {
 			errors.eventDate = "Specify the event date.";
+		}
+
+		if (!doorTime) {
+			errors.doorTime = "Specify the door time.";
+		}
+
+		if (!status) {
+			errors.status = "Specify status of this event.";
 		}
 
 		this.setState({ errors });
@@ -203,7 +299,18 @@ class Event extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		const { eventId, name, eventDate, organizationId, venueId } = this.state;
+		const {
+			eventId,
+			name,
+			eventDate,
+			organizationId,
+			venueId,
+			artists,
+			doorTime,
+			ageLimit,
+			additionalInfo,
+			status
+		} = this.state;
 
 		const eventDetails = {
 			name,
@@ -211,8 +318,16 @@ class Event extends Component {
 			event_start: moment
 				.utc(eventDate)
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //This format --> "2018-09-18T23:56:04"
-			organization_id: organizationId
+			organization_id: organizationId,
+			artists,
+			doorTime,
+			ageLimit,
+			additionalInfo,
+			status
 		};
+
+		console.log("Post to API: ");
+		console.log(eventDetails);
 
 		//If we're updating an existing venue
 		if (eventId) {
@@ -237,6 +352,14 @@ class Event extends Component {
 			this.props.history.push("/admin/events");
 		});
 	}
+
+	addNewArtist(id) {
+		this.setState(({ artists, doorTime }) => {
+			artists.push({ id, setTime: doorTime });
+			return { artists };
+		});
+	}
+
 
 	addTicket() {
 		let { tickets } = this.state;
@@ -273,6 +396,35 @@ class Event extends Component {
 					this.setState({ organizationId });
 					//Reload venues belonging to this org
 					this.loadVenues(organizationId);
+				}}
+				onBlur={this.validateFields.bind(this)}
+			/>
+		);
+	}
+
+	renderAddNewArtist() {
+		//Pass through the currently selected artist if one has been selected
+		const { availableArtists, errors } = this.state;
+		if (availableArtists === null) {
+			return <Typography variant="body1">Loading artists...</Typography>;
+		}
+
+		const artistsObj = {};
+
+		availableArtists.forEach(artist => {
+			artistsObj[artist.id] = artist.name;
+		});
+
+		return (
+			<SelectGroup
+				value={""}
+				items={artistsObj}
+				name={"artists"}
+				label={"Artist"}
+				onChange={e => {
+					const artistId = e.target.value;
+					this.setState({ showArtistSelect: false });
+					this.addNewArtist(artistId);
 				}}
 				onBlur={this.validateFields.bind(this)}
 			/>
@@ -352,11 +504,18 @@ class Event extends Component {
 	render() {
 		const {
 			eventId,
+			showArtistSelect,
+			artists,
+			availableArtists,
 			name,
 			eventDate,
-			tickets,
+			doorTime,
+			ageLimit,
+			additionalInfo,
+			status,
 			errors,
-			isSubmitting
+			isSubmitting,
+			tickets
 		} = this.state;
 		const { classes } = this.props;
 
@@ -366,15 +525,65 @@ class Event extends Component {
 					{eventId ? "Update" : "New"} event
 				</Typography>
 
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={10} lg={8}>
-						<Card className={classes.paper}>
-							<form
-								noValidate
-								autoComplete="off"
-								onSubmit={this.onSubmit.bind(this)}
-							>
-								<CardContent>
+				<Card className={classes.paper}>
+					<form
+						noValidate
+						autoComplete="off"
+						onSubmit={this.onSubmit.bind(this)}
+					>
+						<CardContent>
+							<Grid container spacing={24}>
+								<FormSubHeading>Artists</FormSubHeading>
+
+								<Grid item xs={12} sm={12} md={10} lg={8}>
+									{artists.map((eventArtist, index) => {
+										const { id, setTime } = eventArtist;
+										const artist = availableArtists.find(
+											artist => artist.id === id
+										);
+
+										const { name } = artist;
+
+										return (
+											<EventArtist
+												key={id}
+												typeHeading={index === 0 ? "Headliner*" : "Supporting"}
+												title={name}
+												setTime={setTime}
+												onChangeSetTime={setTime => {
+													this.setState(({ artists }) => {
+														artists[index].setTime = setTime;
+														return { artists };
+													});
+												}}
+												image={`https://picsum.photos/300/300/?image=${index +
+													100}`}
+												error={errors.artists ? errors.artists[index] : null}
+												onDelete={() => {
+													this.setState(({ artists }) => {
+														artists.splice(index, 1);
+														return { artists };
+													});
+												}}
+												onBlur={this.validateFields.bind(this)}
+											/>
+										);
+									})}
+
+									{!showArtistSelect ? (
+										<Button
+											onClick={() => this.setState({ showArtistSelect: true })}
+										>
+											Add another artist
+										</Button>
+									) : null}
+
+									{showArtistSelect ? this.renderAddNewArtist() : null}
+								</Grid>
+
+								<FormSubHeading>Event details</FormSubHeading>
+
+								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
 										error={errors.name}
 										value={name}
@@ -384,7 +593,13 @@ class Event extends Component {
 										onChange={e => this.setState({ name: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>
+								</Grid>
 
+								<Grid item xs={12} sm={6} lg={6}>
+									{this.renderVenues()}
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
 									<DateTimePickerGroup
 										error={errors.eventDate}
 										value={eventDate}
@@ -402,23 +617,90 @@ class Event extends Component {
 										}}
 										onBlur={this.validateFields.bind(this)}
 									/>
+								</Grid>
 
-									{!eventId ? this.renderOrganizations() : null}
+								<Grid item xs={12} sm={6} lg={6}>
+									<DateTimePickerGroup
+										error={errors.doorTime}
+										value={doorTime}
+										name="doorTime"
+										label="Door time"
+										onChange={doorTime => this.setState({ doorTime })}
+										onBlur={this.validateFields.bind(this)}
+										format="HH:mm"
+										type="time"
+									/>
+								</Grid>
 
-									{this.renderVenues()}
-									<div style={{ display: "flex" }}>
-										<Typography variant="display1">Tickets</Typography>
-										<IconButton
-											onClick={this.addTicket.bind(this)}
-											aria-label="Add"
-										>
-											<AddIcon />
-										</IconButton>
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.ageLimit}
+										value={ageLimit}
+										name="ageLimit"
+										label="Age limit"
+										type="number"
+										onChange={e => this.setState({ ageLimit: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<InputGroup
+										error={errors.additionalInfo}
+										value={additionalInfo}
+										name="additionalInfo"
+										label="Additional info"
+										type="text"
+										onChange={e =>
+											this.setState({ additionalInfo: e.target.value })
+										}
+										onBlur={this.validateFields.bind(this)}
+										multiline
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<div style={{ marginTop: 20, marginBottom: 10 }}>
+										<InputLabel>Event promo image</InputLabel>
 									</div>
-									{this.renderTickets()}
-								</CardContent>
 
-								<CardActions>
+									<CardMedia
+										className={classes.promoImage}
+										image="https://picsum.photos/300/300/?random&blur"
+										title={"Artist"}
+									/>
+								</Grid>
+
+								<Grid item xs={12} sm={6} lg={6}>
+									<SelectGroup
+										value={status}
+										items={{ buy: "Buy" }}
+										error={errors.status}
+										name={"status"}
+										missingItemsLabel={"No available status"}
+										label={"Event status"}
+										onChange={e => {
+											const status = e.target.value;
+											this.setState({ status });
+										}}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+
+								{/* TODO remove this if you're an admin or if the OrgOwner only owns one organization. Then we assume the org ID */}
+								<Grid item xs={12} sm={6} lg={6}>
+									{!eventId ? this.renderOrganizations() : null}
+								</Grid>
+
+								<FormSubHeading>Ticketing (Coming soon) <IconButton
+									onClick={this.addTicket.bind(this)}
+									aria-label="Add"
+								>
+									<AddIcon />
+								</IconButton></FormSubHeading>
+
+								{this.renderTickets()}
+								<Grid item xs={12} sm={12} lg={12} style={{ marginTop: 40 }}>
 									<Button
 										disabled={isSubmitting}
 										type="submit"
@@ -433,11 +715,11 @@ class Event extends Component {
 												? "Update"
 												: "Create"}
 									</Button>
-								</CardActions>
-							</form>
-						</Card>
-					</Grid>
-				</Grid>
+								</Grid>
+							</Grid>
+						</CardContent>
+					</form>
+				</Card>
 			</div>
 		);
 	}

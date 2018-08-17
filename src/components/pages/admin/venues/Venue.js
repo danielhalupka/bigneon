@@ -78,8 +78,18 @@ class Venue extends Component {
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
+
+					let message = "Loading venue details failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Loading venue details failed.",
+						message,
 						variant: "error"
 					});
 				});
@@ -93,8 +103,17 @@ class Venue extends Component {
 			})
 			.catch(error => {
 				console.error(error);
+				let message = "Loading organizations failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Loading organizations failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -149,8 +168,18 @@ class Venue extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Create venue failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Create venue failed.",
+					message,
 					variant: "error"
 				});
 			});
@@ -165,8 +194,18 @@ class Venue extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+
+				let message = "Update venue failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Update venue failed.",
+					message,
 					variant: "error"
 				});
 			});

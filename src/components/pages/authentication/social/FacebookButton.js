@@ -63,8 +63,18 @@ class FacebookButton extends Component {
 					this.fbLogout();
 					this.setState({ isAuthenticating: false });
 					console.error(error);
+
+					let message = "Sign in failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
 					notifications.show({
-						message: "Sign in failed.", //TODO add more details here
+						message,
 						variant: "error"
 					});
 				});

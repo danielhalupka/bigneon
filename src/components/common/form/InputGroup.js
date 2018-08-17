@@ -30,7 +30,8 @@ const InputGroup = props => {
 		isSearch,
 		onChange,
 		onBlur,
-		onFocus
+		onFocus,
+		multiline
 	} = props;
 
 	let inputPropClasses = {};
@@ -58,6 +59,7 @@ const InputGroup = props => {
 					classes: inputPropClasses
 				}}
 				placeholder={placeholder}
+				multiline={multiline}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -75,7 +77,8 @@ InputGroup.propTypes = {
 	isSearch: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
-	onFocus: PropTypes.func
+	onFocus: PropTypes.func,
+	multiline: PropTypes.bool
 };
 
 export default withStyles(styles)(InputGroup);

@@ -32,7 +32,7 @@ class Organization extends Component {
 
 	render() {
 		const { activeTab } = this.state;
-		const { classes } = this.props;
+		const { classes, history } = this.props;
 
 		return (
 			<div>
@@ -54,15 +54,24 @@ class Organization extends Component {
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						{activeTab === 0 ? (
-							<UpdateCard organizationId={this.organizationId} />
+							<UpdateCard
+								history={history}
+								organizationId={this.organizationId}
+							/>
 						) : null}
 
 						{activeTab === 1 ? (
-							<LinkVenuesCard organizationId={this.organizationId} />
+							<LinkVenuesCard
+								history={history}
+								organizationId={this.organizationId}
+							/>
 						) : null}
 
 						{activeTab === 2 ? (
-							<InviteUserCard organizationId={this.organizationId} />
+							<InviteUserCard
+								history={history}
+								organizationId={this.organizationId}
+							/>
 						) : null}
 					</Grid>
 				</Grid>

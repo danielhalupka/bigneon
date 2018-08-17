@@ -10,7 +10,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 const styles = theme => ({
 	formControl: {
 		width: "100%",
-		marginBottom: theme.spacing.unit
+		marginTop: theme.spacing.unit * 2
 	}
 });
 
