@@ -79,42 +79,8 @@ class Container extends React.Component {
 		this.setState(state => ({ mobileOpen: !state.mobileOpen }));
 	}
 
-	renderContent(toolBarSpace = true) {
-		const { classes, children } = this.props;
-
-		//TODO find a better place to put this
-		//Check if we're on one of the authentication pages so if we're not logged in an need to be, a pop up shows
-		const authPages = [
-			"/login",
-			"/sign-up",
-			"/",
-			"/events",
-			"/artists",
-			"/venues"
-		];
-		let requiresAuth = !user.isAuthenticated;
-
-		if (authPages.indexOf(window.location.pathname) > -1) {
-			requiresAuth = false;
-		}
-
-		return (
-			<main className={classes.content}>
-				{toolBarSpace ? <div className={classes.toolbar} /> : null}
-				{/* {process.env.NODE_ENV === "development" ? <DevTools /> : null} */}
-				<AuthenticateCheckDialog
-					open={requiresAuth}
-					isLoading={user.isAuthenticated === null}
-				/>
-				<Notification />
-
-				{!requiresAuth ? children : null}
-			</main>
-		);
-	}
-
 	render() {
-		const { classes, history } = this.props;
+		const { classes, history, children } = this.props;
 
 		const drawer = (
 			<div>
@@ -175,7 +141,11 @@ class Container extends React.Component {
 							{drawer}
 						</Drawer>
 					</Hidden>
-					{this.renderContent()}
+					<main className={classes.content}>
+						<div className={classes.toolbar} />
+						{children}
+						<Notification />
+					</main>{" "}
 				</div>
 			</MuiPickersUtilsProvider>
 		);

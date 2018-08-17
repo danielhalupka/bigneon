@@ -76,7 +76,7 @@ class ViewEvent extends Component {
 		) {
 			eventId = this.props.match.params.id;
 
-			api({ auth: true }) //TODO must be false
+			api({ auth: false }) //TODO must be false
 				.get(`/events/${eventId}`)
 				.then(response => {
 					const {

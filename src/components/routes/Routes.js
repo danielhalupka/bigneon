@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+	BrowserRouter as Router,
+	Route,
+	Switch,
+	Redirect
+} from "react-router-dom";
+import { observer } from "mobx-react";
 
 import withRoot from "./withRoot";
 import Container from "../common/Container";
@@ -27,7 +33,27 @@ import AdminEventsList from "../pages/admin/events/List";
 import AdminEvent from "../pages/admin/events/Event";
 
 import user from "../../stores/user";
+import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 
+const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
+	//If isAuthenticated is null then we're still checking the state
+	return (
+		<Route
+			{...rest}
+			render={props =>
+				isAuthenticated === null ? (
+					<AuthenticateCheckDialog isLoading={true} />
+				) : isAuthenticated === true ? (
+					<Component {...props} />
+				) : (
+					<Redirect to="/login" />
+				)
+			}
+		/>
+	);
+};
+
+@observer
 class Routes extends Component {
 	componentDidMount() {
 		//Load the google API here because we need the a .env var
@@ -58,46 +84,116 @@ class Routes extends Component {
 	}
 
 	render() {
+		const { isAuthenticated } = user;
+
 		return (
 			<Router>
 				<Container>
 					<Switch>
 						<Route exact path="/" component={Home} />
+						<Route exact path="/events" component={Home} />
 
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
-						<Route exact path="/dashboard" component={Dashboard} />
-						<Route exact path="/profile" component={Profile} />
+
+						<PrivateRoute
+							exact
+							path="/dashboard"
+							component={Dashboard}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/profile"
+							component={Profile}
+							isAuthenticated={isAuthenticated}
+						/>
 						<Route exact path="/events/:id" component={ViewEvent} />
 
 						{/* System admin routes TODO hide these if they don't blong */}
-						<Route exact path="/admin/dashboard" component={Dashboard} />
-						<Route
+						<PrivateRoute
+							exact
+							path="/admin/dashboard"
+							component={Dashboard}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
 							exact
 							path="/admin/organizations"
 							component={AdminOrganizationsList}
+							isAuthenticated={isAuthenticated}
 						/>
-						<Route
+						<PrivateRoute
 							exact
 							path="/admin/organizations/create"
 							component={AdminOrganization}
+							isAuthenticated={isAuthenticated}
 						/>
-						<Route
+						<PrivateRoute
 							exact
 							path="/admin/organizations/:id"
 							component={AdminOrganization}
+							isAuthenticated={isAuthenticated}
 						/>
-						<Route exact path="/admin/venues" component={AdminVenuesList} />
-						<Route exact path="/admin/venues/create" component={AdminVenue} />
-						<Route exact path="/admin/venues/:id" component={AdminVenue} />
 
-						<Route exact path="/admin/artists" component={AdminArtistsList} />
-						<Route exact path="/admin/artists/create" component={AdminArtist} />
-						<Route exact path="/admin/artists/:id" component={AdminArtist} />
+						<PrivateRoute
+							exact
+							path="/admin/venues"
+							component={AdminVenuesList}
+							isAuthenticated={isAuthenticated}
+						/>
 
-						<Route exact path="/admin/events" component={AdminEventsList} />
-						<Route exact path="/admin/events/create" component={AdminEvent} />
-						<Route exact path="/admin/events/:id" component={AdminEvent} />
+						{/* <Route exact path="/admin/venues" component={AdminVenuesList} /> */}
+						<PrivateRoute
+							exact
+							path="/admin/venues/create"
+							component={AdminVenue}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/admin/venues/:id"
+							component={AdminVenue}
+							isAuthenticated={isAuthenticated}
+						/>
+
+						<PrivateRoute
+							exact
+							path="/admin/artists"
+							component={AdminArtistsList}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/admin/artists/create"
+							component={AdminArtist}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/admin/artists/:id"
+							component={AdminArtist}
+							isAuthenticated={isAuthenticated}
+						/>
+
+						<PrivateRoute
+							exact
+							path="/admin/events"
+							component={AdminEventsList}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/admin/events/create"
+							component={AdminEvent}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/admin/events/:id"
+							component={AdminEvent}
+							isAuthenticated={isAuthenticated}
+						/>
 
 						<Route component={NotFound} />
 					</Switch>
