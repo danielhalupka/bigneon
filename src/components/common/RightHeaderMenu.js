@@ -12,24 +12,18 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import user from "../../stores/user";
 import NotificationList from "../common/NotificationList";
-import { textColorSecondary, primaryHex } from "../../components/styles/theme";
+import { primaryHex } from "../../components/styles/theme";
 
 const styles = theme => ({
 	menuButton: {
-		color: primaryHex
-		//marginLeft: -12,
-		//marginRight: 0
+		color: primaryHex,
+		boxShadow: "0 2px 2px 0px rgba(1, 1, 1, 0)"
 	},
 	rightIcon: {
 		marginRight: theme.spacing.unit,
 		marginBottom: 4
 	}
 });
-const customStyle = {
-	menuHolder: {
-		display: "flex"
-	}
-};
 
 @observer
 class RightHeaderMenu extends React.Component {
@@ -96,7 +90,7 @@ class RightHeaderMenu extends React.Component {
 		const isProduction = process.env.NODE_ENV === "production";
 
 		return (
-			<div style={customStyle.menuHolder}>
+			<div>
 				{this.renderDevelopmentErrors()}
 				<Button
 					className={classes.menuButton}

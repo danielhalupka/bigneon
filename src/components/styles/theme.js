@@ -42,6 +42,11 @@ const theme = createMuiTheme({
 			root: {
 				paddingBottom: 20
 			}
+		},
+		MuiButton: {
+			root: {
+				boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)"
+			}
 		}
 	}
 });

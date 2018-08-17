@@ -17,9 +17,7 @@ import MenuContent from "./MenuContent";
 import RightHeaderMenu from "./RightHeaderMenu";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import Notification from "../common/Notification";
-import notifications from "../../stores/notifications";
 import user from "../../stores/user";
-import decodeJWT from "../../helpers/decodeJWT";
 
 const drawerWidth = 240;
 
