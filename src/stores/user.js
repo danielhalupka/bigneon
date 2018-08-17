@@ -4,13 +4,20 @@ import notifications from "./notifications";
 import api from "../helpers/api";
 
 class User {
-	@observable id = null;
-	@observable token = null;
-	@observable firstName = "";
-	@observable lastName = "";
-	@observable email = "";
-	@observable phone = "";
-	@observable roles = [];
+	@observable
+	id = null;
+	@observable
+	token = null;
+	@observable
+	firstName = "";
+	@observable
+	lastName = "";
+	@observable
+	email = "";
+	@observable
+	phone = "";
+	@observable
+	roles = [];
 
 	@action
 	refreshUser(onResult = null) {
@@ -157,7 +164,7 @@ class User {
 	get isGuest() {
 		//If they haven't signed in or they're simply an end user.
 		//This might change
-		return !this.token || this.roles.indexOf("User") > -1;
+		return !this.token || this.roles.indexOf("Guest") > -1;
 	}
 }
 
