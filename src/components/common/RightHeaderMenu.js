@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Warning from "@material-ui/icons/Warning";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -92,25 +91,18 @@ class RightHeaderMenu extends React.Component {
 		return (
 			<div>
 				{this.renderDevelopmentErrors()}
-				<Button
-					className={classes.menuButton}
-					aria-owns={open ? "menu-appbar" : null}
-					aria-haspopup="true"
-					onClick={this.handleMenu.bind(this)}
-				>
-					<AccountCircle className={classes.rightIcon} />
+				{isAuthenticated !== null ? (
+					<Button
+						className={classes.menuButton}
+						aria-owns={open ? "menu-appbar" : null}
+						aria-haspopup="true"
+						onClick={this.handleMenu.bind(this)}
+					>
+						<AccountCircle className={classes.rightIcon} />
 
-					{isAuthenticated ? `Hi, ${firstName}` : "Login/Signup"}
-				</Button>
-				{/* <IconButton
-					className={classes.menuButton}
-					aria-owns={open ? "menu-appbar" : null}
-					aria-haspopup="true"
-					onClick={this.handleMenu.bind(this)}
-					color="default"
-				>
-					<AccountCircle />
-				</IconButton> */}
+						{isAuthenticated ? `Hi, ${firstName}` : "Login/Signup"}
+					</Button>
+				) : null}
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}

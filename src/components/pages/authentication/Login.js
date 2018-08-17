@@ -85,7 +85,6 @@ class Login extends Component {
 				password
 			})
 			.then(response => {
-				this.setState({ isSubmitting: false });
 				const { access_token, refresh_token } = response.data;
 				if (access_token) {
 					localStorage.setItem("access_token", access_token);
@@ -96,6 +95,8 @@ class Login extends Component {
 						this.props.history.push("/dashboard");
 					});
 				} else {
+					this.setState({ isSubmitting: false });
+
 					notifications.show({
 						message: "Missing token.",
 						variant: "error"
