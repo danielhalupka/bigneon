@@ -11,6 +11,7 @@ import Login from "../pages/authentication/Login";
 
 //Unauthenticated pages
 import Home from "../pages/landing/Index";
+import ViewEvent from "../pages/events/ViewEvent";
 
 //Admin
 import AdminOrganizationsList from "../pages/admin/organizations/List";
@@ -67,6 +68,7 @@ class Routes extends Component {
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/dashboard" component={Dashboard} />
 						<Route exact path="/profile" component={Profile} />
+						<Route exact path="/events/:id" component={ViewEvent} />
 
 						{/* System admin routes TODO hide these if they don't blong */}
 						<Route exact path="/admin/dashboard" component={Dashboard} />

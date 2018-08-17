@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import EventCard from "./Event";
+import EventCard from "./EventCard";
 import api from "../../../../helpers/api";
 import notifications from "../../../../stores/notifications";
 

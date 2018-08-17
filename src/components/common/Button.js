@@ -19,7 +19,6 @@ const styles = {
 		paddingRight: 30,
 		paddingTop: 5,
 		paddingBottom: 5,
-		boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)",
 		textDecoration: "none"
 	},
 	primary: {
