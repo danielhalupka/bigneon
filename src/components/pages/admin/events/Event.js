@@ -5,13 +5,15 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import moment from "moment";
-
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
 import EventArtist from "./EventArtist";
 import FormSubHeading from "../../../common/FormSubHeading";
 import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
 import Button from "../../../common/Button";
+import Ticket from "./tickets/Ticket";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
 
@@ -52,9 +54,12 @@ class Event extends Component {
 			venues: null,
 			venueId: "",
 			status: "",
+			tickets: [],
 			errors: {},
 			isSubmitting: false
 		};
+
+		this.ticketErrors = {};
 	}
 
 	componentDidMount() {
@@ -101,6 +106,7 @@ class Event extends Component {
 					});
 				});
 		} else {
+			this.addTicket();
 			//TODO get this org owners org ID so we're not loading all
 			const organization_id = null;
 			this.loadVenues(organization_id);
@@ -239,7 +245,10 @@ class Event extends Component {
 
 		this.setState({ errors });
 
-		if (Object.keys(errors).length > 0) {
+		if (
+			Object.keys(errors).length > 0 ||
+			Object.keys(this.ticketErrors).length > 0
+		) {
 			return false;
 		}
 
@@ -351,6 +360,17 @@ class Event extends Component {
 		});
 	}
 
+	addTicket() {
+		let { tickets } = this.state;
+		tickets.push(
+			Ticket.Structure({
+				startDate: moment(),
+				endDate: this.state.eventDate
+			})
+		);
+		this.setState({ tickets });
+	}
+
 	renderOrganizations() {
 		const { organizationId, organizations, errors } = this.state;
 		if (organizations === null) {
@@ -443,6 +463,43 @@ class Event extends Component {
 		);
 	}
 
+	renderTickets() {
+		let tickets = [];
+		this.state.tickets.forEach((ticket, index) => {
+			tickets.push(
+				<Ticket
+					key={`ticket_${index}`}
+					data={ticket}
+					onChange={ticket => {
+						let tickets = [...this.state.tickets];
+						tickets.splice(index, 1, ticket);
+						this.setState({ tickets });
+					}}
+					onError={errors => {
+						const hasError = Object.keys(errors).length > 0;
+
+						if (hasError) {
+							this.ticketErrors[index] = true;
+						} else {
+							delete this.ticketErrors[index];
+						}
+					}}
+					onDelete={ticket => {
+						let tickets = [...this.state.tickets];
+						tickets.splice(index, 1);
+						this.setState({ tickets }, () => {
+							if (this.state.tickets.length === 0) {
+								this.addTicket();
+							}
+						});
+					}}
+					validateFields={this.validateFields.bind(this)}
+				/>
+			);
+		});
+		return tickets;
+	}
+
 	render() {
 		const {
 			eventId,
@@ -456,7 +513,8 @@ class Event extends Component {
 			additionalInfo,
 			status,
 			errors,
-			isSubmitting
+			isSubmitting,
+			tickets
 		} = this.state;
 		const { classes } = this.props;
 
@@ -546,7 +604,16 @@ class Event extends Component {
 										value={eventDate}
 										name="eventDate"
 										label="Event date"
-										onChange={eventDate => this.setState({ eventDate })}
+										onChange={eventDate => {
+											this.setState({ eventDate });
+											const tickets = this.state.tickets;
+											if (tickets.length > 0) {
+												if (!tickets[0].endDate) {
+													tickets[0].endDate = eventDate;
+													this.setState({ tickets });
+												}
+											}
+										}}
 										onBlur={this.validateFields.bind(this)}
 									/>
 								</Grid>
@@ -624,8 +691,17 @@ class Event extends Component {
 									{!eventId ? this.renderOrganizations() : null}
 								</Grid>
 
-								<FormSubHeading>Ticketing (Coming soon)</FormSubHeading>
+								<FormSubHeading>
+									Ticketing (Coming soon){" "}
+									<IconButton
+										onClick={this.addTicket.bind(this)}
+										aria-label="Add"
+									>
+										<AddIcon />
+									</IconButton>
+								</FormSubHeading>
 
+								{this.renderTickets()}
 								<Grid item xs={12} sm={12} lg={12} style={{ marginTop: 40 }}>
 									<Button
 										disabled={isSubmitting}

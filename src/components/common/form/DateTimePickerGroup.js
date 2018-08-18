@@ -25,8 +25,8 @@ const DateTimePickerGroup = props => {
 		onChange,
 		onBlur,
 		onFocus,
-		format,
-		minDate
+		minDate = new Date(),
+		format = "YYYY/MM/DD HH:mm"
 	} = props;
 
 	const { classes } = props;
@@ -53,6 +53,9 @@ const DateTimePickerGroup = props => {
 			Picker = DatePicker;
 			break;
 	}
+	if (minDate) {
+		addtionalProps.minDate = minDate;
+	}
 
 	return (
 		<FormControl
@@ -70,7 +73,6 @@ const DateTimePickerGroup = props => {
 				onBlur={onBlur}
 				onFocus={onFocusOverride}
 				placeholder={placeholder || format}
-				minDate={minDate}
 				format={format}
 				keyboard
 				{...addtionalProps}
@@ -97,8 +99,8 @@ DateTimePickerGroup.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
-	format: PropTypes.string,
-	minDate: PropTypes.object
+	minDate: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+	format: PropTypes.string
 };
 
 export default withStyles(styles)(DateTimePickerGroup);
