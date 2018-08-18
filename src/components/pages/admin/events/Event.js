@@ -360,7 +360,6 @@ class Event extends Component {
 		});
 	}
 
-
 	addTicket() {
 		let { tickets } = this.state;
 		tickets.push(
@@ -692,12 +691,15 @@ class Event extends Component {
 									{!eventId ? this.renderOrganizations() : null}
 								</Grid>
 
-								<FormSubHeading>Ticketing (Coming soon) <IconButton
-									onClick={this.addTicket.bind(this)}
-									aria-label="Add"
-								>
-									<AddIcon />
-								</IconButton></FormSubHeading>
+								<FormSubHeading>
+									Ticketing (Coming soon){" "}
+									<IconButton
+										onClick={this.addTicket.bind(this)}
+										aria-label="Add"
+									>
+										<AddIcon />
+									</IconButton>
+								</FormSubHeading>
 
 								{this.renderTickets()}
 								<Grid item xs={12} sm={12} lg={12} style={{ marginTop: 40 }}>
