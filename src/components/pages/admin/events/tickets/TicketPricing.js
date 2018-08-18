@@ -6,7 +6,8 @@ import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-
+import CardContent from "@material-ui/core/CardContent";
+import Card from "@material-ui/core/Card";
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
@@ -44,31 +45,24 @@ class TicketPricing extends Component {
 		let { ticketId, name, description, startDate, endDate, value } = data;
 		const { onDelete } = this.props;
 		return (
-			<div>
-				{onDelete ? (
-					<div style={{ display: "flex" }}>
-						<div style={{ flex: 1 }} />
-						<IconButton onClick={e => onDelete(data)} color="inherit">
-							<DeleteIcon />
-						</IconButton>
-					</div>
-				) : null}
-				<Grid container spacing={8}>
-					<Grid item xs>
-						<InputGroup
-							error={errors.name}
-							value={name}
-							name="name"
-							label="Price Point name"
-							placeholder="Early Bird / General Admission / Day Of"
-							type="text"
-							onChange={e => {
-								this.setField("name", e.target.value);
-							}}
-							onBlur={this.validateFields}
-						/>
-					</Grid>
-					{/* <Grid item xs>
+			<Card>
+				<CardContent>
+					<Grid container spacing={8} alignItems={"center"}>
+						<Grid item xs>
+							<InputGroup
+								error={errors.name}
+								value={name}
+								name="name"
+								label="Price Point name"
+								placeholder="Early Bird / General Admission / Day Of"
+								type="text"
+								onChange={e => {
+									this.setField("name", e.target.value);
+								}}
+								onBlur={this.validateFields}
+							/>
+						</Grid>
+						{/* <Grid item xs>
 						<InputGroup
 							error={errors.description}
 							value={description}
@@ -81,46 +75,54 @@ class TicketPricing extends Component {
 							onBlur={this.validateFields}
 						/>
 					</Grid> */}
-					<Grid item xs>
-						<InputGroup
-							error={errors.value}
-							value={value}
-							name="value"
-							label="Amount"
-							placeholder="50"
-							type="number"
-							onChange={e => {
-								this.setField("value", e.target.value);
-							}}
-							onBlur={this.validateFields}
-						/>
+
+						<Grid item xs>
+							<DateTimePickerGroup
+								error={errors.startDate}
+								value={startDate}
+								name="startDate"
+								label="Onsale Time"
+								onChange={startDate => this.setField("startDate", startDate)}
+								onBlur={this.validateFields}
+								minDate={false}
+							/>
+						</Grid>
+						<Grid item xs>
+							<DateTimePickerGroup
+								error={errors.endDate}
+								value={endDate}
+								name="endDate"
+								label="Offsale Time"
+								onChange={endDate => this.setField("endDate", endDate)}
+								onBlur={this.validateFields}
+								minDate={false}
+							/>
+						</Grid>
+						<Grid item xs>
+							<InputGroup
+								error={errors.value}
+								value={value}
+								name="value"
+								label="Amount"
+								placeholder="50"
+								type="number"
+								onChange={e => {
+									this.setField("value", e.target.value);
+								}}
+								onBlur={this.validateFields}
+							/>
+						</Grid>
+
+						{onDelete ? (
+							<Grid item xs={1}>
+								<IconButton onClick={e => onDelete(data)} color="inherit">
+									<DeleteIcon />
+								</IconButton>
+							</Grid>
+						) : null}
 					</Grid>
-				</Grid>
-				<Grid container spacing={8}>
-					<Grid item xs>
-						<DateTimePickerGroup
-							error={errors.startDate}
-							value={startDate}
-							name="startDate"
-							label="Onsale Time"
-							onChange={startDate => this.setField("startDate", startDate)}
-							onBlur={this.validateFields}
-							minDate={false}
-						/>
-					</Grid>
-					<Grid item xs>
-						<DateTimePickerGroup
-							error={errors.endDate}
-							value={endDate}
-							name="endDate"
-							label="Offsale Time"
-							onChange={endDate => this.setField("endDate", endDate)}
-							onBlur={this.validateFields}
-							minDate={false}
-						/>
-					</Grid>
-				</Grid>
-			</div>
+				</CardContent>
+			</Card>
 		);
 	}
 }

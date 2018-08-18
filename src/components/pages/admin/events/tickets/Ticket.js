@@ -165,16 +165,8 @@ class Ticket extends Component {
 		return (
 			<Card className={styles.paper}>
 				<CardContent>
-					{onDelete ? (
-						<div style={{ display: "flex" }}>
-							<div style={{ flex: 1 }} />
-							<IconButton onClick={e => onDelete(data)} color="inherit">
-								<DeleteIcon />
-							</IconButton>
-						</div>
-					) : null}
-					<Grid container spacing={8}>
-						<Grid item xs={6}>
+					<Grid container spacing={8} alignItems={"center"}>
+						<Grid item xs={7}>
 							<InputGroup
 								error={errors.name}
 								value={name}
@@ -188,7 +180,7 @@ class Ticket extends Component {
 								onBlur={this.validateFields}
 							/>
 						</Grid>
-						<Grid item xs={3}>
+						<Grid item xs={2}>
 							<InputGroup
 								error={errors.quantity}
 								value={quantity}
@@ -202,7 +194,7 @@ class Ticket extends Component {
 								onBlur={this.validateFields}
 							/>
 						</Grid>
-						<Grid item xs={3}>
+						<Grid item xs={2}>
 							<InputGroup
 								error={errors.limit}
 								value={limit}
@@ -216,6 +208,14 @@ class Ticket extends Component {
 								onBlur={this.validateFields}
 							/>
 						</Grid>
+						{onDelete ? (
+							<Grid item xs>
+								<div style={{ flex: 1 }} />
+								<IconButton onClick={e => onDelete(data)} color="inherit">
+									<DeleteIcon />
+								</IconButton>
+							</Grid>
+						) : null}
 						<Grid item xs={6}>
 							<DateTimePickerGroup
 								error={errors.startDate}
