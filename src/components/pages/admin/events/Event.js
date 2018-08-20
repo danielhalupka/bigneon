@@ -694,7 +694,7 @@ class Event extends Component {
 								</Grid>
 
 								<FormSubHeading>
-									Ticketing (Coming soon){" "}
+									Ticketing {" "}
 									<IconButton
 										onClick={this.addTicket.bind(this)}
 										aria-label="Add"
