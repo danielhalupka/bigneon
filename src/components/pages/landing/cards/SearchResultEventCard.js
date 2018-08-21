@@ -19,7 +19,7 @@ const styles = theme => ({
 	}
 });
 
-const EventCard = ({ classes, id, imgSrc, name, description }) => {
+const SearchResultEventCard = ({ classes, id, imgSrc, name, description }) => {
 	return (
 		<Card className={classes.card}>
 			<CardMedia className={classes.media} image={imgSrc} title={name} />
@@ -42,10 +42,10 @@ const EventCard = ({ classes, id, imgSrc, name, description }) => {
 	);
 };
 
-EventCard.propTypes = {
+SearchResultEventCard.propTypes = {
 	imgSrc: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(EventCard);
+export default withStyles(styles)(SearchResultEventCard);
