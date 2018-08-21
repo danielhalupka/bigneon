@@ -3,14 +3,13 @@ import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
-import moment from "moment";
 
 import Button from "../../common/Button";
 import Divider from "../../common/Divider";
-import api from "../../../helpers/api";
 import notifications from "../../../stores/notifications";
 import TicketSelection from "./TicketSelection";
 import PromoCodeDialog from "./PromoCodeDialog";
+import selectedEvent from "../../../stores/selectedEvent";
 
 const styles = theme => ({
 	card: {
@@ -36,83 +35,26 @@ class CheckoutSelection extends Component {
 		super(props);
 
 		this.state = {
-			loadedEvent: null,
-			name: "",
-			displayEventStartDate: null,
 			openPromo: false,
-			ticketPricing: [],
+			ticketPricing: [], //TODO remove and add to selectedEvent store
 			ticketSelection: {}
 		};
 	}
 
 	componentDidMount() {
-		let eventId = null;
 		if (
 			this.props.match &&
 			this.props.match.params &&
 			this.props.match.params.id
 		) {
-			eventId = this.props.match.params.id;
+			const { id } = this.props.match.params;
 
-			api({ auth: false })
-				.get(`/events/${eventId}`)
-				.then(response => {
-					const {
-						name,
-						created_at,
-						event_start,
-						organization_id,
-						ticket_sell_date,
-						venue_id
-					} = response.data;
-
-					const displayEventStartDate = moment(event_start).format(
-						"dddd, MMMM Do YYYY"
-					);
-
-					this.setState({
-						name,
-						displayEventStartDate,
-						loadedEvent: true
-					});
-
-					//TODO this will change completely when it comes out the DB
-					//Ticket groups
-					const ticketPricing = [
-						{
-							id: "123",
-							name: "General standing",
-							description: "Lorem lorem lorem lorem lorem lorem lorem",
-							price: 1
-						},
-						{
-							id: "456",
-							name: "VIP",
-							description: "For like super important people",
-							price: 999
-						}
-					];
-
-					this.setState({ ticketPricing });
-				})
-				.catch(error => {
-					console.error(error);
-					this.setState({ isSubmitting: false, loadedEvent: false });
-
-					let message = "Loading event details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
-					});
+			selectedEvent.refreshResult(id, errorMessage => {
+				notifications.show({
+					message: errorMessage,
+					variant: "error"
 				});
+			});
 		} else {
 			//TODO return 404
 		}
@@ -120,22 +62,19 @@ class CheckoutSelection extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const {
-			name,
-			displayEventStartDate,
-			loadedEvent,
-			openPromo,
-			ticketPricing,
-			ticketSelection
-		} = this.state;
+		const { openPromo, ticketSelection } = this.state;
 
-		if (loadedEvent === null) {
+		const { eventDetails, ticketPricing } = selectedEvent;
+
+		if (eventDetails === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
 
-		if (loadedEvent === false) {
+		if (eventDetails === false) {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
+
+		const { name, displayEventStartDate } = eventDetails;
 
 		return (
 			<Paper className={classes.card}>
