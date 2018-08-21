@@ -7,6 +7,7 @@ import MuiPickersUtilsProvider from "material-ui-pickers/utils/MuiPickersUtilsPr
 import MomentUtils from "material-ui-pickers/utils/moment-utils";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -81,6 +82,7 @@ class Container extends React.Component {
 
 	render() {
 		const { classes, history, children } = this.props;
+		const { mobileOpen } = this.state;
 
 		const drawer = (
 			<div>
@@ -115,10 +117,11 @@ class Container extends React.Component {
 						</Toolbar>
 					</AppBar>
 					<Hidden mdUp>
-						<Drawer
+						<SwipeableDrawer
 							variant="temporary"
 							anchor={"left"}
-							open={this.state.mobileOpen}
+							open={mobileOpen}
+							onOpen={this.handleDrawerToggle.bind(this)}
 							onClose={this.handleDrawerToggle.bind(this)}
 							classes={{
 								paper: classes.drawerPaper
@@ -128,7 +131,7 @@ class Container extends React.Component {
 							}}
 						>
 							{drawer}
-						</Drawer>
+						</SwipeableDrawer>
 					</Hidden>
 					<Hidden smDown implementation="css">
 						<Drawer
