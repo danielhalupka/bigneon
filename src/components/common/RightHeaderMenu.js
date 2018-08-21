@@ -103,6 +103,16 @@ class RightHeaderMenu extends React.Component {
 						{isAuthenticated ? `Hi, ${firstName}` : "Login/Signup"}
 					</Button>
 				) : null}
+
+				<Link to="/help" style={{ textDecoration: "none" }}>
+					<Button className={classes.menuButton}>Help</Button>
+				</Link>
+
+				<Link to="/app" style={{ textDecoration: "none" }}>
+					<Button variant="contained" color="primary">
+						Get the app
+					</Button>
+				</Link>
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}

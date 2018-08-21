@@ -148,7 +148,7 @@ class Container extends React.Component {
 						<div className={classes.toolbar} />
 						{children}
 						<Notification />
-					</main>{" "}
+					</main>
 				</div>
 			</MuiPickersUtilsProvider>
 		);
