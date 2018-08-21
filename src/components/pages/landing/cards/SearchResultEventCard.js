@@ -36,7 +36,9 @@ const SearchResultEventCard = ({ classes, id, imgSrc, name, description }) => {
 					</Button>
 				</Link>
 
-				<Button customClassName="callToAction">Book now</Button>
+				<Link style={{ textDecoration: "none" }} to={`/events/${id}/tickets`}>
+					<Button customClassName="callToAction">Book now</Button>
+				</Link>
 			</CardActions>
 		</Card>
 	);

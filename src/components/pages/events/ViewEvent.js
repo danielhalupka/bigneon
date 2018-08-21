@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
@@ -68,6 +69,8 @@ class ViewEvent extends Component {
 	}
 
 	componentDidMount() {
+		//TODO move this to a store so it can be quickly used in the checkout screens and loaded in the same way
+
 		let eventId = null;
 		if (
 			this.props.match &&
@@ -76,10 +79,11 @@ class ViewEvent extends Component {
 		) {
 			eventId = this.props.match.params.id;
 
-			api({ auth: false }) //TODO must be false
+			api({ auth: false })
 				.get(`/events/${eventId}`)
 				.then(response => {
 					const {
+						id,
 						name,
 						created_at,
 						event_start,
@@ -93,6 +97,7 @@ class ViewEvent extends Component {
 					);
 
 					this.setState({
+						id,
 						name,
 						displayEventStartDate,
 						loadedEvent: true
@@ -123,7 +128,7 @@ class ViewEvent extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { name, displayEventStartDate, loadedEvent } = this.state;
+		const { name, displayEventStartDate, loadedEvent, id } = this.state;
 
 		if (loadedEvent === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
@@ -201,13 +206,18 @@ class ViewEvent extends Component {
 							$10 - $50
 						</Typography>
 
-						<Button
-							size="large"
-							style={{ width: "100%" }}
-							customClassName="callToAction"
+						<Link
+							style={{ textDecoration: "none" }}
+							to={`/events/${id}/tickets`}
 						>
-							Book now
-						</Button>
+							<Button
+								size="large"
+								style={{ width: "100%" }}
+								customClassName="callToAction"
+							>
+								Book now
+							</Button>
+						</Link>
 
 						<div style={{ marginBottom: 30 }} />
 
@@ -254,5 +264,10 @@ class ViewEvent extends Component {
 		);
 	}
 }
+
+ViewEvent.propTypes = {
+	match: PropTypes.object.isRequired,
+	classes: PropTypes.object.isRequired
+};
 
 export default withStyles(styles)(ViewEvent);

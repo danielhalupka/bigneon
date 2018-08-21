@@ -34,6 +34,7 @@ import AdminEvent from "../pages/admin/events/Event";
 
 import user from "../../stores/user";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
+import CheckoutSelection from "../pages/events/CheckoutSelection";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -109,6 +110,12 @@ class Routes extends Component {
 							isAuthenticated={isAuthenticated}
 						/>
 						<Route exact path="/events/:id" component={ViewEvent} />
+
+						<Route
+							exact
+							path="/events/:id/tickets"
+							component={CheckoutSelection}
+						/>
 
 						{/* System admin routes TODO hide these if they don't blong */}
 						<PrivateRoute
