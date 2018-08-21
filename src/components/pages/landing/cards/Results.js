@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 
-import EventCard from "./EventCard";
+import SearchResultEventCard from "./SearchResultEventCard";
 import eventResults from "../../../../stores/eventResults";
 
 const styles = theme => ({
@@ -15,7 +15,7 @@ const styles = theme => ({
 const EventsList = ({ events }) => {
 	return events.map(event => (
 		<Grid item xs={12} sm={6} lg={4} key={event.id}>
-			<EventCard {...event} />
+			<SearchResultEventCard {...event} />
 		</Grid>
 	));
 };
