@@ -391,7 +391,7 @@ class MenuContent extends Component {
 
 		return (
 			<List component="nav">
-				<Link to={"/"}>
+				<Link to={"/"} onClick={toggleDrawer}>
 					<img
 						style={{ width: "100%", padding: 5 }}
 						src="/images/bn-logo-text.png"
