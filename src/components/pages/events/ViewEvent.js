@@ -4,13 +4,13 @@ import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
-import moment from "moment";
+import { observer } from "mobx-react";
 
 import Button from "../../common/Button";
 import SocialButton from "../../common/social/SocialButton";
 import Divider from "../../common/Divider";
-import api from "../../../helpers/api";
 import notifications from "../../../stores/notifications";
+import selectedEvent from "../../../stores/selectedEvent";
 
 const styles = theme => ({
 	card: {
@@ -57,70 +57,28 @@ const ArtistDescription = ({ classes }) => {
 	);
 };
 
+@observer
 class ViewEvent extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			loadedEvent: null,
-			name: "",
-			displayEventStartDate: null
-		};
+		this.state = {};
 	}
 
 	componentDidMount() {
-		//TODO move this to a store so it can be quickly used in the checkout screens and loaded in the same way
-
-		let eventId = null;
 		if (
 			this.props.match &&
 			this.props.match.params &&
 			this.props.match.params.id
 		) {
-			eventId = this.props.match.params.id;
+			const { id } = this.props.match.params;
 
-			api({ auth: false })
-				.get(`/events/${eventId}`)
-				.then(response => {
-					const {
-						id,
-						name,
-						created_at,
-						event_start,
-						organization_id,
-						ticket_sell_date,
-						venue_id
-					} = response.data;
-
-					const displayEventStartDate = moment(event_start).format(
-						"dddd, MMMM Do YYYY"
-					);
-
-					this.setState({
-						id,
-						name,
-						displayEventStartDate,
-						loadedEvent: true
-					});
-				})
-				.catch(error => {
-					console.error(error);
-					this.setState({ isSubmitting: false, loadedEvent: false });
-
-					let message = "Loading event details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
-					});
+			selectedEvent.refreshResult(id, errorMessage => {
+				notifications.show({
+					message: errorMessage,
+					variant: "error"
 				});
+			});
 		} else {
 			//TODO return 404
 		}
@@ -128,15 +86,17 @@ class ViewEvent extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { name, displayEventStartDate, loadedEvent, id } = this.state;
+		const { eventDetails, id } = selectedEvent;
 
-		if (loadedEvent === null) {
+		if (eventDetails === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
 
-		if (loadedEvent === false) {
+		if (eventDetails === false) {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
+
+		const { name, displayEventStartDate } = eventDetails;
 
 		return (
 			<Paper className={classes.card}>

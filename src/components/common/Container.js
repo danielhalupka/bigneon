@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 // import DevTools from "mobx-react-devtools";
 import MuiPickersUtilsProvider from "material-ui-pickers/utils/MuiPickersUtilsProvider";
 import MomentUtils from "material-ui-pickers/utils/moment-utils";
@@ -105,11 +106,13 @@ class Container extends React.Component {
 							</IconButton>
 							<div style={{ flex: 1 }}>
 								<Hidden mdUp implementation="css">
-									<img
-										alt="Header logo"
-										className={classes.headerImage}
-										src="/images/bn-logo-text.png"
-									/>
+									<Link to={"/"}>
+										<img
+											alt="Header logo"
+											className={classes.headerImage}
+											src="/images/bn-logo-text.png"
+										/>
+									</Link>
 								</Hidden>
 							</div>
 
@@ -148,7 +151,7 @@ class Container extends React.Component {
 						<div className={classes.toolbar} />
 						{children}
 						<Notification />
-					</main>{" "}
+					</main>
 				</div>
 			</MuiPickersUtilsProvider>
 		);
