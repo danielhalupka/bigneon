@@ -309,7 +309,8 @@ class Event extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
-			status
+			status,
+			tickets
 		} = this.state;
 
 		const eventDetails = {
@@ -323,7 +324,8 @@ class Event extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
-			status
+			status,
+			tickets
 		};
 
 		console.log("Post to API: ");
@@ -692,7 +694,7 @@ class Event extends Component {
 								</Grid>
 
 								<FormSubHeading>
-									Ticketing (Coming soon){" "}
+									Ticketing {" "}
 									<IconButton
 										onClick={this.addTicket.bind(this)}
 										aria-label="Add"
