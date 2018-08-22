@@ -1,28 +1,20 @@
 import React, { Component } from "react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
+import { Typography, withStyles } from "@material-ui/core";
+import { observer } from "mobx-react";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 
 import Button from "../../common/Button";
-import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";
 import TicketSelection from "./TicketSelection";
 import PromoCodeDialog from "./PromoCodeDialog";
 import selectedEvent from "../../../stores/selectedEvent";
+import EventSummaryGrid from "./EventSummaryGrid";
 
 const styles = theme => ({
 	card: {
 		padding: theme.spacing.unit * 4
-	},
-	media: {
-		height: 200,
-		width: "100%",
-		borderRadius: theme.shape.borderRadius
-	},
-	descriptionDiv: {
-		marginTop: theme.spacing.unit * 4,
-		marginBottom: theme.spacing.unit * 4
 	},
 	buttonsContainer: {
 		justifyContent: "flex-end",
@@ -30,13 +22,13 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class CheckoutSelection extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			openPromo: false,
-			ticketPricing: [], //TODO remove and add to selectedEvent store
 			ticketSelection: {}
 		};
 	}
@@ -60,6 +52,12 @@ class CheckoutSelection extends Component {
 		}
 	}
 
+	onSubmit() {
+		const { id } = selectedEvent;
+
+		this.props.history.push(`/events/${id}/tickets/confirmation`);
+	}
+
 	render() {
 		const { classes } = this.props;
 		const { openPromo, ticketSelection } = this.state;
@@ -78,52 +76,9 @@ class CheckoutSelection extends Component {
 
 		return (
 			<Paper className={classes.card}>
+				<EventSummaryGrid {...eventDetails} />
+
 				<Grid container spacing={24}>
-					<Grid item xs={12} sm={8} lg={8}>
-						<Typography variant="caption">
-							Organization name presents
-						</Typography>
-
-						<Typography variant="display3" component="h3">
-							{name}
-						</Typography>
-
-						<Typography variant="display1" component="h3">
-							With supporting artists, artist 1 and artist 2
-						</Typography>
-
-						<Typography style={{ marginBottom: 20 }} variant="subheading">
-							Date and time
-						</Typography>
-
-						<Typography variant="body1">{displayEventStartDate}</Typography>
-						<Typography variant="body1">
-							Doors: 8:00PM / Show: 9:00PM
-						</Typography>
-						<Typography variant="body1">This event is all ages</Typography>
-
-						<div style={{ marginBottom: 30 }} />
-
-						<div className={classes.descriptionDiv}>
-							<Typography variant="headline">Description</Typography>
-							<Typography variant="body1">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-								eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-								enim ad minim veniam.
-							</Typography>
-						</div>
-					</Grid>
-
-					<Grid item xs={12} sm={4} lg={4}>
-						<CardMedia
-							className={classes.media}
-							image={`https://picsum.photos/800/400/?image=200`}
-							title={name}
-						/>
-					</Grid>
-
-					<Divider />
-
 					<Grid item xs={12} sm={12} lg={12}>
 						{ticketPricing.map(({ id, name, price, description }) => (
 							<TicketSelection
@@ -151,7 +106,11 @@ class CheckoutSelection extends Component {
 								Apply promo code
 							</Button>
 							&nbsp;
-							<Button size="large" customClassName="primary">
+							<Button
+								onClick={this.onSubmit.bind(this)}
+								size="large"
+								customClassName="primary"
+							>
 								Select tickets
 							</Button>
 						</div>

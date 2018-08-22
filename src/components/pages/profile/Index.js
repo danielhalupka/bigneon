@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
