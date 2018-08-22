@@ -180,21 +180,27 @@ class CheckoutConfirmation extends Component {
 							className={classes.userIcon}
 						/>
 						<Typography className={classes.userName} variant="body1">
-							Hi, {user.firstName} {user.lastName}!
+							{user.isAuthenticated
+								? `Hi, ${user.firstName} ${user.lastName}!`
+								: "Please login first"}
 						</Typography>
 					</Grid>
 
-					<Grid item xs={12} sm={12} lg={12}>
-						<CreditCardForm />
-					</Grid>
+					{user.isAuthenticated ? (
+						<Grid item xs={12} sm={12} lg={12}>
+							<CreditCardForm />
+						</Grid>
+					) : null}
 
-					<Grid item xs={12} sm={12} lg={12}>
-						<div className={classes.buttonsContainer}>
-							<Button size="large" customClassName="primary">
-								Purchase tickets
-							</Button>
-						</div>
-					</Grid>
+					{user.isAuthenticated ? (
+						<Grid item xs={12} sm={12} lg={12}>
+							<div className={classes.buttonsContainer}>
+								<Button size="large" customClassName="primary">
+									Purchase tickets
+								</Button>
+							</div>
+						</Grid>
+					) : null}
 				</Grid>
 			</Paper>
 		);
