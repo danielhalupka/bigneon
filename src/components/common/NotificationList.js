@@ -30,6 +30,7 @@ class NotificationList extends React.Component {
 		};
 		this.buttonRef = React.createRef();
 	}
+
 	componentDidMount() {}
 
 	handleMenu(event) {

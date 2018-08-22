@@ -6,16 +6,22 @@ import api from "../helpers/api";
 class User {
 	@observable
 	id = null;
+
 	@observable
 	token = null;
+
 	@observable
 	firstName = "";
+
 	@observable
 	lastName = "";
+
 	@observable
 	email = "";
+
 	@observable
 	phone = "";
+
 	@observable
 	roles = [];
 

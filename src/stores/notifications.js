@@ -1,8 +1,11 @@
 import { observable, computed, action } from "mobx";
 
 class Notification {
-	@observable message = "";
-	@observable variant = "";
+	@observable
+	message = "";
+
+	@observable
+	variant = "";
 
 	@action
 	show({ message, variant = "info" }) {
