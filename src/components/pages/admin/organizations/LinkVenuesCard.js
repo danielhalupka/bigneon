@@ -71,7 +71,7 @@ class LinkVenuesCard extends Component {
 		const { organizationId } = this.props;
 
 		api()
-			.get(`/venues/organizations/${organizationId}`)
+			.get(`/organizations/${organizationId}/venues`)
 			.then(response => {
 				const { data } = response;
 				this.setState({ linkedVenues: data });
