@@ -40,7 +40,7 @@ const styles = theme => ({
 		}
 	},
 	headerImage: {
-		width: 200
+		width: 180
 	},
 	navIconHide: {
 		[theme.breakpoints.up("md")]: {
