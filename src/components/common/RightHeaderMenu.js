@@ -12,6 +12,7 @@ import Menu from "@material-ui/core/Menu";
 import user from "../../stores/user";
 import NotificationList from "../common/NotificationList";
 import { primaryHex } from "../../components/styles/theme";
+import { Hidden } from "@material-ui/core";
 
 const styles = theme => ({
 	menuButton: {
@@ -100,19 +101,31 @@ class RightHeaderMenu extends React.Component {
 					>
 						<AccountCircle className={classes.rightIcon} />
 
-						{isAuthenticated ? `Hi, ${firstName}` : "Login/Signup"}
+						{isAuthenticated ? (
+							<span>
+								Hi,&nbsp;
+								{firstName}
+							</span>
+						) : (
+							"Login/Signup"
+						)}
 					</Button>
 				) : null}
 
-				<Link to="/help" style={{ textDecoration: "none" }}>
-					<Button className={classes.menuButton}>Help</Button>
-				</Link>
+				<Hidden smDown>
+					<Link to="/help" style={{ textDecoration: "none" }}>
+						<Button className={classes.menuButton}>Help</Button>
+					</Link>
+				</Hidden>
 
-				<Link to="/app" style={{ textDecoration: "none" }}>
-					<Button variant="contained" color="primary">
-						Get the app
-					</Button>
-				</Link>
+				<Hidden smDown>
+					<Link to="/app" style={{ textDecoration: "none" }}>
+						<Button variant="contained" color="primary">
+							Get the app
+						</Button>
+					</Link>
+				</Hidden>
+
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}

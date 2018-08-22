@@ -12,6 +12,7 @@ class Sales extends Component {
 			month: "July"
 		};
 	}
+
 	render() {
 		const { value, month } = this.state;
 

@@ -23,6 +23,7 @@ class TicketPricing extends Component {
 			errors: {}
 		};
 	}
+
 	static getDerivedStateFromProps(props, current_state) {
 		if (current_state.data !== props.data) {
 			current_state.data = props.data;
@@ -30,6 +31,7 @@ class TicketPricing extends Component {
 		}
 		return null;
 	}
+
 	setField(key, value) {
 		let data = this.state.data;
 
