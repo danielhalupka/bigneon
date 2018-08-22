@@ -17,7 +17,6 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 import MenuContent from "./MenuContent";
 import RightHeaderMenu from "./RightHeaderMenu";
-import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
 
