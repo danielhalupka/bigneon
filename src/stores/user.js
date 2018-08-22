@@ -109,6 +109,10 @@ class User {
 				onSuccess();
 			})
 			.catch(error => {
+				notifications.show({
+					message: "Failed to refresh session.",
+					variant: "error"
+				});
 				console.error(error);
 				onError(error);
 			});
