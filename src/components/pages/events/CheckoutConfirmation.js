@@ -195,7 +195,14 @@ class CheckoutConfirmation extends Component {
 					{user.isAuthenticated ? (
 						<Grid item xs={12} sm={12} lg={12}>
 							<div className={classes.buttonsContainer}>
-								<Button size="large" customClassName="primary">
+								<Button
+									onClick={() => {
+										//TODO go to submit()
+										this.props.history.push(`/events/${id}/tickets/success`);
+									}}
+									size="large"
+									customClassName="primary"
+								>
 									Purchase tickets
 								</Button>
 							</div>
