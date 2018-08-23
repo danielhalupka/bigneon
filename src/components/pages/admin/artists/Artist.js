@@ -40,13 +40,13 @@ class Artist extends Component {
 			artistId,
 			name: "",
 			bio: "",
-			website: "",
-			facebookUsername: "",
-			instagramUsername: "",
-			snapchatUsername: "",
-			soundcloud: "",
-			bandcamp: "",
-			youtubeVideos: [""],
+			website_url: "",
+			facebook_username: "",
+			instagram_username: "",
+			snapshat_username: "",
+			soundcloud_username: "",
+			bandcamp_username: "",
+			youtube_video_urls: [""],
 			errors: {},
 			isSubmitting: false
 		};
@@ -62,26 +62,25 @@ class Artist extends Component {
 					const {
 						name,
 						bio,
-						website,
-						facebookUsername,
-						instagramUsername,
-						snapchatUsername,
-						soundcloud,
-						bandcamp,
-						youtubeVideos
-						//TODO check what the fields are named when they come from the backend
+						website_url,
+						facebook_username,
+						instagram_username,
+						snapshat_username,
+						soundcloud_username,
+						bandcamp_username,
+						youtube_video_urls
 					} = response.data;
 
 					this.setState({
 						name: name || "",
 						bio: bio || "",
-						website: website || "",
-						facebookUsername: facebookUsername || "",
-						instagramUsername: instagramUsername || "",
-						snapchatUsername: snapchatUsername || "",
-						soundcloud: soundcloud || "",
-						bandcamp: bandcamp || "",
-						youtubeVideos: youtubeVideos || [""]
+						website_url: website_url || "",
+						facebook_username: facebook_username || "",
+						instagram_username: instagram_username || "",
+						snapshat_username: snapshat_username || "",
+						soundcloud_username: soundcloud_username || "",
+						bandcamp_username: bandcamp_username || "",
+						youtube_video_urls: youtube_video_urls || [""]
 					});
 				})
 				.catch(error => {
@@ -114,13 +113,13 @@ class Artist extends Component {
 		const {
 			name,
 			bio,
-			website,
-			facebookUsername,
-			instagramUsername,
-			snapchatUsername,
-			soundcloud,
-			bandcamp,
-			youtubeVideos
+			website_url,
+			facebook_username,
+			instagram_username,
+			snapshat_username,
+			soundcloud_username,
+			bandcamp_username,
+			youtube_video_urls
 		} = this.state;
 
 		const errors = {};
@@ -133,34 +132,22 @@ class Artist extends Component {
 			errors.bio = "Missing artist bio.";
 		}
 
-		if (website) {
-			if (!validUrl(website)) {
-				errors.website = "Please enter a valid URL.";
+		if (website_url) {
+			if (!validUrl(website_url)) {
+				errors.website_url = "Please enter a valid URL.";
 			}
 		}
 
-		if (soundcloud) {
-			if (!validUrl(soundcloud)) {
-				errors.soundcloud = "Please enter a valid URL.";
-			}
-		}
-
-		if (bandcamp) {
-			if (!validUrl(bandcamp)) {
-				errors.bandcamp = "Please enter a valid URL.";
-			}
-		}
-
-		for (let index = 0; index < youtubeVideos.length; index++) {
-			const url = youtubeVideos[index];
+		for (let index = 0; index < youtube_video_urls.length; index++) {
+			const url = youtube_video_urls[index];
 
 			if (url) {
 				if (!validUrl(url)) {
-					let youtubeVideosErrors = errors.youtubeVideos
-						? errors.youtubeVideos
+					let youtubeVideosErrors = errors.youtube_video_urls
+						? errors.youtube_video_urls
 						: [];
 					youtubeVideosErrors[index] = "Please enter a valid URL.";
-					errors.youtubeVideos = youtubeVideosErrors;
+					errors.youtube_video_urls = youtubeVideosErrors;
 				}
 			}
 		}
@@ -242,25 +229,25 @@ class Artist extends Component {
 			artistId,
 			name,
 			bio,
-			website,
-			facebookUsername,
-			instagramUsername,
-			snapchatUsername,
-			soundcloud,
-			bandcamp,
-			youtubeVideos
+			website_url,
+			facebook_username,
+			instagram_username,
+			snapshat_username,
+			soundcloud_username,
+			bandcamp_username,
+			youtube_video_urls
 		} = this.state;
 
 		const artistDetails = {
 			name,
 			bio,
-			website,
-			facebookUsername,
-			instagramUsername,
-			snapchatUsername,
-			soundcloud,
-			bandcamp,
-			youtubeVideos
+			website_url,
+			facebook_username,
+			instagram_username,
+			snapshat_username,
+			soundcloud_username,
+			bandcamp_username,
+			youtube_video_urls
 		};
 
 		//If we're updating an existing venue
@@ -292,13 +279,13 @@ class Artist extends Component {
 			artistId,
 			name,
 			bio,
-			website,
-			facebookUsername,
-			instagramUsername,
-			snapchatUsername,
-			soundcloud,
-			bandcamp,
-			youtubeVideos,
+			website_url,
+			facebook_username,
+			instagram_username,
+			snapshat_username,
+			soundcloud_username,
+			bandcamp_username,
+			youtube_video_urls,
 			errors,
 			isSubmitting
 		} = this.state;
@@ -353,12 +340,14 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.website}
-										value={website}
-										name="website"
+										error={errors.website_url}
+										value={website_url}
+										name="website_url"
 										label="Website"
 										type="text"
-										onChange={e => this.setState({ website: e.target.value })}
+										onChange={e =>
+											this.setState({ website_url: e.target.value })
+										}
 										onBlur={this.validateFields.bind(this)}
 										placeholder="https://artistwebsite.com/"
 									/>
@@ -366,13 +355,13 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.facebookUsername}
-										value={facebookUsername}
-										name="facebookUsername"
+										error={errors.facebook_username}
+										value={facebook_username}
+										name="facebook_username"
 										label="Facebook username"
 										type="text"
 										onChange={e =>
-											this.setState({ facebookUsername: e.target.value })
+											this.setState({ facebook_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
 										placeholder="@Facebook"
@@ -381,13 +370,13 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.instagramUsername}
-										value={instagramUsername}
-										name="instagramUsername"
+										error={errors.instagram_username}
+										value={instagram_username}
+										name="instagram_username"
 										label="Instagram username"
 										type="text"
 										onChange={e =>
-											this.setState({ instagramUsername: e.target.value })
+											this.setState({ instagram_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
 										placeholder="@Instagram"
@@ -396,13 +385,13 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.snapchatUsername}
-										value={snapchatUsername}
-										name="snapchatUsername"
+										error={errors.snapshat_username}
+										value={snapshat_username}
+										name="snapshat_username"
 										label="Snapchat username"
 										type="text"
 										onChange={e =>
-											this.setState({ snapchatUsername: e.target.value })
+											this.setState({ snapshat_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
 										placeholder="@Snapchat"
@@ -413,42 +402,44 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.soundcloud}
-										value={soundcloud}
+										error={errors.soundcloud_username}
+										value={soundcloud_username}
 										name="soundcloud"
-										label="Soundcloud URL"
+										label="Soundcloud username"
 										type="text"
 										onChange={e =>
-											this.setState({ soundcloud: e.target.value })
+											this.setState({ soundcloud_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
-										placeholder="https://soundcloud.com/artist"
+										placeholder="ArtistUsername"
 									/>
 								</Grid>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.bandcamp}
-										value={bandcamp}
-										name="bandcamp"
-										label="Bandcamp URL"
+										error={errors.bandcamp_username}
+										value={bandcamp_username}
+										name="bandcamp_username"
+										label="Bandcamp username"
 										type="text"
-										onChange={e => this.setState({ bandcamp: e.target.value })}
+										onChange={e =>
+											this.setState({ bandcamp_username: e.target.value })
+										}
 										onBlur={this.validateFields.bind(this)}
-										placeholder="https://artist.bandcamp.com/"
+										placeholder="ArtistUsername"
 									/>
 								</Grid>
 
 								<FormSubHeading>Media</FormSubHeading>
 
-								{youtubeVideos.map((youtubeUrl, index) => {
+								{youtube_video_urls.map((youtubeUrl, index) => {
 									return (
 										<Grid key={index} item xs={12} sm={6} lg={6}>
 											<div style={{ display: "flex" }}>
 												<InputGroup
 													error={
-														errors.youtubeVideos
-															? errors.youtubeVideos[index]
+														errors.youtube_video_urls
+															? errors.youtube_video_urls[index]
 															: null
 													}
 													value={youtubeUrl}
@@ -458,9 +449,10 @@ class Artist extends Component {
 													onChange={e => {
 														const url = e.target.value;
 														this.setState(currentState => {
-															currentState.youtubeVideos[index] = url;
+															currentState.youtube_video_urls[index] = url;
 															return {
-																youtubeVideos: currentState.youtubeVideos
+																youtube_video_urls:
+																	currentState.youtube_video_urls
 															};
 														});
 													}}
@@ -474,9 +466,10 @@ class Artist extends Component {
 													onClick={() => {
 														this.setState(currentState => {
 															//Remove just that link
-															currentState.youtubeVideos.splice(index, 1);
+															currentState.youtube_video_urls.splice(index, 1);
 															return {
-																youtubeVideos: currentState.youtubeVideos
+																youtube_video_urls:
+																	currentState.youtube_video_urls
 															};
 														}, this.validateFields.bind(this));
 													}}
@@ -491,10 +484,10 @@ class Artist extends Component {
 									<Button
 										onClick={() => {
 											this.setState(currentState => {
-												const newIndex = currentState.youtubeVideos.length + 1;
-												currentState.youtubeVideos[newIndex] = "";
+												const newIndex = currentState.youtube_video_urls.length;
+												currentState.youtube_video_urls[newIndex] = "";
 												return {
-													youtubeVideos: currentState.youtubeVideos
+													youtube_video_urls: currentState.youtube_video_urls
 												};
 											}, this.validateFields.bind(this));
 										}}

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -11,10 +11,23 @@ import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
 
 const styles = theme => ({
-	paper: {},
+	paper: {
+		display: "flex"
+	},
 	cardContent: {
 		padding: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit
+		marginBottom: theme.spacing.unit,
+		flex: "1 0 auto"
+	},
+	media: {
+		width: "100%",
+		maxWidth: 150,
+		height: 150
+	},
+	actionButtons: {
+		display: "flex",
+		alignItems: "flex-end",
+		padding: theme.spacing.unit
 	}
 });
 
@@ -67,29 +80,41 @@ class ArtistsList extends Component {
 
 		if (artists && artists.length > 0) {
 			return artists.map(artist => {
-				const { id, name } = artist;
+				const { id, name, youtube_video_urls, website_url } = artist;
+				const videoCount = youtube_video_urls ? youtube_video_urls.length : 0;
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<Card className={classes.paper}>
+							<CardMedia
+								className={classes.media}
+								image={"https://picsum.photos/300/300/?random"}
+								title={name}
+							/>
+
 							<CardContent className={classes.cardContent}>
 								<Typography variant="display1">{name}</Typography>
-								{/* <Typography variant="body1">
-									{address || "*Missing address"}
-								</Typography> */}
+								<Typography variant="body1">
+									{videoCount} video
+									{videoCount === 1 ? "" : "s"}
+								</Typography>
+
+								<a href={website_url} target="_blank">
+									<Typography variant="body1">{website_url}</Typography>
+								</a>
 							</CardContent>
 
-							<CardActions>
+							<div className={classes.actionButtons}>
 								<Link
 									to={`/admin/artists/${id}`}
-									style={{ textDecoration: "none" }}
+									style={{ textDecoration: "none", marginRight: 10 }}
 								>
 									<Button customClassName="primary">Edit details</Button>
 								</Link>
 								<Link to={`/artists/${id}`} style={{ textDecoration: "none" }}>
 									<Button customClassName="secondary">View more</Button>
 								</Link>
-							</CardActions>
+							</div>
 						</Card>
 					</Grid>
 				);
