@@ -58,11 +58,37 @@ class CheckoutSelection extends Component {
 		this.props.history.push(`/events/${id}/tickets/confirmation`);
 	}
 
+	renderTicketPricing() {
+		const { ticketPricing } = selectedEvent;
+		const { ticketSelection } = this.state;
+
+		if (!ticketPricing) {
+			return null; //Still loading this
+		}
+
+		return ticketPricing.map(({ id, name, price, description }) => (
+			<TicketSelection
+				key={id}
+				name={name}
+				description={description}
+				price={price}
+				error={null}
+				amount={ticketSelection[id]}
+				onNumberChange={amount =>
+					this.setState(({ ticketSelection }) => {
+						ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
+						return { ticketSelection };
+					})
+				}
+			/>
+		));
+	}
+
 	render() {
 		const { classes } = this.props;
-		const { openPromo, ticketSelection } = this.state;
+		const { openPromo } = this.state;
 
-		const { eventDetails, ticketPricing } = selectedEvent;
+		const { eventDetails } = selectedEvent;
 
 		if (eventDetails === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
@@ -72,30 +98,13 @@ class CheckoutSelection extends Component {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
-		const { name, displayEventStartDate } = eventDetails;
-
 		return (
 			<Paper className={classes.card}>
 				<EventSummaryGrid {...eventDetails} />
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
-						{ticketPricing.map(({ id, name, price, description }) => (
-							<TicketSelection
-								key={id}
-								name={name}
-								description={description}
-								price={price}
-								error={null}
-								amount={ticketSelection[id]}
-								onNumberChange={amount =>
-									this.setState(({ ticketSelection }) => {
-										ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
-										return { ticketSelection };
-									})
-								}
-							/>
-						))}
+						{this.renderTicketPricing()}
 
 						<div className={classes.buttonsContainer}>
 							<Button
