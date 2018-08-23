@@ -211,10 +211,13 @@ class Event extends Component {
 
 		const errors = {};
 
-		errors.artists = {};
 		for (let index = 0; index < artists.length; index++) {
 			const { setTime } = artists[index];
 			if (!setTime) {
+				if (!errors.artists) {
+					errors.artists = {};
+				}
+
 				errors.artists[index] = "Specify the set time.";
 			}
 		}
@@ -327,9 +330,6 @@ class Event extends Component {
 			status,
 			tickets
 		};
-
-		console.log("Post to API: ");
-		console.log(eventDetails);
 
 		//If we're updating an existing venue
 		if (eventId) {
@@ -694,7 +694,7 @@ class Event extends Component {
 								</Grid>
 
 								<FormSubHeading>
-									Ticketing {" "}
+									Ticketing
 									<IconButton
 										onClick={this.addTicket.bind(this)}
 										aria-label="Add"
