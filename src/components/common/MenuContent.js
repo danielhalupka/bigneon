@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";

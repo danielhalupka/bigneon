@@ -125,6 +125,8 @@ class Routes extends Component {
 							component={CheckoutConfirmation}
 						/>
 
+						<Route exact path="/cart" component={CheckoutConfirmation} />
+
 						<PrivateRoute
 							exact
 							path="/events/:id/tickets/success"

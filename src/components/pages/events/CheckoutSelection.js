@@ -11,6 +11,7 @@ import TicketSelection from "./TicketSelection";
 import PromoCodeDialog from "./PromoCodeDialog";
 import selectedEvent from "../../../stores/selectedEvent";
 import EventSummaryGrid from "./EventSummaryGrid";
+import cart from "../../../stores/cart";
 
 const styles = theme => ({
 	card: {
@@ -54,6 +55,9 @@ class CheckoutSelection extends Component {
 
 	onSubmit() {
 		const { id } = selectedEvent;
+
+		//Add to dummy cart
+		cart.addToCart(["TODO_ticket1", "TODO_ticket2"]);
 
 		this.props.history.push(`/events/${id}/tickets/confirmation`);
 	}

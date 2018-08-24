@@ -19,6 +19,7 @@ import MenuContent from "./MenuContent";
 import RightHeaderMenu from "./RightHeaderMenu";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
+import CartMobileBottomBar from "./cart/CartMobileBottomBar";
 
 const drawerWidth = 240;
 
@@ -57,7 +58,8 @@ const styles = theme => ({
 	content: {
 		flexGrow: 1,
 		backgroundColor: theme.palette.background.default,
-		padding: theme.spacing.unit * 3
+		padding: theme.spacing.unit * 3,
+		paddingBottom: theme.spacing.unit * 10
 	}
 });
 
@@ -152,6 +154,7 @@ class Container extends React.Component {
 						<Notification />
 					</main>
 				</div>
+				<CartMobileBottomBar />
 			</MuiPickersUtilsProvider>
 		);
 	}
