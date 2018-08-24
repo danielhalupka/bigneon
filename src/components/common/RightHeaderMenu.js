@@ -2,17 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Warning from "@material-ui/icons/Warning";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+import { Hidden } from "@material-ui/core";
+
 import user from "../../stores/user";
 import NotificationList from "../common/NotificationList";
 import { primaryHex } from "../../components/styles/theme";
-import { Hidden } from "@material-ui/core";
+import CartHeaderLink from "./cart/CartHeaderLink";
 
 const styles = theme => ({
 	menuButton: {
@@ -87,8 +88,6 @@ class RightHeaderMenu extends React.Component {
 
 		const { isAuthenticated, firstName, lastName } = user;
 
-		const isProduction = process.env.NODE_ENV === "production";
-
 		return (
 			<div>
 				{this.renderDevelopmentErrors()}
@@ -111,6 +110,10 @@ class RightHeaderMenu extends React.Component {
 						)}
 					</Button>
 				) : null}
+
+				<Hidden xsDown>
+					<CartHeaderLink />
+				</Hidden>
 
 				<Hidden smDown>
 					<Link to="/help" style={{ textDecoration: "none" }}>

@@ -14,6 +14,7 @@ import EventSummaryGrid from "./EventSummaryGrid";
 import CreditCardForm from "../../common/CreditCardForm";
 import { primaryHex } from "../../styles/theme";
 import Divider from "../../common/Divider";
+import cart from "../../../stores/cart";
 
 const styles = theme => ({
 	card: {
@@ -89,7 +90,7 @@ class CheckoutConfirmation extends Component {
 				});
 			});
 		} else {
-			//TODO return 404
+			//Don't show any event specific details
 		}
 	}
 
@@ -115,21 +116,19 @@ class CheckoutConfirmation extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { openPromo, ticketSelection } = this.state;
+		const { ticketSelection } = this.state;
 
+		//If the user has previously selected an event, it'll still be here
+		//If they haven't selected an event but we have tickets in their cart from previously then display a generic checkout page
 		const { id, eventDetails, ticketPricing } = selectedEvent;
-
-		if (eventDetails === null) {
-			return <Typography variant="subheading">Loading...</Typography>;
-		}
-
-		if (eventDetails === false) {
-			return <Typography variant="subheading">Event not found.</Typography>;
-		}
 
 		return (
 			<Paper className={classes.card}>
-				<EventSummaryGrid {...eventDetails} />
+				{eventDetails ? (
+					<EventSummaryGrid {...eventDetails} />
+				) : (
+					<Typography variant="display2">Checkout</Typography>
+				)}
 
 				<Grid container spacing={24}>
 					<Grid

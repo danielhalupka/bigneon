@@ -11,6 +11,7 @@ import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import user from "../../../stores/user";
 import EventSummaryGrid from "./EventSummaryGrid";
+import cart from "../../../stores/cart";
 
 const styles = theme => ({
 	card: {
@@ -36,6 +37,8 @@ class CheckoutSuccess extends Component {
 	}
 
 	componentDidMount() {
+		cart.emptyCart();
+
 		if (
 			this.props.match &&
 			this.props.match.params &&
