@@ -45,7 +45,7 @@ const SelectGroup = props => {
 			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
-			<InputLabel htmlFor={name}>{label}</InputLabel>
+			{label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
 			<Select
 				value={value}
 				onChange={onChange}
@@ -70,7 +70,7 @@ SelectGroup.propTypes = {
 	value: PropTypes.string.isRequired,
 	missingItemsLabel: PropTypes.string, //If there are no items, the text you want to display
 	name: PropTypes.string.isRequired,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func

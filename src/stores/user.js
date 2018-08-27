@@ -114,7 +114,19 @@ class User {
 					variant: "error"
 				});
 				console.error(error);
-				onError(error);
+
+				//If it's a 404 the user is now gone
+				if (
+					error.response &&
+					error.response.status &&
+					error.response.status === 404
+				) {
+					console.log("Delete refresh token");
+					localStorage.removeItem("access_token");
+					localStorage.removeItem("refresh_token");
+				} else {
+					onError(error);
+				}
 			});
 	}
 
