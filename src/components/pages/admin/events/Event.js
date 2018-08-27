@@ -53,7 +53,6 @@ class Event extends Component {
 			organizationId: "",
 			venues: null,
 			venueId: "",
-			status: "",
 			tickets: [],
 			errors: {},
 			isSubmitting: false
@@ -69,12 +68,21 @@ class Event extends Component {
 			api()
 				.get(`/events/${eventId}`)
 				.then(response => {
+					console.log(response.data);
+					const { artists, event, organization, venue } = response.data;
+
 					const {
-						name,
+						age_limit,
+						created_at,
+						door_time,
 						event_start,
+						name,
+						promo_image_url,
+						publish_date,
 						venue_id,
-						organization_id
-					} = response.data;
+						organization_id,
+						additional_info
+					} = event;
 
 					this.loadVenues(organization_id);
 
@@ -83,8 +91,13 @@ class Event extends Component {
 						eventDate: event_start
 							? moment(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 							: null,
-						venueId: venue_id ? venue_id : "",
-						organizationIcd: organization_id ? organization_id : ""
+						doorTime: door_time
+							? moment(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+							: null,
+						ageLimit: age_limit || "",
+						venueId: venue_id || "",
+						organizationId: organization_id || "",
+						additionalInfo: additional_info || ""
 					});
 				})
 				.catch(error => {
@@ -205,8 +218,7 @@ class Event extends Component {
 			ageLimit,
 			organizationId,
 			venueId,
-			additionalInfo,
-			status
+			additionalInfo
 		} = this.state;
 
 		const errors = {};
@@ -242,11 +254,9 @@ class Event extends Component {
 			errors.doorTime = "Specify the door time.";
 		}
 
-		if (!status) {
-			errors.status = "Specify status of this event.";
-		}
-
 		this.setState({ errors });
+
+		console.error(errors);
 
 		if (
 			Object.keys(errors).length > 0 ||
@@ -276,6 +286,7 @@ class Event extends Component {
 	}
 
 	updateEvent(id, params, onSuccess) {
+		console.log(params);
 		api()
 			.put(`/events/${id}`, { ...params, id })
 			.then(() => {
@@ -312,7 +323,6 @@ class Event extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
-			status,
 			tickets
 		} = this.state;
 
@@ -324,15 +334,20 @@ class Event extends Component {
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //This format --> "2018-09-18T23:56:04"
 			organization_id: organizationId,
 			artists,
-			doorTime,
-			ageLimit,
-			additionalInfo,
-			status,
+			door_time: moment
+				.utc(doorTime)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			age_limit: Number(ageLimit),
+			publish_date: moment
+				.utc(new Date())
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //TODO make publish date selectable on in a date field
+			additional_info: additionalInfo,
 			tickets
 		};
 
 		//If we're updating an existing venue
 		if (eventId) {
+			console.log(eventId);
 			this.updateEvent(eventId, eventDetails, id => {
 				notifications.show({
 					message: "Event updated.",
@@ -513,7 +528,6 @@ class Event extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
-			status,
 			errors,
 			isSubmitting,
 			tickets
@@ -669,22 +683,6 @@ class Event extends Component {
 										className={classes.promoImage}
 										image="https://picsum.photos/300/300/?random&blur"
 										title={"Artist"}
-									/>
-								</Grid>
-
-								<Grid item xs={12} sm={6} lg={6}>
-									<SelectGroup
-										value={status}
-										items={{ buy: "Buy" }}
-										error={errors.status}
-										name={"status"}
-										missingItemsLabel={"No available status"}
-										label={"Event status"}
-										onChange={e => {
-											const status = e.target.value;
-											this.setState({ status });
-										}}
-										onBlur={this.validateFields.bind(this)}
 									/>
 								</Grid>
 
