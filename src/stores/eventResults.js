@@ -5,6 +5,9 @@ class EventResults {
 	@observable
 	events = null;
 
+	@observable
+	filters = {};
+
 	@action
 	refreshResults(params, onSuccess, onError) {
 		api({ auth: false })
@@ -51,6 +54,42 @@ class EventResults {
 
 				onError(message);
 			});
+	}
+
+	@action
+	changeFilter(key, value) {
+		//If value is falsy they're removing a filter
+		this.filters[key] = value;
+	}
+
+	//Instantly filter events by city or other fields
+	@computed
+	get filteredEvents() {
+		if (!this.events) {
+			return [];
+		}
+
+		let filteredEvents = [];
+		this.events.forEach(event => {
+			const { city } = event;
+			let showEvent = true;
+
+			//If there is a filter and a field to filter in the event entry
+			if (this.filters.city) {
+				if (city && city === this.filter.city) {
+					showEvent = true;
+				} else {
+					showEvent = false;
+				}
+			}
+
+			//If all filters passed, show event
+			if (showEvent) {
+				filteredEvents.push(event);
+			}
+		});
+
+		return filteredEvents;
 	}
 }
 
