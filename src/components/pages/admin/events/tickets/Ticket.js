@@ -19,10 +19,6 @@ import api from "../../../../../helpers/api";
 import TicketPricing from "./TicketPricing";
 
 const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
-	},
 	flex: {
 		flexGrow: 1
 	}
@@ -46,10 +42,10 @@ class Ticket extends Component {
 		this.props.onChange(data);
 	}
 
-	static getDerivedStateFromProps(props, current_state) {
-		if (current_state.data !== props.data) {
-			current_state.data = props.data;
-			return current_state;
+	static getDerivedStateFromProps(props, state) {
+		if (state.data !== props.data) {
+			state.data = props.data;
+			return state;
 		}
 		return null;
 	}
@@ -163,91 +159,87 @@ class Ticket extends Component {
 		} = data;
 
 		return (
-			<Card className={styles.paper}>
-				<CardContent>
-					<Grid container spacing={8} alignItems={"center"}>
-						<Grid item xs={7}>
-							<InputGroup
-								error={errors.name}
-								value={name}
-								name="name"
-								label="Ticket name"
-								placeholder="General Admission"
-								type="text"
-								onChange={e => {
-									this.setField("name", e.target.value);
-								}}
-								onBlur={this.validateFields}
-							/>
-						</Grid>
-						<Grid item xs={2}>
-							<InputGroup
-								error={errors.quantity}
-								value={quantity}
-								name="quantity"
-								label="Capacity"
-								placeholder="500"
-								type="number"
-								onChange={e => {
-									this.setField("quantity", e.target.value);
-								}}
-								onBlur={this.validateFields}
-							/>
-						</Grid>
-						<Grid item xs={2}>
-							<InputGroup
-								error={errors.limit}
-								value={limit}
-								name="limit"
-								label="Maximum Allowed"
-								placeholder="10"
-								type="number"
-								onChange={e => {
-									this.setField("limit", e.target.value);
-								}}
-								onBlur={this.validateFields}
-							/>
-						</Grid>
-						{onDelete ? (
-							<Grid item xs>
-								<div style={{ flex: 1 }} />
-								<IconButton onClick={e => onDelete(data)} color="inherit">
-									<DeleteIcon />
-								</IconButton>
-							</Grid>
-						) : null}
-						<Grid item xs={6}>
-							<DateTimePickerGroup
-								error={errors.startDate}
-								value={startDate}
-								name="startDate"
-								label="Onsale Time"
-								onChange={startDate => this.setField("startDate", startDate)}
-								onBlur={this.validateFields}
-								minDate={false}
-							/>
-						</Grid>
-						<Grid item xs={6}>
-							<DateTimePickerGroup
-								error={errors.endDate}
-								value={endDate}
-								name="endDate"
-								label="Offsale Time"
-								onChange={endDate => this.setField("endDate", endDate)}
-								onBlur={this.validateFields}
-								minDate={false}
-							/>
-						</Grid>
-						<div style={{ display: "flex" }}>
-							<Typography variant="headline">Price Points</Typography>
-							<IconButton onClick={this.addPricing.bind(this)} aria-label="Add">
-								<AddIcon />
-							</IconButton>
-						</div>
-						{this.renderTicketPricing()}
+			<Grid container spacing={8} alignItems={"center"}>
+				<Grid item xs={7}>
+					<InputGroup
+						error={errors.name}
+						value={name}
+						name="name"
+						label="Ticket name"
+						placeholder="General Admission"
+						type="text"
+						onChange={e => {
+							this.setField("name", e.target.value);
+						}}
+						onBlur={this.validateFields}
+					/>
+				</Grid>
+				<Grid item xs={2}>
+					<InputGroup
+						error={errors.quantity}
+						value={quantity}
+						name="quantity"
+						label="Capacity"
+						placeholder="500"
+						type="number"
+						onChange={e => {
+							this.setField("quantity", e.target.value);
+						}}
+						onBlur={this.validateFields}
+					/>
+				</Grid>
+				<Grid item xs={2}>
+					<InputGroup
+						error={errors.limit}
+						value={limit}
+						name="limit"
+						label="Maximum Allowed"
+						placeholder="10"
+						type="number"
+						onChange={e => {
+							this.setField("limit", e.target.value);
+						}}
+						onBlur={this.validateFields}
+					/>
+				</Grid>
+				{onDelete ? (
+					<Grid item xs>
+						<div style={{ flex: 1 }} />
+						<IconButton onClick={e => onDelete(data)} color="inherit">
+							<DeleteIcon />
+						</IconButton>
 					</Grid>
-				</CardContent>
-			</Card>
+				) : null}
+				<Grid item xs={6}>
+					<DateTimePickerGroup
+						error={errors.startDate}
+						value={startDate}
+						name="startDate"
+						label="Onsale Time"
+						onChange={startDate => this.setField("startDate", startDate)}
+						onBlur={this.validateFields}
+						minDate={false}
+					/>
+				</Grid>
+				<Grid item xs={6}>
+					<DateTimePickerGroup
+						error={errors.endDate}
+						value={endDate}
+						name="endDate"
+						label="Offsale Time"
+						onChange={endDate => this.setField("endDate", endDate)}
+						onBlur={this.validateFields}
+						minDate={false}
+					/>
+				</Grid>
+				<div style={{ display: "flex" }}>
+					<Typography variant="headline">Price Points</Typography>
+					<IconButton onClick={this.addPricing.bind(this)} aria-label="Add">
+						<AddIcon />
+					</IconButton>
+				</div>
+				{this.renderTicketPricing()}
+			</Grid>
 		);
 	}
 }

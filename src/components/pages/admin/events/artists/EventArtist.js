@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Typography, withStyles, InputLabel } from "@material-ui/core";
+import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import CardMedia from "@material-ui/core/CardMedia";
 
-import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
-import Button from "../../../common/Button";
+import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
+import Button from "../../../../common/Button";
 
 const styles = theme => ({
 	grid: {
