@@ -336,7 +336,9 @@ class Artist extends Component {
 									/>
 								</Grid>
 
-								<FormSubHeading>Social</FormSubHeading>
+								<FormSubHeading style={{ marginTop: 40 }}>
+									Social
+								</FormSubHeading>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
@@ -398,7 +400,7 @@ class Artist extends Component {
 									/>
 								</Grid>
 
-								<FormSubHeading>Music</FormSubHeading>
+								<FormSubHeading style={{ marginTop: 40 }}>Music</FormSubHeading>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
@@ -430,7 +432,7 @@ class Artist extends Component {
 									/>
 								</Grid>
 
-								<FormSubHeading>Media</FormSubHeading>
+								<FormSubHeading style={{ marginTop: 40 }}>Media</FormSubHeading>
 
 								{youtube_video_urls.map((youtubeUrl, index) => {
 									return (
