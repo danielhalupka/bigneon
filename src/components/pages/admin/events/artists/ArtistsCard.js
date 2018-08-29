@@ -8,14 +8,17 @@ import Card from "@material-ui/core/Card";
 import Button from "../../../../common/Button";
 import api from "../../../../../helpers/api";
 import notifications from "../../../../../stores/notifications";
-import SelectGroup from "../../../../common/form/SelectGroup";
 import EventArtist from "./EventArtist";
 import FormSubHeading from "../../../../common/FormSubHeading";
+import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
 
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	content: {
+		minHeight: 200
 	}
 });
 
@@ -114,30 +117,73 @@ class ArtistsCard extends Component {
 		});
 	}
 
+	createNewArtist(name) {
+		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying
+		const artistDetails = { name, bio: "", youtube_video_urls: [] }; //TODO remove youtube_video_urls when it's not needed
+
+		api()
+			.post("/artists", artistDetails)
+			.then(response => {
+				const { id } = response.data;
+				//Once inserted we need it in availableArtists right away
+				this.setState(({ availableArtists }) => {
+					availableArtists.push({ id, ...artistDetails });
+					return { availableArtists };
+				});
+
+				//Add the
+				this.addNewArtist(id);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+
+				let message = "Creating new artist failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+	}
+
 	renderAddNewArtist() {
 		//Pass through the currently selected artist if one has been selected
-		const { availableArtists } = this.state;
+		const { availableArtists, artists } = this.state;
 		if (availableArtists === null) {
 			return <Typography variant="body1">Loading artists...</Typography>;
 		}
 
 		const artistsObj = {};
-
 		availableArtists.forEach(artist => {
 			artistsObj[artist.id] = artist.name;
 		});
 
 		return (
-			<SelectGroup
+			<AutoCompleteGroup
+				style={{ marginBottom: 150 }} //Make space for drop down below
 				value={""}
 				items={artistsObj}
 				name={"artists"}
-				label={"Select an artist"}
-				onChange={e => {
-					const artistId = e.target.value;
-					this.setState({ showArtistSelect: false });
-					this.addNewArtist(artistId);
+				label={`${
+					artists && artists.length > 0 ? "Supporting" : "Headliner"
+				} artist name`}
+				onChange={artistId => {
+					console.log(artistId);
+					if (artistId) {
+						this.addNewArtist(artistId);
+						this.setState({ showArtistSelect: false });
+					}
 				}}
+				formatCreateLabel={label => `Create a new artist "${label}"`}
+				onCreateOption={this.createNewArtist.bind(this)}
 				onBlur={this.validateFields.bind(this)}
 			/>
 		);
@@ -157,8 +203,10 @@ class ArtistsCard extends Component {
 		return (
 			<Card className={classes.paper}>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<CardContent>
-						<FormSubHeading>Artists</FormSubHeading>
+					<CardContent className={classes.content}>
+						<FormSubHeading style={{ marginBottom: 20 }}>
+							Artists
+						</FormSubHeading>
 						<Grid item xs={12} sm={12} md={10} lg={8}>
 							{artists.map((eventArtist, index) => {
 								const { id, setTime } = eventArtist;
@@ -203,7 +251,7 @@ class ArtistsCard extends Component {
 								style={{ marginRight: 10 }}
 								onClick={() => this.setState({ showArtistSelect: true })}
 							>
-								Add another artist
+								Add supporting artist
 							</Button>
 						) : null}
 

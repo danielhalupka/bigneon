@@ -48,7 +48,7 @@ const SelectGroup = props => {
 			{label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
 			<Select
 				value={value}
-				onChange={onChange}
+				onChange={onChange} //TODO return just e.target.value and go back and change everywhere it's used to make it simpler
 				inputProps={{
 					name,
 					id: name,
