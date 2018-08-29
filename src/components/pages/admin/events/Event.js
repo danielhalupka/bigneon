@@ -4,11 +4,14 @@ import Grid from "@material-ui/core/Grid";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepButton from "@material-ui/core/StepButton";
+import OrganizationIcon from "@material-ui/icons/GroupWork";
+
 import ArtistCard from "./artists/ArtistsCard";
 import DetailsCard from "./details/DetailsCard";
 import api from "../../../../helpers/api";
 import notifications from "../../../../stores/notifications";
 import TicketsCard from "./tickets/TicketsCard";
+import SelectOptionDialog from "../../../common/SelectOptionDialog";
 
 const styles = theme => ({
 	paper: {
@@ -24,14 +27,10 @@ class Event extends Component {
 	constructor(props) {
 		super(props);
 
-		//Check if we're editing an existing organization
-		let eventId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			eventId = props.match.params.id;
-		}
-
 		this.state = {
-			eventId,
+			eventId: null,
+			organizationId: null,
+			organizations: {},
 			artists: [],
 			event: {},
 			organization: {},
@@ -45,6 +44,47 @@ class Event extends Component {
 		this.loadEventDetails();
 	}
 
+	static getDerivedStateFromProps(props, state) {
+		//Check if we're editing an existing organization
+		let eventId = null;
+		if (props.match && props.match.params && props.match.params.id) {
+			eventId = props.match.params.id;
+		}
+
+		return { eventId };
+	}
+
+	loadOrganizations() {
+		api()
+			.get("/organizations")
+			.then(response => {
+				const { data } = response;
+				const organizations = {};
+				data.forEach(organization => {
+					organizations[organization.id] = organization.name;
+				});
+
+				this.setState({ organizations });
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = "Loading organizations failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+	}
+
 	loadEventDetails() {
 		const { eventId } = this.state;
 
@@ -53,13 +93,20 @@ class Event extends Component {
 				.get(`/events/${eventId}`)
 				.then(response => {
 					const { artists, event, organization, venue } = response.data;
-					this.setState({ artists, event, organization, venue });
+					const { organization_id } = event;
+					this.setState({
+						artists,
+						event,
+						organization,
+						venue,
+						organizationId: organization_id
+					});
 				})
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
 
-					let message = "Loading venue details failed.";
+					let message = "Loading event details failed.";
 					if (
 						error.response &&
 						error.response.data &&
@@ -73,12 +120,17 @@ class Event extends Component {
 						variant: "error"
 					});
 				});
+		} else {
+			this.loadOrganizations();
 		}
 	}
 
 	handleStep(activeStep) {
 		this.setState({ activeStep });
-		this.loadEventDetails();
+
+		setTimeout(() => {
+			this.loadEventDetails();
+		}, 1000);
 	}
 
 	onComplete() {
@@ -97,16 +149,25 @@ class Event extends Component {
 			organization,
 			venue,
 			activeStep,
-			eventId
+			eventId,
+			organizations,
+			organizationId
 		} = this.state;
 		const { classes, history } = this.props;
-
-		//TODO pass through event details to pre-populate components
 
 		const steps = ["Artists", "Event details", "Ticketing"];
 
 		return (
 			<div>
+				<SelectOptionDialog
+					iconComponent={<OrganizationIcon />}
+					heading="Which organization does this event belong to?"
+					items={organizations}
+					onSelect={organizationId => this.setState({ organizationId })}
+					open={!organizationId}
+					onClose={() => {}}
+				/>
+
 				<Typography variant="display3">
 					{eventId ? "Update" : "New"} event
 				</Typography>
@@ -127,34 +188,40 @@ class Event extends Component {
 					})}
 				</Stepper>
 
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={12}>
-						{activeStep === 0 ? (
-							<ArtistCard
-								history={history}
-								eventId={eventId}
-								onNext={() => this.handleStep(activeStep + 1)}
-							/>
-						) : null}
+				{organizationId ? (
+					<Grid container spacing={24}>
+						<Grid item xs={12} sm={12} lg={12}>
+							{activeStep === 0 ? (
+								<ArtistCard
+									organizationId={organizationId}
+									history={history}
+									eventId={eventId}
+									artists={artists}
+									onNext={() => this.handleStep(activeStep + 1)}
+								/>
+							) : null}
 
-						{activeStep === 1 ? (
-							<DetailsCard
-								history={history}
-								eventId={eventId}
-								eventDetails={event}
-								onNext={() => this.handleStep(activeStep + 1)}
-							/>
-						) : null}
+							{activeStep === 1 ? (
+								<DetailsCard
+									organizationId={organizationId}
+									history={history}
+									eventId={eventId}
+									eventDetails={event}
+									onNext={() => this.handleStep(activeStep + 1)}
+								/>
+							) : null}
 
-						{activeStep === 2 ? (
-							<TicketsCard
-								history={history}
-								eventId={eventId}
-								onNext={this.onComplete.bind(this)}
-							/>
-						) : null}
+							{activeStep === 2 ? (
+								<TicketsCard
+									organizationId={organizationId}
+									history={history}
+									eventId={eventId}
+									onNext={this.onComplete.bind(this)}
+								/>
+							) : null}
+						</Grid>
 					</Grid>
-				</Grid>
+				) : null}
 			</div>
 		);
 	}

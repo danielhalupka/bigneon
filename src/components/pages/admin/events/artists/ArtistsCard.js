@@ -4,6 +4,7 @@ import { Typography, withStyles, Grid } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
+import moment from "moment";
 
 import Button from "../../../../common/Button";
 import api from "../../../../../helpers/api";
@@ -26,8 +27,19 @@ class ArtistsCard extends Component {
 	constructor(props) {
 		super(props);
 
+		let artists = [];
+
+		if (props.artists) {
+			artists = props.artists.map(({ artist_id, set_time }) => ({
+				id: artist_id,
+				setTime: set_time
+					? moment(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+					: null
+			}));
+		}
+
 		this.state = {
-			artists: [],
+			artists,
 			showArtistSelect: true,
 			availableArtists: null,
 			errors: {},
@@ -90,6 +102,65 @@ class ArtistsCard extends Component {
 		return true;
 	}
 
+	saveArtists(eventId) {
+		const { artists } = this.state;
+
+		const artistArray = artists.map(({ id, setTime }) => ({
+			artist_id: id,
+			set_time: moment.utc(setTime).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		}));
+
+		api()
+			.put(`/events/${eventId}/artist`, artistArray)
+			.then(response => {
+				const { data } = response;
+
+				notifications.show({
+					message: "Event artists updated.",
+					variant: "success"
+				});
+				this.props.onNext();
+				this.props.history.push(`/admin/events/${eventId}`);
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = `Adding artist${artists.length > 1 ? "s" : ""} failed.`;
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+	}
+
+	createEvent() {
+		const { organizationId, onNext } = this.props;
+
+		api()
+			.post("/events", { name: "", organization_id: organizationId })
+			.then(response => {
+				const { id } = response.data;
+
+				this.saveArtists(id);
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.show({
+					message: "Creating event failed.",
+					variant: "error"
+				});
+			});
+	}
+
 	onSubmit(e) {
 		e.preventDefault();
 
@@ -100,14 +171,14 @@ class ArtistsCard extends Component {
 		}
 
 		this.setState({ isSubmitting: true });
-		//TODO make api call when it's added
-		setTimeout(() => {
-			notifications.show({
-				message: "Event artists updated.",
-				variant: "success"
-			});
-			this.props.onNext();
-		}, 1000);
+
+		const { eventId } = this.props;
+		if (eventId) {
+			//If we're editing an event we don't need to first creat one
+			this.saveArtists(eventId);
+		} else {
+			this.createEvent();
+		}
 	}
 
 	addNewArtist(id) {
@@ -176,7 +247,6 @@ class ArtistsCard extends Component {
 					artists && artists.length > 0 ? "Supporting" : "Headliner"
 				} artist name`}
 				onChange={artistId => {
-					console.log(artistId);
 					if (artistId) {
 						this.addNewArtist(artistId);
 						this.setState({ showArtistSelect: false });
@@ -210,11 +280,15 @@ class ArtistsCard extends Component {
 						<Grid item xs={12} sm={12} md={10} lg={8}>
 							{artists.map((eventArtist, index) => {
 								const { id, setTime } = eventArtist;
-								const artist = availableArtists.find(
-									artist => artist.id === id
-								);
 
-								const { name } = artist;
+								let name = "Loading..."; // If we haven't loaded all the available artists we won't have this guys name yet
+								if (availableArtists) {
+									const artist = availableArtists.find(
+										artist => artist.id === id
+									);
+
+									name = artist ? artist.name : "";
+								}
 
 								return (
 									<EventArtist
@@ -272,8 +346,10 @@ class ArtistsCard extends Component {
 
 ArtistsCard.propTypes = {
 	eventId: PropTypes.string,
+	organizationId: PropTypes.string.isRequired,
 	onNext: PropTypes.func.isRequired,
-	history: PropTypes.object.isRequired
+	history: PropTypes.object.isRequired,
+	artists: PropTypes.array
 };
 
 export default withStyles(styles)(ArtistsCard);

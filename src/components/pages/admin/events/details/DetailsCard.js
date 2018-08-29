@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-	Typography,
-	withStyles,
-	Grid,
-	InputLabel,
-	CardMedia
-} from "@material-ui/core";
+import { withStyles, Grid, InputLabel, CardMedia } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
@@ -62,7 +56,6 @@ class DetailsCard extends Component {
 				: null,
 			ageLimit: age_limit || "",
 			venueId: venue_id || "",
-			organizationId: organization_id || "",
 			additionalInfo: additional_info || "",
 
 			errors: {},
@@ -71,32 +64,9 @@ class DetailsCard extends Component {
 	}
 
 	componentDidMount() {
-		const organization_id = null; //TODO get this from props if exists
-		this.loadVenues(organization_id);
+		const { organizationId } = this.props;
 
-		api()
-			.get("/organizations")
-			.then(response => {
-				const { data } = response;
-				this.setState({ organizations: data });
-			})
-			.catch(error => {
-				console.error(error);
-
-				let message = "Loading organizations failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
+		this.loadVenues(organizationId);
 	}
 
 	validateFields() {
@@ -135,7 +105,6 @@ class DetailsCard extends Component {
 	}
 
 	updateEvent(id, params, onSuccess) {
-		console.log(params);
 		api()
 			.put(`/events/${id}`, { ...params, id })
 			.then(() => {
@@ -162,10 +131,11 @@ class DetailsCard extends Component {
 
 		this.setState({ isSubmitting: true });
 
+		const { organizationId, eventId, onNext } = this.props;
+
 		const {
 			name,
 			eventDate,
-			organizationId,
 			venueId,
 			artists,
 			doorTime,
@@ -193,12 +163,8 @@ class DetailsCard extends Component {
 			tickets
 		};
 
-		console.log(eventDetails);
-
 		//If we're updating an existing venue
-		const { eventId, onNext } = this.props;
 		if (eventId) {
-			console.log(eventId);
 			this.updateEvent(eventId, eventDetails, id => {
 				notifications.show({
 					message: "Event details updated.",
@@ -212,9 +178,7 @@ class DetailsCard extends Component {
 		}
 
 		this.createNewEvent(eventDetails, id => {
-			this.props.history.push(
-				`/admin/events/f250cbfc-6159-4be4-b4d2-9e569201e4c9`
-			);
+			this.props.history.push(`/admin/events/${id}`);
 
 			notifications.show({
 				message: "New event created.",
@@ -227,7 +191,6 @@ class DetailsCard extends Component {
 
 	loadVenues(organizationId) {
 		this.setState({ venues: null }, () => {
-			//TODO use the org id once an admin can assign a venue to an org
 			//TODO use `/venues/organizations/${organizationId}`
 			api()
 				.get(`/venues`)
@@ -253,36 +216,6 @@ class DetailsCard extends Component {
 					});
 				});
 		});
-	}
-
-	renderOrganizations() {
-		const { organizationId, organizations, errors } = this.state;
-		if (organizations === null) {
-			return <Typography variant="body1">Loading organizations...</Typography>;
-		}
-
-		const organizationsObj = {};
-
-		organizations.forEach(organization => {
-			organizationsObj[organization.id] = organization.name;
-		});
-
-		return (
-			<SelectGroup
-				value={organizationId}
-				items={organizationsObj}
-				error={errors.organizationId}
-				name={"organization"}
-				label={"Organization"}
-				onChange={e => {
-					const organizationId = e.target.value;
-					this.setState({ organizationId });
-					//Reload venues belonging to this org
-					this.loadVenues(organizationId);
-				}}
-				onBlur={this.validateFields.bind(this)}
-			/>
-		);
 	}
 
 	renderVenues() {
@@ -329,7 +262,7 @@ class DetailsCard extends Component {
 			errors
 		} = this.state;
 
-		const { classes, eventId } = this.props;
+		const { classes } = this.props;
 
 		return (
 			<Card className={classes.paper}>
@@ -426,11 +359,6 @@ class DetailsCard extends Component {
 									title={"Artist"}
 								/>
 							</Grid>
-
-							{/* TODO remove this if you're an admin or if the OrgOwner only owns one organization. Then we assume the org ID */}
-							<Grid item xs={12} sm={12} lg={6}>
-								{!eventId ? this.renderOrganizations() : null}
-							</Grid>
 						</Grid>
 					</CardContent>
 					<CardActions>
@@ -451,6 +379,7 @@ class DetailsCard extends Component {
 
 DetailsCard.propTypes = {
 	eventId: PropTypes.string,
+	organizationId: PropTypes.string.isRequired,
 	onNext: PropTypes.func.isRequired,
 	eventDetails: PropTypes.object,
 	history: PropTypes.object.isRequired
