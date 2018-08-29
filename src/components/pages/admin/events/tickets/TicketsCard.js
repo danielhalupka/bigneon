@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-	Typography,
-	withStyles,
-	Grid,
-	InputLabel,
-	CardMedia
-} from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
@@ -81,7 +75,7 @@ class TicketsCard extends Component {
 		const { tickets } = this.state;
 		const { onNext } = this.props;
 
-		console.log(tickets);
+		console.log("TODO save tickets: ", tickets);
 
 		//TODO make api call
 		setTimeout(() => {
@@ -177,6 +171,7 @@ class TicketsCard extends Component {
 }
 
 TicketsCard.propTypes = {
+	organizationId: PropTypes.string.isRequired,
 	eventId: PropTypes.string,
 	onNext: PropTypes.func.isRequired,
 	tickets: PropTypes.array,
