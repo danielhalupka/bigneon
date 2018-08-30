@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
+import { observer } from "mobx-react";
 
 import SelectGroup from "../../../common/form/SelectGroup";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
@@ -12,52 +13,54 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class ResultsRegionFilter extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			cities: { "San fran": "San fran", "New York": "New York" },
-			selectedCity: ""
-		};
+		// //TODO get this list of states from the API to be more dynamic
+		// const stateArray = ["California", "Florida", "New York"];
+
+		// this.state = {
+		// 	s: "all"
+		// };
 	}
 
 	componentDidMount() {
 		//TODO load possible regions
+
+		const url = new URL(window.location.href);
+		const selectedState = url.searchParams.get("state") || "all";
+		eventResults.changeFilter("state", selectedState);
 	}
 
 	onSelect(e) {
 		e.preventDefault();
-		const selectedCity = e.target.value;
-
-		this.setState({ selectedCity });
+		const selectedState = e.target.value;
 
 		//Changes the URL so link can be copy/pasted
-		changeUrlParam("city", selectedCity);
+		changeUrlParam("state", selectedState);
 
-		//Instantly filter on city
-		eventResults.changeFilter("city", selectedCity);
+		//Instantly filter on state
+		eventResults.changeFilter("state", selectedState);
 
 		//Perform actual search query
-		eventResults.refreshResults(
-			{ query: { city: selectedCity } },
-			() => {
-				this.setState({ isSearching: false });
-			},
-			message => {
-				this.setState({ isSearching: false });
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			}
-		);
+		// eventResults.refreshResults(
+		// 	{ state: selectedState },
+		// 	() => {},
+		// 	message => {
+		// 		notifications.show({
+		// 			message,
+		// 			variant: "error"
+		// 		});
+		// 	}
+		// );
 	}
 
 	render() {
 		const { classes } = this.props;
-		const { cities, selectedCity, error } = this.state;
+
+		const selectedState = eventResults.filters["state"] || "all";
 
 		return (
 			<div style={{ display: "flex", flexDirection: "row" }}>
@@ -66,14 +69,14 @@ class ResultsRegionFilter extends Component {
 					gutterBottom
 					className={classes.subheading}
 				>
-					Showing events in
+					Showing events {selectedState !== "all" ? "in" : ""}
 				</Typography>
 
 				<SelectGroup
-					value={selectedCity}
-					items={cities}
-					error={error}
-					name={"cities"}
+					value={selectedState}
+					items={eventResults.statesDropdownValues}
+					error={null}
+					name={"states"}
 					onChange={this.onSelect.bind(this)}
 				/>
 			</div>

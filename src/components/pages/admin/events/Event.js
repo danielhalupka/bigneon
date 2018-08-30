@@ -128,9 +128,7 @@ class Event extends Component {
 	handleStep(activeStep) {
 		this.setState({ activeStep });
 
-		setTimeout(() => {
-			this.loadEventDetails();
-		}, 1000);
+		this.loadEventDetails();
 	}
 
 	onComplete() {

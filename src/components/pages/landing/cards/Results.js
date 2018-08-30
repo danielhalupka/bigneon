@@ -14,11 +14,17 @@ const styles = theme => ({
 });
 
 const EventsList = ({ events }) => {
-	return events.map(event => (
-		<Grid item xs={12} sm={6} lg={4} key={event.id}>
-			<SearchResultEventCard {...event} />
-		</Grid>
-	));
+	return events.map(({ event, venue }) => {
+		if (!event) {
+			console.error("Not found: ");
+			return null;
+		}
+		return (
+			<Grid item xs={12} sm={6} lg={4} key={event.id}>
+				<SearchResultEventCard event={event} venue={venue} />
+			</Grid>
+		);
+	});
 };
 
 const Results = observer(props => {

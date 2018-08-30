@@ -111,7 +111,7 @@ class ArtistsCard extends Component {
 		}));
 
 		api()
-			.put(`/events/${eventId}/artist`, artistArray)
+			.put(`/events/${eventId}/artists`, artistArray)
 			.then(response => {
 				const { data } = response;
 
@@ -158,6 +158,8 @@ class ArtistsCard extends Component {
 					message: "Creating event failed.",
 					variant: "error"
 				});
+
+				this.setState({ isSubmitting: false });
 			});
 	}
 
@@ -222,6 +224,8 @@ class ArtistsCard extends Component {
 					message,
 					variant: "error"
 				});
+
+				this.setState({ isSubmitting: false });
 			});
 	}
 
