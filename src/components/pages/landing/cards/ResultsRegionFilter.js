@@ -17,18 +17,9 @@ const styles = theme => ({
 class ResultsRegionFilter extends Component {
 	constructor(props) {
 		super(props);
-
-		// //TODO get this list of states from the API to be more dynamic
-		// const stateArray = ["California", "Florida", "New York"];
-
-		// this.state = {
-		// 	s: "all"
-		// };
 	}
 
 	componentDidMount() {
-		//TODO load possible regions
-
 		const url = new URL(window.location.href);
 		const selectedState = url.searchParams.get("state") || "all";
 		eventResults.changeFilter("state", selectedState);
@@ -43,18 +34,6 @@ class ResultsRegionFilter extends Component {
 
 		//Instantly filter on state
 		eventResults.changeFilter("state", selectedState);
-
-		//Perform actual search query
-		// eventResults.refreshResults(
-		// 	{ state: selectedState },
-		// 	() => {},
-		// 	message => {
-		// 		notifications.show({
-		// 			message,
-		// 			variant: "error"
-		// 		});
-		// 	}
-		// );
 	}
 
 	render() {
