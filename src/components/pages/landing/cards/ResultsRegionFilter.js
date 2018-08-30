@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, Grid } from "@material-ui/core";
 import { observer } from "mobx-react";
 
 import SelectGroup from "../../../common/form/SelectGroup";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import eventResults from "../../../../stores/eventResults";
-import notifications from "../../../../stores/notifications";
 
 const styles = theme => ({
 	subHeading: {
@@ -42,23 +41,26 @@ class ResultsRegionFilter extends Component {
 		const selectedState = eventResults.filters["state"] || "all";
 
 		return (
-			<div style={{ display: "flex", flexDirection: "row" }}>
-				<Typography
-					variant="subheading"
-					gutterBottom
-					className={classes.subheading}
-				>
-					Showing events {selectedState !== "all" ? "in" : ""}
-				</Typography>
-
-				<SelectGroup
-					value={selectedState}
-					items={eventResults.statesDropdownValues}
-					error={null}
-					name={"states"}
-					onChange={this.onSelect.bind(this)}
-				/>
-			</div>
+			<Grid container spacing={24} alignItems="center">
+				<Grid item>
+					<Typography
+						variant="subheading"
+						gutterBottom
+						className={classes.subheading}
+					>
+						Showing events {selectedState !== "all" ? "in" : ""}
+					</Typography>
+				</Grid>
+				<Grid item>
+					<SelectGroup
+						value={selectedState}
+						items={eventResults.statesDropdownValues}
+						error={null}
+						name={"states"}
+						onChange={this.onSelect.bind(this)}
+					/>
+				</Grid>
+			</Grid>
 		);
 	}
 }
