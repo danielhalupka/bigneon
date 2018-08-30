@@ -36,23 +36,28 @@ class ResultsRegionFilter extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
-
+		const { classes, theme } = this.props;
 		const selectedState = eventResults.filters["state"] || "all";
 
 		return (
-			<Grid container spacing={24} alignItems="center">
+			<Grid container spacing={0} alignItems="center">
 				<Grid item>
 					<Typography
 						variant="subheading"
 						gutterBottom
 						className={classes.subheading}
 					>
-						Showing events {selectedState !== "all" ? "in" : ""}
+						Showing events for
 					</Typography>
 				</Grid>
 				<Grid item>
 					<SelectGroup
+						selectStyle={{
+							...theme.typography.subheading,
+							marginTop: 6,
+							marginLeft: 6
+						}}
+						disableUnderline
 						value={selectedState}
 						items={eventResults.statesDropdownValues}
 						error={null}
@@ -65,4 +70,4 @@ class ResultsRegionFilter extends Component {
 	}
 }
 
-export default withStyles(styles)(ResultsRegionFilter);
+export default withStyles(styles, { withTheme: true })(ResultsRegionFilter);

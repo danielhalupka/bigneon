@@ -6,7 +6,7 @@ import Results from "./cards/Results";
 
 const styles = theme => ({
 	searchGrid: {
-		marginBottom: theme.spacing.unit * 4
+		marginBottom: theme.spacing.unit * 2
 	}
 });
 
@@ -16,7 +16,7 @@ class Home extends Component {
 
 		return (
 			<div>
-				<Grid container spacing={24}>
+				<Grid container>
 					<Grid className={classes.searchGrid} item xs={12} sm={12} lg={12}>
 						<SearchCard />
 					</Grid>
