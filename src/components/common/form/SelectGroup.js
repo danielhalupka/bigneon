@@ -24,7 +24,9 @@ const SelectGroup = props => {
 		onChange,
 		onBlur,
 		onFocus,
-		missingItemsLabel
+		missingItemsLabel,
+		disableUnderline,
+		selectStyle
 	} = props;
 	const { classes } = props;
 
@@ -47,6 +49,8 @@ const SelectGroup = props => {
 		>
 			{label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
 			<Select
+				style={selectStyle}
+				disableUnderline={disableUnderline}
 				value={value}
 				onChange={onChange} //TODO return just e.target.value and go back and change everywhere it's used to make it simpler
 				inputProps={{
@@ -73,7 +77,9 @@ SelectGroup.propTypes = {
 	label: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
-	onFocus: PropTypes.func
+	onFocus: PropTypes.func,
+	disableUnderline: PropTypes.bool,
+	selectStyle: PropTypes.object
 };
 
 export default withStyles(styles)(SelectGroup);
