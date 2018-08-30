@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, Grid } from "@material-ui/core";
+import { observer } from "mobx-react";
 
 import SelectGroup from "../../../common/form/SelectGroup";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import eventResults from "../../../../stores/eventResults";
-import notifications from "../../../../stores/notifications";
 
 const styles = theme => ({
 	subHeading: {
@@ -12,71 +12,55 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class ResultsRegionFilter extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			cities: { "San fran": "San fran", "New York": "New York" },
-			selectedCity: ""
-		};
 	}
 
 	componentDidMount() {
-		//TODO load possible regions
+		const url = new URL(window.location.href);
+		const selectedState = url.searchParams.get("state") || "all";
+		eventResults.changeFilter("state", selectedState);
 	}
 
 	onSelect(e) {
 		e.preventDefault();
-		const selectedCity = e.target.value;
-
-		this.setState({ selectedCity });
+		const selectedState = e.target.value;
 
 		//Changes the URL so link can be copy/pasted
-		changeUrlParam("city", selectedCity);
+		changeUrlParam("state", selectedState);
 
-		//Instantly filter on city
-		eventResults.changeFilter("city", selectedCity);
-
-		//Perform actual search query
-		eventResults.refreshResults(
-			{ query: { city: selectedCity } },
-			() => {
-				this.setState({ isSearching: false });
-			},
-			message => {
-				this.setState({ isSearching: false });
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			}
-		);
+		//Instantly filter on state
+		eventResults.changeFilter("state", selectedState);
 	}
 
 	render() {
 		const { classes } = this.props;
-		const { cities, selectedCity, error } = this.state;
+
+		const selectedState = eventResults.filters["state"] || "all";
 
 		return (
-			<div style={{ display: "flex", flexDirection: "row" }}>
-				<Typography
-					variant="subheading"
-					gutterBottom
-					className={classes.subheading}
-				>
-					Showing events in
-				</Typography>
-
-				<SelectGroup
-					value={selectedCity}
-					items={cities}
-					error={error}
-					name={"cities"}
-					onChange={this.onSelect.bind(this)}
-				/>
-			</div>
+			<Grid container spacing={24} alignItems="center">
+				<Grid item>
+					<Typography
+						variant="subheading"
+						gutterBottom
+						className={classes.subheading}
+					>
+						Showing events {selectedState !== "all" ? "in" : ""}
+					</Typography>
+				</Grid>
+				<Grid item>
+					<SelectGroup
+						value={selectedState}
+						items={eventResults.statesDropdownValues}
+						error={null}
+						name={"states"}
+						onChange={this.onSelect.bind(this)}
+					/>
+				</Grid>
+			</Grid>
 		);
 	}
 }

@@ -6,6 +6,9 @@ class EventResults {
 	events = null;
 
 	@observable
+	states = [];
+
+	@observable
 	filters = {};
 
 	@action
@@ -15,25 +18,24 @@ class EventResults {
 			.then(response => {
 				let events = [];
 
-				let demoImageNumber = 100;
-				response.data.forEach(event => {
-					const {
-						id,
-						event_start,
-						name,
-						organization_id,
-						ticket_sell_date,
-						venue_id
-					} = event;
+				let demoImageNumber = 10;
+				response.data.forEach(eventData => {
+					const { event, venue } = eventData;
 
-					events.push({
-						id,
-						name,
-						description:
-							"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut tempor lacus, vitae facilisis nisi. Etiam eleifend eros et odio rhoncus, a pellentesque sapien maximus.",
-						imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`
-					});
-					demoImageNumber++;
+					//TODO remove this when we're filtering on published events not drafts
+					//Make sure they didn't just add artists without other details.
+					if (event.name) {
+						events.push({
+							event: {
+								...event,
+								description:
+									"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut tempor lacus, vitae facilisis nisi. Etiam eleifend eros et odio rhoncus, a pellentesque sapien maximus.",
+								imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`
+							},
+							venue
+						});
+						demoImageNumber++;
+					}
 				});
 
 				this.events = events;
@@ -62,7 +64,7 @@ class EventResults {
 		this.filters[key] = value;
 	}
 
-	//Instantly filter events by city or other fields
+	//Instantly filter events by state or other fields
 	@computed
 	get filteredEvents() {
 		if (!this.events) {
@@ -70,13 +72,17 @@ class EventResults {
 		}
 
 		let filteredEvents = [];
-		this.events.forEach(event => {
-			const { city } = event;
+		this.events.forEach(eventData => {
+			const { venue } = eventData;
+			const { state } = venue;
 			let showEvent = true;
 
 			//If there is a filter and a field to filter in the event entry
-			if (this.filters.city) {
-				if (city && city === this.filter.city) {
+			if (this.filters) {
+				if (
+					state &&
+					(state === this.filters.state || this.filters.state === "all")
+				) {
 					showEvent = true;
 				} else {
 					showEvent = false;
@@ -85,11 +91,38 @@ class EventResults {
 
 			//If all filters passed, show event
 			if (showEvent) {
-				filteredEvents.push(event);
+				filteredEvents.push(eventData);
 			}
 		});
 
 		return filteredEvents;
+	}
+
+	//Format it for the drop down
+	@computed
+	get statesDropdownValues() {
+		//Get the state from the event and make an array of states for use in the filter
+
+		let statesDropdownValues = { all: "Everywhere" };
+		if (this.events) {
+			this.events.forEach(({ venue }) => {
+				const { state } = venue;
+
+				if (state) {
+					statesDropdownValues[state] = state;
+				}
+			});
+		}
+
+		// if (state) {
+		// 	states.push(state);
+		// }
+
+		// this.states.forEach(state => {
+		// 	statesDropdownValues[state] = state;
+		// });
+
+		return statesDropdownValues;
 	}
 }
 

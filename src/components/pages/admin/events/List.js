@@ -66,7 +66,8 @@ class EventsList extends Component {
 		}
 
 		if (events && events.length > 0) {
-			return events.map(event => {
+			return events.map(eventData => {
+				const { event, venue } = eventData;
 				const { id, name } = event;
 
 				return (
@@ -74,9 +75,9 @@ class EventsList extends Component {
 						<Card className={classes.paper}>
 							<CardContent className={classes.cardContent}>
 								<Typography variant="display1">{name}</Typography>
-								{/* <Typography variant="body1">
-									{address || "*Missing address"}
-								</Typography> */}
+								<Typography variant="body1">
+									{venue.address || "*Missing address"}
+								</Typography>
 							</CardContent>
 
 							<CardActions>
