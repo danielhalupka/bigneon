@@ -1,4 +1,5 @@
 import { observable, computed, action } from "mobx";
+import moment from "moment";
 import api from "../helpers/api";
 
 class EventResults {
@@ -28,8 +29,10 @@ class EventResults {
 						events.push({
 							event: {
 								...event,
-								description:
-									"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut tempor lacus, vitae facilisis nisi. Etiam eleifend eros et odio rhoncus, a pellentesque sapien maximus.",
+								formattedEventDate: moment(
+									event.event_start,
+									moment.HTML5_FMT.DATETIME_LOCAL_MS
+								).format("dddd, MMM D"),
 								imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`
 							},
 							venue

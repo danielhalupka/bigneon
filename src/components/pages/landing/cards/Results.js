@@ -2,6 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import { Link } from "react-router-dom";
 
 import SearchResultEventCard from "./SearchResultEventCard";
 import ResultsRegionFilter from "./ResultsRegionFilter";
@@ -19,9 +20,20 @@ const EventsList = ({ events }) => {
 			console.error("Not found: ");
 			return null;
 		}
+
+		const { id, name, imgSrc, formattedEventDate } = event;
+		const { city, state } = venue;
 		return (
-			<Grid item xs={12} sm={6} lg={4} key={event.id}>
-				<SearchResultEventCard event={event} venue={venue} />
+			<Grid item xs={12} sm={6} lg={4} key={id}>
+				<Link style={{ textDecoration: "none" }} to={`/events/${id}`}>
+					<SearchResultEventCard
+						imgSrc={imgSrc}
+						name={name}
+						formattedEventDate={formattedEventDate}
+						city={city}
+						state={state}
+					/>
+				</Link>
 			</Grid>
 		);
 	});
