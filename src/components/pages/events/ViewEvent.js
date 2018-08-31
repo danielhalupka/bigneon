@@ -11,6 +11,7 @@ import SocialButton from "../../common/social/SocialButton";
 import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
+import SupportingArtistsLabel from "./SupportingArtistsLabel";
 
 const styles = theme => ({
 	card: {
@@ -27,32 +28,73 @@ const styles = theme => ({
 	}
 });
 
-const ArtistDescription = ({ classes }) => {
+const ArtistDescription = props => {
+	const {
+		classes,
+		name,
+		bio,
+		facebook_username,
+		instagram_username,
+		snapchat_username,
+		soundcloud_username,
+		twitter_username,
+		website_url
+	} = props;
+
 	return (
 		<div className={classes.descriptionDiv}>
-			<Typography variant="subheading">Artist name</Typography>
+			<Typography variant="subheading">{name}</Typography>
 
-			<SocialButton
-				style={{ marginRight: 10 }}
-				icon="facebook"
-				onClick={() => console.log("View on Facebook")}
-				size={35}
-			/>
-			<SocialButton
-				icon="twitter"
-				onClick={() => console.log("View on Twitter")}
-				size={35}
-			/>
+			{facebook_username ? (
+				<SocialButton
+					style={{ marginRight: 10 }}
+					icon="facebook"
+					href={`https://facebook.com/${facebook_username}`}
+					size={35}
+				/>
+			) : null}
 
-			<Typography style={{ marginTop: 20 }} variant="body1">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-				commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-				velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-				occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-				mollit anim id est laborum.
-			</Typography>
+			{twitter_username ? (
+				<SocialButton
+					style={{ marginRight: 10 }}
+					icon="twitter"
+					href={`https://twitter.com/${twitter_username}`}
+					size={35}
+				/>
+			) : null}
+
+			{instagram_username ? (
+				<SocialButton
+					style={{ marginRight: 10 }}
+					icon="instagram"
+					href={`https://instagram.com/${instagram_username}`}
+					size={35}
+				/>
+			) : null}
+
+			{snapchat_username ? (
+				<SocialButton
+					style={{ marginRight: 10 }}
+					icon="snapchat"
+					href={`https://snapchat.com/${snapchat_username}`}
+					size={35}
+				/>
+			) : null}
+
+			{soundcloud_username ? (
+				<SocialButton
+					style={{ marginRight: 10 }}
+					icon="soundcloud"
+					href={`https://soundcloud.com/${soundcloud_username}`}
+					size={35}
+				/>
+			) : null}
+
+			{bio ? (
+				<Typography style={{ marginTop: 20 }} variant="body1">
+					{bio}
+				</Typography>
+			) : null}
 		</div>
 	);
 };
@@ -84,19 +126,42 @@ class ViewEvent extends Component {
 		}
 	}
 
+	renderArtists() {
+		const { classes } = this.props;
+		const { artists } = selectedEvent;
+		if (!artists) {
+			return null;
+		}
+
+		return artists.map((artist, index) => (
+			<div key={index}>
+				<ArtistDescription {...artist} classes={classes} />
+				{artists.length > index + 1 ? <Divider /> : null}
+			</div>
+		));
+	}
+
 	render() {
 		const { classes } = this.props;
-		const { eventDetails, id } = selectedEvent;
+		const { event, venue, artists, organization, id } = selectedEvent;
 
-		if (eventDetails === null) {
+		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
 
-		if (eventDetails === false) {
+		if (event === false) {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
-		const { name, displayEventStartDate } = eventDetails;
+		const {
+			name,
+			displayEventStartDate,
+			additional_info,
+			age_limit,
+			promo_image_url,
+			displayDoorTime,
+			displayShowTime
+		} = event;
 
 		return (
 			<Paper className={classes.card}>
@@ -110,7 +175,7 @@ class ViewEvent extends Component {
 
 					<Grid item xs={12} sm={12} lg={12}>
 						<Typography variant="caption">
-							Organization name presents
+							{organization.name} presents
 						</Typography>
 
 						<Typography variant="display3" component="h3">
@@ -118,48 +183,29 @@ class ViewEvent extends Component {
 						</Typography>
 
 						<Typography variant="display1" component="h3">
-							With supporting artists, artist 1 and artist 2
+							<SupportingArtistsLabel artists={artists} />
 						</Typography>
 
-						<Typography variant="subheading">Venue name</Typography>
+						<Typography variant="subheading">{venue.name}</Typography>
 					</Grid>
 
 					<Grid item xs={12} sm={8} lg={8}>
 						<CardMedia
 							className={classes.media}
-							image={`https://picsum.photos/800/400/?image=200`}
+							image={promo_image_url}
 							title={name}
 						/>
 
 						<div className={classes.descriptionDiv}>
 							<Typography variant="headline">Description</Typography>
-							<Typography variant="body1">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-								eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-								enim ad minim veniam, quis nostrud exercitation ullamco laboris
-								nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-								in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-								nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-								sunt in culpa qui officia deserunt mollit anim id est laborum.
-								<br />
-								<br />
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-								eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-								enim ad minim veniam, quis nostrud exercitation ullamco laboris
-								nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-								in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-								nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-								sunt in culpa qui officia deserunt mollit anim id est laborum.
-							</Typography>
+							<Typography variant="body1">{additional_info}</Typography>
 						</div>
 
 						<Typography style={{ marginTop: 60 }} variant="headline">
 							Artists
 						</Typography>
 
-						<ArtistDescription classes={classes} />
-						<Divider />
-						<ArtistDescription classes={classes} />
+						{this.renderArtists()}
 					</Grid>
 					<Grid item xs={12} sm={4} lg={4}>
 						<Typography style={{ textAlign: "center" }} variant="headline">
@@ -187,9 +233,13 @@ class ViewEvent extends Component {
 
 						<Typography variant="body1">{displayEventStartDate}</Typography>
 						<Typography variant="body1">
-							Doors: 8:00PM / Show: 9:00PM
+							Doors: {displayDoorTime} / Show: {displayShowTime}
 						</Typography>
-						<Typography variant="body1">This event is all ages</Typography>
+						<Typography variant="body1">
+							{age_limit
+								? `This event is for over ${age_limit} year olds`
+								: "This event is for all ages"}
+						</Typography>
 
 						<div style={{ marginBottom: 30 }} />
 
@@ -197,9 +247,9 @@ class ViewEvent extends Component {
 							Location
 						</Typography>
 
-						<Typography variant="body1">Venue name</Typography>
-						<Typography variant="body1">123 Street, San Francisco</Typography>
-						<a target="_blank" href="https://google.com/maps">
+						<Typography variant="body1">{venue.name}</Typography>
+						<Typography variant="body1">{venue.address}</Typography>
+						<a target="_blank" href={venue.googleMapsLink}>
 							<Typography variant="body1">View map</Typography>
 						</a>
 
@@ -212,11 +262,15 @@ class ViewEvent extends Component {
 						<SocialButton
 							style={{ marginRight: 10 }}
 							icon="facebook"
-							onClick={() => console.log("Share to Facebook")}
+							href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+								window.location.href
+							)}`}
 						/>
 						<SocialButton
 							icon="twitter"
-							onClick={() => console.log("Share to Twitter")}
+							href={`https://twitter.com/home?status=${encodeURIComponent(
+								window.location.href
+							)}`}
 						/>
 					</Grid>
 				</Grid>

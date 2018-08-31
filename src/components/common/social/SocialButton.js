@@ -23,7 +23,7 @@ const styles = theme => {
 };
 
 const SocialButton = props => {
-	const { classes, onClick, icon, style, size } = props;
+	const { classes, onClick, href, icon, style, size } = props;
 
 	let src = "";
 	switch (icon) {
@@ -32,6 +32,12 @@ const SocialButton = props => {
 			break;
 		case "twitter":
 			src = "/images/social/twitter-icon-gray.svg";
+			break;
+		case "instagram":
+			src = "/images/social/instagram-icon-gray.svg";
+			break;
+		case "soundcloud":
+			src = "/images/social/facebook-icon-gray.svg";
 			break;
 		default:
 			break;
@@ -47,6 +53,8 @@ const SocialButton = props => {
 			onClick={onClick}
 			variant="fab"
 			style={buttonStyle}
+			href={href}
+			target={href ? "_blank" : null}
 		>
 			<img style={{ height: size * 0.4 }} className={classes.icon} src={src} />
 		</Button>
@@ -59,8 +67,10 @@ SocialButton.defaultProps = {
 
 SocialButton.propTypes = {
 	classes: PropTypes.object.isRequired,
-	onClick: PropTypes.func.isRequired,
-	icon: PropTypes.oneOf(["facebook", "twitter"]).isRequired,
+	onClick: PropTypes.func,
+	href: PropTypes.string,
+	icon: PropTypes.oneOf(["facebook", "twitter", "instagram", "soundcloud"])
+		.isRequired,
 	style: PropTypes.object,
 	size: PropTypes.number
 };
