@@ -19,19 +19,28 @@ const styles = theme => ({
 	}
 });
 
-const SearchResultEventCard = ({ classes, event, venue }) => {
-	const { id, imgSrc, name, description } = event;
+const SearchResultEventCard = ({
+	classes,
+	imgSrc,
+	name,
+	formattedEventDate,
+	city,
+	state
+}) => {
+	// const { id, imgSrc, name, additional_info, eventDate } = event;
+	// const { city, state } = venue;
 
 	return (
 		<Card className={classes.card}>
 			<CardMedia className={classes.media} image={imgSrc} title={name} />
 			<CardContent>
-				<Typography gutterBottom variant="headline" component="h2">
-					{name}
-				</Typography>
-				<Typography component="p">{description}</Typography>
+				<Typography variant="caption">{formattedEventDate}</Typography>
+				<br />
+				<Typography variant="headline">{name}</Typography>
+
+				<Typography variant="subheading">{`${city}, ${state}`}</Typography>
 			</CardContent>
-			<CardActions>
+			{/* <CardActions>
 				<Link style={{ textDecoration: "none" }} to={`/events/${id}`}>
 					<Button style={{ marginRight: 4 }} customClassName="primary">
 						Details
@@ -41,14 +50,17 @@ const SearchResultEventCard = ({ classes, event, venue }) => {
 				<Link style={{ textDecoration: "none" }} to={`/events/${id}/tickets`}>
 					<Button customClassName="callToAction">Book now</Button>
 				</Link>
-			</CardActions>
+			</CardActions> */}
 		</Card>
 	);
 };
 
 SearchResultEventCard.propTypes = {
-	event: PropTypes.object.isRequired,
-	venue: PropTypes.object.isRequired
+	imgSrc: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
+	formattedEventDate: PropTypes.string.isRequired,
+	city: PropTypes.string.isRequired,
+	state: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(SearchResultEventCard);

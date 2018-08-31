@@ -120,12 +120,17 @@ class CheckoutConfirmation extends Component {
 
 		//If the user has previously selected an event, it'll still be here
 		//If they haven't selected an event but we have tickets in their cart from previously then display a generic checkout page
-		const { id, eventDetails, ticketPricing } = selectedEvent;
+		const { event, venue, artists, organization, id } = selectedEvent;
 
 		return (
 			<Paper className={classes.card}>
-				{eventDetails ? (
-					<EventSummaryGrid {...eventDetails} />
+				{event ? (
+					<EventSummaryGrid
+						event={event}
+						venue={venue}
+						organization={organization}
+						artists={artists}
+					/>
 				) : (
 					<Typography variant="display2">Checkout</Typography>
 				)}

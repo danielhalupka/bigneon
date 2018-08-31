@@ -92,19 +92,24 @@ class CheckoutSelection extends Component {
 		const { classes } = this.props;
 		const { openPromo } = this.state;
 
-		const { eventDetails } = selectedEvent;
+		const { event, venue, artists, organization, id } = selectedEvent;
 
-		if (eventDetails === null) {
+		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
 
-		if (eventDetails === false) {
+		if (event === false) {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
 		return (
 			<Paper className={classes.card}>
-				<EventSummaryGrid {...eventDetails} />
+				<EventSummaryGrid
+					event={event}
+					venue={venue}
+					organization={organization}
+					artists={artists}
+				/>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
