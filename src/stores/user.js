@@ -26,9 +26,10 @@ class User {
 	roles = [];
 
 	@action
-	refreshUser(onResult = null) {
+	refreshUser(onSuccess = null, onError = null) {
 		const token = localStorage.getItem("access_token");
 		if (!token) {
+			onError ? onError("Missing access token") : null;
 			this.onLogout();
 			return;
 		}
@@ -60,8 +61,8 @@ class User {
 						this.phone = phone;
 						this.roles = roles;
 
-						if (onResult) {
-							onResult({
+						if (onSuccess) {
+							onSuccess({
 								id,
 								firstName: first_name,
 								lastName: last_name,
@@ -72,17 +73,24 @@ class User {
 					})
 					.catch(error => {
 						console.error(error);
-						//TODO if we get a 401, try refresh the token and then try this all again. But don't create a recursive loop.
-						//If we get a 401, assume the token expired
-						if (error.response && error.response.status === 401) {
-							console.log("Unauthorized, logging out.");
-							notifications.show({
-								message: "Session expired",
-								variant: "info"
-							});
-							this.onLogout();
+						if (onError) {
+							onError ? onError(error.message) : null;
 						} else {
-							notifications.show({ message: error.message, variant: "error" });
+							//TODO if we get a 401, try refresh the token and then try this all again. But don't create a recursive loop.
+							//If we get a 401, assume the token expired
+							if (error.response && error.response.status === 401) {
+								console.log("Unauthorized, logging out.");
+								notifications.show({
+									message: "Session expired",
+									variant: "info"
+								});
+								this.onLogout();
+							} else {
+								notifications.show({
+									message: error.message,
+									variant: "error"
+								});
+							}
 						}
 					});
 			},

@@ -105,7 +105,15 @@ class Signup extends Component {
 
 					//Pull user data with our new token
 					user.refreshUser(() => {
-						this.props.history.push("/dashboard");
+						//If we have a security token, send them to the accept invite page first
+						const security_token = localStorage.getItem("security_token");
+						if (security_token) {
+							this.props.history.push(
+								`/invites/accept?token=${security_token}`
+							);
+						} else {
+							this.props.history.push("/dashboard");
+						}
 					});
 				} else {
 					this.setState({ isSubmitting: false });
