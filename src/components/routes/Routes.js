@@ -35,6 +35,9 @@ import AdminArtist from "../pages/admin/artists/Artist";
 import AdminEventsList from "../pages/admin/events/List";
 import AdminEvent from "../pages/admin/events/Event";
 
+import InviteDecline from "../pages/admin/invites/Decline";
+import InviteAccept from "../pages/admin/invites/Accept";
+
 import user from "../../stores/user";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 
@@ -98,6 +101,8 @@ class Routes extends Component {
 
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
+						<Route exact path="/invites/decline" component={InviteDecline} />
+						<Route exact path="/invites/accept" component={InviteAccept} />
 
 						<PrivateRoute
 							exact

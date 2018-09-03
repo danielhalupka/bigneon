@@ -81,13 +81,12 @@ class InviteUserCard extends Component {
 		const { organizationId } = this.props;
 
 		const details = {
-			organization_id: organizationId,
-			invitee_id: user.id,
 			user_email: email
 		};
 
+		console.log(details);
 		api()
-			.post(`/organizations/invite_user`, details)
+			.post(`/organizations/${organizationId}/invite`, details)
 			.then(response => {
 				console.log(response.data);
 				this.setState({ isSubmitting: false });
