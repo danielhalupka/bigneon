@@ -86,12 +86,12 @@ class VenuesList extends Component {
 								>
 									<Button customClassName="primary">Edit details</Button>
 								</Link>
-								<Link
+								{/* <Link
 									to={`/organizations/venues/${id}`}
 									style={{ textDecoration: "none" }}
 								>
 									<Button customClassName="secondary">Events</Button>
-								</Link>
+								</Link> */}
 							</CardActions>
 						</Card>
 					</Grid>
@@ -101,9 +101,6 @@ class VenuesList extends Component {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">No venues yet</Typography>
-					<Link to={"/admin/venues/create"} style={{ textDecoration: "none" }}>
-						<Button customClassName="callToAction">Create venue</Button>
-					</Link>
 				</Grid>
 			);
 		}
@@ -115,6 +112,15 @@ class VenuesList extends Component {
 				<Typography variant="display3">Venues</Typography>
 
 				<Grid container spacing={24}>
+					<Grid item xs={12} sm={12} lg={12}>
+						<Link
+							to={"/admin/venues/create"}
+							style={{ textDecoration: "none" }}
+						>
+							<Button customClassName="callToAction">Create venue</Button>
+						</Link>
+					</Grid>
+
 					{this.renderVenues()}
 				</Grid>
 			</div>
