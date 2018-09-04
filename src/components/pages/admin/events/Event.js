@@ -30,7 +30,7 @@ class Event extends Component {
 		this.state = {
 			eventId: null,
 			organizationId: null,
-			organizations: {},
+			organizations: null,
 			artists: [],
 			event: {},
 			organization: {},
@@ -63,6 +63,11 @@ class Event extends Component {
 				data.forEach(organization => {
 					organizations[organization.id] = organization.name;
 				});
+
+				//If there's only org then assume that ID
+				if (data.length === 1) {
+					this.setState({ organizationId: data[0].id });
+				}
 
 				this.setState({ organizations });
 			})
@@ -159,8 +164,12 @@ class Event extends Component {
 			<div>
 				<SelectOptionDialog
 					iconComponent={<OrganizationIcon />}
-					heading="Which organization does this event belong to?"
-					items={organizations}
+					heading={
+						organizations
+							? "Which organization does this event belong to?"
+							: "Loading..."
+					}
+					items={organizations || {}}
 					onSelect={organizationId => this.setState({ organizationId })}
 					open={!organizationId}
 					onClose={() => {}}
