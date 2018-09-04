@@ -2,7 +2,6 @@ import { observable, computed, action } from "mobx";
 import api from "../helpers/api";
 import moment from "moment";
 
-//TODO make add all fields to this model when they come from the API
 class SelectedEvent {
 	@observable
 	id = null;
@@ -36,14 +35,7 @@ class SelectedEvent {
 		api({ auth: false })
 			.get(`/events/${id}`)
 			.then(response => {
-				const {
-					event,
-					artists,
-					venue,
-					organization,
-					total_interest,
-					user_is_interested
-				} = response.data;
+				const { artists, organization, venue, ...event } = response.data;
 
 				const {
 					id,

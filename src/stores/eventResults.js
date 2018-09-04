@@ -21,20 +21,18 @@ class EventResults {
 
 				let demoImageNumber = 10;
 				response.data.forEach(eventData => {
-					const { event, venue } = eventData;
+					const { venue, ...event } = eventData;
 
 					//TODO remove this when we're filtering on published events not drafts
 					//Make sure they didn't just add artists without other details.
 					if (event.name) {
 						events.push({
-							event: {
-								...event,
-								formattedEventDate: moment(
-									event.event_start,
-									moment.HTML5_FMT.DATETIME_LOCAL_MS
-								).format("dddd, MMM D"),
-								imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`
-							},
+							...event,
+							formattedEventDate: moment(
+								event.event_start,
+								moment.HTML5_FMT.DATETIME_LOCAL_MS
+							).format("dddd, MMM D"),
+							imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`,
 							venue
 						});
 						demoImageNumber++;
@@ -116,14 +114,6 @@ class EventResults {
 				}
 			});
 		}
-
-		// if (state) {
-		// 	states.push(state);
-		// }
-
-		// this.states.forEach(state => {
-		// 	statesDropdownValues[state] = state;
-		// });
 
 		return statesDropdownValues;
 	}

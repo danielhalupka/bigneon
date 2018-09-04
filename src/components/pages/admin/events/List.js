@@ -67,7 +67,7 @@ class EventsList extends Component {
 
 		if (events && events.length > 0) {
 			return events.map(eventData => {
-				const { event, venue } = eventData;
+				const { venue, ...event } = eventData;
 				const { id, name } = event;
 
 				return (

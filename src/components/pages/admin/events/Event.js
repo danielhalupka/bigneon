@@ -92,7 +92,7 @@ class Event extends Component {
 			api()
 				.get(`/events/${eventId}`)
 				.then(response => {
-					const { artists, event, organization, venue } = response.data;
+					const { artists, organization, venue, ...event } = response.data;
 					const { organization_id } = event;
 					this.setState({
 						artists,

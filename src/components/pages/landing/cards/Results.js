@@ -15,7 +15,7 @@ const styles = theme => ({
 });
 
 const EventsList = ({ events }) => {
-	return events.map(({ event, venue }) => {
+	return events.map(({ venue, ...event }) => {
 		if (!event) {
 			console.error("Not found: ");
 			return null;
