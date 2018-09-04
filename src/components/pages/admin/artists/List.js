@@ -123,9 +123,6 @@ class ArtistsList extends Component {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">No artists yet</Typography>
-					<Link to={"/admin/artists/create"} style={{ textDecoration: "none" }}>
-						<Button customClassName="callToAction">Create artist</Button>
-					</Link>
 				</Grid>
 			);
 		}
@@ -137,6 +134,15 @@ class ArtistsList extends Component {
 				<Typography variant="display3">Artists</Typography>
 
 				<Grid container spacing={24}>
+					<Grid item xs={12} sm={12} lg={12}>
+						<Link
+							to={"/admin/artists/create"}
+							style={{ textDecoration: "none" }}
+						>
+							<Button customClassName="callToAction">Create artist</Button>
+						</Link>
+					</Grid>
+
 					{this.renderArtists()}
 				</Grid>
 			</div>

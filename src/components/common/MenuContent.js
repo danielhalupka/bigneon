@@ -236,7 +236,7 @@ class MenuContent extends Component {
 					}}
 				>
 					<Link
-						to={"/events/create"}
+						to={"/admin/events/create"}
 						style={{
 							textDecoration: "none"
 						}}
@@ -253,12 +253,51 @@ class MenuContent extends Component {
 				<Divider />
 
 				<MenuItem
-					to="/dashboard"
+					to="/admin/dashboard"
 					icon={<SendIcon />}
 					toggleDrawer={toggleDrawer}
 				>
 					Dashboard
 				</MenuItem>
+
+				<MenuItem
+					icon={<VenueIcon />}
+					onClick={() => this.changeOpenMenu("admin-venues")}
+					expandIcon={
+						openMenuItem === "admin-venues" ? <ExpandLess /> : <ExpandMore />
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Venues
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-venues"}
+					classes={classes}
+					items={{
+						All: "/admin/venues",
+						Create: "/admin/venues/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
+				<MenuItem
+					icon={<ArtistsIcon />}
+					onClick={() => this.changeOpenMenu("admin-artists")}
+					expandIcon={
+						openMenuItem === "admin-artists" ? <ExpandLess /> : <ExpandMore />
+					}
+					toggleDrawer={toggleDrawer}
+				>
+					Artists
+				</MenuItem>
+				<SubMenuItems
+					isExpanded={openMenuItem === "admin-artists"}
+					classes={classes}
+					items={{
+						All: "/admin/artists",
+						Create: "/admin/artists/create"
+					}}
+					toggleDrawer={toggleDrawer}
+				/>
 
 				<MenuItem
 					icon={<EventsIcon />}
@@ -274,25 +313,27 @@ class MenuContent extends Component {
 					isExpanded={openMenuItem === "events"}
 					classes={classes}
 					items={{
-						"Upcoming events": "/events/upcoming",
-						"Past events": "/events/past",
-						"Saved drafts": "/events/drafts"
+						"All events": "/admin/events",
+						Create: "/admin/events/create"
 					}}
 					toggleDrawer={toggleDrawer}
 				/>
+
 				<MenuItem
-					to="/reports"
+					to="/admin/reports"
 					icon={<ChartIcon />}
 					toggleDrawer={toggleDrawer}
 				>
 					Reports
 				</MenuItem>
-				<MenuItem to="/fans" icon={<FansIcon />} toggleDrawer={toggleDrawer}>
+				<MenuItem
+					to="/admin/fans"
+					icon={<FansIcon />}
+					toggleDrawer={toggleDrawer}
+				>
 					Fans
 				</MenuItem>
-				<MenuItem icon={<ArtistsIcon />} toggleDrawer={toggleDrawer}>
-					Artists
-				</MenuItem>
+
 				<MenuItem
 					icon={<MarketingIcon />}
 					onClick={() => this.changeOpenMenu("marketing")}
@@ -307,11 +348,11 @@ class MenuContent extends Component {
 					isExpanded={openMenuItem === "marketing"}
 					classes={classes}
 					items={{
-						Social: "/marketing/social",
-						Mobile: "/marketing/mobile",
-						Email: "/marketing/email",
-						Website: "/marketing/website",
-						"Event API": "/marketing/event-api"
+						Social: "/admin/marketing/social",
+						Mobile: "/admin/marketing/mobile",
+						Email: "/admin/marketing/email",
+						Website: "/admin/marketing/website",
+						"Event API": "/admin/marketing/event-api"
 					}}
 					toggleDrawer={toggleDrawer}
 				/>

@@ -51,7 +51,9 @@ const CustomButton = props => {
 		style,
 		type,
 		disabled,
-		size
+		size,
+		href,
+		target
 	} = props;
 
 	return (
@@ -70,6 +72,8 @@ const CustomButton = props => {
 			type={type}
 			disabled={disabled}
 			size={size}
+			href={href}
+			target={target}
 		>
 			{children}
 		</Button>
@@ -87,7 +91,9 @@ CustomButton.propTypes = {
 	onClick: PropTypes.func,
 	style: PropTypes.object,
 	type: PropTypes.string,
-	size: PropTypes.string
+	size: PropTypes.string,
+	href: PropTypes.string,
+	target: PropTypes.string
 };
 
 export default withStyles(styles)(CustomButton);

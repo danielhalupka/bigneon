@@ -87,9 +87,13 @@ class EventsList extends Component {
 								>
 									<Button customClassName="primary">Edit details</Button>
 								</Link>
-								<Link to={`/events/${id}`} style={{ textDecoration: "none" }}>
-									<Button customClassName="secondary">View more</Button>
-								</Link>
+								<Button
+									target="_blank"
+									href={`/events/${id}`}
+									customClassName="secondary"
+								>
+									Open event page
+								</Button>
 							</CardActions>
 						</Card>
 					</Grid>
@@ -99,9 +103,6 @@ class EventsList extends Component {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">No events yet</Typography>
-					<Link to={"/admin/events/create"} style={{ textDecoration: "none" }}>
-						<Button customClassName="callToAction">Create event</Button>
-					</Link>
 				</Grid>
 			);
 		}
@@ -113,6 +114,15 @@ class EventsList extends Component {
 				<Typography variant="display3">Events</Typography>
 
 				<Grid container spacing={24}>
+					<Grid item xs={12} sm={12} lg={12}>
+						<Link
+							to={"/admin/events/create"}
+							style={{ textDecoration: "none" }}
+						>
+							<Button customClassName="callToAction">Create event</Button>
+						</Link>
+					</Grid>
+
 					{this.renderEvents()}
 				</Grid>
 			</div>
