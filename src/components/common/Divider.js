@@ -8,7 +8,15 @@ import {
 	secondaryHex
 } from "../styles/theme";
 
-export default ({ children, style = {} }) => {
+export default ({ children, style = {}, dashed = false }) => {
+	let dashedStyle = {};
+	if (dashed) {
+		dashedStyle = {
+			borderStyle: "dashed",
+			borderColor: "white"
+		};
+	}
+
 	const Hr = () => (
 		<hr
 			style={{
@@ -16,7 +24,8 @@ export default ({ children, style = {} }) => {
 				height: 1,
 				borderRadius: 4,
 				flex: 1,
-				marginTop: 12
+				marginTop: 12,
+				...dashedStyle
 			}}
 		/>
 	);
