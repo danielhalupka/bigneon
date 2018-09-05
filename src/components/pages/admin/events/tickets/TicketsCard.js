@@ -7,6 +7,7 @@ import Card from "@material-ui/core/Card";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import moment from "moment";
+import axios from "axios";
 
 import Button from "../../../../common/Button";
 import api from "../../../../../helpers/api";
@@ -73,14 +74,60 @@ class TicketsCard extends Component {
 		this.setState({ isSubmitting: true });
 
 		const { tickets } = this.state;
-		const { onNext } = this.props;
+		const { eventId, organizationId, onNext } = this.props;
 
-		console.log("TODO save tickets: ", tickets);
+		//Build an array of promises to execute
+		let promises = [];
+		tickets.forEach(ticket => {
+			const { capacity } = ticket;
 
-		//TODO make api call
-		setTimeout(() => {
-			onNext();
-		}, 1000);
+			const ticketDetails = {
+				...ticket,
+				capacity: Number(capacity),
+				organizationId,
+				eventId
+			};
+
+			const axiosPromise = api().post(
+				`/events/${eventId}/tickets`,
+				ticketDetails
+			);
+			promises.push(axiosPromise);
+		});
+
+		axios
+			.all(promises)
+			.then(results => {
+				results.forEach(({ data }) => {
+					console.log("id: ", data);
+				});
+
+				console.log("Done all");
+				notifications.show({
+					message: "Event tickets updated.",
+					variant: "success"
+				});
+				onNext();
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = `Adding tickets failed.`;
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+
+		this.setState({ isSubmitting: false });
 	}
 
 	addTicket() {
@@ -121,13 +168,21 @@ class TicketsCard extends Component {
 											this.setState({ tickets });
 										}}
 										onError={errors => {
-											const hasError = Object.keys(errors).length > 0;
+											console.log("Ticket errors");
+											console.log(errors);
+											// const hasError =
+											// 	this.ticketErrors && Object.keys(errors).length > 0;
 
-											if (hasError) {
-												this.ticketErrors[index] = true;
-											} else {
-												delete this.ticketErrors[index];
-											}
+											// if (Object.keys(errors).length>0) {
+											// 	this.setState(({errors}) => {
+											// 		errors[index] = true;
+											// 		return {errors};
+											// 	})
+
+											// 	//this.ticketErrors[index] = true;
+											// } else {
+											// 	delete this.ticketErrors[index];
+											// }
 										}}
 										onDelete={ticket => {
 											let tickets = [...this.state.tickets];

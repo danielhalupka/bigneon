@@ -67,7 +67,7 @@ class Ticket extends Component {
 			description,
 			startDate,
 			endDate,
-			quantity,
+			capacity,
 			limit,
 			pricing
 		} = data;
@@ -85,8 +85,8 @@ class Ticket extends Component {
 			errors.endDate = "Specify the ticket end date";
 		}
 
-		if (quantity === "" || isNaN(quantity)) {
-			errors.quantity = "Specify a valid capacity";
+		if (capacity === "" || isNaN(capacity)) {
+			errors.capacity = "Specify a valid capacity";
 		}
 
 		if (limit !== "" && isNaN(limit)) {
@@ -153,7 +153,7 @@ class Ticket extends Component {
 			description,
 			startDate,
 			endDate,
-			quantity,
+			capacity,
 			limit,
 			pricing
 		} = data;
@@ -176,14 +176,14 @@ class Ticket extends Component {
 				</Grid>
 				<Grid item xs={2}>
 					<InputGroup
-						error={errors.quantity}
-						value={quantity}
-						name="quantity"
+						error={errors.capacity}
+						value={capacity}
+						name="capacity"
 						label="Capacity"
 						placeholder="500"
 						type="number"
 						onChange={e => {
-							this.setField("quantity", e.target.value);
+							this.setField("capacity", e.target.value);
 						}}
 						onBlur={this.validateFields}
 					/>
@@ -259,7 +259,7 @@ Ticket.Structure = (ticket = {}) => {
 		description: "",
 		startDate: "",
 		endDate: "",
-		quantity: 0,
+		capacity: 0,
 		limit: 0, //Limit per purchase
 		pricing: []
 	};
