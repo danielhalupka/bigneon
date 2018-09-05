@@ -26,8 +26,6 @@ const CartHeaderLink = observer(({ classes }) => {
 		return null;
 	}
 
-	console.log("Cart: ", ticketCount);
-
 	return (
 		<Link to="/cart" style={{ textDecoration: "none" }}>
 			<Button className={classes.menuButton}>

@@ -69,10 +69,6 @@ const TicketLineEntry = ({ col1, col2, col3, className }) => (
 class CheckoutConfirmation extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			ticketSelection: {} //TODO load from API?
-		};
 	}
 
 	componentDidMount() {
@@ -95,28 +91,85 @@ class CheckoutConfirmation extends Component {
 	}
 
 	renderTickets() {
-		const { ticketPricing } = selectedEvent;
+		const { tickets } = selectedEvent;
 		const { classes } = this.props;
+		const { selectedTickets } = cart;
 
-		if (!ticketPricing) {
+		if (!tickets) {
 			return null;
 		}
 
-		return ticketPricing.map(({ id, name, price, description }) => (
+		return tickets.map(({ id, name, price, description }) => {
+			const quantity = selectedTickets[id];
+			if (quantity) {
+				return (
+					<TicketLineEntry
+						key={id}
+						col1={
+							<Typography variant="body1">
+								{quantity} x {name}
+							</Typography>
+						}
+						col2={<Typography variant="body1">$ {price}</Typography>}
+						col3={<Typography variant="body1">{price * quantity}</Typography>}
+						className={classes.ticketLineEntry}
+					/>
+				);
+			}
+
+			return null;
+		});
+	}
+
+	renderTotals() {
+		const { classes } = this.props;
+		const { tickets, id } = selectedEvent;
+		const { selectedTickets } = cart;
+
+		//TODO move this to the computed value in stores/cart.js store
+		let total = 0;
+
+		if (tickets) {
+			tickets.forEach(ticket => {
+				const { price } = ticket;
+				const quantity = selectedTickets[ticket.id];
+				if (quantity) {
+					total = total + price * quantity;
+				}
+			});
+		}
+
+		return (
 			<TicketLineEntry
-				key={id}
-				col1={<Typography variant="body1">1 x {name}</Typography>}
-				col2={<Typography variant="body1">$ {price}</Typography>}
-				col3={<Typography variant="body1">{price * 1}</Typography>}
+				col1={
+					id ? (
+						<Link
+							to={`/events/${id}/tickets`}
+							style={{ textDecoration: "none" }}
+						>
+							<Button>Change tickets</Button>
+						</Link>
+					) : null
+				}
+				col2={
+					<span>
+						<Typography variant="body1">Service fees:</Typography>
+						<Typography variant="body1">Order total:</Typography>
+					</span>
+				}
+				col3={
+					<span>
+						<Typography variant="body1">$2</Typography>
+						<Typography variant="body1">${total}</Typography>
+					</span>
+				}
 				className={classes.ticketLineEntry}
 			/>
-			// 	amount={ticketSelection[id]}
-		));
+		);
 	}
 
 	render() {
 		const { classes } = this.props;
-		const { ticketSelection } = this.state;
 
 		//If the user has previously selected an event, it'll still be here
 		//If they haven't selected an event but we have tickets in their cart from previously then display a generic checkout page
@@ -149,33 +202,12 @@ class CheckoutConfirmation extends Component {
 							col3={<Typography variant="subheading">Subtotal</Typography>}
 							className={classes.ticketLineEntry}
 						/>
+
 						{this.renderTickets()}
 
 						<Divider />
 
-						<TicketLineEntry
-							col1={
-								<Link
-									to={`/events/${id}/tickets`}
-									style={{ textDecoration: "none" }}
-								>
-									<Button>Change tickets</Button>
-								</Link>
-							}
-							col2={
-								<span>
-									<Typography variant="body1">Service fees:</Typography>
-									<Typography variant="body1">Order total:</Typography>
-								</span>
-							}
-							col3={
-								<span>
-									<Typography variant="body1">$2</Typography>
-									<Typography variant="body1">$4</Typography>
-								</span>
-							}
-							className={classes.ticketLineEntry}
-						/>
+						{this.renderTotals()}
 					</Grid>
 
 					<Grid item xs={12} sm={12} lg={12} className={classes.userContainer}>

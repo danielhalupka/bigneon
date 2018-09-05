@@ -39,8 +39,6 @@ const CartMobileBottomBar = observer(({ classes }) => {
 		return null;
 	}
 
-	console.log("Cart: ", ticketCount);
-
 	return (
 		<Hidden smUp implementation="css">
 			<Link to="/cart" className={classes.link}>
