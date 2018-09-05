@@ -2,20 +2,12 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Card from "@material-ui/core/Card";
-import moment from "moment";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
-import SelectGroup from "../../../../common/form/SelectGroup";
-import Button from "../../../../common/Button";
-import notifications from "../../../../../stores/notifications";
-import api from "../../../../../helpers/api";
 import TicketPricing from "./TicketPricing";
 
 const styles = theme => ({
@@ -67,7 +59,7 @@ class Ticket extends Component {
 			description,
 			startDate,
 			endDate,
-			quantity,
+			capacity,
 			limit,
 			pricing
 		} = data;
@@ -85,8 +77,8 @@ class Ticket extends Component {
 			errors.endDate = "Specify the ticket end date";
 		}
 
-		if (quantity === "" || isNaN(quantity)) {
-			errors.quantity = "Specify a valid capacity";
+		if (capacity === "" || isNaN(capacity)) {
+			errors.capacity = "Specify a valid capacity";
 		}
 
 		if (limit !== "" && isNaN(limit)) {
@@ -153,7 +145,7 @@ class Ticket extends Component {
 			description,
 			startDate,
 			endDate,
-			quantity,
+			capacity,
 			limit,
 			pricing
 		} = data;
@@ -176,14 +168,14 @@ class Ticket extends Component {
 				</Grid>
 				<Grid item xs={2}>
 					<InputGroup
-						error={errors.quantity}
-						value={quantity}
-						name="quantity"
+						error={errors.capacity}
+						value={capacity}
+						name="capacity"
 						label="Capacity"
 						placeholder="500"
 						type="number"
 						onChange={e => {
-							this.setField("quantity", e.target.value);
+							this.setField("capacity", e.target.value);
 						}}
 						onBlur={this.validateFields}
 					/>
@@ -259,7 +251,7 @@ Ticket.Structure = (ticket = {}) => {
 		description: "",
 		startDate: "",
 		endDate: "",
-		quantity: 0,
+		capacity: 0,
 		limit: 0, //Limit per purchase
 		pricing: []
 	};

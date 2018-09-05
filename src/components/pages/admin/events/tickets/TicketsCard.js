@@ -4,23 +4,18 @@ import { withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
-import IconButton from "@material-ui/core/IconButton";
-import AddIcon from "@material-ui/icons/Add";
 import moment from "moment";
+import axios from "axios";
 
 import Button from "../../../../common/Button";
 import api from "../../../../../helpers/api";
 import notifications from "../../../../../stores/notifications";
-import InputGroup from "../../../../common/form/InputGroup";
-import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
-import SelectGroup from "../../../../common/form/SelectGroup";
 import Ticket from "./Ticket";
 import FormSubHeading from "../../../../common/FormSubHeading";
 import Divider from "../../../../common/Divider";
 
 const styles = theme => ({
 	paper: {
-		//padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
 	}
 });
@@ -37,10 +32,52 @@ class TicketsCard extends Component {
 	}
 
 	componentDidMount() {
-		const { tickets } = this.state;
-		if (tickets.length < 1) {
-			this.addTicket();
-		}
+		const { eventId } = this.props;
+
+		api()
+			.get(`/events/${eventId}/tickets`)
+			.then(response => {
+				const { ticket_types } = response.data;
+
+				let tickets = [];
+				ticket_types.forEach(ticket_type => {
+					const { id, name, capacity } = ticket_type;
+
+					tickets.push(
+						Ticket.Structure({
+							id,
+							name,
+							capacity: capacity ? capacity : 0,
+							startDate: moment(),
+							endDate: this.state.eventDate
+						})
+					);
+				});
+
+				this.setState({ tickets });
+
+				//If there are no tickets, add one
+				if (tickets.length < 1) {
+					this.addTicket();
+				}
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = "Loading event tickets failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
 	}
 
 	validateFields() {
@@ -73,14 +110,59 @@ class TicketsCard extends Component {
 		this.setState({ isSubmitting: true });
 
 		const { tickets } = this.state;
-		const { onNext } = this.props;
+		const { eventId, organizationId, onNext } = this.props;
 
-		console.log("TODO save tickets: ", tickets);
+		//Build an array of promises to execute
+		let promises = [];
+		tickets.forEach(ticket => {
+			const { capacity, name } = ticket;
 
-		//TODO make api call
-		setTimeout(() => {
-			onNext();
-		}, 1000);
+			//TODO add missing fields when added
+			const ticketDetails = {
+				name,
+				capacity: Number(capacity)
+			};
+
+			const axiosPromise = api().post(
+				`/events/${eventId}/tickets`,
+				ticketDetails
+			);
+			promises.push(axiosPromise);
+		});
+
+		axios
+			.all(promises)
+			.then(results => {
+				results.forEach(({ data }) => {
+					console.log("id: ", data);
+				});
+
+				console.log("Done all");
+				notifications.show({
+					message: "Event tickets updated.",
+					variant: "success"
+				});
+				onNext();
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = `Adding tickets failed.`;
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+
+		this.setState({ isSubmitting: false });
 	}
 
 	addTicket() {
@@ -109,7 +191,7 @@ class TicketsCard extends Component {
 							//Only add a divider between ticket sections
 							const bottomDivider =
 								tickets.length - 1 > index ? (
-									<Divider style={{ marginBottom: 60, marginTop: 60 }} />
+									<Divider style={{ marginBottom: 60, marginTop: 60 }} dashed />
 								) : null;
 							return (
 								<div key={`ticket_${index}`}>
@@ -121,13 +203,22 @@ class TicketsCard extends Component {
 											this.setState({ tickets });
 										}}
 										onError={errors => {
-											const hasError = Object.keys(errors).length > 0;
+											console.log("Ticket errors");
+											console.log(errors);
+											//TODO place back and test
+											// const hasError =
+											// 	this.ticketErrors && Object.keys(errors).length > 0;
 
-											if (hasError) {
-												this.ticketErrors[index] = true;
-											} else {
-												delete this.ticketErrors[index];
-											}
+											// if (Object.keys(errors).length>0) {
+											// 	this.setState(({errors}) => {
+											// 		errors[index] = true;
+											// 		return {errors};
+											// 	})
+
+											// 	//this.ticketErrors[index] = true;
+											// } else {
+											// 	delete this.ticketErrors[index];
+											// }
 										}}
 										onDelete={ticket => {
 											let tickets = [...this.state.tickets];
