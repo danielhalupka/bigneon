@@ -55,22 +55,23 @@ class CheckoutSelection extends Component {
 
 	onSubmit() {
 		const { id } = selectedEvent;
+		const { ticketSelection } = this.state;
 
 		//Add to dummy cart
-		cart.addToCart(["TODO_ticket1", "TODO_ticket2"]);
+		cart.addToCart(ticketSelection);
 
 		this.props.history.push(`/events/${id}/tickets/confirmation`);
 	}
 
 	renderTicketPricing() {
-		const { ticketPricing } = selectedEvent;
+		const { tickets } = selectedEvent;
 		const { ticketSelection } = this.state;
 
-		if (!ticketPricing) {
+		if (!tickets) {
 			return null; //Still loading this
 		}
 
-		return ticketPricing.map(({ id, name, price, description }) => (
+		return tickets.map(({ id, name, price, description }) => (
 			<TicketSelection
 				key={id}
 				name={name}

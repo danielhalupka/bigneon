@@ -1,6 +1,7 @@
 import { observable, computed, action } from "mobx";
-import api from "../helpers/api";
 import moment from "moment";
+import api from "../helpers/api";
+import notifications from "./notifications";
 
 class SelectedEvent {
 	@observable
@@ -19,7 +20,7 @@ class SelectedEvent {
 	organization = null;
 
 	@observable
-	ticketPricing = null;
+	tickets = null;
 
 	@action
 	refreshResult(id, onError = () => {}) {
@@ -29,7 +30,7 @@ class SelectedEvent {
 			this.venue = null;
 			this.artists = [];
 			this.organization = null;
-			this.ticketPricing = null;
+			this.tickets = null;
 		}
 
 		api({ auth: false })
@@ -49,6 +50,8 @@ class SelectedEvent {
 					promo_image_url,
 					age_limit
 				} = event;
+
+				this.loadTickets(id);
 
 				this.organization = organization;
 
@@ -88,22 +91,6 @@ class SelectedEvent {
 					displayShowTime,
 					promo_image_url: `https://picsum.photos/800/400/?image=200` //TODO remove this when image is being saved
 				};
-
-				//TODO retrieve ticket pricing when API is ready
-				this.ticketPricing = [
-					{
-						id: "123",
-						name: "General standing",
-						description: "Lorem lorem lorem lorem lorem lorem lorem",
-						price: 1
-					},
-					{
-						id: "456",
-						name: "VIP",
-						description: "For like super important people",
-						price: 999
-					}
-				];
 			})
 			.catch(error => {
 				console.error(error);
@@ -156,7 +143,45 @@ class SelectedEvent {
 					message = error.response.data.error;
 				}
 
-				//TODO popup notification
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+	}
+
+	@action
+	loadTickets(id) {
+		api({ auth: false })
+			.get(`/events/${id}/tickets`)
+			.then(response => {
+				const { ticket_types } = response.data;
+
+				let tickets = [];
+				//TODO wait for more fields
+				ticket_types.forEach((ticket, index) => {
+					const { id, name } = ticket;
+					tickets.push({ id, name, price: 10 + index, description: "" });
+				});
+
+				this.tickets = tickets;
+			})
+			.catch(error => {
+				console.error(error);
+
+				let message = "Loading event tickets failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
 			});
 	}
 }

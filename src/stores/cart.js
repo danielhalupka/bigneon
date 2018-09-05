@@ -8,7 +8,7 @@ class Cart {
 	cartId = null;
 
 	@observable
-	tickets = [];
+	selectedTickets = {}; //{id: quantity}
 
 	@action
 	refreshCart() {
@@ -19,7 +19,7 @@ class Cart {
 
 				const { cartId, tickets } = data;
 				this.cartId = cartId;
-				this.tickets = tickets;
+				this.selectedTickets = tickets;
 			})
 			.catch(error => {
 				console.error(error);
@@ -41,18 +41,18 @@ class Cart {
 	}
 
 	@action
-	addToCart(tickets) {
-		this.tickets = tickets.concat(this.tickets);
+	addToCart(selectedTickets) {
+		this.selectedTickets = { ...this.selectedTickets, ...selectedTickets };
 	}
 
 	@action
-	emptyCart(tickets) {
-		this.tickets = [];
+	emptyCart(selectedTickets) {
+		this.selectedTickets = {};
 	}
 
 	@computed
 	get ticketCount() {
-		return this.tickets ? this.tickets.length : 0;
+		return this.selectedTickets ? Object.keys(this.selectedTickets).length : 0;
 	}
 }
 
