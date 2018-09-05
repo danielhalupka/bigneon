@@ -51,6 +51,7 @@ const styles = theme => ({
 	toolbar: theme.mixins.toolbar,
 	drawerPaper: {
 		width: drawerWidth,
+		minHeight: window.innerHeight * 1.1,
 		[theme.breakpoints.up("md")]: {
 			position: "relative"
 		}
