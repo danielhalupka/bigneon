@@ -15,6 +15,7 @@ import decodeJWT from "../../../helpers/decodeJWT";
 import api from "../../../helpers/api";
 import FacebookButton from "./social/FacebookButton";
 import Divider from "../../common/Divider";
+import ResetPasswordModal from "./ResetPasswordModal";
 
 const styles = () => ({});
 
@@ -28,7 +29,8 @@ class Login extends Component {
 			password: process.env.NODE_ENV === "development" ? "password" : "",
 			confirmPassword: "",
 			isSubmitting: false,
-			errors: {}
+			errors: {},
+			resetOpen: false
 		};
 	}
 
@@ -121,58 +123,77 @@ class Login extends Component {
 	}
 
 	render() {
-		const { email, password, isSubmitting, errors } = this.state;
+		const { email, password, resetOpen, isSubmitting, errors } = this.state;
 
 		return (
 			<Container>
-				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<CardContent>
-						{/* <Typography gutterBottom variant="headline" component="h2">
+				<div>
+					<ResetPasswordModal
+						onClose={() => this.setState({ resetOpen: false })}
+						open={resetOpen}
+						email={email}
+					/>
+					<form
+						noValidate
+						autoComplete="off"
+						onSubmit={this.onSubmit.bind(this)}
+					>
+						<CardContent>
+							{/* <Typography gutterBottom variant="headline" component="h2">
 							Login
 						</Typography> */}
 
-						<FacebookButton
-							onSuccess={() => this.props.history.push("/dashboard")}
-						>
-							Login with Facebook
-						</FacebookButton>
+							<FacebookButton
+								onSuccess={() => this.props.history.push("/dashboard")}
+							>
+								Login with Facebook
+							</FacebookButton>
 
-						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
+							<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
 
-						<InputGroup
-							error={errors.email}
-							value={email}
-							name="email"
-							label="Email address"
-							type="text"
-							onChange={e => this.setState({ email: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
-						<InputGroup
-							error={errors.password}
-							value={password}
-							name="password"
-							label="Password"
-							type="password"
-							onChange={e => this.setState({ password: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
-					</CardContent>
-					<CardActions>
-						<Button
-							disabled={isSubmitting}
-							type="submit"
-							style={{ marginRight: 10 }}
-							customClassName="callToAction"
-						>
-							{isSubmitting ? "Submitting..." : "Login"}
-						</Button>
+							<InputGroup
+								error={errors.email}
+								value={email}
+								name="email"
+								label="Email address"
+								type="text"
+								onChange={e => this.setState({ email: e.target.value })}
+								onBlur={this.validateFields.bind(this)}
+							/>
+							<InputGroup
+								error={errors.password}
+								value={password}
+								name="password"
+								label="Password"
+								type="password"
+								onChange={e => this.setState({ password: e.target.value })}
+								onBlur={this.validateFields.bind(this)}
+							/>
+						</CardContent>
+						<CardActions>
+							<Button
+								disabled={isSubmitting}
+								type="submit"
+								style={{ marginRight: 10 }}
+								customClassName="callToAction"
+							>
+								{isSubmitting ? "Submitting..." : "Login"}
+							</Button>
 
-						<Link to={"/sign-up"} style={{ textDecoration: "none" }}>
-							<Button disabled={isSubmitting}>I don't have an account</Button>
-						</Link>
-					</CardActions>
-				</form>
+							<Button
+								onClick={() => this.setState({ resetOpen: true })}
+								style={{ marginRight: 10 }}
+								disabled={isSubmitting}
+							>
+								Forgot password
+							</Button>
+
+							<Link to={"/sign-up"} style={{ textDecoration: "none" }}>
+								<Button disabled={isSubmitting}>I don't have an account</Button>
+							</Link>
+						</CardActions>
+					</form>
+				</div>
 			</Container>
 		);
 	}
