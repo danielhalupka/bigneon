@@ -14,6 +14,7 @@ import Dashboard from "../pages/dashboard/Index";
 import Profile from "../pages/profile/Index";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
+import PasswordReset from "../pages/authentication/PasswordReset";
 
 //Unauthenticated pages
 import Home from "../pages/landing/Index";
@@ -101,6 +102,7 @@ class Routes extends Component {
 
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
+						<Route exact path="/password-reset" component={PasswordReset} />
 						<Route exact path="/invites/decline" component={InviteDecline} />
 						<Route exact path="/invites/accept" component={InviteAccept} />
 
