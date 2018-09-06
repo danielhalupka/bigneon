@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { observer } from "mobx-react";
-import { withStyles } from "@material-ui/core";
+import React, {Component} from "react";
+import {Link} from "react-router-dom";
+import {observer} from "mobx-react";
+import {withStyles} from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 
@@ -10,12 +10,12 @@ import Button from "../../common/Button";
 import Container from "./Container";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
-import { validEmail } from "../../../validators";
+import {validEmail} from "../../../validators";
 import decodeJWT from "../../../helpers/decodeJWT";
-import api from "../../../helpers/api";
 import FacebookButton from "./social/FacebookButton";
 import Divider from "../../common/Divider";
 import ResetPasswordModal from "./ResetPasswordModal";
+import Bigneon from '../../../helpers/bigneon';
 
 const styles = () => ({});
 
@@ -40,7 +40,7 @@ class Login extends Component {
 			return true;
 		}
 
-		const { email, password } = this.state;
+		const {email, password} = this.state;
 
 		const errors = {};
 
@@ -56,7 +56,7 @@ class Login extends Component {
 			errors.password = "Missing password.";
 		}
 
-		this.setState({ errors });
+		this.setState({errors});
 
 		if (Object.keys(errors).length > 0) {
 			return false;
@@ -68,7 +68,7 @@ class Login extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { email, password } = this.state;
+		const {email, password} = this.state;
 
 		this.submitAttempted = true;
 
@@ -76,17 +76,13 @@ class Login extends Component {
 			return false;
 		}
 
-		this.setState({ isSubmitting: true });
-
-		api({
-			auth: false
+		this.setState({isSubmitting: true});
+		Bigneon().auth.create({
+			email,
+			password
 		})
-			.post("/auth/token", {
-				email,
-				password
-			})
 			.then(response => {
-				const { access_token, refresh_token } = response.data;
+				const {access_token, refresh_token} = response.data;
 				if (access_token) {
 					localStorage.setItem("access_token", access_token);
 					localStorage.setItem("refresh_token", refresh_token);
@@ -96,12 +92,13 @@ class Login extends Component {
 						this.props.history.push("/dashboard");
 					});
 				} else {
-					this.setState({ isSubmitting: false });
+					this.setState({isSubmitting: false});
 
 					notifications.show({
 						message: "Missing token.",
 						variant: "error"
 					});
+
 				}
 			})
 			.catch(error => {
@@ -114,7 +111,7 @@ class Login extends Component {
 				) {
 					message = error.response.data.error;
 				}
-				this.setState({ isSubmitting: false });
+				this.setState({isSubmitting: false});
 				notifications.show({
 					message,
 					variant: "error"
@@ -123,8 +120,8 @@ class Login extends Component {
 	}
 
 	render() {
-		const { email, password, resetOpen, isSubmitting, errors } = this.state;
-
+    const { email, password, resetOpen, isSubmitting, errors } = this.state;
+    
 		return (
 			<Container>
 				<div>
@@ -142,7 +139,6 @@ class Login extends Component {
 							{/* <Typography gutterBottom variant="headline" component="h2">
 							Login
 						</Typography> */}
-
 							<FacebookButton
 								onSuccess={() => this.props.history.push("/dashboard")}
 							>
@@ -194,6 +190,7 @@ class Login extends Component {
 						</CardActions>
 					</form>
 				</div>
+
 			</Container>
 		);
 	}

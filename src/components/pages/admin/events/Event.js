@@ -8,10 +8,10 @@ import OrganizationIcon from "@material-ui/icons/GroupWork";
 
 import ArtistCard from "./artists/ArtistsCard";
 import DetailsCard from "./details/DetailsCard";
-import api from "../../../../helpers/api";
 import notifications from "../../../../stores/notifications";
 import TicketsCard from "./tickets/TicketsCard";
 import SelectOptionDialog from "../../../common/SelectOptionDialog";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -55,8 +55,7 @@ class Event extends Component {
 	}
 
 	loadOrganizations() {
-		api()
-			.get("/organizations")
+		Bigneon().organization.index()
 			.then(response => {
 				const { data } = response;
 				const organizations = {};
@@ -94,8 +93,7 @@ class Event extends Component {
 		const { eventId } = this.state;
 
 		if (eventId) {
-			api()
-				.get(`/events/${eventId}`)
+			Bigneon().event.read({id: eventId})
 				.then(response => {
 					const { artists, organization, venue, ...event } = response.data;
 					const { organization_id } = event;

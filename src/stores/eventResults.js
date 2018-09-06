@@ -1,6 +1,6 @@
 import { observable, computed, action } from "mobx";
 import moment from "moment";
-import api from "../helpers/api";
+import Bigneon from "../helpers/bigneon";
 
 class EventResults {
 	@observable
@@ -14,8 +14,7 @@ class EventResults {
 
 	@action
 	refreshResults(params, onSuccess, onError) {
-		api({ auth: false })
-			.get(`/events`, { params })
+		Bigneon().event.index(params)
 			.then(response => {
 				let events = [];
 

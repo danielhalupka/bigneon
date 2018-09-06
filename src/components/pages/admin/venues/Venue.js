@@ -10,7 +10,7 @@ import LocationInputGroup from "../../../common/form/LocationInputGroup";
 import SelectGroup from "../../../common/form/SelectGroup";
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
+import Bigneon from "../../../../helpers/bigneon";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 import { validPhone } from "../../../../validators";
 
@@ -52,8 +52,7 @@ class Venue extends Component {
 		const { venueId } = this.state;
 
 		if (venueId) {
-			api()
-				.get(`/venues/${venueId}`)
+			Bigneon().venue.read({id: venueId})
 				.then(response => {
 					const {
 						name,
@@ -95,8 +94,7 @@ class Venue extends Component {
 				});
 		}
 
-		api()
-			.get("/organizations")
+		Bigneon().organization.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ organizations: data });
@@ -159,8 +157,7 @@ class Venue extends Component {
 	}
 
 	createNewVenue(params, onSuccess) {
-		api()
-			.post("/venues", params)
+		Bigneon().venue.edit(params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -186,8 +183,7 @@ class Venue extends Component {
 	}
 
 	updateVenue(id, params, onSuccess) {
-		api()
-			.put(`/venues/${id}`, { ...params, id })
+		Bigneon().venue.edit({...params, id})
 			.then(() => {
 				onSuccess(id);
 			})
