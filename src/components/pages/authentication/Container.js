@@ -30,7 +30,7 @@ const Container = props => {
 			</Grid>
 
 			<Grid container justify="center">
-				<Grid item xs={12} sm={12} md={8} lg={5}>
+				<Grid item xs={12} sm={12} md={8} lg={6}>
 					<div>
 						<Card className={classes.paper}>{children}</Card>
 					</div>
