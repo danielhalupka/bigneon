@@ -1,4 +1,4 @@
-import Bigneon from "bn-api-node/dist/bundle.client";
+import Bigneon from "bn-api-node";
 
 let bigneon;
 
