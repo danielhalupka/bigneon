@@ -106,9 +106,8 @@ class Profile extends Component {
 		}
 
 		this.setState({ isSubmitting: true });
-
-		api()
-			.put("/users/me", {
+		Bigneon()
+			.users.update({
 				first_name: firstName,
 				last_name: lastName,
 				email,
