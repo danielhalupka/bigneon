@@ -52,7 +52,7 @@ class Venue extends Component {
 		const { venueId } = this.state;
 
 		if (venueId) {
-			Bigneon().venue.read({id: venueId})
+			Bigneon().venue.read({ id: venueId })
 				.then(response => {
 					const {
 						name,
@@ -183,7 +183,7 @@ class Venue extends Component {
 	}
 
 	updateVenue(id, params, onSuccess) {
-		Bigneon().venue.edit({...params, id})
+		Bigneon().venue.edit({ ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})
