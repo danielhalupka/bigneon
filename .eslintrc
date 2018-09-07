@@ -23,7 +23,8 @@
     "react/jsx-uses-vars": "error",
     "no-console": "off",
     "react/jsx-no-undef": "error",
-    "lines-between-class-members": "warn"
+    "lines-between-class-members": "warn",
+    "object-curly-spacing": ["error", "always"]
   },
   "env": {
     "browser": true,
