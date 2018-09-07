@@ -93,7 +93,7 @@ class Event extends Component {
 		const { eventId } = this.state;
 
 		if (eventId) {
-			Bigneon().event.read({id: eventId})
+			Bigneon().event.read({ id: eventId })
 				.then(response => {
 					const { artists, organization, venue, ...event } = response.data;
 					const { organization_id } = event;
