@@ -10,6 +10,8 @@ import Button from "../../common/Button";
 import { validEmail, validPhone } from "../../../validators";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
+import api from "../../../helpers/api";
+import Bigneon from "../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -105,8 +107,39 @@ class Profile extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		notifications.show({ message: "API not available yet" });
-		this.setState({ isSubmitting: false });
+		api()
+			.put("/users/me", {
+				first_name: firstName,
+				last_name: lastName,
+				email,
+				phone
+			})
+			.then(response => {
+				console.log(response.data);
+				notifications.show({ message: "Profile updated.", variant: "success" });
+				this.setState({ isSubmitting: false });
+
+				//Then load from API for the freshest data
+				user.refreshUser();
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+
+				let message = "Failed to update profile.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
 	}
 
 	render() {
