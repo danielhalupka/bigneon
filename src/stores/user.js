@@ -23,6 +23,9 @@ class User {
 	phone = "";
 
 	@observable
+	profilePicUrl = "";
+
+	@observable
 	roles = [];
 
 	@action
@@ -44,7 +47,14 @@ class User {
 						const { data } = response;
 
 						const {
-							user: { id, first_name, last_name, email, phone },
+							user: {
+								id,
+								first_name,
+								last_name,
+								email,
+								phone,
+								profile_pic_url
+							},
 							roles
 						} = data;
 						const jwtData = decodeJWT(token);
@@ -60,6 +70,7 @@ class User {
 						this.email = email;
 						this.phone = phone;
 						this.roles = roles;
+						this.profilePicUrl = profile_pic_url;
 
 						if (onSuccess) {
 							onSuccess({
@@ -67,7 +78,8 @@ class User {
 								firstName: first_name,
 								lastName: last_name,
 								email,
-								phone
+								phone,
+								profilePicUrl: profile_pic_url
 							});
 						}
 					})

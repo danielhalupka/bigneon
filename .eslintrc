@@ -24,7 +24,7 @@
     "no-console": "off",
     "react/jsx-no-undef": "error",
     "lines-between-class-members": "warn",
-    "object-curly-spacing": ["error", "always"]
+    "object-curly-spacing": ["warn", "always"]
   },
   "env": {
     "browser": true,
@@ -50,6 +50,7 @@
     "alert": false,
     "fetch": false,
     "google": false,
-    "Promise": false
+    "Promise": false,
+    "cloudinary": false
   }
 }

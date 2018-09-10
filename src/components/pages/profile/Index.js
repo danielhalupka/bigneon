@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -12,11 +12,17 @@ import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
 import api from "../../../helpers/api";
 import Bigneon from "../../../helpers/bigneon";
+import cloudinaryWidget from "../../../helpers/cloudinaryWidget";
 
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	image: {
+		width: "100%",
+		height: 300,
+		borderRadius: theme.shape.borderRadius
 	}
 });
 
@@ -30,6 +36,7 @@ class Profile extends Component {
 			lastName: "",
 			email: "",
 			phone: "",
+			profilePicUrl: "",
 			isSubmitting: false,
 			errors: {}
 		};
@@ -37,20 +44,23 @@ class Profile extends Component {
 
 	componentDidMount() {
 		//Initially load from current store
+		const { firstName, lastName, email, phone, profilePicUrl } = user;
 		this.setState({
-			firstName: user.firstName,
-			lastName: user.lastName,
-			email: user.email,
-			phone: user.phone
+			firstName,
+			lastName,
+			email,
+			phone,
+			profilePicUrl
 		});
 
 		//Then load from API for the freshest data
-		user.refreshUser(({ firstName, lastName, email, phone }) =>
+		user.refreshUser(({ firstName, lastName, email, phone, profilePicUrl }) =>
 			this.setState({
-				firstName: user.firstName,
-				lastName: user.lastName,
-				email: user.email,
-				phone: user.phone
+				firstName,
+				lastName,
+				email,
+				phone,
+				profilePicUrl
 			})
 		);
 	}
@@ -97,7 +107,7 @@ class Profile extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { firstName, lastName, email, phone } = this.state;
+		const { firstName, lastName, email, phone, profilePicUrl } = this.state;
 
 		this.submitAttempted = true;
 
@@ -111,10 +121,10 @@ class Profile extends Component {
 				first_name: firstName,
 				last_name: lastName,
 				email,
-				phone
+				phone,
+				profile_pic_url: profilePicUrl
 			})
 			.then(response => {
-				console.log(response.data);
 				notifications.show({ message: "Profile updated.", variant: "success" });
 				this.setState({ isSubmitting: false });
 
@@ -141,6 +151,25 @@ class Profile extends Component {
 			});
 	}
 
+	uploadWidget() {
+		cloudinaryWidget(
+			result => {
+				const imgResult = result[0];
+				const { secure_url } = imgResult;
+				console.log(secure_url);
+				this.setState({ profilePicUrl: secure_url });
+			},
+			error => {
+				console.error(error);
+
+				notifications.show({
+					message: "Profile picture failed to upload.",
+					variant: "error"
+				});
+			}
+		);
+	}
+
 	render() {
 		const { classes } = this.props;
 
@@ -149,6 +178,7 @@ class Profile extends Component {
 			lastName,
 			email,
 			phone,
+			profilePicUrl,
 			errors,
 			isSubmitting
 		} = this.state;
@@ -158,7 +188,7 @@ class Profile extends Component {
 				<Typography variant="display3">Profile</Typography>
 
 				<Grid container spacing={24}>
-					<Grid item xs={12} sm={6} lg={6}>
+					<Grid item xs={12} sm={12} lg={10}>
 						<Card className={classes.paper}>
 							<form
 								noValidate
@@ -166,42 +196,63 @@ class Profile extends Component {
 								onSubmit={this.onSubmit.bind(this)}
 							>
 								<CardContent>
-									<InputGroup
-										error={errors.firstName}
-										value={firstName}
-										name="firstName"
-										label="First name"
-										type="text"
-										onChange={e => this.setState({ firstName: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
-									<InputGroup
-										error={errors.lastName}
-										value={lastName}
-										name="lastName"
-										label="Last name"
-										type="text"
-										onChange={e => this.setState({ lastName: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
-									<InputGroup
-										error={errors.email}
-										value={email}
-										name="email"
-										label="Email address"
-										type="text"
-										onChange={e => this.setState({ email: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
-									<InputGroup
-										error={errors.phone}
-										value={phone}
-										name="phone"
-										label="Phone number"
-										type="text"
-										onChange={e => this.setState({ phone: e.target.value })}
-										onBlur={this.validateFields.bind(this)}
-									/>
+									<Grid container spacing={24}>
+										<Grid item xs={12} sm={6} lg={6}>
+											<InputGroup
+												error={errors.firstName}
+												value={firstName}
+												name="firstName"
+												label="First name"
+												type="text"
+												onChange={e =>
+													this.setState({ firstName: e.target.value })
+												}
+												onBlur={this.validateFields.bind(this)}
+											/>
+											<InputGroup
+												error={errors.lastName}
+												value={lastName}
+												name="lastName"
+												label="Last name"
+												type="text"
+												onChange={e =>
+													this.setState({ lastName: e.target.value })
+												}
+												onBlur={this.validateFields.bind(this)}
+											/>
+											<InputGroup
+												error={errors.email}
+												value={email}
+												name="email"
+												label="Email address"
+												type="text"
+												onChange={e => this.setState({ email: e.target.value })}
+												onBlur={this.validateFields.bind(this)}
+											/>
+											<InputGroup
+												error={errors.phone}
+												value={phone}
+												name="phone"
+												label="Phone number"
+												type="text"
+												onChange={e => this.setState({ phone: e.target.value })}
+												onBlur={this.validateFields.bind(this)}
+											/>
+										</Grid>
+
+										<Grid item xs={12} sm={6} lg={6}>
+											<CardMedia
+												className={classes.image}
+												image={
+													profilePicUrl || "/images/profile-pic-placeholder.png"
+												}
+												title={name}
+											/>
+											<Button onClick={this.uploadWidget.bind(this)}>
+												Upload new image
+											</Button>
+										</Grid>
+									</Grid>
 								</CardContent>
 								<CardActions>
 									<Button
