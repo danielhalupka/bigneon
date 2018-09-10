@@ -13,6 +13,7 @@ import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
 import { validUrl } from "../../../../validators";
+import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
 
 const styles = theme => ({
 	paper: {
@@ -38,6 +39,7 @@ class Artist extends Component {
 
 		this.state = {
 			artistId,
+			imageUrl: "",
 			name: "",
 			bio: "",
 			website_url: "",
@@ -68,7 +70,8 @@ class Artist extends Component {
 						snapshat_username,
 						soundcloud_username,
 						bandcamp_username,
-						youtube_video_urls
+						youtube_video_urls,
+						image_url
 					} = response.data;
 
 					this.setState({
@@ -80,7 +83,8 @@ class Artist extends Component {
 						snapshat_username: snapshat_username || "",
 						soundcloud_username: soundcloud_username || "",
 						bandcamp_username: bandcamp_username || "",
-						youtube_video_urls: youtube_video_urls || [""]
+						youtube_video_urls: youtube_video_urls || [""],
+						imageUrl: image_url || ""
 					});
 				})
 				.catch(error => {
@@ -214,6 +218,26 @@ class Artist extends Component {
 			});
 	}
 
+	uploadWidget() {
+		cloudinaryWidget(
+			result => {
+				const imgResult = result[0];
+				const { secure_url } = imgResult;
+				console.log(secure_url);
+				this.setState({ imageUrl: secure_url });
+			},
+			error => {
+				console.error(error);
+
+				notifications.show({
+					message: "Image failed to upload.",
+					variant: "error"
+				});
+			},
+			["artist-images"]
+		);
+	}
+
 	onSubmit(e) {
 		e.preventDefault();
 
@@ -227,6 +251,7 @@ class Artist extends Component {
 
 		const {
 			artistId,
+			imageUrl,
 			name,
 			bio,
 			website_url,
@@ -239,6 +264,8 @@ class Artist extends Component {
 		} = this.state;
 
 		const artistDetails = {
+			image_url: imageUrl,
+			thumb_image_url: imageUrl,
 			name,
 			bio,
 			website_url,
@@ -277,6 +304,7 @@ class Artist extends Component {
 	render() {
 		const {
 			artistId,
+			imageUrl,
 			name,
 			bio,
 			website_url,
@@ -308,9 +336,15 @@ class Artist extends Component {
 								<Grid item xs={12} sm={4} lg={4}>
 									<CardMedia
 										className={classes.artistImage}
-										image="https://picsum.photos/300/300/?random&blur"
+										image={imageUrl || "/images/profile-pic-placeholder.png"}
 										title={name}
 									/>
+									<Button
+										style={{ width: "100%" }}
+										onClick={this.uploadWidget.bind(this)}
+									>
+										Upload image
+									</Button>
 								</Grid>
 
 								<Grid item xs={12} sm={8} lg={8}>
