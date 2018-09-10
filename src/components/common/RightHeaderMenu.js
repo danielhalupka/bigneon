@@ -58,7 +58,10 @@ class RightHeaderMenu extends React.Component {
 				"REACT_APP_API_HOST",
 				"REACT_APP_API_PORT",
 				"REACT_APP_FACEBOOK_APP_ID",
-				"REACT_APP_GOOGLE_PLACES_API_KEY"
+				"REACT_APP_GOOGLE_PLACES_API_KEY",
+				"REACT_APP_CLOUDINARY_CLOUD_NAME",
+				"REACT_APP_CLOUDINARY_UPLOAD_PRESET",
+				"REACT_APP_CLOUDINARY_API_KEY"
 			];
 			let items = [];
 			checkEnvKeys.forEach(key => {
@@ -73,7 +76,6 @@ class RightHeaderMenu extends React.Component {
 						icon={<Warning />}
 						items={items}
 						classes={classes}
-						color={"secondary"}
 					/>
 				);
 			}
