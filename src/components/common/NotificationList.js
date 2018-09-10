@@ -59,7 +59,7 @@ class NotificationList extends React.Component {
 		const open = Boolean(anchorEl);
 
 		return (
-			<div>
+			<span>
 				<IconButton
 					className={classes.menuButton}
 					aria-owns={open ? "menu-appbar" : null}
@@ -85,7 +85,7 @@ class NotificationList extends React.Component {
 				>
 					{this.renderItems()}
 				</Menu>
-			</div>
+			</span>
 		);
 	}
 }
