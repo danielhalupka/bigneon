@@ -122,7 +122,8 @@ class Profile extends Component {
 				last_name: lastName,
 				email,
 				phone,
-				profile_pic_url: profilePicUrl
+				profile_pic_url: profilePicUrl,
+				thumb_profile_pic_url: profilePicUrl
 			})
 			.then(response => {
 				notifications.show({ message: "Profile updated.", variant: "success" });
@@ -166,7 +167,8 @@ class Profile extends Component {
 					message: "Profile picture failed to upload.",
 					variant: "error"
 				});
-			}
+			},
+			["profile-pictures"]
 		);
 	}
 
@@ -248,7 +250,10 @@ class Profile extends Component {
 												}
 												title={name}
 											/>
-											<Button onClick={this.uploadWidget.bind(this)}>
+											<Button
+												style={{ width: "100%" }}
+												onClick={this.uploadWidget.bind(this)}
+											>
 												Upload new image
 											</Button>
 										</Grid>
