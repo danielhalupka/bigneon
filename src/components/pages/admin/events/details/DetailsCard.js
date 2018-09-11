@@ -13,6 +13,7 @@ import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import FormSubHeading from "../../../../common/FormSubHeading";
+import cloudinaryWidget from "../../../../../helpers/cloudinaryWidget";
 
 const styles = theme => ({
 	paper: {
@@ -57,6 +58,7 @@ class DetailsCard extends Component {
 			ageLimit: age_limit || "",
 			venueId: venue_id || "",
 			additionalInfo: additional_info || "",
+			promoImageUrl: promo_image_url,
 
 			errors: {},
 			isSubmitting: false
@@ -141,7 +143,8 @@ class DetailsCard extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
-			tickets
+			tickets,
+			promoImageUrl
 		} = this.state;
 
 		const eventDetails = {
@@ -160,7 +163,8 @@ class DetailsCard extends Component {
 				.utc(new Date())
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //TODO make publish date selectable on in a date field
 			additional_info: additionalInfo,
-			tickets
+			tickets,
+			promo_image_url: promoImageUrl
 		};
 
 		//If we're updating an existing venue
@@ -218,6 +222,26 @@ class DetailsCard extends Component {
 		});
 	}
 
+	uploadWidget() {
+		cloudinaryWidget(
+			result => {
+				const imgResult = result[0];
+				const { secure_url } = imgResult;
+				console.log(secure_url);
+				this.setState({ promoImageUrl: secure_url });
+			},
+			error => {
+				console.error(error);
+
+				notifications.show({
+					message: "Image failed to upload.",
+					variant: "error"
+				});
+			},
+			["event-promo-images"]
+		);
+	}
+
 	renderVenues() {
 		const { venueId, venues, errors } = this.state;
 
@@ -258,6 +282,7 @@ class DetailsCard extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
+			promoImageUrl,
 			isSubmitting,
 			errors
 		} = this.state;
@@ -353,11 +378,20 @@ class DetailsCard extends Component {
 									<InputLabel>Event promo image</InputLabel>
 								</div>
 
-								<CardMedia
-									className={classes.promoImage}
-									image="https://picsum.photos/800/400/?image=368"
-									title={"Artist"}
-								/>
+								{promoImageUrl ? (
+									<CardMedia
+										className={classes.promoImage}
+										image={promoImageUrl}
+										title={"Event promo image"}
+									/>
+								) : null}
+
+								<Button
+									style={{ width: "100%" }}
+									onClick={this.uploadWidget.bind(this)}
+								>
+									Upload image
+								</Button>
 							</Grid>
 						</Grid>
 					</CardContent>

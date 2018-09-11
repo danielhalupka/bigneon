@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
@@ -11,10 +10,23 @@ import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
 
 const styles = theme => ({
-	paper: {},
+	paper: {
+		display: "flex"
+	},
 	cardContent: {
 		padding: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit
+		marginBottom: theme.spacing.unit,
+		flex: "1 0 auto"
+	},
+	media: {
+		width: "100%",
+		maxWidth: 150,
+		height: 150
+	},
+	actionButtons: {
+		display: "flex",
+		alignItems: "flex-end",
+		padding: theme.spacing.unit
 	}
 });
 
@@ -68,11 +80,17 @@ class EventsList extends Component {
 		if (events && events.length > 0) {
 			return events.map(eventData => {
 				const { venue, ...event } = eventData;
-				const { id, name } = event;
+				const { id, name, promo_image_url } = event;
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<Card className={classes.paper}>
+							<CardMedia
+								className={classes.media}
+								image={promo_image_url || "/images/event-placeholder.png"}
+								title={name}
+							/>
+
 							<CardContent className={classes.cardContent}>
 								<Typography variant="display1">{name}</Typography>
 								<Typography variant="body1">
@@ -80,10 +98,10 @@ class EventsList extends Component {
 								</Typography>
 							</CardContent>
 
-							<CardActions>
+							<div className={classes.actionButtons}>
 								<Link
 									to={`/admin/events/${id}`}
-									style={{ textDecoration: "none" }}
+									style={{ textDecoration: "none", marginRight: 10 }}
 								>
 									<Button customClassName="primary">Edit details</Button>
 								</Link>
@@ -94,7 +112,7 @@ class EventsList extends Component {
 								>
 									Open event page
 								</Button>
-							</CardActions>
+							</div>
 						</Card>
 					</Grid>
 				);

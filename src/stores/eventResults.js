@@ -14,13 +14,13 @@ class EventResults {
 
 	@action
 	refreshResults(params, onSuccess, onError) {
-		Bigneon().event.index(params)
+		Bigneon()
+			.event.index(params)
 			.then(response => {
 				let events = [];
 
-				let demoImageNumber = 10;
 				response.data.forEach(eventData => {
-					const { venue, ...event } = eventData;
+					const { venue, promo_image_url, ...event } = eventData;
 
 					//TODO remove this when we're filtering on published events not drafts
 					//Make sure they didn't just add artists without other details.
@@ -31,10 +31,10 @@ class EventResults {
 								event.event_start,
 								moment.HTML5_FMT.DATETIME_LOCAL_MS
 							).format("dddd, MMM D"),
-							imgSrc: `https://picsum.photos/800/400/?image=${demoImageNumber}`,
-							venue
+							venue,
+							promo_image_url:
+								promo_image_url || "/images/event-placeholder.png"
 						});
-						demoImageNumber++;
 					}
 				});
 
