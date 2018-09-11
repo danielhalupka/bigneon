@@ -23,7 +23,8 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 		displayDoorTime,
 		displayShowTime,
 		age_limit,
-		additional_info
+		additional_info,
+		promo_image_url
 	} = event;
 
 	return (
@@ -64,7 +65,7 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 			<Grid item xs={12} sm={4} lg={4}>
 				<CardMedia
 					className={classes.media}
-					image={`https://picsum.photos/800/400/?image=200`}
+					image={promo_image_url}
 					title={name}
 				/>
 			</Grid>

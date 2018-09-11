@@ -38,7 +38,9 @@ const SearchResultEventCard = ({
 				<br />
 				<Typography variant="headline">{name}</Typography>
 
-				<Typography variant="subheading">{`${city}, ${state}`}</Typography>
+				<Typography variant="subheading">{`${city}${
+					city ? ", " : ""
+				}${state}`}</Typography>
 			</CardContent>
 			{/* <CardActions>
 				<Link style={{ textDecoration: "none" }} to={`/events/${id}`}>

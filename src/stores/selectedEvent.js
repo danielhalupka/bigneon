@@ -89,7 +89,7 @@ class SelectedEvent {
 					displayEventStartDate,
 					displayDoorTime,
 					displayShowTime,
-					promo_image_url: `https://picsum.photos/800/400/?image=200` //TODO remove this when image is being saved
+					promo_image_url: promo_image_url || "/images/event-placeholder.png"
 				};
 			})
 			.catch(error => {

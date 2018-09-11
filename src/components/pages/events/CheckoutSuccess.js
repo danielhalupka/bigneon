@@ -37,7 +37,7 @@ class CheckoutSuccess extends Component {
 	}
 
 	componentDidMount() {
-		cart.emptyCart();
+		cart.emptyCart(); //TODO move this to after they've submitted the final form
 
 		if (
 			this.props.match &&
@@ -59,19 +59,18 @@ class CheckoutSuccess extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { openPromo } = this.state;
 
-		const { eventDetails } = selectedEvent;
+		const { event } = selectedEvent;
 
-		if (eventDetails === null) {
+		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
 
-		if (eventDetails === false) {
+		if (event === false) {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
-		const { name, displayEventStartDate } = selectedEvent;
+		const { name, displayEventStartDate, promo_image_url } = event;
 
 		return (
 			<Paper className={classes.card}>
@@ -103,7 +102,7 @@ class CheckoutSuccess extends Component {
 					<Grid item xs={12} sm={4} lg={4}>
 						<CardMedia
 							className={classes.media}
-							image={`https://picsum.photos/800/400/?image=200`}
+							image={promo_image_url}
 							title={name}
 						/>
 					</Grid>
