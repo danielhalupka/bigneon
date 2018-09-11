@@ -286,12 +286,16 @@ class ArtistsCard extends Component {
 								const { id, setTime } = eventArtist;
 
 								let name = "Loading..."; // If we haven't loaded all the available artists we won't have this guys name yet
+								let thumb_image_url = "";
 								if (availableArtists) {
 									const artist = availableArtists.find(
 										artist => artist.id === id
 									);
 
-									name = artist ? artist.name : "";
+									if (artist) {
+										name = artist.name;
+										thumb_image_url = artist.thumb_image_url;
+									}
 								}
 
 								return (
@@ -306,8 +310,9 @@ class ArtistsCard extends Component {
 												return { artists };
 											});
 										}}
-										image={`https://picsum.photos/300/300/?image=${index +
-											100}`}
+										image={
+											thumb_image_url || "/images/profile-pic-placeholder.png"
+										}
 										error={errors.artists ? errors.artists[index] : null}
 										onDelete={() => {
 											this.setState(({ artists }) => {

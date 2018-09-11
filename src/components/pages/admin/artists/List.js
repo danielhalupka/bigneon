@@ -80,7 +80,13 @@ class ArtistsList extends Component {
 
 		if (artists && artists.length > 0) {
 			return artists.map(artist => {
-				const { id, name, youtube_video_urls, website_url } = artist;
+				const {
+					id,
+					name,
+					youtube_video_urls,
+					website_url,
+					thumb_image_url
+				} = artist;
 				const videoCount = youtube_video_urls ? youtube_video_urls.length : 0;
 
 				return (
@@ -88,7 +94,7 @@ class ArtistsList extends Component {
 						<Card className={classes.paper}>
 							<CardMedia
 								className={classes.media}
-								image={"https://picsum.photos/300/300/?random"}
+								image={thumb_image_url || "/images/profile-pic-placeholder.png"}
 								title={name}
 							/>
 
