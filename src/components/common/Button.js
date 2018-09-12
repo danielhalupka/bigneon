@@ -8,7 +8,8 @@ import {
 	textColorPrimary,
 	textColorSecondary,
 	primaryHex,
-	secondaryHex
+	secondaryHex,
+	warningHex
 } from "../styles/theme";
 
 const styles = {
@@ -35,6 +36,10 @@ const styles = {
 	},
 	callToAction: {
 		background: `linear-gradient(45deg, ${textColorSecondary} 10%, ${primaryHex} 30%, ${secondaryHex} 90%)`,
+		color: "#FFF"
+	},
+	warning: {
+		background: `linear-gradient(45deg, ${warningHex} 10%, ${warningHex} 90%)`,
 		color: "#FFF"
 	},
 	label: {
