@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import notifications from "../../../../stores/notifications";
 import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
+import CancelEventDialog from "./CancelEventDialog";
 
 const styles = theme => ({
 	paper: {
@@ -35,34 +36,41 @@ class EventsList extends Component {
 		super(props);
 
 		this.state = {
-			events: null
+			events: null,
+			cancelEventId: null
 		};
 	}
 
 	componentDidMount() {
-		api()
-			.get("/events")
-			.then(response => {
-				const { data } = response;
-				this.setState({ events: data });
-			})
-			.catch(error => {
-				console.error(error);
+		this.updateEvents();
+	}
 
-				let message = "Loading events failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
+	updateEvents() {
+		this.setState({ events: null }, () => {
+			api()
+				.get("/events")
+				.then(response => {
+					const { data } = response;
+					this.setState({ events: data });
+				})
+				.catch(error => {
+					console.error(error);
 
-				notifications.show({
-					message,
-					variant: "error"
+					let message = "Loading events failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
+					notifications.show({
+						message,
+						variant: "error"
+					});
 				});
-			});
+		});
 	}
 
 	renderEvents() {
@@ -80,7 +88,7 @@ class EventsList extends Component {
 		if (events && events.length > 0) {
 			return events.map(eventData => {
 				const { venue, ...event } = eventData;
-				const { id, name, promo_image_url } = event;
+				const { id, name, promo_image_url, cancelled_at } = event;
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
@@ -92,27 +100,38 @@ class EventsList extends Component {
 							/>
 
 							<CardContent className={classes.cardContent}>
-								<Typography variant="display1">{name}</Typography>
+								<Typography variant="display1">
+									{name} {cancelled_at ? "(Cancelled)" : ""}
+								</Typography>
 								<Typography variant="body1">
 									{venue.address || "*Missing address"}
 								</Typography>
 							</CardContent>
 
-							<div className={classes.actionButtons}>
-								<Link
-									to={`/admin/events/${id}`}
-									style={{ textDecoration: "none", marginRight: 10 }}
-								>
-									<Button customClassName="primary">Edit details</Button>
-								</Link>
-								<Button
-									target="_blank"
-									href={`/events/${id}`}
-									customClassName="secondary"
-								>
-									Open event page
-								</Button>
-							</div>
+							{!cancelled_at ? (
+								<div className={classes.actionButtons}>
+									<Button
+										onClick={() => this.setState({ cancelEventId: id })}
+										customClassName="warning"
+										style={{ marginRight: 10 }}
+									>
+										Cancel event
+									</Button>
+									<Link
+										to={`/admin/events/${id}`}
+										style={{ textDecoration: "none", marginRight: 10 }}
+									>
+										<Button customClassName="primary">Edit details</Button>
+									</Link>
+									<Button
+										target="_blank"
+										href={`/events/${id}`}
+										customClassName="secondary"
+									>
+										Open event page
+									</Button>
+								</div>
+							) : null}
 						</Card>
 					</Grid>
 				);
@@ -127,8 +146,16 @@ class EventsList extends Component {
 	}
 
 	render() {
+		const { cancelEventId } = this.state;
+
 		return (
 			<div>
+				<CancelEventDialog
+					id={cancelEventId}
+					onClose={() =>
+						this.setState({ cancelEventId: null }, this.updateEvents.bind(this))
+					}
+				/>
 				<Typography variant="display3">Events</Typography>
 
 				<Grid container spacing={24}>

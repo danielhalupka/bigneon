@@ -20,22 +20,28 @@ class EventResults {
 				let events = [];
 
 				response.data.forEach(eventData => {
-					const { venue, promo_image_url, ...event } = eventData;
+					const { venue, promo_image_url, cancelled_at, ...event } = eventData;
+
+					//TODO remove this when it's added as a filter in the API
+					if (cancelled_at) {
+						return;
+					}
 
 					//TODO remove this when we're filtering on published events not drafts
 					//Make sure they didn't just add artists without other details.
-					if (event.name) {
-						events.push({
-							...event,
-							formattedEventDate: moment(
-								event.event_start,
-								moment.HTML5_FMT.DATETIME_LOCAL_MS
-							).format("dddd, MMM D"),
-							venue,
-							promo_image_url:
-								promo_image_url || "/images/event-placeholder.png"
-						});
+					if (!event.name) {
+						return;
 					}
+
+					events.push({
+						...event,
+						formattedEventDate: moment(
+							event.event_start,
+							moment.HTML5_FMT.DATETIME_LOCAL_MS
+						).format("dddd, MMM D"),
+						venue,
+						promo_image_url: promo_image_url || "/images/event-placeholder.png"
+					});
 				});
 
 				this.events = events;
