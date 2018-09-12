@@ -14,7 +14,7 @@ import { validEmail } from "../../../validators";
 import decodeJWT from "../../../helpers/decodeJWT";
 import FacebookButton from "./social/FacebookButton";
 import Divider from "../../common/Divider";
-import ResetPasswordModal from "./ResetPasswordModal";
+import PasswordResetDialog from "./PasswordResetDialog";
 import Bigneon from "../../../helpers/bigneon";
 
 const styles = () => ({});
@@ -125,7 +125,7 @@ class Login extends Component {
 		return (
 			<Container>
 				<div>
-					<ResetPasswordModal
+					<PasswordResetDialog
 						onClose={() => this.setState({ resetOpen: false })}
 						open={resetOpen}
 						email={email}

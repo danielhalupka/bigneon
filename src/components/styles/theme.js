@@ -4,6 +4,7 @@ const primaryHex = "#707CED";
 const secondaryHex = "#FF20B1";
 const textColorPrimary = "#1E1E1E";
 const textColorSecondary = "#4EB0E5";
+const warningHex = "#ff6333";
 
 const theme = createMuiTheme({
 	typography: {
@@ -56,5 +57,6 @@ export {
 	secondaryHex,
 	textColorPrimary,
 	textColorSecondary,
+	warningHex,
 	theme
 };
