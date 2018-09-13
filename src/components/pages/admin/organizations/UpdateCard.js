@@ -247,12 +247,19 @@ class OrganizationUpdateCard extends Component {
 		//If we're creating an org, we need to lookup the users ID with their email address
 		api()
 			.get(`/users`, {
-				params: {
-					email
-				}
+				params: { email }
 			})
 			.then(response => {
 				const { id } = response.data;
+				if (!id) {
+					this.setState({ isSubmitting: false });
+					notifications.show({
+						message: "Failed to locate user with that email.",
+						variant: "error"
+					});
+					return;
+				}
+
 				//Got the user ID, now create the organization
 				this.createNewOrganization(
 					{ ...orgDetails, owner_user_id: id },
@@ -272,7 +279,7 @@ class OrganizationUpdateCard extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Failed to locate user with that email address.",
+					message: "Failed to locate user by email.",
 					variant: "error"
 				});
 			});
