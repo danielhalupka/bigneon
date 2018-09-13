@@ -143,7 +143,7 @@ class LocationInputGroup extends React.Component {
 
 								<div style={{ textAlign: "center" }}>
 									<img
-										style={{ width: "25%", paddingTop: 5 }}
+										style={{ width: "25%", maxWidth: 200, paddingTop: 5 }}
 										src="https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3_hdpi.png"
 									/>
 								</div>
