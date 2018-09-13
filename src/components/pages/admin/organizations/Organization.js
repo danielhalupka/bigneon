@@ -3,9 +3,9 @@ import { Typography, withStyles } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
-import UpdateCard from "./UpdateCard";
-import LinkVenuesCard from "./LinkVenuesCard";
-import InviteUserCard from "./InviteUserCard";
+import UpdateCard from "./cards/UpdateCard";
+import LinkVenuesCard from "./cards/LinkVenuesCard";
+import InviteUserCard from "./cards/InviteUserCard";
 
 const styles = theme => ({
 	paper: {

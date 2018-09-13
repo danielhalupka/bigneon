@@ -4,14 +4,14 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
-import InputGroup from "../../../common/form/InputGroup";
-import Button from "../../../common/Button";
-import user from "../../../../stores/user";
-import notifications from "../../../../stores/notifications";
-import { validEmail, validPhone } from "../../../../validators";
-import LocationInputGroup from "../../../common/form/LocationInputGroup";
-import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
-import Bigneon from "../../../../helpers/bigneon";
+import InputGroup from "../../../../common/form/InputGroup";
+import Button from "../../../../common/Button";
+import user from "../../../../../stores/user";
+import notifications from "../../../../../stores/notifications";
+import { validEmail, validPhone } from "../../../../../validators";
+import LocationInputGroup from "../../../../common/form/LocationInputGroup";
+import addressTypeFromGoogleResult from "../../../../../helpers/addressTypeFromGoogleResult";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
