@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Typography, withStyles } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
-import SelectGroup from "../../../common/form/SelectGroup";
-import InputGroup from "../../../common/form/InputGroup";
-import Button from "../../../common/Button";
-import user from "../../../../stores/user";
-import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
-import { validEmail } from "../../../../validators";
+import InputGroup from "../../../../common/form/InputGroup";
+import Button from "../../../../common/Button";
+import notifications from "../../../../../stores/notifications";
+import api from "../../../../../helpers/api";
+import { validEmail } from "../../../../../validators";
 
 const styles = theme => ({
 	paper: {

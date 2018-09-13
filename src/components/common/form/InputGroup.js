@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import Input from "@material-ui/core/Input";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
@@ -32,7 +31,8 @@ const InputGroup = props => {
 		onBlur,
 		onFocus,
 		multiline,
-		autoFocus
+		autoFocus,
+		InputProps = {}
 	} = props;
 
 	let inputPropClasses = {};
@@ -57,6 +57,7 @@ const InputGroup = props => {
 				onBlur={onBlur}
 				onFocus={onFocus}
 				InputProps={{
+					...InputProps,
 					classes: inputPropClasses
 				}}
 				placeholder={placeholder}
@@ -81,7 +82,8 @@ InputGroup.propTypes = {
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
 	multiline: PropTypes.bool,
-	autoFocus: PropTypes.bool
+	autoFocus: PropTypes.bool,
+	InputProps: PropTypes.object
 };
 
 export default withStyles(styles)(InputGroup);

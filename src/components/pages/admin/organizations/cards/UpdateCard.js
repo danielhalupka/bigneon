@@ -1,20 +1,17 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
-import LinkVenuesCard from "./LinkVenuesCard";
-import InviteUserCard from "./InviteUserCard";
-import InputGroup from "../../../common/form/InputGroup";
-import Button from "../../../common/Button";
-import user from "../../../../stores/user";
-import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
-import { validEmail, validPhone } from "../../../../validators";
-import LocationInputGroup from "../../../common/form/LocationInputGroup";
-import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
+import InputGroup from "../../../../common/form/InputGroup";
+import Button from "../../../../common/Button";
+import user from "../../../../../stores/user";
+import notifications from "../../../../../stores/notifications";
+import { validEmail, validPhone } from "../../../../../validators";
+import LocationInputGroup from "../../../../common/form/LocationInputGroup";
+import addressTypeFromGoogleResult from "../../../../../helpers/addressTypeFromGoogleResult";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -50,8 +47,8 @@ class OrganizationUpdateCard extends Component {
 		const { organizationId } = this.props;
 
 		if (organizationId) {
-			api()
-				.get(`/organizations/${organizationId}`)
+			Bigneon()
+				.organization.read({ id: organizationId })
 				.then(response => {
 					const {
 						owner_user_id,
@@ -139,8 +136,8 @@ class OrganizationUpdateCard extends Component {
 	}
 
 	createNewOrganization(params, onSuccess) {
-		api()
-			.post("/organizations", params)
+		Bigneon()
+			.organization.create(params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -166,18 +163,14 @@ class OrganizationUpdateCard extends Component {
 	}
 
 	updateOrganization(id, params, onSuccess) {
-		console.log(`/organizations/${id}`);
-		console.log(JSON.stringify({ ...params, id }));
-
-		//TODO REMOVE ID
 		//Remove owner_user_id
-		api()
-			.patch(`/organizations/${id}`, { ...params })
+		Bigneon()
+			.organization.update({ id, ...params })
 			.then(() => {
 				onSuccess(id);
 			})
 			.catch(error => {
-				console.error(error);
+				console.log(error);
 				this.setState({ isSubmitting: false });
 
 				let message = "Update organization failed.";
@@ -245,14 +238,19 @@ class OrganizationUpdateCard extends Component {
 		}
 
 		//If we're creating an org, we need to lookup the users ID with their email address
-		api()
-			.get(`/users`, {
-				params: {
-					email
-				}
-			})
+		Bigneon()
+			.users.find({ email })
 			.then(response => {
 				const { id } = response.data;
+				if (!id) {
+					this.setState({ isSubmitting: false });
+					notifications.show({
+						message: "Failed to locate user with that email.",
+						variant: "error"
+					});
+					return;
+				}
+
 				//Got the user ID, now create the organization
 				this.createNewOrganization(
 					{ ...orgDetails, owner_user_id: id },
@@ -272,7 +270,7 @@ class OrganizationUpdateCard extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Failed to locate user with that email address.",
+					message: "Failed to locate user by email.",
 					variant: "error"
 				});
 			});
