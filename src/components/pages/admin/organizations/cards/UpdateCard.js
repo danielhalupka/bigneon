@@ -48,7 +48,7 @@ class OrganizationUpdateCard extends Component {
 
 		if (organizationId) {
 			Bigneon()
-				.organization.find({ id: organizationId })
+				.organization.read({ id: organizationId })
 				.then(response => {
 					const {
 						owner_user_id,

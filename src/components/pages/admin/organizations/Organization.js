@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import UpdateCard from "./cards/UpdateCard";
 import LinkVenuesCard from "./cards/LinkVenuesCard";
 import InviteUserCard from "./cards/InviteUserCard";
+import FeeScheduleCard from "./cards/FeeScheduleCard";
 
 const styles = theme => ({
 	paper: {
@@ -48,6 +49,7 @@ class Organization extends Component {
 						<Tab key={0} label="Details" />
 						<Tab key={1} label="Linked venues" />
 						<Tab key={2} label="Organization members" />
+						<Tab key={3} label="Fee schedule" />
 					</Tabs>
 				) : null}
 
@@ -69,6 +71,13 @@ class Organization extends Component {
 
 						{activeTab === 2 ? (
 							<InviteUserCard
+								history={history}
+								organizationId={this.organizationId}
+							/>
+						) : null}
+
+						{activeTab === 3 ? (
+							<FeeScheduleCard
 								history={history}
 								organizationId={this.organizationId}
 							/>
