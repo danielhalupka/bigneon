@@ -39,15 +39,17 @@ class FeeScheduleCard extends Component {
 	componentDidMount() {
 		//TODO load in existing fee schedule
 		const { organizationId } = this.props;
-		console.log(`/organizations/${organizationId}/fee_schedule`);
 
 		api()
 			.get(`/organizations/${organizationId}/fee_schedule`)
 			.then(response => {
-				console.log(response.data);
 				const { id, name, ranges } = response.data;
 
-				this.setState({ id, name, ranges });
+				if (id) {
+					this.setState({ id, name, ranges });
+				} else {
+					this.addNewRange();
+				}
 			})
 			.catch(error => {
 				console.error(error);
@@ -144,12 +146,10 @@ class FeeScheduleCard extends Component {
 		}
 
 		this.setState({ isSubmitting: true });
-
-		//TODO change this formatting when it's fixed in the API. Array => Object
-		const formattedRanges = ranges.map(({ min_price, fee }) => [
-			Number(min_price),
-			Number(fee)
-		]);
+		const formattedRanges = ranges.map(({ min_price, fee }) => ({
+			min_price: Number(min_price),
+			fee: Number(fee)
+		}));
 
 		api()
 			.post(`/organizations/${organizationId}/fee_schedule`, {
