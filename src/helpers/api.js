@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export default (options = {}) => {
+	console.warn("api.js is deprecated. Use bigneon.js module instead.");
 	const { auth } = options;
 	let headers = {};
 
