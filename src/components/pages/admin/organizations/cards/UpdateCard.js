@@ -48,7 +48,7 @@ class OrganizationUpdateCard extends Component {
 
 		if (organizationId) {
 			Bigneon()
-				.organization.read({ id: organizationId })
+				.organizations.read({ id: organizationId })
 				.then(response => {
 					const {
 						owner_user_id,
@@ -137,7 +137,7 @@ class OrganizationUpdateCard extends Component {
 
 	createNewOrganization(params, onSuccess) {
 		Bigneon()
-			.organization.create(params)
+			.organizations.create(params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -165,7 +165,7 @@ class OrganizationUpdateCard extends Component {
 	updateOrganization(id, params, onSuccess) {
 		//Remove owner_user_id
 		Bigneon()
-			.organization.update({ id, ...params })
+			.organizations.update({ id, ...params })
 			.then(() => {
 				onSuccess(id);
 			})

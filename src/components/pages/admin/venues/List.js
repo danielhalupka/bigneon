@@ -29,7 +29,8 @@ class VenuesList extends Component {
 	}
 
 	componentDidMount() {
-		Bigneon().venue.index()
+		Bigneon()
+			.venues.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ venues: data });

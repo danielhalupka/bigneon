@@ -119,7 +119,7 @@ class FacebookButton extends Component {
 		let style = { background: "#4267B2", color: "white" };
 		let onClick = () => {
 			this.setState({ isAuthenticating: true });
-			window.FB.login(this.onFBSignIn.bind(this), { scope: 'email' });
+			window.FB.login(this.onFBSignIn.bind(this), { scope: "email" });
 		};
 
 		if (authenticated) {
