@@ -25,17 +25,16 @@ const styles = theme => {
 };
 
 class AddressBlock extends Component {
-
 	constructor(props) {
 		super(props);
 		this.state = {
-			address: '',
-			city: '',
-			state: '',
-			country: '',
-			zip: '',
-			latitude: '',
-			longitude: '',
+			address: "",
+			city: "",
+			state: "",
+			country: "",
+			zip: "",
+			latitude: "",
+			longitude: ""
 		};
 	}
 
@@ -52,7 +51,6 @@ class AddressBlock extends Component {
 			result = this.getGoogleObject();
 		}
 		onChange(this.state.address, result);
-
 	}
 
 	getGoogleObject() {
@@ -61,66 +59,44 @@ class AddressBlock extends Component {
 		const googleObject = {
 			address_components: [
 				{
-					"long_name": this.state.address,
-					"short_name":this.state.address,
-					"types": [
-						"street_number"
-					]
+					long_name: this.state.address,
+					short_name: this.state.address,
+					types: ["street_number"]
 				},
 				{
-					"long_name": this.state.address,
-					"short_name": this.state.address,
-					"types": [
-						"route"
-					]
+					long_name: this.state.address,
+					short_name: this.state.address,
+					types: ["route"]
 				},
 				{
-					"long_name": this.state.city,
-					"short_name": this.state.city,
-					"types": [
-						"political",
-						"sublocality",
-						"sublocality_level_1"
-					]
+					long_name: this.state.city,
+					short_name: this.state.city,
+					types: ["political", "sublocality", "sublocality_level_1"]
 				},
 				{
-					"long_name": this.state.city,
-					"short_name": this.state.city,
-					"types": [
-						"locality",
-						"political"
-					]
+					long_name: this.state.city,
+					short_name: this.state.city,
+					types: ["locality", "political"]
 				},
 				{
-					"long_name": this.state.city,
-					"short_name": this.state.city,
-					"types": [
-						"administrative_area_level_2",
-						"political"
-					]
+					long_name: this.state.city,
+					short_name: this.state.city,
+					types: ["administrative_area_level_2", "political"]
 				},
 				{
-					"long_name": this.state.state,
-					"short_name": this.state.state,
-					"types": [
-						"administrative_area_level_1",
-						"political"
-					]
+					long_name: this.state.state,
+					short_name: this.state.state,
+					types: ["administrative_area_level_1", "political"]
 				},
 				{
-					"long_name": this.state.country,
-					"short_name":this.state.country,
-					"types": [
-						"country",
-						"political"
-					]
+					long_name: this.state.country,
+					short_name: this.state.country,
+					types: ["country", "political"]
 				},
 				{
-					"long_name": this.state.zip,
-					"short_name": this.state.zip,
-					"types": [
-						"postal_code"
-					]
+					long_name: this.state.zip,
+					short_name: this.state.zip,
+					types: ["postal_code"]
 				}
 			],
 			formatted_address: this.state.address,
@@ -143,7 +119,6 @@ class AddressBlock extends Component {
 		return [googleObject];
 	}
 
-
 	render() {
 		const {
 			address,
@@ -160,73 +135,66 @@ class AddressBlock extends Component {
 				<InputGroup
 					value={address}
 					label="Address"
-					name={'address'}
+					name={"address"}
 					onChange={e => {
-						this.setValue('address', e.target.value);
+						this.setValue("address", e.target.value);
 					}}
-					placeholder={'Address'}
+					placeholder={"Address"}
 				/>
 				<InputGroup
 					value={city}
 					label="City"
-					name={'city'}
+					name={"city"}
 					onChange={e => {
-						this.setValue('city', e.target.value)
-					}
-					}
-					placeholder={'City'}
+						this.setValue("city", e.target.value);
+					}}
+					placeholder={"City"}
 				/>
 				<InputGroup
 					value={state}
 					label="State"
-					name={'state'}
+					name={"state"}
 					onChange={e => {
-						this.setValue('state', e.target.value)
-					}
-					}
-					placeholder={'State'}
+						this.setValue("state", e.target.value);
+					}}
+					placeholder={"State"}
 				/>
 				<InputGroup
 					value={country}
 					label="Country"
-					name={'country'}
+					name={"country"}
 					onChange={e => {
-						this.setValue('country', e.target.value)
-					}
-					}
-					placeholder={'Country'}
+						this.setValue("country", e.target.value);
+					}}
+					placeholder={"Country"}
 				/>
 				<InputGroup
 					value={zip}
 					label="Zip"
-					name={'zip'}
+					name={"zip"}
 					onChange={e => {
-						this.setValue('zip', e.target.value)
-					}
-					}
-					placeholder={'Zip'}
+						this.setValue("zip", e.target.value);
+					}}
+					placeholder={"Zip"}
 				/>
 				<InputGroup
 					value={latitude}
 					label="Latitude"
-					name={'latitude'}
+					name={"latitude"}
 					onChange={e => {
-						this.setValue('latitude', e.target.value)
-					}
-					}
-					placeholder={'Latitude'}
+						this.setValue("latitude", e.target.value);
+					}}
+					placeholder={"Latitude"}
 				/>
 				<InputGroup
 					value={longitude}
 					label="Longitude"
-					name={'longitude'}
+					name={"longitude"}
 					onChange={e => {
-						this.setValue('longitude', e.target.value)
-					}
-					}
-					placeholder={'Longitude'}
+						this.setValue("longitude", e.target.value);
+					}}
+					placeholder={"Longitude"}
 				/>
-
 			</div>
 		);
 	}
