@@ -26,7 +26,7 @@ done
 echo "\nJavascript validation completed!\n"
 
 if ! $PASS; then
-  echo "\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass ESLint but do not. Please fix the ESLint errors and try again.\n\n Try running: \n node_modules/eslint/bin/eslint.js -c .eslintrc --fix ./src/ \n"
+  echo "\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass ESLint but do not. Please fix the ESLint errors and try again.\n\n Try running: \n npm run eslint-fix \n"
   exit 1
 else
   echo "\033[42mCOMMIT SUCCEEDED\033[0m\n"
