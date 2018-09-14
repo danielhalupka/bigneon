@@ -12,6 +12,14 @@
     }
   },
   "rules": {
+    "quotes": [
+      "error",
+      "double",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
+    ],
     "max-len": 0,
     "global-require": 0,
     "no-nested-ternary": 0,
