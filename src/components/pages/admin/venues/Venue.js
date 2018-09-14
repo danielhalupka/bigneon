@@ -53,7 +53,7 @@ class Venue extends Component {
 
 		if (venueId) {
 			Bigneon()
-				.venue.read({ id: venueId })
+				.venues.read({ id: venueId })
 				.then(response => {
 					const {
 						name,
@@ -96,7 +96,7 @@ class Venue extends Component {
 		}
 
 		Bigneon()
-			.organization.index()
+			.organizations.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ organizations: data });
@@ -160,7 +160,7 @@ class Venue extends Component {
 
 	createNewVenue(params, onSuccess) {
 		Bigneon()
-			.venue.create(params)
+			.venues.create(params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -187,7 +187,7 @@ class Venue extends Component {
 
 	updateVenue(id, params, onSuccess) {
 		Bigneon()
-			.venue.edit({ ...params, id })
+			.venues.edit({ ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})

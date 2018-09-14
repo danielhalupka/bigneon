@@ -55,7 +55,8 @@ class Event extends Component {
 	}
 
 	loadOrganizations() {
-		Bigneon().organization.index()
+		Bigneon()
+			.organizations.index()
 			.then(response => {
 				const { data } = response;
 				const organizations = {};
@@ -93,7 +94,8 @@ class Event extends Component {
 		const { eventId } = this.state;
 
 		if (eventId) {
-			Bigneon().event.read({ id: eventId })
+			Bigneon()
+				.events.read({ id: eventId })
 				.then(response => {
 					const { artists, organization, venue, ...event } = response.data;
 					const { organization_id } = event;

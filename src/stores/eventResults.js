@@ -15,7 +15,7 @@ class EventResults {
 	@action
 	refreshResults(params, onSuccess, onError) {
 		Bigneon()
-			.event.index(params)
+			.events.index(params)
 			.then(response => {
 				let events = [];
 

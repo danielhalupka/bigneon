@@ -32,7 +32,7 @@ class CancelEventDialog extends React.Component {
 
 		if (id && prevProps.id !== id) {
 			Bigneon()
-				.event.read({ id })
+				.events.read({ id })
 				.then(response => {
 					const { artists, organization, venue, ...event } = response.data;
 					const { name } = event;
@@ -67,7 +67,7 @@ class CancelEventDialog extends React.Component {
 		this.setState({ isSubmitting: true });
 
 		Bigneon()
-			.event.delete({ id })
+			.events.delete({ id })
 			.then(response => {
 				this.setState({ isSubmitting: false }, () => onClose());
 			})
