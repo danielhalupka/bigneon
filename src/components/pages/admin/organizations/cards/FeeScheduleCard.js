@@ -28,6 +28,7 @@ class FeeScheduleCard extends Component {
 		super(props);
 
 		this.state = {
+			id: "",
 			name: "",
 			ranges: [],
 			errors: {},
@@ -38,17 +39,15 @@ class FeeScheduleCard extends Component {
 	componentDidMount() {
 		//TODO load in existing fee schedule
 		const { organizationId } = this.props;
+		console.log(`/organizations/${organizationId}/fee_schedule`);
 
 		api()
 			.get(`/organizations/${organizationId}/fee_schedule`)
 			.then(response => {
 				console.log(response.data);
-				//TODO set details here when API is working
+				const { id, name, ranges } = response.data;
 
-				notifications.show({
-					message: "Existing fee schedule found.",
-					variant: "warning"
-				});
+				this.setState({ id, name, ranges });
 			})
 			.catch(error => {
 				console.error(error);
@@ -134,12 +133,29 @@ class FeeScheduleCard extends Component {
 		}
 
 		const { organizationId } = this.props;
-		const { name, ranges } = this.state;
+		const { id, name, ranges } = this.state;
+
+		if (id) {
+			notifications.show({
+				message: "Fee schedules cannot be updated yet.",
+				variant: "warning"
+			});
+			return;
+		}
 
 		this.setState({ isSubmitting: true });
 
+		//TODO change this formatting when it's fixed in the API. Array => Object
+		const formattedRanges = ranges.map(({ min_price, fee }) => [
+			Number(min_price),
+			Number(fee)
+		]);
+
 		api()
-			.post(`/organizations/${organizationId}/fee_schedule`, { name, ranges })
+			.post(`/organizations/${organizationId}/fee_schedule`, {
+				name,
+				ranges: formattedRanges
+			})
 			.then(response => {
 				this.setState({ isSubmitting: false });
 
