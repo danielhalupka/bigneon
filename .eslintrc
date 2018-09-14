@@ -13,7 +13,7 @@
   },
   "rules": {
     "quotes": [
-      "error",
+      "warn",
       "double",
       {
         "avoidEscape": true,
