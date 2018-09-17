@@ -1,7 +1,7 @@
 import { observable, computed, action } from "mobx";
-import { observer } from "mobx-react";
+import axios from "axios";
 import notifications from "./notifications";
-import api from "../helpers/api";
+import Bigneon from "../helpers/bigneon";
 
 class Cart {
 	@observable
@@ -12,8 +12,8 @@ class Cart {
 
 	@action
 	refreshCart() {
-		api()
-			.get("/cart")
+		Bigneon()
+			.cart.index()
 			.then(response => {
 				const { data } = response;
 
@@ -41,8 +41,36 @@ class Cart {
 	}
 
 	@action
-	addToCart(selectedTickets) {
-		this.selectedTickets = { ...this.selectedTickets, ...selectedTickets };
+	addToCart(selectedTickets, onSuccess, onError) {
+		const ticketIds = Object.keys(selectedTickets);
+
+		//Promises array of posts to the add cart function and iterate through them
+		let cartAddPromises = [];
+		ticketIds.forEach(id => {
+			const quantity = selectedTickets[id];
+			const ticketRequestParams = {
+				ticket_type_id: id,
+				quantity
+			};
+
+			cartAddPromises.push(Bigneon().cart.add(ticketRequestParams));
+		});
+
+		axios
+			.all(cartAddPromises)
+			.then(results => {
+				//Quick add to update store
+				this.selectedTickets = { ...this.selectedTickets, ...selectedTickets };
+
+				//Refresh cart from the API to make sure we in sync
+				this.refreshCart();
+
+				onSuccess();
+			})
+			.catch(error => {
+				console.error(error);
+				onError(error);
+			});
 	}
 
 	@action

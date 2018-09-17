@@ -30,7 +30,8 @@ class CheckoutSelection extends Component {
 
 		this.state = {
 			openPromo: false,
-			ticketSelection: {}
+			ticketSelection: {},
+			isSubmitting: false
 		};
 	}
 
@@ -57,10 +58,35 @@ class CheckoutSelection extends Component {
 		const { id } = selectedEvent;
 		const { ticketSelection } = this.state;
 
-		//Add to dummy cart
-		cart.addToCart(ticketSelection);
+		this.setState({ isSubmitting: true });
 
-		this.props.history.push(`/events/${id}/tickets/confirmation`);
+		cart.addToCart(
+			ticketSelection,
+			() => {
+				notifications.show({
+					message: "Tickets added to cart",
+					variant: "success"
+				});
+				this.props.history.push(`/events/${id}/tickets/confirmation`);
+			},
+			error => {
+				this.setState({ isSubmitting: false });
+
+				let message = "Adding to cart failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			}
+		);
 	}
 
 	renderTicketPricing() {
@@ -91,7 +117,7 @@ class CheckoutSelection extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { openPromo } = this.state;
+		const { openPromo, isSubmitting } = this.state;
 
 		const { event, venue, artists, organization, id } = selectedEvent;
 
@@ -126,11 +152,12 @@ class CheckoutSelection extends Component {
 							</Button>
 							&nbsp;
 							<Button
+								disabled={isSubmitting}
 								onClick={this.onSubmit.bind(this)}
 								size="large"
 								customClassName="primary"
 							>
-								Select tickets
+								{isSubmitting ? "Adding..." : "Select tickets"}
 							</Button>
 						</div>
 
