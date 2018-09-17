@@ -10,7 +10,7 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit * 4
 	},
 	media: {
-		height: 200,
+		height: 300,
 		width: "100%",
 		borderRadius: theme.shape.borderRadius
 	}
