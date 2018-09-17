@@ -1,7 +1,7 @@
 import { observable, computed, action } from "mobx";
 import decodeJWT from "../helpers/decodeJWT";
 import notifications from "./notifications";
-import api from "../helpers/api";
+import Bigneon from "../helpers/bigneon";
 
 class User {
 	@observable
@@ -41,8 +41,8 @@ class User {
 		//There could be a better way, open to suggestions.
 		this.refreshToken(
 			() => {
-				api()
-					.get("/users/me")
+				Bigneon()
+					.users.current()
 					.then(response => {
 						const { data } = response;
 
@@ -120,8 +120,8 @@ class User {
 			return;
 		}
 
-		api({ auth: false })
-			.post("/auth/token/refresh", { refresh_token })
+		Bigneon()
+			.auth.refresh({ refresh_token })
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
 				localStorage.setItem("access_token", access_token);
