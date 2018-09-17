@@ -1,6 +1,6 @@
 import { observable, computed, action } from "mobx";
 import moment from "moment";
-import api from "../helpers/api";
+import Bigneon from "../helpers/bigneon";
 import notifications from "./notifications";
 
 class SelectedEvent {
@@ -33,8 +33,8 @@ class SelectedEvent {
 			this.tickets = null;
 		}
 
-		api({ auth: false })
-			.get(`/events/${id}`)
+		Bigneon()
+			.events.read({ id })
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 
@@ -110,8 +110,8 @@ class SelectedEvent {
 
 	@action
 	loadArtist(id) {
-		api({ auth: false })
-			.get(`/artists/${id}`)
+		Bigneon()
+			.artists.read({ id })
 			.then(response => {
 				const currentArtists = this.artists;
 
@@ -152,8 +152,8 @@ class SelectedEvent {
 
 	@action
 	loadTickets(id) {
-		api({ auth: false })
-			.get(`/events/${id}/tickets`)
+		Bigneon()
+			.events.tickets.index({ id })
 			.then(response => {
 				const { ticket_types } = response.data;
 
