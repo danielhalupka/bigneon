@@ -231,7 +231,7 @@ class OrganizationUpdateCard extends Component {
 					variant: "success"
 				});
 
-				this.props.history.push("/admin/organizations");
+				this.props.history.push(`/admin/organizations/${organizationId}`);
 			});
 
 			return;
@@ -261,7 +261,7 @@ class OrganizationUpdateCard extends Component {
 						});
 
 						this.setState({ isSubmitting: false }, () => {
-							this.props.history.push("/admin/organizations");
+							this.props.history.push(`/admin/organizations/${organizationId}`);
 						});
 					}
 				);

@@ -19,29 +19,31 @@ class Organization extends Component {
 	constructor(props) {
 		super(props);
 
-		//Check if we're editing an existing organization
-		let organizationId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			organizationId = props.match.params.id;
-			this.organizationId = organizationId;
-		}
-
 		this.state = {
 			activeTab: 0
 		};
 	}
 
+	static getDerivedStateFromProps(props, state) {
+		let organizationId = null;
+		if (props.match && props.match.params && props.match.params.id) {
+			organizationId = props.match.params.id;
+		}
+
+		return { organizationId };
+	}
+
 	render() {
-		const { activeTab } = this.state;
+		const { activeTab, organizationId } = this.state;
 		const { classes, history } = this.props;
 
 		return (
 			<div>
 				<Typography variant="display3">
-					{this.organizationId ? "Update" : "New"} organization
+					{organizationId ? "Update" : "New"} organization
 				</Typography>
 
-				{this.organizationId ? (
+				{organizationId ? (
 					<Tabs
 						value={activeTab}
 						onChange={(event, activeTab) => this.setState({ activeTab })}
@@ -56,30 +58,27 @@ class Organization extends Component {
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						{activeTab === 0 ? (
-							<UpdateCard
-								history={history}
-								organizationId={this.organizationId}
-							/>
+							<UpdateCard history={history} organizationId={organizationId} />
 						) : null}
 
 						{activeTab === 1 ? (
 							<LinkVenuesCard
 								history={history}
-								organizationId={this.organizationId}
+								organizationId={organizationId}
 							/>
 						) : null}
 
 						{activeTab === 2 ? (
 							<InviteUserCard
 								history={history}
-								organizationId={this.organizationId}
+								organizationId={organizationId}
 							/>
 						) : null}
 
 						{activeTab === 3 ? (
 							<FeeScheduleCard
 								history={history}
-								organizationId={this.organizationId}
+								organizationId={organizationId}
 							/>
 						) : null}
 					</Grid>
