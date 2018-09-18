@@ -12,15 +12,21 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogContentText,
-	DialogTitle
+	DialogTitle,
+	List,
+	ListItem,
+	Avatar,
+	ListItemText
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import MoneyIcon from "@material-ui/icons/MonetizationOn";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
 import api from "../../../../../helpers/api";
 import Bigneon from "../../../../../helpers/bigneon";
+import user from "../../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -267,12 +273,11 @@ class FeeScheduleCard extends Component {
 		);
 	}
 
-	render() {
-		const { id, name, ranges, errors, isSubmitting } = this.state;
-		const { classes } = this.props;
+	renderForm() {
+		const { name, ranges, errors, isSubmitting } = this.state;
 
 		return (
-			<Card className={classes.paper}>
+			<div>
 				{this.renderAreYouSureDialog()}
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
@@ -358,6 +363,39 @@ class FeeScheduleCard extends Component {
 						</Button>
 					</CardActions>
 				</form>
+			</div>
+		);
+	}
+
+	renderDisplay() {
+		const { ranges } = this.state;
+
+		return (
+			<CardContent>
+				<List>
+					{ranges.map(({ min_price, fee }, index) => (
+						<ListItem key={index}>
+							<Avatar>
+								<MoneyIcon />
+							</Avatar>
+							<ListItemText
+								primary={`Minimum price $ ${min_price}`}
+								secondary={`Fee $ ${fee}`}
+							/>
+						</ListItem>
+					))}
+				</List>
+			</CardContent>
+		);
+	}
+
+	render() {
+		const { classes } = this.props;
+		const { isAdmin } = user;
+
+		return (
+			<Card className={classes.paper}>
+				{isAdmin ? this.renderForm() : this.renderDisplay()}
 			</Card>
 		);
 	}
