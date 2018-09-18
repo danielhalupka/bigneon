@@ -216,9 +216,8 @@ class User {
 
 	@computed
 	get isGuest() {
-		//If they haven't signed in or they're simply an end user.
-		//This might change
-		return !this.token || this.roles.indexOf("Guest") > -1;
+		//If they haven't signed in yet
+		return !this.token;
 	}
 }
 
