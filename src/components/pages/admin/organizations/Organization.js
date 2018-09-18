@@ -4,7 +4,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
 import UpdateCard from "./cards/UpdateCard";
-import LinkVenuesCard from "./cards/LinkVenuesCard";
+// import LinkVenuesCard from "./cards/LinkVenuesCard";
 import InviteUserCard from "./cards/InviteUserCard";
 import FeeScheduleCard from "./cards/FeeScheduleCard";
 
@@ -20,7 +20,8 @@ class Organization extends Component {
 		super(props);
 
 		this.state = {
-			activeTab: 0
+			activeTab: 0,
+			organizationId: null
 		};
 	}
 
@@ -49,9 +50,9 @@ class Organization extends Component {
 						onChange={(event, activeTab) => this.setState({ activeTab })}
 					>
 						<Tab key={0} label="Details" />
-						<Tab key={1} label="Linked venues" />
-						<Tab key={2} label="Organization members" />
-						<Tab key={3} label="Fee schedule" />
+						{/* <Tab key={1} label="Linked venues" /> */}
+						<Tab key={1} label="Organization members" />
+						<Tab key={2} label="Fee schedule" />
 					</Tabs>
 				) : null}
 
@@ -61,21 +62,21 @@ class Organization extends Component {
 							<UpdateCard history={history} organizationId={organizationId} />
 						) : null}
 
-						{activeTab === 1 ? (
+						{/* {activeTab === 1 ? (
 							<LinkVenuesCard
 								history={history}
 								organizationId={organizationId}
 							/>
-						) : null}
+						) : null} */}
 
-						{activeTab === 2 ? (
+						{activeTab === 1 ? (
 							<InviteUserCard
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
 
-						{activeTab === 3 ? (
+						{activeTab === 2 ? (
 							<FeeScheduleCard
 								history={history}
 								organizationId={organizationId}
