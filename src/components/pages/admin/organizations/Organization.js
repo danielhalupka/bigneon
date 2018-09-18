@@ -4,7 +4,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
 import UpdateCard from "./cards/UpdateCard";
-import LinkVenuesCard from "./cards/LinkVenuesCard";
+// import LinkVenuesCard from "./cards/LinkVenuesCard";
 import InviteUserCard from "./cards/InviteUserCard";
 import FeeScheduleCard from "./cards/FeeScheduleCard";
 
@@ -19,67 +19,67 @@ class Organization extends Component {
 	constructor(props) {
 		super(props);
 
-		//Check if we're editing an existing organization
-		let organizationId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			organizationId = props.match.params.id;
-			this.organizationId = organizationId;
-		}
-
 		this.state = {
-			activeTab: 0
+			activeTab: 0,
+			organizationId: null
 		};
 	}
 
+	static getDerivedStateFromProps(props, state) {
+		let organizationId = null;
+		if (props.match && props.match.params && props.match.params.id) {
+			organizationId = props.match.params.id;
+		}
+
+		return { organizationId };
+	}
+
 	render() {
-		const { activeTab } = this.state;
+		const { activeTab, organizationId } = this.state;
 		const { classes, history } = this.props;
 
 		return (
 			<div>
 				<Typography variant="display3">
-					{this.organizationId ? "Update" : "New"} organization
+					{organizationId ? "Update" : "New"} organization
 				</Typography>
 
-				{this.organizationId ? (
+				{organizationId ? (
 					<Tabs
 						value={activeTab}
 						onChange={(event, activeTab) => this.setState({ activeTab })}
 					>
 						<Tab key={0} label="Details" />
-						<Tab key={1} label="Linked venues" />
-						<Tab key={2} label="Organization members" />
-						<Tab key={3} label="Fee schedule" />
+						{/* <Tab key={1} label="Linked venues" /> */}
+						<Tab key={1} label="Organization members" />
+						<Tab key={2} label="Fee schedule" />
 					</Tabs>
 				) : null}
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						{activeTab === 0 ? (
-							<UpdateCard
-								history={history}
-								organizationId={this.organizationId}
-							/>
+							<UpdateCard history={history} organizationId={organizationId} />
 						) : null}
 
-						{activeTab === 1 ? (
+						{/* {activeTab === 1 ? (
 							<LinkVenuesCard
 								history={history}
-								organizationId={this.organizationId}
+								organizationId={organizationId}
+							/>
+						) : null} */}
+
+						{activeTab === 1 ? (
+							<InviteUserCard
+								history={history}
+								organizationId={organizationId}
 							/>
 						) : null}
 
 						{activeTab === 2 ? (
-							<InviteUserCard
-								history={history}
-								organizationId={this.organizationId}
-							/>
-						) : null}
-
-						{activeTab === 3 ? (
 							<FeeScheduleCard
 								history={history}
-								organizationId={this.organizationId}
+								organizationId={organizationId}
 							/>
 						) : null}
 					</Grid>

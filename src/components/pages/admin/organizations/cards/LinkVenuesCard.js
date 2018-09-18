@@ -1,3 +1,5 @@
+//TODO this might not be needed anymore as each venue can be privately linked to an org
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Typography, withStyles } from "@material-ui/core";
@@ -9,6 +11,7 @@ import SelectGroup from "../../../../common/form/SelectGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
 import api from "../../../../../helpers/api";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -36,8 +39,8 @@ class LinkVenuesCard extends Component {
 	}
 
 	loadAllVenues() {
-		api()
-			.get(`/venues`)
+		Bigneon()
+			.venues.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ venues: data });
@@ -64,10 +67,11 @@ class LinkVenuesCard extends Component {
 	loadLinkedVenues() {
 		const { organizationId } = this.props;
 
-		api()
-			.get(`/organizations/${organizationId}/venues`)
+		Bigneon()
+			.organizations.venues.index({ id: organizationId })
 			.then(response => {
 				const { data } = response;
+				console.log(data);
 				this.setState({ linkedVenues: data });
 			})
 			.catch(error => {
