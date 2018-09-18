@@ -491,7 +491,7 @@ class MenuContent extends Component {
 		}
 
 		if (isOrgOwner) {
-			return this.this.renderOrgOwnMenu();
+			return this.renderOrgOwnMenu();
 		}
 
 		if (isUser) {
