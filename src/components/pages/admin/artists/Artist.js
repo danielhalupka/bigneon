@@ -45,7 +45,7 @@ class Artist extends Component {
 			website_url: "",
 			facebook_username: "",
 			instagram_username: "",
-			snapshat_username: "",
+			snapchat_username: "",
 			soundcloud_username: "",
 			bandcamp_username: "",
 			youtube_video_urls: [""],
@@ -67,7 +67,7 @@ class Artist extends Component {
 						website_url,
 						facebook_username,
 						instagram_username,
-						snapshat_username,
+						snapchat_username,
 						soundcloud_username,
 						bandcamp_username,
 						youtube_video_urls,
@@ -80,7 +80,7 @@ class Artist extends Component {
 						website_url: website_url || "",
 						facebook_username: facebook_username || "",
 						instagram_username: instagram_username || "",
-						snapshat_username: snapshat_username || "",
+						snapchat_username: snapchat_username || "",
 						soundcloud_username: soundcloud_username || "",
 						bandcamp_username: bandcamp_username || "",
 						youtube_video_urls: youtube_video_urls || [""],
@@ -120,7 +120,7 @@ class Artist extends Component {
 			website_url,
 			facebook_username,
 			instagram_username,
-			snapshat_username,
+			snapchat_username,
 			soundcloud_username,
 			bandcamp_username,
 			youtube_video_urls
@@ -182,6 +182,7 @@ class Artist extends Component {
 					error.response.data &&
 					error.response.data.error
 				) {
+					console.log(error.response.data);
 					message = error.response.data.error;
 				}
 
@@ -257,24 +258,34 @@ class Artist extends Component {
 			website_url,
 			facebook_username,
 			instagram_username,
-			snapshat_username,
+			snapchat_username,
 			soundcloud_username,
 			bandcamp_username,
 			youtube_video_urls
 		} = this.state;
 
+		//If some fields are not set, don't send through empty strings as they'll fail validation
+		const cleanParam = (value) => {
+			return value === "" ? undefined : value
+		};
+
+		
+		
 		const artistDetails = {
-			image_url: imageUrl,
-			thumb_image_url: imageUrl,
+			image_url: cleanParam(imageUrl),
+			thumb_image_url: cleanParam(imageUrl),
 			name,
 			bio,
-			website_url,
-			facebook_username,
-			instagram_username,
-			snapshat_username,
-			soundcloud_username,
-			bandcamp_username,
-			youtube_video_urls
+			website_url: cleanParam(website_url),
+			facebook_username: cleanParam(facebook_username),
+			instagram_username: cleanParam(instagram_username),
+			snapchat_username: cleanParam(snapchat_username),
+			soundcloud_username: cleanParam(soundcloud_username),
+			bandcamp_username: cleanParam(bandcamp_username),
+			youtube_video_urls:
+				youtube_video_urls.length === 1 && youtube_video_urls[0] === ""
+					? undefined
+					: youtube_video_urls
 		};
 
 		//If we're updating an existing venue
@@ -310,7 +321,7 @@ class Artist extends Component {
 			website_url,
 			facebook_username,
 			instagram_username,
-			snapshat_username,
+			snapchat_username,
 			soundcloud_username,
 			bandcamp_username,
 			youtube_video_urls,
@@ -421,13 +432,13 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
-										error={errors.snapshat_username}
-										value={snapshat_username}
-										name="snapshat_username"
+										error={errors.snapchat_username}
+										value={snapchat_username}
+										name="snapchat_username"
 										label="Snapchat username"
 										type="text"
 										onChange={e =>
-											this.setState({ snapshat_username: e.target.value })
+											this.setState({ snapchat_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
 										placeholder="@Snapchat"
