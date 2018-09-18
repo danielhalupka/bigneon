@@ -24,7 +24,6 @@ import MoneyIcon from "@material-ui/icons/MonetizationOn";
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
-import api from "../../../../../helpers/api";
 import Bigneon from "../../../../../helpers/bigneon";
 import user from "../../../../../stores/user";
 
@@ -177,8 +176,9 @@ class FeeScheduleCard extends Component {
 			fee: Number(fee)
 		}));
 
-		api()
-			.post(`/organizations/${organizationId}/fee_schedule`, {
+		Bigneon()
+			.organizations.feeSchedule.create({
+				id: organizationId,
 				name,
 				ranges: formattedRanges
 			})
