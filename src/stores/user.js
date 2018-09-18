@@ -55,8 +55,20 @@ class User {
 								phone,
 								profile_pic_url
 							},
+							scopes, //TODO use these instead of roles
+							organization_roles,
+							organization_scopes, //TODO use these instead of roles
 							roles
 						} = data;
+
+						//TODO eventually this won't be like this as scopes will be on an org level and not a global one but for now the frontend needs to work to continue the checkout
+						let globalRoles = roles;
+						Object.keys(organization_roles).forEach(organizationId => {
+							globalRoles = globalRoles.concat(
+								organization_roles[organizationId]
+							);
+						});
+
 						const jwtData = decodeJWT(token);
 
 						const {
@@ -69,7 +81,7 @@ class User {
 						this.lastName = last_name;
 						this.email = email;
 						this.phone = phone;
-						this.roles = roles;
+						this.roles = globalRoles;
 						this.profilePicUrl = profile_pic_url;
 
 						if (onSuccess) {
