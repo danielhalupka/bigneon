@@ -23,6 +23,7 @@ import MarketingIcon from "@material-ui/icons/Notifications";
 import OrganizationIcon from "@material-ui/icons/GroupWork";
 import HomeIcon from "@material-ui/icons/Home";
 import VenueIcon from "@material-ui/icons/Room";
+import TicketsIcon from "@material-ui/icons/Receipt";
 
 import ListSubheader from "@material-ui/core/ListSubheader";
 
@@ -367,6 +368,66 @@ class MenuContent extends Component {
 		);
 	}
 
+	renderUserMenu() {
+		const { toggleDrawer } = this.props;
+
+		return (
+			<div>
+				<div
+					style={{
+						width: "100%",
+						textAlign: "center",
+						padding: 15
+					}}
+				>
+					<Link
+						to={"/"}
+						style={{
+							textDecoration: "none"
+						}}
+					>
+						<Button
+							customClassName="callToAction"
+							onClick={toggleDrawer}
+							style={{ width: "100%" }}
+						>
+							Discover
+						</Button>
+					</Link>
+				</div>
+				<Divider />
+
+				<MenuItem
+					to="/tickets"
+					icon={<TicketsIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					My tickets
+				</MenuItem>
+
+				<MenuItem
+					to="/events"
+					icon={<EventsIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					Events
+				</MenuItem>
+
+				<MenuItem
+					to="/artists"
+					icon={<ArtistsIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					Artists
+				</MenuItem>
+
+				<MenuItem to="/venues" icon={<VenueIcon />} toggleDrawer={toggleDrawer}>
+					Venues
+				</MenuItem>
+			</div>
+		);
+	}
+
 	renderUnauthenticatedMenu() {
 		const { openMenuItem } = this.state;
 		const { classes, toggleDrawer } = this.props;
@@ -423,11 +484,27 @@ class MenuContent extends Component {
 		);
 	}
 
-	render() {
-		const { isAdmin, isOrgOwner, isGuest } = user;
+	renderMenuItems() {
+		const { isAdmin, isOrgOwner, isGuest, isUser } = user;
+		if (isAdmin) {
+			return this.renderAdminMenu();
+		}
 
-		const { classes, toggleDrawer } = this.props;
-		const { openMenuItem } = this.state;
+		if (isOrgOwner) {
+			return this.this.renderOrgOwnMenu();
+		}
+
+		if (isUser) {
+			return this.renderUserMenu();
+		}
+
+		if (isGuest) {
+			return this.renderUnauthenticatedMenu();
+		}
+	}
+
+	render() {
+		const { toggleDrawer } = this.props;
 
 		return (
 			<List component="nav">
@@ -438,18 +515,7 @@ class MenuContent extends Component {
 						alt="Logo"
 					/>
 				</Link>
-
-				{/* 
-					If they're admin, just show those menu options
-					TODO maybe render this using an if/else render function
-			 	*/}
-				{isAdmin ? this.renderAdminMenu() : null}
-
-				{!isAdmin && isGuest && !isOrgOwner
-					? this.renderUnauthenticatedMenu()
-					: null}
-
-				{!isAdmin && isOrgOwner ? this.renderOrgOwnMenu() : null}
+				{this.renderMenuItems()}
 			</List>
 		);
 	}
