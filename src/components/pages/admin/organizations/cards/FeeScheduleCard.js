@@ -7,7 +7,12 @@ import {
 	CardContent,
 	Card,
 	InputAdornment,
-	IconButton
+	IconButton,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 
@@ -15,6 +20,7 @@ import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
 import api from "../../../../../helpers/api";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -31,24 +37,28 @@ class FeeScheduleCard extends Component {
 			id: "",
 			name: "",
 			ranges: [],
+			areYouSureDialogOpen: false,
 			errors: {},
 			isSubmitting: false
 		};
 	}
 
 	componentDidMount() {
-		//TODO load in existing fee schedule
 		const { organizationId } = this.props;
 
-		api()
-			.get(`/organizations/${organizationId}/fee_schedule`)
+		Bigneon()
+			.organizations.feeSchedule.index({ id: organizationId })
 			.then(response => {
-				const { id, name, ranges } = response.data;
+				const { id, name, ranges, message } = response.data;
 
 				if (id) {
 					this.setState({ id, name, ranges });
 				} else {
 					this.addNewRange();
+				}
+
+				if (message) {
+					notifications.show({ message });
 				}
 			})
 			.catch(error => {
@@ -99,14 +109,17 @@ class FeeScheduleCard extends Component {
 
 		let rangesErrors = {};
 		ranges.forEach(({ min_price, fee }, index) => {
-			if (!min_price || !fee) {
+			const missingMinPrice = !min_price && min_price !== 0;
+			const missingFee = !fee && fee !== 0;
+
+			if (missingMinPrice || missingFee) {
 				rangesErrors[index] = {};
 
-				if (!min_price) {
+				if (missingMinPrice) {
 					rangesErrors[index].min_price = "Missing minimum price.";
 				}
 
-				if (!fee) {
+				if (missingFee) {
 					rangesErrors[index].fee = "Missing fee.";
 				}
 			}
@@ -134,16 +147,23 @@ class FeeScheduleCard extends Component {
 			return false;
 		}
 
-		const { organizationId } = this.props;
-		const { id, name, ranges } = this.state;
+		const { id } = this.state;
 
 		if (id) {
-			notifications.show({
-				message: "Fee schedules cannot be updated yet.",
-				variant: "warning"
-			});
-			return;
+			return this.setState({ areYouSureDialogOpen: true });
 		}
+
+		this.saveNewFeeSchedule();
+	}
+
+	saveNewFeeSchedule() {
+		if (!this.validateFields()) {
+			return false;
+		}
+
+		const { organizationId } = this.props;
+
+		const { id, name, ranges } = this.state;
 
 		this.setState({ isSubmitting: true });
 		const formattedRanges = ranges.map(({ min_price, fee }) => ({
@@ -157,6 +177,7 @@ class FeeScheduleCard extends Component {
 				ranges: formattedRanges
 			})
 			.then(response => {
+				this.onDialogClose();
 				this.setState({ isSubmitting: false });
 
 				notifications.show({
@@ -165,6 +186,7 @@ class FeeScheduleCard extends Component {
 				});
 			})
 			.catch(error => {
+				this.onDialogClose();
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
@@ -205,12 +227,53 @@ class FeeScheduleCard extends Component {
 		});
 	}
 
+	onDialogClose() {
+		this.setState({ areYouSureDialogOpen: false });
+	}
+
+	renderAreYouSureDialog() {
+		const { areYouSureDialogOpen } = this.state;
+
+		const onClose = this.onDialogClose.bind(this);
+
+		return (
+			<Dialog
+				open={areYouSureDialogOpen}
+				onClose={onClose}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">
+					Are you sure you want to create this new fee schedule?
+				</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						Adding a new fee schedule archives the previous one but existing
+						events will still belong to the fee schedule that was active at the
+						time the event was created.
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={onClose}>Cancel</Button>
+					<Button
+						customClassName="primary"
+						onClick={this.saveNewFeeSchedule.bind(this)}
+						autoFocus
+					>
+						Create new fee schedule
+					</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	}
+
 	render() {
-		const { name, ranges, errors, isSubmitting } = this.state;
+		const { id, name, ranges, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
 
 		return (
 			<Card className={classes.paper}>
+				{this.renderAreYouSureDialog()}
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
 						<InputGroup
@@ -291,7 +354,7 @@ class FeeScheduleCard extends Component {
 							type="submit"
 							customClassName="callToAction"
 						>
-							{isSubmitting ? "Creating..." : "Create"}
+							{isSubmitting ? "Creating..." : "Create new schedule"}
 						</Button>
 					</CardActions>
 				</form>
