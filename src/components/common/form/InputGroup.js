@@ -19,6 +19,7 @@ const styles = theme => {
 
 const InputGroup = props => {
 	const {
+		disabled,
 		classes,
 		error,
 		value,
@@ -63,6 +64,7 @@ const InputGroup = props => {
 				placeholder={placeholder}
 				multiline={multiline}
 				autoFocus={autoFocus}
+				disabled={disabled}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -83,7 +85,8 @@ InputGroup.propTypes = {
 	onFocus: PropTypes.func,
 	multiline: PropTypes.bool,
 	autoFocus: PropTypes.bool,
-	InputProps: PropTypes.object
+	InputProps: PropTypes.object,
+	disabled: PropTypes.bool
 };
 
 export default withStyles(styles)(InputGroup);
