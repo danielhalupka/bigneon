@@ -36,6 +36,8 @@ class CheckoutSelection extends Component {
 	}
 
 	componentDidMount() {
+		cart.refreshCart();
+
 		if (
 			this.props.match &&
 			this.props.match.params &&

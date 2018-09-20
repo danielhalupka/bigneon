@@ -51,6 +51,7 @@ class SelectedEvent {
 					age_limit
 				} = event;
 
+				//TODO soon this will be added to the above response and not needed in a separate call
 				this.loadTickets(id);
 
 				this.organization = organization;

@@ -64,7 +64,6 @@ class TicketsCard extends Component {
 							value: price_in_cents / 100
 						});
 					});
-
 					console.log(pricing);
 					tickets.push(
 						Ticket.Structure({
@@ -77,7 +76,7 @@ class TicketsCard extends Component {
 							endDate: end_date
 								? moment(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 								: null,
-							pricing
+							pricing: ticket_pricing
 						})
 					);
 				});

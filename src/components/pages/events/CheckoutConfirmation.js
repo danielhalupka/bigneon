@@ -72,6 +72,8 @@ class CheckoutConfirmation extends Component {
 	}
 
 	componentDidMount() {
+		cart.refreshCart();
+
 		if (
 			this.props.match &&
 			this.props.match.params &&
@@ -91,17 +93,22 @@ class CheckoutConfirmation extends Component {
 	}
 
 	renderTickets() {
-		const { tickets } = selectedEvent;
+		//const { tickets } = selectedEvent;
+		const tickets = selectedEvent.tickets;
 		const { classes } = this.props;
-		const { selectedTickets } = cart;
+		const { items } = cart;
 
 		if (!tickets) {
 			return null;
 		}
 
-		return tickets.map(({ id, name, price, description }) => {
-			const quantity = selectedTickets[id];
+		console.log(tickets);
+
+		return items.map(({ id, item_type, cost, quantity, ticket_type_id }) => {
 			if (quantity) {
+				const ticket = tickets.find(t => t.id === ticket_type_id);
+				const name = ticket && ticket.name ? ticket.name : "Ticket";
+
 				return (
 					<TicketLineEntry
 						key={id}
@@ -110,8 +117,16 @@ class CheckoutConfirmation extends Component {
 								{quantity} x {name}
 							</Typography>
 						}
-						col2={<Typography variant="body1">$ {price}</Typography>}
-						col3={<Typography variant="body1">{price * quantity}</Typography>}
+						col2={
+							<Typography variant="body1">
+								$ {Math.round(cost / 100)}
+							</Typography>
+						}
+						col3={
+							<Typography variant="body1">
+								{Math.round((cost / 100) * quantity)}
+							</Typography>
+						}
 						className={classes.ticketLineEntry}
 					/>
 				);
@@ -124,20 +139,7 @@ class CheckoutConfirmation extends Component {
 	renderTotals() {
 		const { classes } = this.props;
 		const { tickets, id } = selectedEvent;
-		const { selectedTickets } = cart;
-
-		//TODO move this to the computed value in stores/cart.js store
-		let total = 0;
-
-		if (tickets) {
-			tickets.forEach(ticket => {
-				const { price } = ticket;
-				const quantity = selectedTickets[ticket.id];
-				if (quantity) {
-					total = total + price * quantity;
-				}
-			});
-		}
+		const { fees, total } = cart;
 
 		return (
 			<TicketLineEntry
@@ -159,8 +161,8 @@ class CheckoutConfirmation extends Component {
 				}
 				col3={
 					<span>
-						<Typography variant="body1">$2</Typography>
-						<Typography variant="body1">${total}</Typography>
+						<Typography variant="body1">${fees}</Typography>
+						<Typography variant="body1">${Math.round(total / 100)}</Typography>
 					</span>
 				}
 				className={classes.ticketLineEntry}

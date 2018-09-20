@@ -5,10 +5,13 @@ import Bigneon from "../helpers/bigneon";
 
 class Cart {
 	@observable
-	cartId = null;
+	id = null; //Cart ID
 
 	@observable
-	selectedTickets = {}; //{id: quantity}
+	items = [];
+
+	@observable
+	total = 0;
 
 	@action
 	refreshCart() {
@@ -16,10 +19,12 @@ class Cart {
 			.cart.index()
 			.then(response => {
 				const { data } = response;
+				const { id, items, total } = data;
+				console.log(data);
 
-				const { cartId, tickets } = data;
-				this.cartId = cartId;
-				this.selectedTickets = tickets;
+				this.id = id;
+				this.items = items;
+				this.total = total;
 			})
 			.catch(error => {
 				console.error(error);
@@ -59,9 +64,6 @@ class Cart {
 		axios
 			.all(cartAddPromises)
 			.then(results => {
-				//Quick add to update store
-				this.selectedTickets = { ...this.selectedTickets, ...selectedTickets };
-
 				//Refresh cart from the API to make sure we in sync
 				this.refreshCart();
 
@@ -75,12 +77,40 @@ class Cart {
 
 	@action
 	emptyCart(selectedTickets) {
+		//TODO delete from cart using API first
 		this.selectedTickets = {};
 	}
 
 	@computed
 	get ticketCount() {
-		return this.selectedTickets ? Object.keys(this.selectedTickets).length : 0;
+		if (!this.items) {
+			return 0;
+		}
+
+		let count = 0;
+		this.items.forEach(({ item_type, quantity }) => {
+			if (item_type === "Tickets") {
+				count = count + quantity;
+			}
+		});
+
+		return count;
+	}
+
+	@computed
+	get fees() {
+		if (!this.items) {
+			return 0;
+		}
+
+		let fees = 0;
+		this.items.forEach(({ item_type, cost }) => {
+			if (item_type === "Fees") {
+				fees = fees + cost;
+			}
+		});
+
+		return fees;
 	}
 }
 
