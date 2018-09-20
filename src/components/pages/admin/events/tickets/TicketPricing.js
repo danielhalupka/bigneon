@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core";
+import { withStyles, InputAdornment } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import InputGroup from "../../../../common/form/InputGroup";
@@ -38,7 +38,7 @@ class TicketPricing extends Component {
 
 	render() {
 		const { data, errors } = this.state;
-		let { ticketId, name, description, startDate, endDate, value } = data;
+		let { ticketId, name, startDate, endDate, value } = data;
 		const { onDelete } = this.props;
 		return (
 			<Grid container spacing={8} alignItems={"center"}>
@@ -47,7 +47,7 @@ class TicketPricing extends Component {
 						error={errors.name}
 						value={name}
 						name="name"
-						label="Price Point name"
+						label="Price name"
 						placeholder="Early Bird / General Admission / Day Of"
 						type="text"
 						onChange={e => {
@@ -56,26 +56,12 @@ class TicketPricing extends Component {
 						onBlur={this.validateFields}
 					/>
 				</Grid>
-				{/* <Grid item xs>
-						<InputGroup
-							error={errors.description}
-							value={description}
-							name="description"
-							label="Price description"
-							type="text"
-							onChange={e => {
-								this.setField("description", e.target.value);
-							}}
-							onBlur={this.validateFields}
-						/>
-					</Grid> */}
-
 				<Grid item xs>
 					<DateTimePickerGroup
 						error={errors.startDate}
 						value={startDate}
 						name="startDate"
-						label="Onsale Time"
+						label="On sale Time"
 						onChange={startDate => this.setField("startDate", startDate)}
 						onBlur={this.validateFields}
 						minDate={false}
@@ -86,7 +72,7 @@ class TicketPricing extends Component {
 						error={errors.endDate}
 						value={endDate}
 						name="endDate"
-						label="Offsale Time"
+						label="Off sale Time"
 						onChange={endDate => this.setField("endDate", endDate)}
 						onBlur={this.validateFields}
 						minDate={false}
@@ -94,6 +80,11 @@ class TicketPricing extends Component {
 				</Grid>
 				<Grid item xs>
 					<InputGroup
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position="start">$</InputAdornment>
+							)
+						}}
 						error={errors.value}
 						value={value}
 						name="value"
@@ -124,7 +115,6 @@ TicketPricing.Structure = (pricing = {}) => {
 		id: "",
 		ticketId: "",
 		name: "",
-		description: "",
 		startDate: "",
 		endDate: "",
 		value: 0

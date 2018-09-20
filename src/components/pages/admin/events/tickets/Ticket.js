@@ -56,11 +56,10 @@ class Ticket extends Component {
 			id,
 			eventId,
 			name,
-			description,
 			startDate,
 			endDate,
 			capacity,
-			limit,
+			//limit,
 			pricing
 		} = data;
 
@@ -81,9 +80,9 @@ class Ticket extends Component {
 			errors.capacity = "Specify a valid capacity";
 		}
 
-		if (limit !== "" && isNaN(limit)) {
-			errors.limit = "Specify a valid limit per person";
-		}
+		// if (limit !== "" && isNaN(limit)) {
+		// 	errors.limit = "Specify a valid limit per person";
+		// }
 
 		const hasErrors = Object.keys(errors).length > 0;
 		onError(errors);
@@ -142,11 +141,10 @@ class Ticket extends Component {
 			id,
 			eventId,
 			name,
-			description,
 			startDate,
 			endDate,
 			capacity,
-			limit,
+			//limit,
 			pricing
 		} = data;
 
@@ -180,7 +178,7 @@ class Ticket extends Component {
 						onBlur={this.validateFields}
 					/>
 				</Grid>
-				<Grid item xs={2}>
+				{/* <Grid item xs={2}>
 					<InputGroup
 						error={errors.limit}
 						value={limit}
@@ -193,7 +191,7 @@ class Ticket extends Component {
 						}}
 						onBlur={this.validateFields}
 					/>
-				</Grid>
+				</Grid> */}
 				{onDelete ? (
 					<Grid item xs>
 						<div style={{ flex: 1 }} />
@@ -207,7 +205,7 @@ class Ticket extends Component {
 						error={errors.startDate}
 						value={startDate}
 						name="startDate"
-						label="Onsale Time"
+						label="On sale Time"
 						onChange={startDate => this.setField("startDate", startDate)}
 						onBlur={this.validateFields}
 						minDate={false}
@@ -218,14 +216,14 @@ class Ticket extends Component {
 						error={errors.endDate}
 						value={endDate}
 						name="endDate"
-						label="Offsale Time"
+						label="Off sale Time"
 						onChange={endDate => this.setField("endDate", endDate)}
 						onBlur={this.validateFields}
 						minDate={false}
 					/>
 				</Grid>
 				<div style={{ display: "flex" }}>
-					<Typography variant="headline">Price Points</Typography>
+					<Typography variant="headline">Pricing</Typography>
 					<IconButton onClick={this.addPricing.bind(this)} aria-label="Add">
 						<AddIcon />
 					</IconButton>
@@ -248,11 +246,10 @@ Ticket.Structure = (ticket = {}) => {
 		id: "",
 		eventId: "",
 		name: "",
-		description: "",
-		startDate: "",
-		endDate: "",
+		startDate: null,
+		endDate: null,
 		capacity: 0,
-		limit: 0, //Limit per purchase
+		//limit: 0, //Limit per purchase
 		pricing: []
 	};
 	return Object.assign(defaultTicket, ticket);

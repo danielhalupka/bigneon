@@ -37,19 +37,47 @@ class TicketsCard extends Component {
 		api()
 			.get(`/events/${eventId}/tickets`)
 			.then(response => {
+				console.log(response.data);
 				const { ticket_types } = response.data;
 
 				let tickets = [];
 				ticket_types.forEach(ticket_type => {
-					const { id, name, capacity } = ticket_type;
+					const {
+						id,
+						name,
+						capacity,
+						ticket_pricing,
+						start_date,
+						end_date
+					} = ticket_type;
 
+					let pricing = [];
+					ticket_pricing.forEach(pricePoint => {
+						const { name, price_in_cents } = pricePoint;
+
+						pricing.push({
+							id: pricePoint.id,
+							ticketId: id,
+							name,
+							startDate: null,
+							endDate: null,
+							value: price_in_cents / 100
+						});
+					});
+
+					console.log(pricing);
 					tickets.push(
 						Ticket.Structure({
 							id,
 							name,
 							capacity: capacity ? capacity : 0,
-							startDate: moment(),
-							endDate: this.state.eventDate
+							startDate: start_date
+								? moment(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+								: null,
+							endDate: end_date
+								? moment(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+								: null,
+							pricing
 						})
 					);
 				});
@@ -113,31 +141,68 @@ class TicketsCard extends Component {
 		const { eventId, organizationId, onNext } = this.props;
 
 		//Build an array of promises to execute
-		let promises = [];
+		let ticketTypePromises = [];
 		tickets.forEach(ticket => {
-			const { capacity, name } = ticket;
+			const { id, capacity, name, pricing, startDate, endDate } = ticket;
+			if (id) {
+				//Don't post the same ticket that's already been saved.
+				//TODO use an patch here instead of a post when API endpoint is available
+				console.warn(
+					`Not saving existing ticket type because API isn't available yet: ${name}`
+				);
+				return;
+			}
+
+			let ticket_pricing = [];
+			pricing.forEach(pricePoint => {
+				const { id, name, startDate, endDate, value } = pricePoint;
+
+				ticket_pricing.push({
+					id: id ? id : undefined,
+					name,
+					price_in_cents: Math.round(Number(value) * 100),
+					start_date: moment
+						.utc(startDate)
+						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+					end_date: moment
+						.utc(endDate)
+						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				});
+			});
 
 			//TODO add missing fields when added
 			const ticketDetails = {
 				name,
-				capacity: Number(capacity)
+				capacity: Number(capacity),
+				start_date: moment
+					.utc(startDate)
+					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_date: moment
+					.utc(endDate)
+					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				ticket_pricing
 			};
+
+			console.log("To save: ", ticketDetails);
 
 			const axiosPromise = api().post(
 				`/events/${eventId}/tickets`,
 				ticketDetails
 			);
-			promises.push(axiosPromise);
+			ticketTypePromises.push(axiosPromise);
 		});
 
 		axios
-			.all(promises)
+			.all(ticketTypePromises)
 			.then(results => {
+				console.log("Tickets: ", results);
+				let ticketPricesPromises = [];
 				results.forEach(({ data }) => {
-					console.log("id: ", data);
+					console.log("saved data: ", data);
+					//Now save ticket pricing
+					// /ticket-pricing
 				});
 
-				console.log("Done all");
 				notifications.show({
 					message: "Event tickets updated.",
 					variant: "success"
@@ -169,8 +234,8 @@ class TicketsCard extends Component {
 		let { tickets } = this.state;
 		tickets.push(
 			Ticket.Structure({
-				startDate: moment(),
-				endDate: this.state.eventDate
+				startDate: null,
+				endDate: null
 			})
 		);
 		this.setState({ tickets });
@@ -185,7 +250,9 @@ class TicketsCard extends Component {
 			<Card className={classes.paper}>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
-						<FormSubHeading>Ticketing</FormSubHeading>
+						<FormSubHeading style={{ marginBottom: 40 }}>
+							Ticketing
+						</FormSubHeading>
 
 						{tickets.map((ticket, index) => {
 							//Only add a divider between ticket sections
@@ -220,14 +287,22 @@ class TicketsCard extends Component {
 											// 	delete this.ticketErrors[index];
 											// }
 										}}
-										onDelete={ticket => {
-											let tickets = [...this.state.tickets];
-											tickets.splice(index, 1);
-											this.setState({ tickets }, () => {
-												if (this.state.tickets.length === 0) {
-													this.addTicket();
-												}
-											});
+										onDelete={() => {
+											if (ticket.id) {
+												notifications.show({
+													message:
+														"Can't yet delete a ticket type that's been saved.",
+													variant: "warning"
+												});
+											} else {
+												let tickets = [...this.state.tickets];
+												tickets.splice(index, 1);
+												this.setState({ tickets }, () => {
+													if (this.state.tickets.length === 0) {
+														this.addTicket();
+													}
+												});
+											}
 										}}
 										validateFields={this.validateFields.bind(this)}
 									/>
@@ -236,7 +311,6 @@ class TicketsCard extends Component {
 								</div>
 							);
 						})}
-						{/* {this.renderTickets()} */}
 					</CardContent>
 					<CardActions>
 						<Button
