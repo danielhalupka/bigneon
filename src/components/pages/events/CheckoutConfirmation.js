@@ -93,20 +93,26 @@ class CheckoutConfirmation extends Component {
 	}
 
 	renderTickets() {
-		//const { tickets } = selectedEvent;
-		const tickets = selectedEvent.tickets;
+		const { tickets } = selectedEvent;
 		const { classes } = this.props;
 		const { items } = cart;
 
-		if (!tickets) {
-			return null;
-		}
+		return items.map(
+			({
+				id,
+				item_type,
+				cost,
+				quantity,
+				ticket_type_id,
+				ticket_pricing_id
+			}) => {
+				if (!quantity) {
+					return null;
+				}
 
-		console.log(tickets);
-
-		return items.map(({ id, item_type, cost, quantity, ticket_type_id }) => {
-			if (quantity) {
-				const ticket = tickets.find(t => t.id === ticket_type_id);
+				const ticket = tickets
+					? tickets.find(t => t.id === ticket_type_id)
+					: {};
 				const name = ticket && ticket.name ? ticket.name : "Ticket";
 
 				return (
@@ -124,16 +130,14 @@ class CheckoutConfirmation extends Component {
 						}
 						col3={
 							<Typography variant="body1">
-								{Math.round((cost / 100) * quantity)}
+								$ {Math.round((cost / 100) * quantity)}
 							</Typography>
 						}
 						className={classes.ticketLineEntry}
 					/>
 				);
 			}
-
-			return null;
-		});
+		);
 	}
 
 	renderTotals() {
