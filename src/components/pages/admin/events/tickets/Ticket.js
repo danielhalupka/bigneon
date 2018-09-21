@@ -20,10 +20,9 @@ class Ticket extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: Ticket.Structure(props.data),
-			errors: {}
+			data: Ticket.Structure(props.data)
+			//errors: {}
 		};
-		this.validateFields = this.validateFields.bind(this);
 	}
 
 	setField(key, value) {
@@ -48,48 +47,6 @@ class Ticket extends Component {
 		}
 	}
 
-	validateFields() {
-		const { onError } = this.props;
-		const { data } = this.state;
-
-		const {
-			id,
-			eventId,
-			name,
-			startDate,
-			endDate,
-			capacity,
-			//limit,
-			pricing
-		} = data;
-
-		const errors = {};
-		if (!name) {
-			errors.name = "Missing ticket name";
-		}
-
-		if (!startDate) {
-			errors.startDate = "Specify the ticket start date";
-		}
-
-		if (!endDate) {
-			errors.endDate = "Specify the ticket end date";
-		}
-
-		if (capacity === "" || isNaN(capacity)) {
-			errors.capacity = "Specify a valid capacity";
-		}
-
-		// if (limit !== "" && isNaN(limit)) {
-		// 	errors.limit = "Specify a valid limit per person";
-		// }
-
-		const hasErrors = Object.keys(errors).length > 0;
-		onError(errors);
-		this.setState({ errors });
-		return !hasErrors;
-	}
-
 	addPricing() {
 		let { data } = this.state;
 		let { pricing, startDate, endDate } = data;
@@ -103,11 +60,16 @@ class Ticket extends Component {
 	}
 
 	renderTicketPricing() {
+		const { errors, validateFields } = this.props;
+		const pricingErrors = errors && errors.pricing ? errors.pricing : {};
+
 		let ticketPricings = [];
 		this.state.data.pricing.forEach((pricing, index) => {
 			ticketPricings.push(
 				<Grid item xs={12} key={`ticket_pricing_${index}`}>
 					<TicketPricing
+						validateFields={validateFields}
+						errors={pricingErrors[index]}
 						data={pricing}
 						onChange={ticketPrice => {
 							let pricings = [...this.state.data.pricing];
@@ -135,9 +97,9 @@ class Ticket extends Component {
 	}
 
 	render() {
-		let { onDelete } = this.props;
-		let { data, errors } = this.state;
-		let {
+		const { onDelete, validateFields, errors = {} } = this.props;
+		const { data } = this.state;
+		const {
 			id,
 			eventId,
 			name,
@@ -161,7 +123,7 @@ class Ticket extends Component {
 						onChange={e => {
 							this.setField("name", e.target.value);
 						}}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 					/>
 				</Grid>
 				<Grid item xs={2}>
@@ -175,7 +137,7 @@ class Ticket extends Component {
 						onChange={e => {
 							this.setField("capacity", e.target.value);
 						}}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 					/>
 				</Grid>
 				{/* <Grid item xs={2}>
@@ -189,7 +151,7 @@ class Ticket extends Component {
 						onChange={e => {
 							this.setField("limit", e.target.value);
 						}}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 					/>
 				</Grid> */}
 				{onDelete ? (
@@ -207,7 +169,7 @@ class Ticket extends Component {
 						name="startDate"
 						label="On sale Time"
 						onChange={startDate => this.setField("startDate", startDate)}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 						minDate={false}
 					/>
 				</Grid>
@@ -218,7 +180,7 @@ class Ticket extends Component {
 						name="endDate"
 						label="Off sale Time"
 						onChange={endDate => this.setField("endDate", endDate)}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 						minDate={false}
 					/>
 				</Grid>
@@ -237,8 +199,10 @@ class Ticket extends Component {
 Ticket.propTypes = {
 	data: PropTypes.object,
 	onChange: PropTypes.func,
-	onError: PropTypes.func,
-	onDelete: PropTypes.func
+	//onError: PropTypes.func,
+	onDelete: PropTypes.func,
+	validateFields: PropTypes.func.isRequired,
+	errors: PropTypes.object
 };
 
 Ticket.Structure = (ticket = {}) => {
@@ -250,7 +214,8 @@ Ticket.Structure = (ticket = {}) => {
 		endDate: null,
 		capacity: 0,
 		//limit: 0, //Limit per purchase
-		pricing: []
+		pricing: [],
+		submitAttempted: false
 	};
 	return Object.assign(defaultTicket, ticket);
 };

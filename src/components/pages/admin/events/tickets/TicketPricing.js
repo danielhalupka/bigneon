@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { withStyles, InputAdornment } from "@material-ui/core";
 import PropTypes from "prop-types";
+import { withStyles, InputAdornment } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import InputGroup from "../../../../common/form/InputGroup";
-import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+
+import InputGroup from "../../../../common/form/InputGroup";
+import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 
 const styles = theme => ({});
 
@@ -13,8 +14,7 @@ class TicketPricing extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: TicketPricing.Structure(props.data),
-			errors: {}
+			data: TicketPricing.Structure(props.data)
 		};
 	}
 
@@ -34,12 +34,11 @@ class TicketPricing extends Component {
 		this.props.onChange(data);
 	}
 
-	validateFields() {}
-
 	render() {
-		const { data, errors } = this.state;
+		const { data } = this.state;
 		let { ticketId, name, startDate, endDate, value } = data;
-		const { onDelete } = this.props;
+		const { onDelete, validateFields, errors = {} } = this.props;
+
 		return (
 			<Grid container spacing={8} alignItems={"center"}>
 				<Grid item xs>
@@ -53,7 +52,7 @@ class TicketPricing extends Component {
 						onChange={e => {
 							this.setField("name", e.target.value);
 						}}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 					/>
 				</Grid>
 				<Grid item xs>
@@ -63,7 +62,7 @@ class TicketPricing extends Component {
 						name="startDate"
 						label="On sale Time"
 						onChange={startDate => this.setField("startDate", startDate)}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 						minDate={false}
 					/>
 				</Grid>
@@ -74,7 +73,7 @@ class TicketPricing extends Component {
 						name="endDate"
 						label="Off sale Time"
 						onChange={endDate => this.setField("endDate", endDate)}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 						minDate={false}
 					/>
 				</Grid>
@@ -94,7 +93,7 @@ class TicketPricing extends Component {
 						onChange={e => {
 							this.setField("value", e.target.value);
 						}}
-						onBlur={this.validateFields}
+						onBlur={validateFields}
 					/>
 				</Grid>
 
@@ -124,6 +123,8 @@ TicketPricing.Structure = (pricing = {}) => {
 TicketPricing.propTypes = {
 	data: PropTypes.object,
 	onChange: PropTypes.func,
-	onDelete: PropTypes.func
+	onDelete: PropTypes.func,
+	errors: PropTypes.object,
+	validateFields: PropTypes.func.isRequired
 };
 export default withStyles(styles)(TicketPricing);

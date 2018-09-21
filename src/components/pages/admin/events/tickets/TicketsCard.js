@@ -1,18 +1,22 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
+import axios from "axios";
 import { withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
-import moment from "moment";
-import axios from "axios";
 
 import Button from "../../../../common/Button";
 import api from "../../../../../helpers/api";
+import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
 import Ticket from "./Ticket";
 import FormSubHeading from "../../../../common/FormSubHeading";
 import Divider from "../../../../common/Divider";
+
+//TODO consider a sliding mechanism for choosing pricing periods. Easy to see and no overlaps caused by UI.
+//https://mpowaga.github.io/react-slider/
 
 const styles = theme => ({
 	paper: {
@@ -34,11 +38,11 @@ class TicketsCard extends Component {
 	componentDidMount() {
 		const { eventId } = this.props;
 
-		api()
-			.get(`/events/${eventId}/tickets`)
+		Bigneon()
+			.events.tickets.index({ id: eventId })
 			.then(response => {
-				console.log(response.data);
 				const { ticket_types } = response.data;
+				console.log(ticket_types);
 
 				let tickets = [];
 				ticket_types.forEach(ticket_type => {
@@ -59,12 +63,11 @@ class TicketsCard extends Component {
 							id: pricePoint.id,
 							ticketId: id,
 							name,
-							startDate: null,
-							endDate: null,
+							startDate: null, //TODO get from api when available
+							endDate: null, //TODO get from api when available
 							value: price_in_cents / 100
 						});
 					});
-					console.log(pricing);
 					tickets.push(
 						Ticket.Structure({
 							id,
@@ -76,7 +79,7 @@ class TicketsCard extends Component {
 							endDate: end_date
 								? moment(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 								: null,
-							pricing: ticket_pricing
+							pricing
 						})
 					);
 				});
@@ -113,8 +116,101 @@ class TicketsCard extends Component {
 			return true;
 		}
 
-		const errors = {};
-		//TODO validation
+		let errors = {};
+
+		const { tickets } = this.state;
+		tickets.forEach((ticket, index) => {
+			const {
+				id,
+				eventId,
+				name,
+				startDate,
+				endDate,
+				capacity,
+				//limit,
+				pricing
+			} = ticket;
+
+			const ticketErrors = {};
+			if (!name) {
+				ticketErrors.name = "Missing ticket name.";
+			}
+
+			if (!startDate) {
+				ticketErrors.startDate = "Specify the ticket start time.";
+			}
+
+			if (!endDate) {
+				ticketErrors.endDate = "Specify the ticket end time.";
+			} else if (startDate) {
+				//Start date must be before endDate
+				if (endDate.diff(startDate) < 0) {
+					ticketErrors.endDate = "Off sale time must be after on sale time";
+				}
+			}
+
+			if (!capacity) {
+				ticketErrors.capacity = "Specify a valid capacity.";
+			}
+
+			if (!pricing) {
+				ticketErrors.pricing = "Add pricing for ticket.";
+			} else {
+				let pricingErrors = {};
+
+				pricing.forEach((pricingItem, index) => {
+					const { name, startDate, endDate, value } = pricingItem;
+
+					//Previous pricing dates needed for current row
+					const previousPricing = index > 0 ? pricing[index - 1] : null;
+
+					let pricingError = {};
+
+					if (!name) {
+						pricingError.name = "Missing pricing name.";
+					}
+
+					if (!startDate) {
+						pricingError.startDate = "Specify the pricing start time.";
+					} else if (ticket.startDate) {
+						//On sale date for this pricing can't be sooner than event on sale time
+						if (startDate.diff(ticket.startDate) < 0) {
+							pricingError.startDate =
+								"Time must be after ticket on sale time.";
+						} else if (previousPricing && previousPricing.endDate) {
+							//Check on sale time is after off sale time of previous pricing
+							if (startDate.diff(previousPricing.endDate) < 0) {
+								pricingError.startDate =
+									"Time must be after previous pricing off sale time.";
+							}
+						}
+					}
+
+					if (!endDate) {
+						pricingError.endDate = "Specify the pricing end time.";
+					} else if (startDate) {
+						//Off sale date for this pricing can't be sooner than pricing on sale time
+						if (endDate.diff(startDate) < 0) {
+							pricingError.endDate =
+								"Off sale time must be after pricing on sale time.";
+						}
+					}
+
+					if (Object.keys(pricingError).length > 0) {
+						pricingErrors[index] = pricingError;
+					}
+				});
+
+				if (Object.keys(pricingErrors).length > 0) {
+					ticketErrors.pricing = pricingErrors;
+				}
+			}
+
+			//If we got any errors at all
+			if (Object.keys(ticketErrors).length > 0) {
+				errors[index] = ticketErrors;
+			}
+		});
 
 		this.setState({ errors });
 
@@ -131,6 +227,8 @@ class TicketsCard extends Component {
 		this.submitAttempted = true;
 
 		if (!this.validateFields()) {
+			console.warn("Validation errors: ");
+			console.warn(this.state.errors);
 			return false;
 		}
 
@@ -169,7 +267,6 @@ class TicketsCard extends Component {
 				});
 			});
 
-			//TODO add missing fields when added
 			const ticketDetails = {
 				name,
 				capacity: Number(capacity),
@@ -182,8 +279,7 @@ class TicketsCard extends Component {
 				ticket_pricing
 			};
 
-			console.log("To save: ", ticketDetails);
-
+			//TODO use Bigneon()
 			const axiosPromise = api().post(
 				`/events/${eventId}/tickets`,
 				ticketDetails
@@ -195,11 +291,8 @@ class TicketsCard extends Component {
 			.all(ticketTypePromises)
 			.then(results => {
 				console.log("Tickets: ", results);
-				let ticketPricesPromises = [];
 				results.forEach(({ data }) => {
-					console.log("saved data: ", data);
-					//Now save ticket pricing
-					// /ticket-pricing
+					console.log("Saved ticket: ", data);
 				});
 
 				notifications.show({
@@ -262,6 +355,8 @@ class TicketsCard extends Component {
 							return (
 								<div key={`ticket_${index}`}>
 									<Ticket
+										validateFields={this.validateFields.bind(this)}
+										errors={errors[index]}
 										data={ticket}
 										onChange={ticket => {
 											let tickets = [...this.state.tickets];
@@ -269,22 +364,19 @@ class TicketsCard extends Component {
 											this.setState({ tickets });
 										}}
 										onError={errors => {
-											console.log("Ticket errors");
-											console.log(errors);
-											//TODO place back and test
-											// const hasError =
-											// 	this.ticketErrors && Object.keys(errors).length > 0;
+											const hasErrors = Object.keys(errors).length > 0;
 
-											// if (Object.keys(errors).length>0) {
-											// 	this.setState(({errors}) => {
-											// 		errors[index] = true;
-											// 		return {errors};
-											// 	})
-
-											// 	//this.ticketErrors[index] = true;
-											// } else {
-											// 	delete this.ticketErrors[index];
-											// }
+											if (hasErrors) {
+												this.setState(({ errors }) => {
+													errors[index] = true;
+													return { errors };
+												});
+											} else {
+												this.setState(({ errors }) => {
+													delete errors[index];
+													return { errors };
+												});
+											}
 										}}
 										onDelete={() => {
 											if (ticket.id) {

@@ -187,7 +187,10 @@ class Event extends Component {
 					{steps.map((label, index) => {
 						return (
 							<Step key={label}>
-								<StepButton onClick={() => this.handleStep(index)}>
+								<StepButton
+									disabled={!eventId && index === 2}
+									onClick={() => this.handleStep(index)}
+								>
 									{label}
 								</StepButton>
 							</Step>
