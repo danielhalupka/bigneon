@@ -40,6 +40,7 @@ import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
 
 import user from "../../stores/user";
+import cart from "../../stores/cart";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
@@ -82,6 +83,8 @@ class Routes extends Component {
 		this.interval = setInterval(() => {
 			user.refreshUser();
 		}, 5 * 60 * 1000); //every 5min
+
+		cart.refreshCart();
 	}
 
 	componentWillUnmount() {

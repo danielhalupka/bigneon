@@ -14,6 +14,7 @@ const styles = theme => ({
 
 const TicketSelection = props => {
 	const {
+		available,
 		classes,
 		error,
 		name,
@@ -27,14 +28,14 @@ const TicketSelection = props => {
 		<Grid alignItems="center" className={classes.container} container>
 			<Grid item xs={8} sm={8} md={6} lg={8}>
 				<Typography variant="subheading">{name}</Typography>
-
 				<Typography variant="caption">{description}</Typography>
 			</Grid>
 			<Grid item xs={2} sm={2} md={6} lg={2}>
-				<Typography variant="title">${price}</Typography>
+				<Typography variant="title">{available ? `$${price}` : ""}</Typography>
 			</Grid>
 			<Grid item xs={2} sm={2} md={6} lg={2} style={{ paddingTop: 10 }}>
 				<InputGroup
+					disabled={!available}
 					error={error}
 					value={amount || ""}
 					name="amount"
@@ -50,6 +51,7 @@ const TicketSelection = props => {
 };
 
 TicketSelection.propTypes = {
+	available: PropTypes.bool,
 	onNumberChange: PropTypes.func.isRequired,
 	name: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,

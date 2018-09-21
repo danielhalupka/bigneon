@@ -97,53 +97,56 @@ class CheckoutConfirmation extends Component {
 		const { classes } = this.props;
 		const { items } = cart;
 
-		return items.map(
-			({
+		if (!items) {
+			console.warn("No cart items");
+			return null;
+		}
+
+		return items.map(item => {
+			const {
 				id,
 				item_type,
-				cost,
+				unit_price_in_cents,
 				quantity,
 				ticket_type_id,
 				ticket_pricing_id
-			}) => {
-				if (!quantity) {
-					return null;
-				}
+			} = item;
 
-				const ticket = tickets
-					? tickets.find(t => t.id === ticket_type_id)
-					: {};
-				const name = ticket && ticket.name ? ticket.name : "Ticket";
-
-				return (
-					<TicketLineEntry
-						key={id}
-						col1={
-							<Typography variant="body1">
-								{quantity} x {name}
-							</Typography>
-						}
-						col2={
-							<Typography variant="body1">
-								$ {Math.round(cost / 100)}
-							</Typography>
-						}
-						col3={
-							<Typography variant="body1">
-								$ {Math.round((cost / 100) * quantity)}
-							</Typography>
-						}
-						className={classes.ticketLineEntry}
-					/>
-				);
+			if (!quantity || item_type === "Fees") {
+				return null;
 			}
-		);
+
+			const ticket = tickets ? tickets.find(t => t.id === ticket_type_id) : {};
+			const name = ticket && ticket.name ? ticket.name : "Ticket";
+
+			return (
+				<TicketLineEntry
+					key={id}
+					col1={
+						<Typography variant="body1">
+							{quantity} x {name}
+						</Typography>
+					}
+					col2={
+						<Typography variant="body1">
+							$ {Math.round(unit_price_in_cents / 100)}
+						</Typography>
+					}
+					col3={
+						<Typography variant="body1">
+							$ {Math.round((unit_price_in_cents / 100) * quantity)}
+						</Typography>
+					}
+					className={classes.ticketLineEntry}
+				/>
+			);
+		});
 	}
 
 	renderTotals() {
 		const { classes } = this.props;
 		const { tickets, id } = selectedEvent;
-		const { fees, total } = cart;
+		const { fees, total_in_cents } = cart;
 
 		return (
 			<TicketLineEntry
@@ -166,7 +169,9 @@ class CheckoutConfirmation extends Component {
 				col3={
 					<span>
 						<Typography variant="body1">${fees}</Typography>
-						<Typography variant="body1">${Math.round(total / 100)}</Typography>
+						<Typography variant="body1">
+							${Math.round(total_in_cents / 100)}
+						</Typography>
 					</span>
 				}
 				className={classes.ticketLineEntry}

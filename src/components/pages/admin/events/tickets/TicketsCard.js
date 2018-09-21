@@ -59,12 +59,28 @@ class TicketsCard extends Component {
 					ticket_pricing.forEach(pricePoint => {
 						const { name, price_in_cents } = pricePoint;
 
+						let startDate = null;
+						if (pricePoint.start_date) {
+							startDate = moment(
+								pricePoint.start_date,
+								moment.HTML5_FMT.DATETIME_LOCAL_MS
+							);
+						}
+
+						let endDate = null;
+						if (pricePoint.end_date) {
+							endDate = moment(
+								pricePoint.end_date,
+								moment.HTML5_FMT.DATETIME_LOCAL_MS
+							);
+						}
+
 						pricing.push({
 							id: pricePoint.id,
 							ticketId: id,
 							name,
-							startDate: null, //TODO get from api when available
-							endDate: null, //TODO get from api when available
+							startDate,
+							endDate,
 							value: price_in_cents / 100
 						});
 					});

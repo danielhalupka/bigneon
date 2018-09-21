@@ -11,7 +11,7 @@ class Cart {
 	items = [];
 
 	@observable
-	total = 0;
+	total_in_cents = 0;
 
 	@action
 	refreshCart() {
@@ -19,12 +19,12 @@ class Cart {
 			.cart.index()
 			.then(response => {
 				const { data } = response;
-				const { id, items, total } = data;
+				const { id, items, total_in_cents } = data;
 				console.log(data);
 
 				this.id = id;
 				this.items = items;
-				this.total = total;
+				this.total_in_cents = total_in_cents;
 			})
 			.catch(error => {
 				console.error(error);
@@ -104,9 +104,12 @@ class Cart {
 		}
 
 		let fees = 0;
-		this.items.forEach(({ item_type, cost }) => {
+		this.items.forEach(item => {
+			const { item_type, quantity, unit_price_in_cents } = item;
 			if (item_type === "Fees") {
-				fees = fees + cost;
+				console.log(unit_price_in_cents);
+				console.log(quantity);
+				fees = fees + unit_price_in_cents * quantity;
 			}
 		});
 

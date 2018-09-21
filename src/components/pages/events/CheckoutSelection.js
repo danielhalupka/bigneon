@@ -92,29 +92,42 @@ class CheckoutSelection extends Component {
 	}
 
 	renderTicketPricing() {
-		const { tickets } = selectedEvent;
+		const { ticket_types } = selectedEvent;
 		const { ticketSelection } = this.state;
 
-		if (!tickets) {
+		if (!ticket_types) {
+			//TODO use a loader
 			return null; //Still loading this
 		}
 
-		return tickets.map(({ id, name, price, description }) => (
-			<TicketSelection
-				key={id}
-				name={name}
-				description={description}
-				price={price}
-				error={null}
-				amount={ticketSelection[id]}
-				onNumberChange={amount =>
-					this.setState(({ ticketSelection }) => {
-						ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
-						return { ticketSelection };
-					})
-				}
-			/>
-		));
+		return ticket_types.map(({ id, name, status, ticket_pricing }) => {
+			let description = "";
+			let price = 0;
+			if (ticket_pricing) {
+				price = ticket_pricing.price_in_cents / 100;
+				description = ticket_pricing.name;
+			} else {
+				description = "(Tickets currently unavailable)";
+			}
+
+			return (
+				<TicketSelection
+					key={id}
+					name={name}
+					description={description}
+					available={!!ticket_pricing}
+					price={price}
+					error={null}
+					amount={ticketSelection[id]}
+					onNumberChange={amount =>
+						this.setState(({ ticketSelection }) => {
+							ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
+							return { ticketSelection };
+						})
+					}
+				/>
+			);
+		});
 	}
 
 	render() {

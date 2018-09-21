@@ -20,7 +20,7 @@ class SelectedEvent {
 	organization = null;
 
 	@observable
-	tickets = null;
+	ticket_types = null;
 
 	@action
 	refreshResult(id, onError = () => {}) {
@@ -48,12 +48,11 @@ class SelectedEvent {
 					venue_id,
 					door_time,
 					promo_image_url,
-					age_limit
+					age_limit,
+					ticket_types
 				} = event;
 
-				//TODO soon this will be added to the above response and not needed in a separate call
-				this.loadTickets(id);
-
+				this.ticket_types = ticket_types;
 				this.organization = organization;
 
 				//TODO maybe this data gets added to the first api call to make it a little smoother
@@ -136,41 +135,6 @@ class SelectedEvent {
 				console.error(error);
 
 				let message = "Loading artist details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
-	}
-
-	@action
-	loadTickets(id) {
-		Bigneon()
-			.events.tickets.index({ id })
-			.then(response => {
-				const { ticket_types } = response.data;
-
-				let tickets = [];
-				//TODO wait for more fields
-				ticket_types.forEach((ticket, index) => {
-					const { id, name } = ticket;
-					tickets.push({ id, name, price: 10 + index, description: "" });
-				});
-
-				this.tickets = tickets;
-			})
-			.catch(error => {
-				console.error(error);
-
-				let message = "Loading event tickets failed.";
 				if (
 					error.response &&
 					error.response.data &&

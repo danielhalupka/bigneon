@@ -55,9 +55,15 @@ class FeeScheduleCard extends Component {
 			.organizations.feeSchedule.index({ id: organizationId })
 			.then(response => {
 				const { id, name, ranges, message } = response.data;
+				console.log(ranges);
+
+				let formattedRanges = [];
+				ranges.forEach(range => {
+					formattedRanges.push({ ...range, fee: range.fee / 100 }); //TODO rename range.fee to range.fee_in_cents when it's there
+				});
 
 				if (id) {
-					this.setState({ id, name, ranges });
+					this.setState({ id, name, ranges: formattedRanges });
 				} else {
 					this.addNewRange();
 				}
@@ -173,7 +179,7 @@ class FeeScheduleCard extends Component {
 		this.setState({ isSubmitting: true });
 		const formattedRanges = ranges.map(({ min_price, fee }) => ({
 			min_price: Number(min_price),
-			fee: Number(fee)
+			fee: Number(fee) * 100 //TODO Rename `fee` at the start of this line to fee_in_cents when ready
 		}));
 
 		Bigneon()
