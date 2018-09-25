@@ -2,6 +2,7 @@ import { observable, computed, action } from "mobx";
 import decodeJWT from "../helpers/decodeJWT";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
+import cart from "./cart";
 
 class User {
 	@observable
@@ -94,6 +95,8 @@ class User {
 								profilePicUrl: profile_pic_url
 							});
 						}
+
+						cart.refreshCart();
 					})
 					.catch(error => {
 						console.error(error);

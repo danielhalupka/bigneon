@@ -6,6 +6,9 @@ import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import EditIcon from "@material-ui/icons/Edit";
+import IconButton from "@material-ui/core/IconButton";
+
 import Button from "../../common/Button";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
@@ -15,6 +18,7 @@ import CreditCardForm from "../../common/CreditCardForm";
 import { primaryHex } from "../../styles/theme";
 import Divider from "../../common/Divider";
 import cart from "../../../stores/cart";
+import EditCartItemDialog from "./EditCartItemDialog";
 
 const styles = theme => ({
 	card: {
@@ -51,16 +55,19 @@ const styles = theme => ({
 	}
 });
 
-const TicketLineEntry = ({ col1, col2, col3, className }) => (
+const TicketLineEntry = ({ col1, col2, col3, col4, className }) => (
 	<Grid alignItems="center" container className={className}>
-		<Grid item xs={8} sm={8} md={6} lg={8}>
+		<Grid item xs={1} sm={1} md={1} lg={1}>
 			{col1}
 		</Grid>
-		<Grid item xs={2} sm={2} md={6} lg={2}>
+		<Grid item xs={7} sm={7} md={6} lg={7}>
 			{col2}
 		</Grid>
-		<Grid item xs={2} sm={2} md={6} lg={2}>
+		<Grid item xs={2} sm={2} md={5} lg={2}>
 			{col3}
+		</Grid>
+		<Grid item xs={2} sm={2} md={6} lg={2}>
+			{col4}
 		</Grid>
 	</Grid>
 );
@@ -69,6 +76,10 @@ const TicketLineEntry = ({ col1, col2, col3, className }) => (
 class CheckoutConfirmation extends Component {
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			editingItemId: null
+		};
 	}
 
 	componentDidMount() {
@@ -117,22 +128,40 @@ class CheckoutConfirmation extends Component {
 			}
 
 			const ticket = tickets ? tickets.find(t => t.id === ticket_type_id) : {};
-			const name = ticket && ticket.name ? ticket.name : "Ticket";
+
+			//TODO name might come in item list later
+			const name = ticket && ticket.name ? ticket.name : "Ticket name (TODO)";
 
 			return (
 				<TicketLineEntry
 					key={id}
 					col1={
+						<IconButton
+							onClick={() =>
+								this.setState({
+									editingItemId: id,
+									editingTicketTypeId: ticket_type_id,
+									editingItemName: name,
+									editingItemQuantity: quantity,
+									editingItemPriceInCents: unit_price_in_cents
+								})
+							}
+							aria-label="Edit"
+						>
+							<EditIcon />
+						</IconButton>
+					}
+					col2={
 						<Typography variant="body1">
 							{quantity} x {name}
 						</Typography>
 					}
-					col2={
+					col3={
 						<Typography variant="body1">
 							$ {Math.round(unit_price_in_cents / 100)}
 						</Typography>
 					}
-					col3={
+					col4={
 						<Typography variant="body1">
 							$ {Math.round((unit_price_in_cents / 100) * quantity)}
 						</Typography>
@@ -150,7 +179,8 @@ class CheckoutConfirmation extends Component {
 
 		return (
 			<TicketLineEntry
-				col1={
+				col1={null}
+				col2={
 					id ? (
 						<Link
 							to={`/events/${id}/tickets`}
@@ -160,13 +190,13 @@ class CheckoutConfirmation extends Component {
 						</Link>
 					) : null
 				}
-				col2={
+				col3={
 					<span>
 						<Typography variant="body1">Service fees:</Typography>
 						<Typography variant="body1">Order total:</Typography>
 					</span>
 				}
-				col3={
+				col4={
 					<span>
 						<Typography variant="body1">${fees}</Typography>
 						<Typography variant="body1">
@@ -181,6 +211,13 @@ class CheckoutConfirmation extends Component {
 
 	render() {
 		const { classes } = this.props;
+		const {
+			editingItemId,
+			editingTicketTypeId,
+			editingItemName,
+			editingItemQuantity,
+			editingItemPriceInCents
+		} = this.state;
 
 		//If the user has previously selected an event, it'll still be here
 		//If they haven't selected an event but we have tickets in their cart from previously then display a generic checkout page
@@ -188,6 +225,14 @@ class CheckoutConfirmation extends Component {
 
 		return (
 			<Paper className={classes.card}>
+				<EditCartItemDialog
+					id={editingItemId}
+					ticketTypeId={editingTicketTypeId}
+					name={editingItemName}
+					quantity={editingItemQuantity}
+					priceInCents={editingItemPriceInCents}
+					onClose={() => this.setState({ editingItemId: null })}
+				/>
 				{event ? (
 					<EventSummaryGrid
 						event={event}
@@ -208,9 +253,10 @@ class CheckoutConfirmation extends Component {
 						className={classes.ticketsContainer}
 					>
 						<TicketLineEntry
-							col1={<Typography variant="subheading">Ticket</Typography>}
-							col2={<Typography variant="subheading">Price</Typography>}
-							col3={<Typography variant="subheading">Subtotal</Typography>}
+							col1={null}
+							col2={<Typography variant="subheading">Ticket</Typography>}
+							col3={<Typography variant="subheading">Price</Typography>}
+							col4={<Typography variant="subheading">Subtotal</Typography>}
 							className={classes.ticketLineEntry}
 						/>
 

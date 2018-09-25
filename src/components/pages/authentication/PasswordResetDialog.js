@@ -14,6 +14,7 @@ import { validEmail } from "../../../validators";
 import notifications from "../../../stores/notifications";
 import Button from "../../common/Button";
 import api from "../../../helpers/api";
+import DialogTransition from "../../common/DialogTransition";
 
 const styles = {};
 
@@ -112,6 +113,7 @@ class PasswordResetDialog extends React.Component {
 
 		return (
 			<Dialog
+				TransitionComponent={DialogTransition}
 				open={open}
 				onClose={onClose}
 				aria-labelledby="simple-dialog-title"

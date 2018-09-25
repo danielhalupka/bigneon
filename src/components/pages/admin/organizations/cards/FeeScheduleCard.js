@@ -23,6 +23,7 @@ import MoneyIcon from "@material-ui/icons/MonetizationOn";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../common/Button";
+import DialogTransition from "../../../../common/DialogTransition";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 import user from "../../../../../stores/user";
@@ -59,7 +60,7 @@ class FeeScheduleCard extends Component {
 
 				let formattedRanges = [];
 				ranges.forEach(range => {
-					formattedRanges.push({ ...range, fee: range.fee / 100 }); //TODO rename range.fee to range.fee_in_cents when it's there
+					formattedRanges.push({ ...range, fee: range.fee_in_cents / 100 });
 				});
 
 				if (id) {
@@ -179,7 +180,7 @@ class FeeScheduleCard extends Component {
 		this.setState({ isSubmitting: true });
 		const formattedRanges = ranges.map(({ min_price, fee }) => ({
 			min_price: Number(min_price),
-			fee: Number(fee) * 100 //TODO Rename `fee` at the start of this line to fee_in_cents when ready
+			fee_in_cents: Number(fee) * 100
 		}));
 
 		Bigneon()
@@ -250,6 +251,7 @@ class FeeScheduleCard extends Component {
 
 		return (
 			<Dialog
+				TransitionComponent={DialogTransition}
 				open={areYouSureDialogOpen}
 				onClose={onClose}
 				aria-labelledby="alert-dialog-title"

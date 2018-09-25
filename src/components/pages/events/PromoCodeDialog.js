@@ -7,6 +7,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "../../common/Button";
 import Slide from "@material-ui/core/Slide";
+
+import DialogTransition from "../../common/DialogTransition";
 import InputGroup from "../../common/form/InputGroup";
 import api from "../../../helpers/api";
 
@@ -76,6 +78,7 @@ class PromoCodeDialog extends React.Component {
 
 		return (
 			<Dialog
+				TransitionComponent={DialogTransition}
 				open={open}
 				onClose={onCancel}
 				aria-labelledby="form-dialog-title"

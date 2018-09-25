@@ -83,8 +83,6 @@ class Routes extends Component {
 		this.interval = setInterval(() => {
 			user.refreshUser();
 		}, 5 * 60 * 1000); //every 5min
-
-		cart.refreshCart();
 	}
 
 	componentWillUnmount() {

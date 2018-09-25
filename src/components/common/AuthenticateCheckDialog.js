@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-
 import { withStyles } from "@material-ui/core/styles";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
+
+import DialogTransition from "./DialogTransition";
 
 const styles = theme => {
 	return {
@@ -17,6 +18,7 @@ class AuthenticateCheckDialog extends React.Component {
 
 		return (
 			<Dialog
+				TransitionComponent={DialogTransition}
 				aria-labelledby="please-authenticate"
 				open={true}
 				className={classes.root}

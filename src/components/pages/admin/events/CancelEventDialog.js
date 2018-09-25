@@ -13,6 +13,7 @@ import {
 import notifications from "../../../../stores/notifications";
 import Button from "../../../common/Button";
 import Bigneon from "../../../../helpers/bigneon";
+import DialogTransition from "../../../common/DialogTransition";
 
 const styles = {};
 
@@ -97,6 +98,7 @@ class CancelEventDialog extends React.Component {
 
 		return (
 			<Dialog
+				TransitionComponent={DialogTransition}
 				open={!!id}
 				onClose={onClose}
 				aria-labelledby="simple-dialog-title"

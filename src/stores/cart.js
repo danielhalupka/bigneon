@@ -2,6 +2,8 @@ import { observable, computed, action } from "mobx";
 import axios from "axios";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
+import user from "./user";
+import api from "../helpers/api";
 
 class Cart {
 	@observable
@@ -15,12 +17,16 @@ class Cart {
 
 	@action
 	refreshCart() {
+		//Right now carts only work for authed users
+		if (!user.isAuthenticated) {
+			return;
+		}
+
 		Bigneon()
 			.cart.index()
 			.then(response => {
 				const { data } = response;
 				const { id, items, total_in_cents } = data;
-				console.log(data);
 
 				this.id = id;
 				this.items = items;
@@ -47,6 +53,7 @@ class Cart {
 
 	@action
 	addToCart(selectedTickets, onSuccess, onError) {
+		console.log(selectedTickets);
 		const ticketIds = Object.keys(selectedTickets);
 
 		//Promises array of posts to the add cart function and iterate through them
@@ -76,9 +83,37 @@ class Cart {
 	}
 
 	@action
-	emptyCart(selectedTickets) {
+	removeFromCart(cart_item_id, quantity, onSuccess, onError) {
+		console.log("cart_item_id:  ", cart_item_id);
+		// api()
+		// 	.delete("/cart", {
+		// 		params: cart_item_id,
+		// 		quantity,
+		// 		headers: {
+		// 			"Content-Type": "application/json"
+		// 		}
+		// 	})
+		// 	.then(() => {
+		// 		//TODO maybe update the store variable quickly, then refresh from cart for that zippy feeling
+		// 		this.refreshCart();
+		// 		onSuccess();
+		// 	})
+		// 	.catch(error => onError(error));
+
+		Bigneon()
+			.cart.delete({ cart_item_id, quantity })
+			.then(() => {
+				//TODO maybe update the store variable quickly, then refresh from cart for that zippy feeling
+				this.refreshCart();
+				onSuccess();
+			})
+			.catch(error => onError(error));
+	}
+
+	@action
+	emptyCart() {
 		//TODO delete from cart using API first
-		this.selectedTickets = {};
+		this.items = [];
 	}
 
 	@computed
@@ -107,13 +142,11 @@ class Cart {
 		this.items.forEach(item => {
 			const { item_type, quantity, unit_price_in_cents } = item;
 			if (item_type === "Fees") {
-				console.log(unit_price_in_cents);
-				console.log(quantity);
 				fees = fees + unit_price_in_cents * quantity;
 			}
 		});
 
-		return fees;
+		return fees / 100;
 	}
 }
 
