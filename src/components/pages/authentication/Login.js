@@ -90,7 +90,7 @@ class Login extends Component {
 
 					//Pull user data with our new token
 					user.refreshUser(() => {
-						this.props.history.push("/dashboard");
+						this.props.history.push("/");
 					});
 				} else {
 					this.setState({ isSubmitting: false });
@@ -139,9 +139,7 @@ class Login extends Component {
 							{/* <Typography gutterBottom variant="headline" component="h2">
 							Login
 						</Typography> */}
-							<FacebookButton
-								onSuccess={() => this.props.history.push("/dashboard")}
-							>
+							<FacebookButton onSuccess={() => this.props.history.push("/")}>
 								Login with Facebook
 							</FacebookButton>
 

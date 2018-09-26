@@ -37,7 +37,10 @@ const SocialButton = props => {
 			src = "/images/social/instagram-icon-gray.svg";
 			break;
 		case "soundcloud":
-			src = "/images/social/facebook-icon-gray.svg";
+			src = "/images/social/soundcloud-icon-gray.svg";
+			break;
+		case "snapchat":
+			src = "/images/social/snapchat-icon-gray.svg";
 			break;
 		default:
 			break;
@@ -69,8 +72,13 @@ SocialButton.propTypes = {
 	classes: PropTypes.object.isRequired,
 	onClick: PropTypes.func,
 	href: PropTypes.string,
-	icon: PropTypes.oneOf(["facebook", "twitter", "instagram", "soundcloud"])
-		.isRequired,
+	icon: PropTypes.oneOf([
+		"facebook",
+		"twitter",
+		"instagram",
+		"soundcloud",
+		"snapchat"
+	]).isRequired,
 	style: PropTypes.object,
 	size: PropTypes.number
 };

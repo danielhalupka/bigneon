@@ -76,7 +76,7 @@ const ArtistDescription = props => {
 				<SocialButton
 					style={{ marginRight: 10 }}
 					icon="snapchat"
-					href={`https://snapchat.com/${snapchat_username}`}
+					href={`https://www.snapchat.com/add/${snapchat_username}`}
 					size={35}
 				/>
 			) : null}

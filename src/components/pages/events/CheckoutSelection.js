@@ -12,6 +12,7 @@ import PromoCodeDialog from "./PromoCodeDialog";
 import selectedEvent from "../../../stores/selectedEvent";
 import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
+import user from "../../../stores/user";
 
 const styles = theme => ({
 	card: {
@@ -59,6 +60,27 @@ class CheckoutSelection extends Component {
 	onSubmit() {
 		const { id } = selectedEvent;
 		const { ticketSelection } = this.state;
+
+		if (!user.isAuthenticated) {
+			notifications.show({
+				message: "Please login or signup to purchase tickets."
+			});
+			return;
+		}
+
+		let emptyCart = true;
+		Object.keys(ticketSelection).forEach(ticketTypeId => {
+			if (ticketSelection[ticketTypeId] && ticketSelection[ticketTypeId] > 0) {
+				emptyCart = false;
+			}
+		});
+
+		if (emptyCart) {
+			notifications.show({
+				message: "Select tickets first."
+			});
+			return;
+		}
 
 		this.setState({ isSubmitting: true });
 

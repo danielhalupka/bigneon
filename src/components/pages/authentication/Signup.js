@@ -112,7 +112,7 @@ class Signup extends Component {
 								`/invites/accept?token=${security_token}`
 							);
 						} else {
-							this.props.history.push("/dashboard");
+							this.props.history.push("/");
 						}
 					});
 				} else {
@@ -200,9 +200,7 @@ class Signup extends Component {
 							Sign up
 						</Typography> */}
 
-						<FacebookButton
-							onSuccess={() => this.props.history.push("/dashboard")}
-						/>
+						<FacebookButton onSuccess={() => this.props.history.push("/")} />
 
 						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, InputAdornment } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -265,12 +265,10 @@ class Artist extends Component {
 		} = this.state;
 
 		//If some fields are not set, don't send through empty strings as they'll fail validation
-		const cleanParam = (value) => {
-			return value === "" ? undefined : value
+		const cleanParam = value => {
+			return value === "" ? undefined : value;
 		};
 
-		
-		
 		const artistDetails = {
 			image_url: cleanParam(imageUrl),
 			thumb_image_url: cleanParam(imageUrl),
@@ -402,6 +400,11 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">@</InputAdornment>
+											)
+										}}
 										error={errors.facebook_username}
 										value={facebook_username}
 										name="facebook_username"
@@ -411,12 +414,17 @@ class Artist extends Component {
 											this.setState({ facebook_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
-										placeholder="@Facebook"
+										placeholder="username"
 									/>
 								</Grid>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">@</InputAdornment>
+											)
+										}}
 										error={errors.instagram_username}
 										value={instagram_username}
 										name="instagram_username"
@@ -426,12 +434,17 @@ class Artist extends Component {
 											this.setState({ instagram_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
-										placeholder="@Instagram"
+										placeholder="username"
 									/>
 								</Grid>
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">@</InputAdornment>
+											)
+										}}
 										error={errors.snapchat_username}
 										value={snapchat_username}
 										name="snapchat_username"
@@ -441,7 +454,7 @@ class Artist extends Component {
 											this.setState({ snapchat_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
-										placeholder="@Snapchat"
+										placeholder="username"
 									/>
 								</Grid>
 
@@ -449,6 +462,11 @@ class Artist extends Component {
 
 								<Grid item xs={12} sm={6} lg={6}>
 									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">@</InputAdornment>
+											)
+										}}
 										error={errors.soundcloud_username}
 										value={soundcloud_username}
 										name="soundcloud"
@@ -458,7 +476,7 @@ class Artist extends Component {
 											this.setState({ soundcloud_username: e.target.value })
 										}
 										onBlur={this.validateFields.bind(this)}
-										placeholder="ArtistUsername"
+										placeholder="username"
 									/>
 								</Grid>
 

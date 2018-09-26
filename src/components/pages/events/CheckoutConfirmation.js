@@ -104,7 +104,7 @@ class CheckoutConfirmation extends Component {
 	}
 
 	renderTickets() {
-		const { tickets } = selectedEvent;
+		const { ticket_types } = selectedEvent;
 		const { classes } = this.props;
 		const { items } = cart;
 
@@ -120,17 +120,13 @@ class CheckoutConfirmation extends Component {
 				unit_price_in_cents,
 				quantity,
 				ticket_type_id,
-				ticket_pricing_id
+				ticket_pricing_id,
+				description
 			} = item;
 
 			if (!quantity || item_type === "Fees") {
 				return null;
 			}
-
-			const ticket = tickets ? tickets.find(t => t.id === ticket_type_id) : {};
-
-			//TODO name might come in item list later
-			const name = ticket && ticket.name ? ticket.name : "Ticket name (TODO)";
 
 			return (
 				<TicketLineEntry
@@ -141,7 +137,7 @@ class CheckoutConfirmation extends Component {
 								this.setState({
 									editingItemId: id,
 									editingTicketTypeId: ticket_type_id,
-									editingItemName: name,
+									editingItemName: description,
 									editingItemQuantity: quantity,
 									editingItemPriceInCents: unit_price_in_cents
 								})
@@ -153,7 +149,7 @@ class CheckoutConfirmation extends Component {
 					}
 					col2={
 						<Typography variant="body1">
-							{quantity} x {name}
+							{quantity} x {description}
 						</Typography>
 					}
 					col3={
