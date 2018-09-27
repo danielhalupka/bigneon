@@ -9,8 +9,6 @@ import notifications from "../../../../stores/notifications";
 import eventResults from "../../../../stores/eventResults";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 
-
-
 const styles = theme => ({
 	card: {
 		paddingLeft: theme.spacing.unit * 5,
@@ -41,10 +39,8 @@ class SearchCard extends Component {
 
 		this.setState({ query });
 
-
-
 		eventResults.refreshResults(
-			{ query },
+			{ query, status: "Published" },
 			() => {},
 			message => {
 				notifications.show({
