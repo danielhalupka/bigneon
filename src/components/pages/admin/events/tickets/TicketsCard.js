@@ -8,7 +8,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 import Button from "../../../../common/Button";
-import api from "../../../../../helpers/api";
 import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
 import Ticket from "./Ticket";
@@ -257,14 +256,6 @@ class TicketsCard extends Component {
 		let ticketTypePromises = [];
 		tickets.forEach(ticket => {
 			const { id, capacity, name, pricing, startDate, endDate } = ticket;
-			if (id) {
-				//Don't post the same ticket that's already been saved.
-				//TODO use an patch here instead of a post when API endpoint is available
-				console.warn(
-					`Not saving existing ticket type because API isn't available yet: ${name}`
-				);
-				return;
-			}
 
 			let ticket_pricing = [];
 			pricing.forEach(pricePoint => {
@@ -295,11 +286,21 @@ class TicketsCard extends Component {
 				ticket_pricing
 			};
 
-			//TODO use Bigneon()
-			const axiosPromise = api().post(
-				`/events/${eventId}/tickets`,
-				ticketDetails
-			);
+			let axiosPromise;
+
+			if (id) {
+				axiosPromise = Bigneon().events.tickets.update({
+					event_id: eventId,
+					id,
+					...ticketDetails
+				});
+			} else {
+				axiosPromise = Bigneon().events.tickets.create({
+					event_id: eventId,
+					...ticketDetails
+				});
+			}
+
 			ticketTypePromises.push(axiosPromise);
 		});
 

@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
-
-import InputGroup from "../../../../common/form/InputGroup";
-import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
+import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
+
+import InputGroup from "../../../../common/form/InputGroup";
+import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import TicketPricing from "./TicketPricing";
 
 const styles = theme => ({
@@ -127,18 +128,29 @@ class Ticket extends Component {
 					/>
 				</Grid>
 				<Grid item xs={2}>
-					<InputGroup
-						error={errors.capacity}
-						value={capacity}
-						name="capacity"
-						label="Capacity"
-						placeholder="500"
-						type="number"
-						onChange={e => {
-							this.setField("capacity", e.target.value);
-						}}
-						onBlur={validateFields}
-					/>
+					<Tooltip
+						title={
+							id
+								? "You can't adjust capacity once ticket has been created."
+								: ""
+						}
+					>
+						<span>
+							<InputGroup
+								disabled={!!id}
+								error={errors.capacity}
+								value={capacity}
+								name="capacity"
+								label="Capacity"
+								placeholder="500"
+								type="number"
+								onChange={e => {
+									this.setField("capacity", e.target.value);
+								}}
+								onBlur={validateFields}
+							/>
+						</span>
+					</Tooltip>
 				</Grid>
 				{/* <Grid item xs={2}>
 					<InputGroup
