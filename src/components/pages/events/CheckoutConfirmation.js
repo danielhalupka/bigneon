@@ -14,19 +14,16 @@ import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import user from "../../../stores/user";
 import EventSummaryGrid from "./EventSummaryGrid";
-import CreditCardForm from "../../common/CreditCardForm";
 import { primaryHex } from "../../styles/theme";
 import Divider from "../../common/Divider";
 import cart from "../../../stores/cart";
 import EditCartItemDialog from "./EditCartItemDialog";
+import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
+import api from "../../../helpers/api";
 
 const styles = theme => ({
 	card: {
 		padding: theme.spacing.unit * 4
-	},
-	buttonsContainer: {
-		justifyContent: "flex-end",
-		display: "flex"
 	},
 	ticketsContainer: {
 		marginTop: theme.spacing.unit * 6,
@@ -101,6 +98,50 @@ class CheckoutConfirmation extends Component {
 		} else {
 			//Don't show any event specific details
 		}
+	}
+
+	onCheckout(stripeToken, onError) {
+		//TODO Remove the id when the route changes to not include the ID
+		api()
+			.post(`/carts/${cart.id}/checkout`, {
+				amount: cart.total_in_cents, //TODO remove this amount, we shouldn't be specifying it on the frontend
+				method: {
+					type: "Stripe",
+					token: stripeToken.id
+				}
+			})
+			.then(() => {
+				cart.refreshCart();
+				notifications.show({
+					message: "Payment successful",
+					variant: "success"
+				});
+
+				const { history } = this.props;
+				const { id } = selectedEvent;
+				if (id) {
+					//If they're checking out for a specific event then we have a custom success page for them
+					history.push(`/events/${id}/tickets/success`);
+				} else {
+					history.push(`/`); //TODO go straight to tickets when route is available
+				}
+			})
+			.catch(error => {
+				let message = "Checkout failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+				onError();
+			});
 	}
 
 	renderTickets() {
@@ -277,24 +318,7 @@ class CheckoutConfirmation extends Component {
 
 					{user.isAuthenticated ? (
 						<Grid item xs={12} sm={12} lg={12}>
-							<CreditCardForm />
-						</Grid>
-					) : null}
-
-					{user.isAuthenticated ? (
-						<Grid item xs={12} sm={12} lg={12}>
-							<div className={classes.buttonsContainer}>
-								<Button
-									onClick={() => {
-										//TODO go to submit()
-										this.props.history.push(`/events/${id}/tickets/success`);
-									}}
-									size="large"
-									customClassName="primary"
-								>
-									Purchase tickets
-								</Button>
-							</div>
+							<CheckoutForm onToken={this.onCheckout.bind(this)} />
 						</Grid>
 					) : null}
 				</Grid>
