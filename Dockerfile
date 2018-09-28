@@ -5,5 +5,5 @@ WORKDIR /app
 ADD . /app/
 RUN npm install
 
-CMD ["npm","run", "start"]
+CMD ["./scripts/start_env.sh"]
 USER node
