@@ -40,6 +40,7 @@
   },
   "globals": {
     "__DEV__": true,
+    "REACT_APP_VERSION": true,
     "console": false,
     "process": false,
     "document": false,
