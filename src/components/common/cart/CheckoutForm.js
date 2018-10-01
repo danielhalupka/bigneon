@@ -49,8 +49,6 @@ class CheckoutForm extends Component {
 			base: theme.overrides.MuiInput.root
 		};
 
-		console.log(stripeStyle);
-
 		return (
 			<div className="checkout">
 				<Grid item xs={12} sm={12} lg={6}>

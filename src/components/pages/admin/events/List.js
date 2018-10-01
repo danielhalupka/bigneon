@@ -6,9 +6,9 @@ import CardContent from "@material-ui/core/CardContent";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
 import CancelEventDialog from "./CancelEventDialog";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -47,16 +47,48 @@ class EventsList extends Component {
 
 	updateEvents() {
 		this.setState({ events: null }, () => {
-			api()
-				.get("/events")
-				.then(response => {
-					const { data } = response;
-					this.setState({ events: data });
+			//TODO remove this temp fix of iterating through orgs this user belongs to.
+			//When a user can choose which org they're dealing with currently
+			//https://github.com/big-neon/bn-web/issues/237
+			Bigneon()
+				.organizations.index()
+				.then(orgResponse => {
+					orgResponse.data.forEach(({ id }) => {
+						console.log(id);
+						Bigneon()
+							.organizations.events.index({ id })
+							.then(eventResponse => {
+								//Append all events together
+								this.setState(({ events }) => {
+									const previousEvents = events ? events : [];
+									return {
+										events: [...previousEvents, ...eventResponse.data]
+									};
+								});
+							})
+							.catch(error => {
+								console.error(error);
+
+								let message = "Loading events failed.";
+								if (
+									error.response &&
+									error.response.data &&
+									error.response.data.error
+								) {
+									message = error.response.data.error;
+								}
+
+								notifications.show({
+									message,
+									variant: "error"
+								});
+							});
+					});
 				})
 				.catch(error => {
 					console.error(error);
 
-					let message = "Loading events failed.";
+					let message = "Loading organizations failed.";
 					if (
 						error.response &&
 						error.response.data &&
@@ -104,7 +136,7 @@ class EventsList extends Component {
 									{name} {cancelled_at ? "(Cancelled)" : ""}
 								</Typography>
 								<Typography variant="body1">
-									{venue.address || "*Missing address"}
+									{venue && venue.address ? venue.address : "*Missing address"}
 								</Typography>
 							</CardContent>
 

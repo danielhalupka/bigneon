@@ -101,9 +101,8 @@ class CheckoutConfirmation extends Component {
 	}
 
 	onCheckout(stripeToken, onError) {
-		//TODO Remove the id when the route changes to not include the ID
 		api()
-			.post(`/carts/${cart.id}/checkout`, {
+			.post(`/carts/checkout`, {
 				amount: cart.total_in_cents, //TODO remove this amount, we shouldn't be specifying it on the frontend
 				method: {
 					type: "Stripe",
@@ -112,6 +111,7 @@ class CheckoutConfirmation extends Component {
 			})
 			.then(() => {
 				cart.refreshCart();
+
 				notifications.show({
 					message: "Payment successful",
 					variant: "success"
@@ -140,6 +140,7 @@ class CheckoutConfirmation extends Component {
 					message,
 					variant: "error"
 				});
+				console.error(error.response);
 				onError();
 			});
 	}

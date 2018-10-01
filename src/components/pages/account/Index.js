@@ -27,7 +27,7 @@ const styles = theme => ({
 });
 
 @observer
-class Profile extends Component {
+class Account extends Component {
 	constructor(props) {
 		super(props);
 
@@ -126,7 +126,7 @@ class Profile extends Component {
 				thumb_profile_pic_url: profilePicUrl
 			})
 			.then(response => {
-				notifications.show({ message: "Profile updated.", variant: "success" });
+				notifications.show({ message: "Account updated.", variant: "success" });
 				this.setState({ isSubmitting: false });
 
 				//Then load from API for the freshest data
@@ -187,7 +187,7 @@ class Profile extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">Profile</Typography>
+				<Typography variant="display3">Account</Typography>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={10}>
@@ -279,4 +279,4 @@ class Profile extends Component {
 	}
 }
 
-export default withStyles(styles)(Profile);
+export default withStyles(styles)(Account);

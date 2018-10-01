@@ -11,7 +11,9 @@ import withRoot from "./withRoot";
 import Container from "../common/Container";
 import NotFound from "../common/NotFound";
 import Dashboard from "../pages/dashboard/Index";
-import Profile from "../pages/profile/Index";
+import Account from "../pages/account/Index";
+import Orders from "../pages/orders/List";
+import Order from "../pages/orders/Order";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 import PasswordReset from "../pages/authentication/PasswordReset";
@@ -115,10 +117,25 @@ class Routes extends Component {
 						/>
 						<PrivateRoute
 							exact
-							path="/profile"
-							component={Profile}
+							path="/account"
+							component={Account}
 							isAuthenticated={isAuthenticated}
 						/>
+
+						<PrivateRoute
+							exact
+							path="/orders"
+							component={Orders}
+							isAuthenticated={isAuthenticated}
+						/>
+
+						<PrivateRoute
+							exact
+							path="/orders/:id"
+							component={Order}
+							isAuthenticated={isAuthenticated}
+						/>
+
 						<Route exact path="/events/:id" component={ViewEvent} />
 
 						<Route

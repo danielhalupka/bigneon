@@ -148,10 +148,10 @@ class RightHeaderMenu extends React.Component {
 				>
 					{isAuthenticated ? (
 						<Link
-							to="/profile"
+							to="/account"
 							style={{ textDecoration: "none", outline: "none" }}
 						>
-							<MenuItem onClick={this.handleClose.bind(this)}>Profile</MenuItem>
+							<MenuItem onClick={this.handleClose.bind(this)}>Account</MenuItem>
 						</Link>
 					) : null}
 

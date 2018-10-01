@@ -9,6 +9,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 //Icons
 import ExpandLess from "@material-ui/icons/ExpandLess";
@@ -24,8 +25,8 @@ import OrganizationIcon from "@material-ui/icons/GroupWork";
 import HomeIcon from "@material-ui/icons/Home";
 import VenueIcon from "@material-ui/icons/Room";
 import TicketsIcon from "@material-ui/icons/Receipt";
-
-import ListSubheader from "@material-ui/core/ListSubheader";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import OrdersIcon from "@material-ui/icons/List";
 
 import user from "../../stores/user";
 import Button from "./Button";
@@ -397,6 +398,18 @@ class MenuContent extends Component {
 				</div>
 				<Divider />
 
+				<MenuItem to="/hub" icon={<HomeIcon />} toggleDrawer={toggleDrawer}>
+					Fan hub
+				</MenuItem>
+
+				<MenuItem
+					to="/account"
+					icon={<AccountCircleIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					Account
+				</MenuItem>
+
 				<MenuItem
 					to="/tickets"
 					icon={<TicketsIcon />}
@@ -406,6 +419,14 @@ class MenuContent extends Component {
 				</MenuItem>
 
 				<MenuItem
+					to="/orders"
+					icon={<OrdersIcon />}
+					toggleDrawer={toggleDrawer}
+				>
+					My orders
+				</MenuItem>
+
+				{/* <MenuItem
 					to="/events"
 					icon={<EventsIcon />}
 					toggleDrawer={toggleDrawer}
@@ -423,7 +444,7 @@ class MenuContent extends Component {
 
 				<MenuItem to="/venues" icon={<VenueIcon />} toggleDrawer={toggleDrawer}>
 					Venues
-				</MenuItem>
+				</MenuItem> */}
 			</div>
 		);
 	}
