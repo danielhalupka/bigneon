@@ -434,7 +434,7 @@ class TicketsCard extends Component {
 							style={{ marginRight: 10 }}
 							customClassName="callToAction"
 						>
-							{isSubmitting ? "Saving..." : "Save"}
+							{isSubmitting ? "Saving..." : "Save and continue"}
 						</Button>
 					</CardActions>
 				</form>

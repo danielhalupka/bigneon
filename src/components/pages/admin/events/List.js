@@ -140,8 +140,8 @@ class EventsList extends Component {
 								</Typography>
 							</CardContent>
 
-							{!cancelled_at ? (
-								<div className={classes.actionButtons}>
+							<div className={classes.actionButtons}>
+								{!cancelled_at ? (
 									<Button
 										onClick={() => this.setState({ cancelEventId: id })}
 										customClassName="warning"
@@ -149,12 +149,14 @@ class EventsList extends Component {
 									>
 										Cancel event
 									</Button>
-									<Link
-										to={`/admin/events/${id}`}
-										style={{ textDecoration: "none", marginRight: 10 }}
-									>
-										<Button customClassName="primary">Edit details</Button>
-									</Link>
+								) : null}
+								<Link
+									to={`/admin/events/${id}`}
+									style={{ textDecoration: "none", marginRight: 10 }}
+								>
+									<Button customClassName="primary">Edit details</Button>
+								</Link>
+								{!cancelled_at ? (
 									<Button
 										target="_blank"
 										href={`/events/${id}`}
@@ -162,8 +164,8 @@ class EventsList extends Component {
 									>
 										Open event page
 									</Button>
-								</div>
-							) : null}
+								) : null}
+							</div>
 						</Card>
 					</Grid>
 				);

@@ -218,16 +218,17 @@ class CheckoutConfirmation extends Component {
 		return (
 			<TicketLineEntry
 				col1={null}
-				col2={
-					id ? (
-						<Link
-							to={`/events/${id}/tickets`}
-							style={{ textDecoration: "none" }}
-						>
-							<Button>Change tickets</Button>
-						</Link>
-					) : null
-				}
+				// col2={
+				// 	id ? (
+				// 		null
+				// 		// <Link
+				// 		// 	to={`/events/${id}/tickets`}
+				// 		// 	style={{ textDecoration: "none" }}
+				// 		// >
+				// 		// 	<Button>Change tickets</Button>
+				// 		// </Link>
+				// 	) : null
+				// }
 				col3={
 					<span>
 						<Typography variant="body1">Service fees:</Typography>

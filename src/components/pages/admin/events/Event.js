@@ -10,6 +10,7 @@ import ArtistCard from "./artists/ArtistsCard";
 import DetailsCard from "./details/DetailsCard";
 import notifications from "../../../../stores/notifications";
 import TicketsCard from "./tickets/TicketsCard";
+import PublishCard from "./publish/PublishCard";
 import SelectOptionDialog from "../../../common/SelectOptionDialog";
 import Bigneon from "../../../../helpers/bigneon";
 
@@ -137,11 +138,6 @@ class Event extends Component {
 	}
 
 	onComplete() {
-		notifications.show({
-			message: "Event updated.",
-			variant: "success"
-		});
-
 		this.props.history.push("/admin/events");
 	}
 
@@ -158,7 +154,7 @@ class Event extends Component {
 		} = this.state;
 		const { classes, history } = this.props;
 
-		const steps = ["Artists", "Event details", "Ticketing"];
+		const steps = ["Artists", "Event details", "Ticketing", "Publish"];
 
 		return (
 			<div>
@@ -188,7 +184,7 @@ class Event extends Component {
 						return (
 							<Step key={label}>
 								<StepButton
-									disabled={!eventId && index === 2}
+									disabled={!eventId && (index === 2 || index === 3)}
 									onClick={() => this.handleStep(index)}
 								>
 									{label}
@@ -226,6 +222,16 @@ class Event extends Component {
 									organizationId={organizationId}
 									history={history}
 									eventId={eventId}
+									onNext={() => this.handleStep(activeStep + 1)}
+								/>
+							) : null}
+
+							{activeStep === 3 ? (
+								<PublishCard
+									organizationId={organizationId}
+									history={history}
+									eventId={eventId}
+									eventDetails={event}
 									onNext={this.onComplete.bind(this)}
 								/>
 							) : null}
