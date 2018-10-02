@@ -8,7 +8,7 @@ const warningHex = "#ff6333";
 
 const theme = createMuiTheme({
 	typography: {
-		fontFamily: "BebasNeue-Regular",
+		fontFamily: "TTCommons-Regular",
 		fontSize: 16
 	},
 	palette: {
@@ -35,7 +35,7 @@ const theme = createMuiTheme({
 		},
 		MuiInput: {
 			root: {
-				fontFamily: "Oswald, arial",
+				fontFamily: "TTCommons-Regular",
 				fontSize: 17
 			}
 		},
