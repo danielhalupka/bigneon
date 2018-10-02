@@ -12,8 +12,9 @@ import Container from "../common/Container";
 import NotFound from "../common/NotFound";
 import Dashboard from "../pages/dashboard/Index";
 import Account from "../pages/account/Index";
-import Orders from "../pages/orders/List";
+import OrderList from "../pages/orders/List";
 import Order from "../pages/orders/Order";
+import TicketList from "../pages/tickets/List";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 import PasswordReset from "../pages/authentication/PasswordReset";
@@ -124,8 +125,15 @@ class Routes extends Component {
 
 						<PrivateRoute
 							exact
+							path="/tickets"
+							component={TicketList}
+							isAuthenticated={isAuthenticated}
+						/>
+
+						<PrivateRoute
+							exact
 							path="/orders"
-							component={Orders}
+							component={OrderList}
 							isAuthenticated={isAuthenticated}
 						/>
 
