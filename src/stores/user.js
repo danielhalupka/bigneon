@@ -186,6 +186,8 @@ class User {
 				}
 			});
 		}
+
+		cart.emptyCart();
 	}
 
 	@computed

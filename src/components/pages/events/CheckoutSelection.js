@@ -13,6 +13,7 @@ import selectedEvent from "../../../stores/selectedEvent";
 import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
+import RequiresAuthDialog from "../authentication/RequiresAuthDialog";
 
 const styles = theme => ({
 	card: {
@@ -32,7 +33,8 @@ class CheckoutSelection extends Component {
 		this.state = {
 			openPromo: false,
 			ticketSelection: {},
-			isSubmitting: false
+			isSubmitting: false,
+			showRequireAuthDialog: false
 		};
 	}
 
@@ -62,9 +64,7 @@ class CheckoutSelection extends Component {
 		const { ticketSelection } = this.state;
 
 		if (!user.isAuthenticated) {
-			notifications.show({
-				message: "Please login or signup to purchase tickets."
-			});
+			this.setState({ showRequireAuthDialog: true });
 			return;
 		}
 
@@ -154,7 +154,7 @@ class CheckoutSelection extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { openPromo, isSubmitting } = this.state;
+		const { openPromo, isSubmitting, showRequireAuthDialog } = this.state;
 
 		const { event, venue, artists, organization, id } = selectedEvent;
 
@@ -168,6 +168,11 @@ class CheckoutSelection extends Component {
 
 		return (
 			<Paper className={classes.card}>
+				<RequiresAuthDialog
+					onAuthSuccess={this.onSubmit.bind(this)}
+					open={showRequireAuthDialog}
+					onClose={() => this.setState({ showRequireAuthDialog: false })}
+				/>
 				<EventSummaryGrid
 					event={event}
 					venue={venue}

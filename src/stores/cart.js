@@ -3,7 +3,6 @@ import axios from "axios";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
 import user from "./user";
-import api from "../helpers/api";
 
 class Cart {
 	@observable
@@ -19,6 +18,7 @@ class Cart {
 	refreshCart() {
 		//Right now carts only work for authed users
 		if (!user.isAuthenticated) {
+			this.emptyCart();
 			return;
 		}
 
@@ -53,7 +53,6 @@ class Cart {
 
 	@action
 	addToCart(selectedTickets, onSuccess, onError) {
-		console.log(selectedTickets);
 		const ticketIds = Object.keys(selectedTickets);
 
 		//Promises array of posts to the add cart function and iterate through them
@@ -98,6 +97,8 @@ class Cart {
 	emptyCart() {
 		//TODO delete from cart using API first
 		this.items = [];
+		this.id = null;
+		this.total_in_cents = 0;
 	}
 
 	@computed
