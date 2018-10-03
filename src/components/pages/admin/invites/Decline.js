@@ -42,7 +42,7 @@ class InviteDecline extends Component {
 		const { security_token } = this.state;
 
 		api({ auth: false })
-			.get(`/organizations/decline_invite`, { params: { security_token } })
+			.delete(`/invitations`, { params: { security_token } })
 			.then(response => {
 				this.setState({ isSubmitting: false });
 

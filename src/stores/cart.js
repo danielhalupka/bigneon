@@ -84,22 +84,6 @@ class Cart {
 
 	@action
 	removeFromCart(cart_item_id, quantity, onSuccess, onError) {
-		console.log("cart_item_id:  ", cart_item_id);
-		// api()
-		// 	.delete("/cart", {
-		// 		params: cart_item_id,
-		// 		quantity,
-		// 		headers: {
-		// 			"Content-Type": "application/json"
-		// 		}
-		// 	})
-		// 	.then(() => {
-		// 		//TODO maybe update the store variable quickly, then refresh from cart for that zippy feeling
-		// 		this.refreshCart();
-		// 		onSuccess();
-		// 	})
-		// 	.catch(error => onError(error));
-
 		Bigneon()
 			.cart.delete({ cart_item_id, quantity })
 			.then(() => {

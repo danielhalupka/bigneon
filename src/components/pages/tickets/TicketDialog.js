@@ -34,9 +34,11 @@ class TicketDialog extends React.Component {
 
 		let label = "";
 
+		let index = 0;
 		if (tickets) {
 			tickets.forEach(ticket => {
-				ticketsObj[ticket.id] = ticket.ticket_type_name;
+				index++;
+				ticketsObj[ticket.id] = `${ticket.ticket_type_name} (${index})`;
 			});
 			label = "Ticket";
 		} else {

@@ -12,6 +12,7 @@ import Container from "../common/Container";
 import NotFound from "../common/NotFound";
 import Dashboard from "../pages/dashboard/Index";
 import Account from "../pages/account/Index";
+import Artists from "../pages/landing/Artists";
 import OrderList from "../pages/orders/List";
 import Order from "../pages/orders/Order";
 import TicketList from "../pages/tickets/List";
@@ -103,6 +104,7 @@ class Routes extends Component {
 					<Switch>
 						<Route exact path="/" component={Home} />
 						<Route exact path="/events" component={Home} />
+						<Route exact path="/artists" component={Artists} />
 
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
@@ -116,6 +118,7 @@ class Routes extends Component {
 							component={Dashboard}
 							isAuthenticated={isAuthenticated}
 						/>
+
 						<PrivateRoute
 							exact
 							path="/account"

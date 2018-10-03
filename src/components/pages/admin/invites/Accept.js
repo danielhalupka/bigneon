@@ -48,9 +48,8 @@ class InviteAccept extends Component {
 		this.setState({ isSubmitting: true });
 
 		const { security_token } = this.state;
-
 		api()
-			.get(`/organizations/accept_invite`, { params: { security_token } })
+			.post(`/invitations`, { params: { security_token } })
 			.then(response => {
 				this.setState({ isSubmitting: false });
 
@@ -66,7 +65,7 @@ class InviteAccept extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				notifications.show({
-					message: "Declining invite failed.",
+					message: "Accepting invite failed.",
 					variant: "error"
 				});
 			});
