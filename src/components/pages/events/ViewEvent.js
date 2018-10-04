@@ -141,6 +141,30 @@ class ViewEvent extends Component {
 		));
 	}
 
+	renderInterestedButton() {
+		if (!selectedEvent) {
+			return null;
+		}
+
+		const { id, user_is_interested } = selectedEvent;
+
+		if (user_is_interested === null) {
+			//Unknown
+			return null;
+		}
+
+		return (
+			<Button
+				size="large"
+				style={{ width: "100%", marginTop: 10 }}
+				customClassName={user_is_interested ? "default" : "primary"}
+				onClick={() => selectedEvent.userIsInterested()}
+			>
+				{user_is_interested ? "I'm not interested" : "I'm interested"}
+			</Button>
+		);
+	}
+
 	render() {
 		const { classes } = this.props;
 		const { event, venue, artists, organization, id } = selectedEvent;
@@ -224,6 +248,8 @@ class ViewEvent extends Component {
 								Book now
 							</Button>
 						</Link>
+
+						{this.renderInterestedButton()}
 
 						<div style={{ marginBottom: 30 }} />
 

@@ -22,6 +22,9 @@ class SelectedEvent {
 	@observable
 	ticket_types = null;
 
+	@observable
+	user_is_interested = null;
+
 	@action
 	refreshResult(id, onError = () => {}) {
 		//If we're updating the state to a different event just reset the values first so it doesn't load old data in components observing thi
@@ -31,6 +34,7 @@ class SelectedEvent {
 			this.artists = [];
 			this.organization = null;
 			this.tickets = null;
+			this.user_is_interested = null;
 		}
 
 		Bigneon()
@@ -49,11 +53,13 @@ class SelectedEvent {
 					door_time,
 					promo_image_url,
 					age_limit,
-					ticket_types
+					ticket_types,
+					user_is_interested
 				} = event;
 
 				this.ticket_types = ticket_types;
 				this.organization = organization;
+				this.user_is_interested = user_is_interested;
 
 				//TODO maybe this data gets added to the first api call to make it a little smoother
 
@@ -148,6 +154,49 @@ class SelectedEvent {
 					variant: "error"
 				});
 			});
+	}
+
+	@action
+	userIsInterested() {
+		if (!this.id) {
+			console.error("No event selected.");
+			return;
+		}
+
+		const interestedStatus = !this.user_is_interested; //Get a true/false value
+		this.user_is_interested = interestedStatus; //More responsive to update store first
+
+		if (interestedStatus) {
+			//Set to true
+			Bigneon()
+				.events.interests.create({ id: this.id })
+				.then(
+					() => {
+						//If this was clicked twice, make sure current status is set
+						this.user_is_interested = true;
+					},
+					error => {
+						//Revert back if api fails
+						this.user_is_interested = false;
+						console.error(error);
+					}
+				);
+		} else {
+			//Set to false
+			Bigneon()
+				.events.interests.delete({ id: this.id })
+				.then(
+					() => {
+						//If this was clicked twice, make sure current status is set
+						this.user_is_interested = false;
+					},
+					error => {
+						//Revert back if api fails
+						this.user_is_interested = true;
+						console.error(error);
+					}
+				);
+		}
 	}
 }
 
