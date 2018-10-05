@@ -9,11 +9,9 @@ import { primaryHex } from "../../styles/theme";
 import DialogTransition from "../../common/DialogTransition";
 import Typography from "@material-ui/core/Typography";
 
-const styles = {
-	dialogContent: {}
-};
+const styles = {};
 
-class TicketDialog extends React.Component {
+class TransferTicketsDialog extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -21,10 +19,14 @@ class TicketDialog extends React.Component {
 	}
 
 	render() {
-		const { ticket, eventName, classes, onClose, ...other } = this.props;
+		const { onClose, ticketIds, classes, ...other } = this.props;
 
-		const qrText = ticket ? ticket.id : "";
-		const ticketName = ticket ? ticket.ticket_type_name : "";
+		let ticketIdsString = "";
+		if (ticketIds) {
+			ticketIdsString = ticketIds.join();
+		}
+
+		const qrText = `Coming soon (TM) :${ticketIdsString}`;
 
 		return (
 			<Dialog
@@ -34,8 +36,10 @@ class TicketDialog extends React.Component {
 				{...other}
 			>
 				<DialogContent>
-					<Typography variant="display1">{eventName}</Typography>
-					<Typography variant="subheading">{ticketName}</Typography>
+					<Typography variant="headline">
+						Scan with your bigNEON mobile wallet to transfer
+					</Typography>
+					<br />
 					{qrText ? (
 						<div
 							style={{
@@ -44,7 +48,7 @@ class TicketDialog extends React.Component {
 								justifyContent: "center"
 							}}
 						>
-							<QRCode size={300} fgColor={primaryHex} value={qrText} />
+							<QRCode size={350} fgColor={primaryHex} value={qrText} />
 						</div>
 					) : null}
 				</DialogContent>
@@ -53,11 +57,10 @@ class TicketDialog extends React.Component {
 	}
 }
 
-TicketDialog.propTypes = {
-	ticket: PropTypes.object,
-	eventName: PropTypes.string,
+TransferTicketsDialog.propTypes = {
 	classes: PropTypes.object.isRequired,
-	onClose: PropTypes.func.isRequired
+	onClose: PropTypes.func.isRequired,
+	ticketIds: PropTypes.array
 };
 
-export default withStyles(styles)(TicketDialog);
+export default withStyles(styles)(TransferTicketsDialog);

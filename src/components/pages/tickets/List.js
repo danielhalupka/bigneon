@@ -1,47 +1,28 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import {
-	Typography,
-	withStyles,
-	Grid,
-	Card,
-	CardContent,
-	CardMedia
-} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import moment from "moment";
 
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
-import Button from "../../common/Button";
 import TicketDialog from "./TicketDialog";
+import TicketGroup from "./TicketGroup";
+import TransferTicketsDialog from "./TransferTicketsDialog";
+import SelectGroup from "../../common/form/SelectGroup";
 
-const styles = theme => ({
-	paper: {
-		display: "flex"
-	},
-	cardContent: {
-		padding: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit,
-		flex: "1 0 auto"
-	},
-	media: {
-		width: "100%",
-		maxWidth: 300,
-		height: 180
-	},
-	actionButtons: {
-		display: "flex",
-		alignItems: "flex-end",
-		padding: theme.spacing.unit
-	}
-});
+const styles = theme => ({});
 
 class TicketList extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			ticketGroups: null
+			showTicketsFor: "upcoming",
+			ticketGroups: null,
+			filteredTicketGroups: null,
+			expandedTicketGroupId: null,
+			selectedTransferTicketIds: null
 		};
 	}
 
@@ -65,7 +46,7 @@ class TicketList extends Component {
 					ticketGroups.push({ event, tickets });
 				});
 
-				this.setState({ ticketGroups });
+				this.setState({ ticketGroups }, this.filterTicketGroups.bind(this));
 			})
 			.catch(error => {
 				console.error(error);
@@ -85,11 +66,54 @@ class TicketList extends Component {
 			});
 	}
 
-	renderTickets() {
-		const { ticketGroups } = this.state;
-		const { classes } = this.props;
+	filterTicketGroups() {
+		const { ticketGroups, showTicketsFor } = this.state;
 
 		if (ticketGroups === null) {
+			return this.setState({ filteredTicketGroups: null });
+		}
+
+		let filteredTicketGroups = [];
+		ticketGroups.forEach(ticketGroup => {
+			const { event } = ticketGroup;
+			const { id, name, event_start } = event;
+
+			const eventStartDate = moment(
+				event_start,
+				moment.HTML5_FMT.DATETIME_LOCAL_MS
+			);
+
+			const timeDifference = moment().diff(eventStartDate);
+			let includeTicketGroup = false;
+
+			if (showTicketsFor === "all") {
+				includeTicketGroup = true;
+			}
+
+			if (showTicketsFor === "upcoming" && timeDifference < 0) {
+				includeTicketGroup = true;
+			}
+
+			if (showTicketsFor === "past" && timeDifference > 0) {
+				includeTicketGroup = true;
+			}
+
+			if (includeTicketGroup) {
+				filteredTicketGroups.push(ticketGroup);
+			}
+		});
+
+		return this.setState({ filteredTicketGroups });
+	}
+
+	renderTickets() {
+		const {
+			expandedTicketGroupId,
+			showTicketsFor,
+			filteredTicketGroups
+		} = this.state;
+
+		if (filteredTicketGroups === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">Loading...</Typography>
@@ -97,89 +121,90 @@ class TicketList extends Component {
 			);
 		}
 
-		if (ticketGroups && ticketGroups.length > 0) {
-			return ticketGroups.map(ticketGroup => {
-				const { event, tickets } = ticketGroup;
-				const { id, promo_image_url, formattedData, name, venue } = event;
+		if (filteredTicketGroups.length > 0) {
+			return filteredTicketGroups.map(ticketGroup => {
+				const { event } = ticketGroup;
+				const { id, name, event_start } = event;
+
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
-						<Card className={classes.paper}>
-							<CardMedia
-								className={classes.media}
-								image={promo_image_url || "/images/event-placeholder.png"}
-								title={name}
-							/>
-
-							<CardContent className={classes.cardContent}>
-								<Grid container spacing={24}>
-									<Grid item xs={12} sm={12} lg={12}>
-										<Typography component="h2" variant="headline">
-											{name}
-										</Typography>
-										<Typography variant="subheading">
-											{formattedData}
-										</Typography>
-										<Typography variant="subheading">
-											{venue.address}
-										</Typography>
-									</Grid>
-
-									{/* <Grid item xs={12} sm={12} lg={4}>
-										<Typography variant="title">Tickets</Typography>
-										{tickets.map(({ id, ticket_type_name }) => (
-											<Typography key={id} variant="body1">
-												{ticket_type_name}
-											</Typography>
-										))}
-									</Grid> */}
-								</Grid>
-							</CardContent>
-
-							<div className={classes.actionButtons}>
-								<Button
-									style={{ marginRight: 10 }}
-									customClassName="primary"
-									onClick={() =>
-										this.setState({
-											selectedTickets: tickets,
-											selectedEventName: name
-										})
-									}
-								>
-									View tickets
-								</Button>
-								<Button
-									target="_blank"
-									href={`/events/${id}`}
-									customClassName="secondary"
-								>
-									View event
-								</Button>
-							</div>
-						</Card>
+						<TicketGroup
+							{...ticketGroup}
+							expanded={expandedTicketGroupId === id}
+							onExpandedChange={() => {
+								if (expandedTicketGroupId === id) {
+									this.setState({ expandedTicketGroupId: null });
+								} else {
+									this.setState({ expandedTicketGroupId: id });
+								}
+							}}
+							onTicketSelect={selectedTicket =>
+								this.setState({ selectedTicket, selectedEventName: name })
+							}
+							onShowTransferQR={selectedTransferTicketIds =>
+								this.setState({ selectedTransferTicketIds })
+							}
+						/>
 					</Grid>
 				);
 			});
 		} else {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
-					<Typography variant="body1">No tickets yet</Typography>
+					<Typography variant="body1">
+						No tickets for {showTicketsFor} events
+					</Typography>
 				</Grid>
 			);
 		}
 	}
 
+	renderSelectFilter() {
+		const { showTicketsFor } = this.state;
+
+		const filterOptions = {
+			all: "All events",
+			upcoming: "Upcoming events",
+			past: "Past events"
+		};
+
+		return (
+			<SelectGroup
+				value={showTicketsFor}
+				items={filterOptions}
+				name={"venues"}
+				label={"Filter tickets by"}
+				onChange={e => {
+					const showTicketsFor = e.target.value;
+					this.setState({ showTicketsFor }, this.filterTicketGroups.bind(this));
+				}}
+			/>
+		);
+	}
+
 	render() {
-		const { selectedTickets, selectedEventName } = this.state;
+		const {
+			selectedTicket,
+			selectedEventName,
+			selectedTransferTicketIds
+		} = this.state;
+
 		return (
 			<div>
 				<Typography variant="display3">My tickets</Typography>
+				{this.renderSelectFilter()}
 				<TicketDialog
-					open={!!selectedTickets}
+					open={!!selectedTicket}
 					eventName={selectedEventName}
-					tickets={selectedTickets}
-					onClose={() => this.setState({ selectedTickets: null })}
+					ticket={selectedTicket}
+					onClose={() => this.setState({ selectedTicket: null })}
 				/>
+				<TransferTicketsDialog
+					open={!!selectedTransferTicketIds}
+					ticketIds={selectedTransferTicketIds}
+					onClose={() => this.setState({ selectedTransferTicketIds: null })}
+				/>
+
 				<Grid container spacing={24}>
 					{this.renderTickets()}
 				</Grid>

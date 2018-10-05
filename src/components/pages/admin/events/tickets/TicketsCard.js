@@ -41,7 +41,6 @@ class TicketsCard extends Component {
 			.events.tickets.index({ id: eventId })
 			.then(response => {
 				const { ticket_types } = response.data;
-				console.log(ticket_types);
 
 				let tickets = [];
 				ticket_types.forEach(ticket_type => {
@@ -307,10 +306,7 @@ class TicketsCard extends Component {
 		axios
 			.all(ticketTypePromises)
 			.then(results => {
-				console.log("Tickets: ", results);
-				results.forEach(({ data }) => {
-					console.log("Saved ticket: ", data);
-				});
+				results.forEach(({ data }) => {});
 
 				notifications.show({
 					message: "Event tickets updated.",

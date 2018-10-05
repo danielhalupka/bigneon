@@ -12,6 +12,7 @@ import {
 	TableRow,
 	CardContent
 } from "@material-ui/core";
+import moment from "moment";
 
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
@@ -88,6 +89,11 @@ class OrderList extends Component {
 						{orders.map(order => {
 							const { id, date, total_in_cents, items } = order;
 
+							const formattedDate = moment(
+								date,
+								moment.HTML5_FMT.DATETIME_LOCAL_MS
+							).format("dddd, MMM D, HH:mm");
+
 							//TODO move this to when we fetch the data so it's not executed on each render
 							let tickets = 0;
 							let eventName = ""; //TODO get this when available in the API
@@ -103,7 +109,7 @@ class OrderList extends Component {
 							return (
 								<TableRow key={id}>
 									<TableCell component="th" scope="row">
-										{date}
+										{formattedDate}
 									</TableCell>
 									<TableCell numeric>
 										<Link

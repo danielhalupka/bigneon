@@ -110,9 +110,9 @@ class CheckoutSuccess extends Component {
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						<div className={classes.buttonsContainer}>
-							<Link to="/" style={{ textDecoration: "none" }}>
+							<Link to="/tickets" style={{ textDecoration: "none" }}>
 								<Button size="large" customClassName="primary">
-									Home
+									My tickets
 								</Button>
 							</Link>
 						</div>
