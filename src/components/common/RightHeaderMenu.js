@@ -89,10 +89,10 @@ class RightHeaderMenu extends React.Component {
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
 
-		const { isAuthenticated, firstName, lastName } = user;
+		const { isAuthenticated, firstName } = user;
 
 		return (
-			<div>
+			<span>
 				{this.renderDevelopmentErrors()}
 				{isAuthenticated !== null ? (
 					<Button
@@ -185,7 +185,7 @@ class RightHeaderMenu extends React.Component {
 						</MenuItem>
 					) : null}
 				</Menu>
-			</div>
+			</span>
 		);
 	}
 }

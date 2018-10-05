@@ -95,12 +95,12 @@ class OrganizationsList extends Component {
 								>
 									<Button customClassName="primary">Edit details</Button>
 								</Link>
-								<Link
+								{/* <Link
 									to={`/organizations/events/${id}`}
 									style={{ textDecoration: "none" }}
 								>
 									<Button customClassName="secondary">Events</Button>
-								</Link>
+								</Link> */}
 							</CardActions>
 						</Card>
 					</Grid>

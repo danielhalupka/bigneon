@@ -1,25 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import Warning from "@material-ui/icons/Warning";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 
-import user from "../../stores/user";
-
 const styles = {
-	menuButton: {
-		//marginLeft: -12,
-		//marginRight: 0
-	}
+	menuButton: {}
 };
 
-@observer
 class NotificationList extends React.Component {
 	constructor(props) {
 		super(props);
