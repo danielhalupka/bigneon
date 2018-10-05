@@ -46,6 +46,7 @@ import InviteAccept from "../pages/admin/invites/Accept";
 import user from "../../stores/user";
 import cart from "../../stores/cart";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
+import EventQRLink from "../pages/widgets/EventQRLink";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -254,6 +255,8 @@ class Routes extends Component {
 							component={AdminEvent}
 							isAuthenticated={isAuthenticated}
 						/>
+
+						<Route exact path="/qr/:id" component={EventQRLink} />
 
 						<Route component={NotFound} />
 					</Switch>
