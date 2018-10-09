@@ -6,11 +6,30 @@ const textColorPrimary = "#1E1E1E";
 const textColorSecondary = "#4EB0E5";
 const warningHex = "#ff6333";
 
+const borderRadius = 3;
+
+let shadows = ["none"];
+let baseShadow = 0.4;
+const increaseBy = 0.01;
+for (let index = 0; index < 24; index++) {
+	baseShadow = (Number(baseShadow) + increaseBy).toFixed(2);
+	const baseShadow2 = `${(baseShadow * 2).toFixed(2)}`;
+	const baseShadow3 = `${(baseShadow * 3).toFixed(2)}`;
+
+	shadows.push(
+		`0px ${baseShadow}px ${baseShadow3}px 0px rgba(0, 0, 0, 0.1),0px ${baseShadow}px ${baseShadow}px 0px rgba(0, 0, 0, 0.1),0px ${baseShadow2}px ${baseShadow}px -${baseShadow}px rgba(0, 0, 0, 0.1)`
+	);
+}
+
 const theme = createMuiTheme({
 	typography: {
 		fontFamily: "TTCommons-Regular",
 		fontSize: 16
 	},
+	shape: {
+		borderRadius
+	},
+	shadows,
 	palette: {
 		primary: {
 			light: primaryHex,
@@ -30,7 +49,7 @@ const theme = createMuiTheme({
 			root: {
 				background: `linear-gradient(45deg, #FFF 30%, #FFF 90%)`,
 				color: textColorPrimary,
-				boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)"
+				boxShadow: shadows[1]
 			}
 		},
 		MuiInput: {
@@ -46,7 +65,21 @@ const theme = createMuiTheme({
 		},
 		MuiButton: {
 			root: {
-				boxShadow: "0 2px 2px 0px rgba(1, 1, 1, .2)"
+				boxShadow: shadows[2],
+				borderRadius
+			}
+		},
+		MuiExpansionPanelSummary: {
+			root: {
+				padding: 0,
+				borderRadius
+			},
+			content: {
+				margin: 0
+			},
+			expanded: {
+				padding: 0,
+				margin: 0
 			}
 		}
 	}

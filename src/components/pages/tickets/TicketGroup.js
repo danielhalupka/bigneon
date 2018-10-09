@@ -9,7 +9,6 @@ import {
 } from "@material-ui/core";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-
 import Grid from "@material-ui/core/Grid";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -18,11 +17,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
-// import TicketsIcon from "@material-ui/icons/Receipt";
 import Checkbox from "@material-ui/core/Checkbox";
-
-import UncheckedIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckedIcon from "@material-ui/icons/CheckBox";
 import QRIcon from "@material-ui/icons/Receipt";
 
 import Button from "../../common/Button";
@@ -202,7 +197,8 @@ class TicketGroup extends Component {
 								disabled={checkedTicketsIds.length < 1}
 								onClick={() => onShowTransferQR(checkedTicketsIds)}
 							>
-								Send to wallet
+								Transfer ticket
+								{checkedTicketsIds.length > 1 ? "s" : ""}
 							</Button>
 						</div>
 					</div>
