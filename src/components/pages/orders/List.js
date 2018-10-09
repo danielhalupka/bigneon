@@ -89,10 +89,9 @@ class OrderList extends Component {
 						{orders.map(order => {
 							const { id, date, total_in_cents, items } = order;
 
-							const formattedDate = moment(
-								date,
-								moment.HTML5_FMT.DATETIME_LOCAL_MS
-							).format("dddd, MMM D, HH:mm");
+							const formattedDate = moment
+								.utc(date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+								.format("dddd, MMM D, HH:mm");
 
 							//TODO move this to when we fetch the data so it's not executed on each render
 							let tickets = 0;

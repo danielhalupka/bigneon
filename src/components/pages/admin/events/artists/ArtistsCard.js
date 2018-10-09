@@ -33,7 +33,7 @@ class ArtistsCard extends Component {
 			artists = props.artists.map(({ artist_id, set_time }) => ({
 				id: artist_id,
 				setTime: set_time
-					? moment(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+					? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 					: null
 			}));
 		}

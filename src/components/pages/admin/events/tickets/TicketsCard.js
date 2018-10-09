@@ -38,66 +38,68 @@ class TicketsCard extends Component {
 		const { eventId } = this.props;
 
 		Bigneon()
-			.events.tickets.index({ id: eventId })
+			.events.ticketTypes.index({ event_id: eventId })
 			.then(response => {
 				const { ticket_types } = response.data;
 
 				let tickets = [];
-				ticket_types.forEach(ticket_type => {
-					const {
-						id,
-						name,
-						capacity,
-						ticket_pricing,
-						start_date,
-						end_date
-					} = ticket_type;
 
-					let pricing = [];
-					ticket_pricing.forEach(pricePoint => {
-						const { name, price_in_cents } = pricePoint;
-
-						let startDate = null;
-						if (pricePoint.start_date) {
-							startDate = moment(
-								pricePoint.start_date,
-								moment.HTML5_FMT.DATETIME_LOCAL_MS
-							);
-						}
-
-						let endDate = null;
-						if (pricePoint.end_date) {
-							endDate = moment(
-								pricePoint.end_date,
-								moment.HTML5_FMT.DATETIME_LOCAL_MS
-							);
-						}
-
-						pricing.push({
-							id: pricePoint.id,
-							ticketId: id,
-							name,
-							startDate,
-							endDate,
-							value: price_in_cents / 100
-						});
-					});
-					tickets.push(
-						Ticket.Structure({
+				if (ticket_types) {
+					ticket_types.forEach(ticket_type => {
+						const {
 							id,
 							name,
-							capacity: capacity ? capacity : 0,
-							startDate: start_date
-								? moment(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-								: null,
-							endDate: end_date
-								? moment(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-								: null,
-							pricing
-						})
-					);
-				});
+							capacity,
+							ticket_pricing,
+							start_date,
+							end_date
+						} = ticket_type;
 
+						let pricing = [];
+						ticket_pricing.forEach(pricePoint => {
+							const { name, price_in_cents } = pricePoint;
+
+							let startDate = null;
+							if (pricePoint.start_date) {
+								startDate = moment.utc(
+									pricePoint.start_date,
+									moment.HTML5_FMT.DATETIME_LOCAL_MS
+								);
+							}
+
+							let endDate = null;
+							if (pricePoint.end_date) {
+								endDate = moment.utc(
+									pricePoint.end_date,
+									moment.HTML5_FMT.DATETIME_LOCAL_MS
+								);
+							}
+
+							pricing.push({
+								id: pricePoint.id,
+								ticketId: id,
+								name,
+								startDate,
+								endDate,
+								value: price_in_cents / 100
+							});
+						});
+						tickets.push(
+							Ticket.Structure({
+								id,
+								name,
+								capacity: capacity ? capacity : 0,
+								startDate: start_date
+									? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+									: null,
+								endDate: end_date
+									? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+									: null,
+								pricing
+							})
+						);
+					});
+				}
 				this.setState({ tickets });
 
 				//If there are no tickets, add one
@@ -288,13 +290,13 @@ class TicketsCard extends Component {
 			let axiosPromise;
 
 			if (id) {
-				axiosPromise = Bigneon().events.tickets.update({
+				axiosPromise = Bigneon().events.ticketTypes.update({
 					event_id: eventId,
 					id,
 					...ticketDetails
 				});
 			} else {
-				axiosPromise = Bigneon().events.tickets.create({
+				axiosPromise = Bigneon().events.ticketTypes.create({
 					event_id: eventId,
 					...ticketDetails
 				});

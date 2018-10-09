@@ -38,10 +38,9 @@ class TicketList extends Component {
 					const event = ticketGroup[0];
 					const tickets = ticketGroup[1];
 
-					event.formattedData = moment(
-						event.event_start,
-						moment.HTML5_FMT.DATETIME_LOCAL_MS
-					).format("dddd, MMM D");
+					event.formattedData = moment
+						.utc(event.event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+						.format("dddd, MMM D");
 
 					ticketGroups.push({ event, tickets });
 				});
@@ -78,12 +77,12 @@ class TicketList extends Component {
 			const { event } = ticketGroup;
 			const { id, name, event_start } = event;
 
-			const eventStartDate = moment(
+			const eventStartDate = moment.utc(
 				event_start,
 				moment.HTML5_FMT.DATETIME_LOCAL_MS
 			);
 
-			const timeDifference = moment().diff(eventStartDate);
+			const timeDifference = moment.utc().diff(eventStartDate);
 			let includeTicketGroup = false;
 
 			if (showTicketsFor === "all") {

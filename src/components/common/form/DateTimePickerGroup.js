@@ -32,7 +32,7 @@ const DateTimePickerGroup = props => {
 	const { classes } = props;
 
 	//Get tomorrows date at 12pm as default
-	const tomorrow = moment().add(1, "days");
+	const tomorrow = moment.utc().add(1, "days");
 	tomorrow.set({ hour: 12, minute: 0, second: 0 });
 
 	//If there is no date chosen yet and they click it for the first time set it as the current time

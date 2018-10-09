@@ -105,8 +105,11 @@ class CheckoutConfirmation extends Component {
 			.post(`/carts/checkout`, {
 				amount: cart.total_in_cents, //TODO remove this amount, we shouldn't be specifying it on the frontend
 				method: {
-					type: "Stripe",
-					token: stripeToken.id
+					type: "Card",
+					provider: "stripe",
+					token: stripeToken.id,
+					save_payment_method: false,
+					set_default: false
 				}
 			})
 			.then(() => {

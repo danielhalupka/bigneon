@@ -54,9 +54,8 @@ class EventsList extends Component {
 				.organizations.index()
 				.then(orgResponse => {
 					orgResponse.data.forEach(({ id }) => {
-						console.log(id);
 						Bigneon()
-							.organizations.events.index({ id })
+							.organizations.events.index({ organization_id: id })
 							.then(eventResponse => {
 								//Append all events together
 								this.setState(({ events }) => {

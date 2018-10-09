@@ -50,10 +50,10 @@ class DetailsCard extends Component {
 
 			name: name || "",
 			eventDate: event_start
-				? moment(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 				: null,
 			doorTime: door_time
-				? moment(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 				: null,
 			ageLimit: age_limit || "",
 			venueId: venue_id || "",
