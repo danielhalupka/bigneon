@@ -9,8 +9,8 @@ export const bigneonFactory = (options = {}, headers = {}, mockData) => {
 				protocol: process.env.REACT_APP_API_PROTOCOL,
 				host: process.env.REACT_APP_API_HOST,
 				port: process.env.REACT_APP_API_PORT,
-				timeout: process.env.REACT_APP_API_TIMEOUT || 3000,
-				basePath: process.env.REACT_APP_API_BASEPATH || "",
+				timeout: process.env.REACT_APP_API_TIMEOUT || 30000,
+				basePath: process.env.REACT_APP_API_BASEPATH || ""
 			},
 			...options
 		};

@@ -9,7 +9,6 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
 
-import Button from "../../common/Button";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import user from "../../../stores/user";
@@ -20,6 +19,7 @@ import cart from "../../../stores/cart";
 import EditCartItemDialog from "./EditCartItemDialog";
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
 import api from "../../../helpers/api";
+import Bigneon from "../../../helpers/bigneon";
 
 const styles = theme => ({
 	card: {
@@ -101,8 +101,8 @@ class CheckoutConfirmation extends Component {
 	}
 
 	onCheckout(stripeToken, onError) {
-		api()
-			.post(`/carts/checkout`, {
+		Bigneon()
+			.cart.checkout({
 				amount: cart.total_in_cents, //TODO remove this amount, we shouldn't be specifying it on the frontend
 				method: {
 					type: "Card",
@@ -143,7 +143,7 @@ class CheckoutConfirmation extends Component {
 					message,
 					variant: "error"
 				});
-				console.error(error.response);
+				console.error(error);
 				onError();
 			});
 	}
@@ -154,7 +154,6 @@ class CheckoutConfirmation extends Component {
 		const { items } = cart;
 
 		if (!items) {
-			console.warn("No cart items");
 			return null;
 		}
 
@@ -242,7 +241,7 @@ class CheckoutConfirmation extends Component {
 					<span>
 						<Typography variant="body1">${fees}</Typography>
 						<Typography variant="body1">
-							${Math.round(total_in_cents / 100)}
+							${total_in_cents ? Math.round(total_in_cents / 100) : 0}
 						</Typography>
 					</span>
 				}
@@ -252,6 +251,8 @@ class CheckoutConfirmation extends Component {
 	}
 
 	render() {
+		const { fees, total_in_cents } = cart;
+
 		const { classes } = this.props;
 		const {
 			editingItemId,
@@ -309,20 +310,28 @@ class CheckoutConfirmation extends Component {
 						{this.renderTotals()}
 					</Grid>
 
-					<Grid item xs={12} sm={12} lg={12} className={classes.userContainer}>
-						<AccountCircle
-							style={{ fontSize: 45 }}
-							className={classes.userIcon}
-						/>
-						<Typography className={classes.userName} variant="body1">
-							{user.isAuthenticated
-								? `Hi, ${user.firstName} ${user.lastName}!`
-								: "Please login first"}
-						</Typography>
-					</Grid>
+					{total_in_cents ? (
+						<Grid
+							item
+							xs={12}
+							sm={12}
+							lg={12}
+							className={classes.userContainer}
+						>
+							<AccountCircle
+								style={{ fontSize: 45 }}
+								className={classes.userIcon}
+							/>
+							<Typography className={classes.userName} variant="body1">
+								{user.isAuthenticated
+									? `Hi, ${user.firstName} ${user.lastName}!`
+									: "Please login first"}
+							</Typography>
+						</Grid>
+					) : null}
 
-					{user.isAuthenticated ? (
-						<Grid item xs={12} sm={12} lg={12}>
+					{user.isAuthenticated && total_in_cents ? (
+						<Grid item xs={12} sm={12} lg={12} style={{ padding: 0 }}>
 							<CheckoutForm onToken={this.onCheckout.bind(this)} />
 						</Grid>
 					) : null}
