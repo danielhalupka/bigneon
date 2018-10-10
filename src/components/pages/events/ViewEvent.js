@@ -12,6 +12,7 @@ import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import SupportingArtistsLabel from "./SupportingArtistsLabel";
+import user from "../../../stores/user";
 
 const styles = theme => ({
 	card: {
@@ -126,6 +127,16 @@ class ViewEvent extends Component {
 		}
 	}
 
+	toggleUserInterest() {
+		if (!user.isAuthenticated) {
+			//Show dialog for the user to signup/login, try again when they're authenticated
+			user.showAuthRequiredDialog(this.toggleUserInterest.bind(this));
+			return;
+		}
+
+		selectedEvent.toggleUserInterest();
+	}
+
 	renderArtists() {
 		const { classes } = this.props;
 		const { artists } = selectedEvent;
@@ -158,7 +169,7 @@ class ViewEvent extends Component {
 				size="large"
 				style={{ width: "100%", marginTop: 10 }}
 				customClassName={user_is_interested ? "default" : "primary"}
-				onClick={() => selectedEvent.userIsInterested()}
+				onClick={this.toggleUserInterest.bind(this)}
 			>
 				{user_is_interested ? "I'm not interested" : "I'm interested"}
 			</Button>

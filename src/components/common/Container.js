@@ -20,6 +20,7 @@ import RightHeaderMenu from "./RightHeaderMenu";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
 import CartMobileBottomBar from "./cart/CartMobileBottomBar";
+import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
 
 const drawerWidth = 240;
 
@@ -152,6 +153,11 @@ class Container extends React.Component {
 					<main className={classes.content}>
 						<div className={classes.toolbar} />
 						{children}
+						<RequiresAuthDialog
+							onAuthSuccess={() => user.onSuccessAuthRequiredDialog()}
+							open={user.showRequiresAuthDialog}
+							onClose={() => user.hideAuthRequiredDialog()}
+						/>
 						<Notification />
 					</main>
 				</div>

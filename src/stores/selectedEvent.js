@@ -157,7 +157,7 @@ class SelectedEvent {
 	}
 
 	@action
-	userIsInterested() {
+	toggleUserInterest() {
 		if (!this.id) {
 			console.error("No event selected.");
 			return;
@@ -169,7 +169,7 @@ class SelectedEvent {
 		if (interestedStatus) {
 			//Set to true
 			Bigneon()
-				.events.interests.create({ id: this.id })
+				.events.interests.create({ event_id: this.id })
 				.then(
 					() => {
 						//If this was clicked twice, make sure current status is set
@@ -184,7 +184,7 @@ class SelectedEvent {
 		} else {
 			//Set to false
 			Bigneon()
-				.events.interests.delete({ id: this.id })
+				.events.interests.remove({ event_id: this.id })
 				.then(
 					() => {
 						//If this was clicked twice, make sure current status is set

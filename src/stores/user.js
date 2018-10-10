@@ -29,6 +29,9 @@ class User {
 	@observable
 	roles = [];
 
+	@observable
+	showRequiresAuthDialog = false;
+
 	@action
 	refreshUser(onSuccess = null, onError = null) {
 		const token = localStorage.getItem("access_token");
@@ -188,6 +191,30 @@ class User {
 		}
 
 		cart.emptyCart();
+	}
+
+	//Dialog is kept in Container.js ready to popup when it's needed
+	@action
+	showAuthRequiredDialog(onSuccess) {
+		this.showRequiresAuthDialog = true;
+
+		if (onSuccess) {
+			this.onAuthDialogSuccess = onSuccess;
+		}
+	}
+
+	@action
+	onSuccessAuthRequiredDialog() {
+		this.showRequiresAuthDialog = false;
+
+		if (this.onAuthDialogSuccess) {
+			this.onAuthDialogSuccess();
+		}
+	}
+
+	@action
+	hideAuthRequiredDialog() {
+		this.showRequiresAuthDialog = false;
 	}
 
 	@computed
