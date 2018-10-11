@@ -5,6 +5,7 @@ if [ -z $ENV ]; then
 fi
 
 if [ "$ENV" = "production" ]; then
+    npm install
     npm run build
 	./node_modules/.bin/serve -s build
 else
