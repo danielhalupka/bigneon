@@ -12,6 +12,7 @@ import notifications from "../../../../../stores/notifications";
 import EventArtist from "./EventArtist";
 import FormSubHeading from "../../../../common/FormSubHeading";
 import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -48,8 +49,8 @@ class ArtistsCard extends Component {
 	}
 
 	componentDidMount() {
-		api()
-			.get("/artists")
+		Bigneon()
+			.artists.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ availableArtists: data });
@@ -110,6 +111,9 @@ class ArtistsCard extends Component {
 			set_time: moment.utc(setTime).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 		}));
 
+		//TODO implement bn-api-node when this works
+		// Bigneon()
+		// 	.events.artists.update({ event_id: eventId, ...artistArray })
 		api()
 			.put(`/events/${eventId}/artists`, artistArray)
 			.then(response => {
@@ -142,10 +146,10 @@ class ArtistsCard extends Component {
 	}
 
 	createEvent() {
-		const { organizationId, onNext } = this.props;
+		const { organizationId } = this.props;
 
-		api()
-			.post("/events", { name: "", organization_id: organizationId })
+		Bigneon()
+			.events.create({ name: "", organization_id: organizationId })
 			.then(response => {
 				const { id } = response.data;
 
@@ -194,8 +198,8 @@ class ArtistsCard extends Component {
 		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying
 		const artistDetails = { name, bio: "", youtube_video_urls: [] }; //TODO remove youtube_video_urls when it's not needed
 
-		api()
-			.post("/artists", artistDetails)
+		Bigneon()
+			.artists.create(artistDetails)
 			.then(response => {
 				const { id } = response.data;
 				//Once inserted we need it in availableArtists right away

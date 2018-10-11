@@ -5,12 +5,12 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "../../common/Button";
 import Slide from "@material-ui/core/Slide";
 
+import Button from "../../common/Button";
 import DialogTransition from "../../common/DialogTransition";
 import InputGroup from "../../common/form/InputGroup";
-import api from "../../../helpers/api";
+import Bigneon from "../../../helpers/bigneon";
 
 const styles = theme => ({
 	container: {
@@ -46,29 +46,24 @@ class PromoCodeDialog extends React.Component {
 		this.setState({ isSubmitting: true });
 
 		//TODO this isn't in the API yet so needs tweaking when the API endpoint is available
-		api({
-			auth: false
-		})
-			.post("/promo/validate", {
-				code
-			})
-			.then(response => {
-				const { value } = response.data;
+		// Bigneon().cart.applyPromo({code})
+		// 	.then(response => {
+		// 		const { value } = response.data;
 
-				onSuccess(value);
-			})
-			.catch(error => {
-				let message = "Promo code check failed.";
+		// 		onSuccess(value);
+		// 	})
+		// 	.catch(error => {
+		// 		let message = "Promo code check failed.";
 
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-				this.setState({ isSubmitting: false, error: message });
-			});
+		// 		if (
+		// 			error.response &&
+		// 			error.response.data &&
+		// 			error.response.data.error
+		// 		) {
+		// 			message = error.response.data.error;
+		// 		}
+		// 		this.setState({ isSubmitting: false, error: message });
+		// 	});
 	}
 
 	render() {

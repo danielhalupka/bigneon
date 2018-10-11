@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import notifications from "../../../stores/notifications";
 import api from "../../../helpers/api";
 import Button from "../../common/Button";
+import Bigneon from "../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -41,8 +42,8 @@ class ArtistsList extends Component {
 	}
 
 	componentDidMount() {
-		api()
-			.get("/artists")
+		Bigneon()
+			.artists.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ artists: data });

@@ -10,9 +10,9 @@ import Button from "../../../common/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import { validEmail, validPhone } from "../../../../validators";
-import api from "../../../../helpers/api";
 import FacebookButton from "../social/FacebookButton";
 import Divider from "../../../common/Divider";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = () => ({});
 
@@ -90,10 +90,8 @@ class SignupForm extends Component {
 
 	onSignupSuccess({ email, password }) {
 		//Successful signup, now get a token
-		api({
-			auth: false
-		})
-			.post("/auth/token", {
+		Bigneon()
+			.auth.authenticate({
 				email,
 				password
 			})
@@ -155,10 +153,8 @@ class SignupForm extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		api({
-			auth: false
-		})
-			.post("/users/register", {
+		Bigneon()
+			.users.create({
 				first_name,
 				last_name,
 				email,
@@ -171,8 +167,17 @@ class SignupForm extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
+				let message = "Sign up failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
 				notifications.show({
-					message: "Sign up failed.", //TODO add more details here
+					message,
 					variant: "error"
 				});
 			});

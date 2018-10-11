@@ -8,8 +8,8 @@ import Card from "@material-ui/core/Card";
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
-import api from "../../../../../helpers/api";
 import { validEmail } from "../../../../../validators";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -77,15 +77,12 @@ class InviteUserCard extends Component {
 		const { email } = this.state;
 		const { organizationId } = this.props;
 
-		const details = {
-			user_email: email
-		};
-
-		console.log(details);
-		api()
-			.post(`/organizations/${organizationId}/invite`, details)
+		Bigneon()
+			.organizations.invite.create({
+				organization_id: organizationId,
+				user_email: email
+			})
 			.then(response => {
-				console.log(response.data);
 				this.setState({ isSubmitting: false });
 
 				notifications.show({

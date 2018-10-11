@@ -4,9 +4,9 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 
 import Button from "../../../common/Button";
-import api from "../../../../helpers/api";
 import notifications from "../../../../stores/notifications";
 import user from "../../../../stores/user";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
 	leftIcon: {
@@ -33,12 +33,9 @@ class FacebookButton extends Component {
 		const authenticated = status === "connected";
 		this.setState({ authenticated });
 
-		//TODO confirm api endpoint route
 		if (authenticated) {
-			api({
-				auth: false
-			})
-				.post("/external/facebook/web_login", authResponse)
+			Bigneon()
+				.external.facebookLogin(authResponse)
 				.then(response => {
 					this.setState({ isAuthenticating: false });
 

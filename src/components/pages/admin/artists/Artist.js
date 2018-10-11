@@ -11,9 +11,9 @@ import InputGroup from "../../../common/form/InputGroup";
 import FormSubHeading from "../../../common/FormSubHeading";
 import Button from "../../../common/Button";
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
 import { validUrl } from "../../../../validators";
 import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -58,9 +58,10 @@ class Artist extends Component {
 		const { artistId } = this.state;
 
 		if (artistId) {
-			api()
-				.get(`/artists/${artistId}`)
+			Bigneon()
+				.artists.read({ id: artistId })
 				.then(response => {
+					console.log(response);
 					const {
 						name,
 						bio,
@@ -166,8 +167,8 @@ class Artist extends Component {
 	}
 
 	createNewArtist(params, onSuccess) {
-		api()
-			.post("/artists", params)
+		Bigneon()
+			.artists.create(params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -194,8 +195,8 @@ class Artist extends Component {
 	}
 
 	updateArtist(id, params, onSuccess) {
-		api()
-			.put(`/artists/${id}`, { ...params, id })
+		Bigneon()
+			.artists.update({ ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})

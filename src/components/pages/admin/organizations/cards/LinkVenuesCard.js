@@ -10,7 +10,6 @@ import Card from "@material-ui/core/Card";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import Button from "../../../../common/Button";
 import notifications from "../../../../../stores/notifications";
-import api from "../../../../../helpers/api";
 import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
@@ -71,7 +70,6 @@ class LinkVenuesCard extends Component {
 			.organizations.venues.index({ id: organizationId })
 			.then(response => {
 				const { data } = response;
-				console.log(data);
 				this.setState({ linkedVenues: data });
 			})
 			.catch(error => {
@@ -130,8 +128,9 @@ class LinkVenuesCard extends Component {
 		const { venueId } = this.state;
 		const { organizationId } = this.props;
 
-		api()
-			.post(`/venues/${venueId}/organizations`, {
+		Bigneon()
+			.venues.addToOrganization({
+				id: venueId,
 				organization_id: organizationId
 			})
 			.then(response => {

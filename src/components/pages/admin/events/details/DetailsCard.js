@@ -7,13 +7,13 @@ import Card from "@material-ui/core/Card";
 import moment from "moment";
 
 import Button from "../../../../common/Button";
-import api from "../../../../../helpers/api";
 import notifications from "../../../../../stores/notifications";
 import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import FormSubHeading from "../../../../common/FormSubHeading";
 import cloudinaryWidget from "../../../../../helpers/cloudinaryWidget";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -90,8 +90,8 @@ class DetailsCard extends Component {
 	}
 
 	createNewEvent(params, onSuccess) {
-		api()
-			.post("/events", params)
+		Bigneon()
+			.events.create(params)
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
@@ -107,8 +107,8 @@ class DetailsCard extends Component {
 	}
 
 	updateEvent(id, params, onSuccess) {
-		api()
-			.put(`/events/${id}`, { ...params, id })
+		Bigneon()
+			.events.update({ ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})
@@ -195,9 +195,8 @@ class DetailsCard extends Component {
 
 	loadVenues(organizationId) {
 		this.setState({ venues: null }, () => {
-			//TODO use `/venues/organizations/${organizationId}`
-			api()
-				.get(`/venues`)
+			Bigneon()
+				.venues.index()
 				.then(response => {
 					const { data } = response;
 					this.setState({ venues: data });

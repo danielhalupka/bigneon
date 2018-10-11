@@ -7,8 +7,8 @@ import CardActions from "@material-ui/core/CardActions";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {},
@@ -28,8 +28,8 @@ class OrganizationsList extends Component {
 	}
 
 	componentDidMount() {
-		api()
-			.get("/organizations")
+		Bigneon()
+			.organizations.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ organizations: data });

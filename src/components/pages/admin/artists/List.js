@@ -3,12 +3,11 @@ import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -41,8 +40,8 @@ class ArtistsList extends Component {
 	}
 
 	componentDidMount() {
-		api()
-			.get("/artists")
+		Bigneon()
+			.artists.index()
 			.then(response => {
 				const { data } = response;
 				this.setState({ artists: data });

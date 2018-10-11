@@ -8,8 +8,8 @@ import InputGroup from "../../common/form/InputGroup";
 import Button from "../../common/Button";
 import Container from "./Container";
 import notifications from "../../../stores/notifications";
-import api from "../../../helpers/api";
 import user from "../../../stores/user";
+import Bigneon from "../../../helpers/bigneon";
 
 const styles = () => ({});
 
@@ -79,13 +79,12 @@ class PasswordReset extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		api({
-			auth: false
-		})
-			.put("/password_reset", {
+		Bigneon()
+			.passwordReset.update({
 				password,
 				password_reset_token
 			})
+
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
 

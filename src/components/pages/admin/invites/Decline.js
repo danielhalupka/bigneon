@@ -1,14 +1,10 @@
 import React, { Component } from "react";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
 import Button from "../../../common/Button";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({});
 
@@ -41,8 +37,8 @@ class InviteDecline extends Component {
 
 		const { security_token } = this.state;
 
-		api({ auth: false })
-			.delete(`/invitations`, { params: { security_token } })
+		Bigneon()
+			.invitations.accept({ security_token })
 			.then(response => {
 				this.setState({ isSubmitting: false });
 

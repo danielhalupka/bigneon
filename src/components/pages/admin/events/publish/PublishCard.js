@@ -6,9 +6,9 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 import Button from "../../../../common/Button";
-import api from "../../../../../helpers/api";
 import notifications from "../../../../../stores/notifications";
 import FormSubHeading from "../../../../common/FormSubHeading";
+import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({
 	paper: {
@@ -35,8 +35,8 @@ class PublishCard extends Component {
 	changeEventStatus(isPublished, onSuccess) {
 		//TODO implement an un publish call when ready in API
 		const { eventId } = this.props;
-		api()
-			.post(`/events/${eventId}/publish`)
+		Bigneon()
+			.events.publish({ id: eventId })
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);

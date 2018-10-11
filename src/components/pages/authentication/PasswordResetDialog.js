@@ -13,8 +13,8 @@ import InputGroup from "../../common/form/InputGroup";
 import { validEmail } from "../../../validators";
 import notifications from "../../../stores/notifications";
 import Button from "../../common/Button";
-import api from "../../../helpers/api";
 import DialogTransition from "../../common/DialogTransition";
+import Bigneon from "../../../helpers/bigneon";
 
 const styles = {};
 
@@ -45,8 +45,8 @@ class PasswordResetDialog extends React.Component {
 
 		console.log("Go");
 
-		api({ auth: false })
-			.post("/password_reset", {
+		Bigneon()
+			.passwordReset.create({
 				email
 			})
 			.then(response => {

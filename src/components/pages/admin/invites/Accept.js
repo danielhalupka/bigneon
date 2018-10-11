@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
 
 import notifications from "../../../../stores/notifications";
-import api from "../../../../helpers/api";
 import user from "../../../../stores/user";
+import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({});
 
@@ -46,10 +46,10 @@ class InviteAccept extends Component {
 
 	acceptInvite() {
 		this.setState({ isSubmitting: true });
-
 		const { security_token } = this.state;
-		api()
-			.post(`/invitations`, { params: { security_token } })
+
+		Bigneon()
+			.invitations.accept({ security_token })
 			.then(response => {
 				this.setState({ isSubmitting: false });
 
