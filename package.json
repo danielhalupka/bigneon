@@ -58,7 +58,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "postinstall": "git config core.hooksPath .githooks",
+    "prepare": "[ \"$NODE_ENV\" != \"production\" ] && git config core.hooksPath .githooks",
     "eslint-validate": "node_modules/eslint/bin/eslint.js -c .eslintrc --ignore-path=.eslintignore --ext .js ./ ",
     "eslint-fix": "node_modules/eslint/bin/eslint.js --fix -c .eslintrc --ignore-path=.eslintignore --ext .js ./ "
   },
