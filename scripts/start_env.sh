@@ -9,7 +9,7 @@ if [ -z $NODE_ENV ]; then
 fi
 
 if [ "$ENV" = "production" ]; then
-    npm install
+    npm update
     npm run build
     if [ ! -z "$PORT" ] && [ "$PORT" -ne 0 ]; then
         echo "Serving static files from $PORT"
