@@ -160,10 +160,19 @@ class EventsList extends Component {
 									<Button
 										target="_blank"
 										href={`/events/${id}`}
-										customClassName="secondary"
+										customClassName="primary"
+										style={{ marginRight: 10 }}
 									>
 										Open event page
 									</Button>
+								) : null}
+								{!cancelled_at ? (
+									<Link
+										to={`/admin/widget-builder/${id}`}
+										style={{ textDecoration: "none", marginRight: 10 }}
+									>
+										<Button customClassName="primary">Create widget</Button>
+									</Link>
 								) : null}
 							</div>
 						</Card>

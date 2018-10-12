@@ -71,13 +71,17 @@ class Container extends React.Component {
 		super(props);
 
 		this.state = {
-			mobileOpen: false
+			mobileOpen: false,
+			isWidget: false
 		};
 	}
 
 	componentDidMount() {
 		//This component mounts every time the browser is refreshed, so we need to check we still have a valid token
 		user.refreshUser();
+
+		const isWidget = window.location.pathname.includes("/widget/");
+		this.setState({ isWidget });
 	}
 
 	handleDrawerToggle() {
@@ -86,7 +90,12 @@ class Container extends React.Component {
 
 	render() {
 		const { classes, history, children } = this.props;
-		const { mobileOpen } = this.state;
+		const { mobileOpen, isWidget } = this.state;
+
+		//Don't render container things if we're in a widget
+		if (isWidget) {
+			return <div>{children}</div>;
+		}
 
 		const drawer = (
 			<div>

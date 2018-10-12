@@ -113,7 +113,7 @@ class ArtistsCard extends Component {
 
 		//TODO implement bn-api-node when this works
 		// Bigneon()
-		// 	.events.artists.update({ event_id: eventId, ...artistArray })
+		// 	.events.artists.update({ event_id: eventId, artists: artistArray })
 		api()
 			.put(`/events/${eventId}/artists`, artistArray)
 			.then(response => {

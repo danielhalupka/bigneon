@@ -44,9 +44,10 @@ import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
 
 import user from "../../stores/user";
-import cart from "../../stores/cart";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
-import EventQRLink from "../pages/widgets/EventQRLink";
+import WidgetLinkBuilder from "../widgets/LinkBuilder";
+import EventQR from "../widgets/EventQR";
+import EmbeddedWidget from "../widgets/Embedded";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -106,71 +107,59 @@ class Routes extends Component {
 						<Route exact path="/" component={Home} />
 						<Route exact path="/events" component={Home} />
 						<Route exact path="/artists" component={Artists} />
-
 						<Route exact path="/sign-up" component={Signup} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/password-reset" component={PasswordReset} />
 						<Route exact path="/invites/decline" component={InviteDecline} />
 						<Route exact path="/invites/accept" component={InviteAccept} />
-
 						<PrivateRoute
 							exact
 							path="/dashboard"
 							component={Dashboard}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/account"
 							component={Account}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/tickets"
 							component={TicketList}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/orders"
 							component={OrderList}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/orders/:id"
 							component={Order}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<Route exact path="/events/:id" component={ViewEvent} />
-
 						<Route
 							exact
 							path="/events/:id/tickets"
 							component={CheckoutSelection}
 						/>
-
 						<Route
 							exact
 							path="/events/:id/tickets/confirmation"
 							component={CheckoutConfirmation}
 						/>
-
 						<Route exact path="/cart" component={CheckoutConfirmation} />
-
 						<PrivateRoute
 							exact
 							path="/events/:id/tickets/success"
 							component={CheckoutSuccess}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						{/* System admin routes TODO hide these if they don't blong */}
 						<PrivateRoute
 							exact
@@ -196,14 +185,12 @@ class Routes extends Component {
 							component={AdminOrganization}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/admin/venues"
 							component={AdminVenuesList}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						{/* <Route exact path="/admin/venues" component={AdminVenuesList} /> */}
 						<PrivateRoute
 							exact
@@ -217,7 +204,6 @@ class Routes extends Component {
 							component={AdminVenue}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/admin/artists"
@@ -236,7 +222,6 @@ class Routes extends Component {
 							component={AdminArtist}
 							isAuthenticated={isAuthenticated}
 						/>
-
 						<PrivateRoute
 							exact
 							path="/admin/events"
@@ -255,9 +240,15 @@ class Routes extends Component {
 							component={AdminEvent}
 							isAuthenticated={isAuthenticated}
 						/>
-
-						<Route exact path="/qr/:id" component={EventQRLink} />
-
+						<PrivateRoute
+							exact
+							path="/admin/widget-builder/:id"
+							component={WidgetLinkBuilder}
+							isAuthenticated={isAuthenticated}
+						/>
+						{/* TODO these will be moved into their own Routes.js when web pack is changes to serve different compiled bundles */}
+						<Route exact path="/widget/qr/:id" component={EventQR} />
+						<Route exact path="/widget/embed/:id" component={EmbeddedWidget} />
 						<Route component={NotFound} />
 					</Switch>
 				</Container>

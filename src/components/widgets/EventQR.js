@@ -6,18 +6,13 @@ import { Paper } from "@material-ui/core";
 import { observer } from "mobx-react";
 import QRCode from "qrcode.react";
 
-import notifications from "../../../stores/notifications";
-import selectedEvent from "../../../stores/selectedEvent";
-import { primaryHex } from "../../styles/theme";
+import notifications from "../../stores/notifications";
+import selectedEvent from "../../stores/selectedEvent";
+import { primaryHex } from "../styles/theme";
 
 const styles = theme => ({
 	card: {
 		padding: theme.spacing.unit * 4
-	},
-	media: {
-		height: 400,
-		width: "100%",
-		borderRadius: theme.shape.borderRadius
 	},
 	descriptionDiv: {
 		marginTop: theme.spacing.unit * 4,
@@ -26,7 +21,7 @@ const styles = theme => ({
 });
 
 @observer
-class EventQRLink extends Component {
+class EventQR extends Component {
 	constructor(props) {
 		super(props);
 
@@ -68,10 +63,8 @@ class EventQRLink extends Component {
 		}
 
 		const href = window.location.href;
-		const host = href.substring(0, href.indexOf("/qr")); //TODO better
-		console.log(host);
-
-		const qrText = `http://localhost:3000/events/${eventId}`;
+		const host = href.substring(0, href.indexOf("/widget")); //TODO better especially if widget gets hosted on different doimain
+		const qrText = `${host}/events/${eventId}`;
 
 		const {
 			name,
@@ -84,7 +77,7 @@ class EventQRLink extends Component {
 		} = event;
 
 		return (
-			<Paper className={classes.card}>
+			<div className={classes.card}>
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						<Typography variant="subheading">
@@ -142,14 +135,14 @@ class EventQRLink extends Component {
 						</div>
 					</Grid>
 				</Grid>
-			</Paper>
+			</div>
 		);
 	}
 }
 
-EventQRLink.propTypes = {
+EventQR.propTypes = {
 	match: PropTypes.object.isRequired,
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(EventQRLink);
+export default withStyles(styles)(EventQR);
