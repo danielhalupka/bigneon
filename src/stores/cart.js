@@ -25,7 +25,7 @@ class Cart {
 		Bigneon()
 			.cart.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				const { id, items, total_in_cents } = data;
 
 				this.id = id;

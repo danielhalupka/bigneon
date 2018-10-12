@@ -40,7 +40,7 @@ class OrderList extends Component {
 		Bigneon()
 			.orders.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				this.setState({ orders: data });
 			})
 			.catch(error => {

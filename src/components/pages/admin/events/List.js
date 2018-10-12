@@ -52,8 +52,9 @@ class EventsList extends Component {
 			//https://github.com/big-neon/bn-web/issues/237
 			Bigneon()
 				.organizations.index()
-				.then(orgResponse => {
-					orgResponse.data.forEach(({ id }) => {
+				.then(response => {
+					const { data, paging } = response.data; //@TODO Implement pagination
+					data.forEach(({ id }) => {
 						Bigneon()
 							.organizations.events.index({ organization_id: id })
 							.then(eventResponse => {

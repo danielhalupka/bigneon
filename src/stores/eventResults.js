@@ -19,7 +19,8 @@ class EventResults {
 			.then(response => {
 				let events = [];
 
-				response.data.forEach(eventData => {
+				const { data, paging } = response.data; //@TODO Implement pagination
+				data.forEach(eventData => {
 					const { venue, promo_image_url, cancelled_at, ...event } = eventData;
 
 					//TODO remove this when it's added as a filter in the API

@@ -31,7 +31,7 @@ class VenuesList extends Component {
 		Bigneon()
 			.venues.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				this.setState({ venues: data });
 			})
 			.catch(error => {

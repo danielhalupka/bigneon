@@ -30,7 +30,7 @@ class TicketList extends Component {
 		Bigneon()
 			.tickets.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				let ticketGroups = [];
 
 				//TODO api data structure will eventually change

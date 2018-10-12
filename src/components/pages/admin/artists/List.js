@@ -43,7 +43,7 @@ class ArtistsList extends Component {
 		Bigneon()
 			.artists.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				this.setState({ artists: data });
 			})
 			.catch(error => {

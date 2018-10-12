@@ -31,7 +31,7 @@ class OrganizationsList extends Component {
 		Bigneon()
 			.organizations.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				this.setState({ organizations: data });
 			})
 			.catch(error => {

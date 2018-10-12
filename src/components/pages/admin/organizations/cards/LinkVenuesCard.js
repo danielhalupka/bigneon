@@ -41,7 +41,7 @@ class LinkVenuesCard extends Component {
 		Bigneon()
 			.venues.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				this.setState({ venues: data });
 			})
 			.catch(error => {
@@ -69,7 +69,7 @@ class LinkVenuesCard extends Component {
 		Bigneon()
 			.organizations.venues.index({ id: organizationId })
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				this.setState({ linkedVenues: data });
 			})
 			.catch(error => {

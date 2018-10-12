@@ -55,7 +55,8 @@ class FeeScheduleCard extends Component {
 		Bigneon()
 			.organizations.feeSchedule.index({ id: organizationId })
 			.then(response => {
-				const { id, name, ranges, message } = response.data;
+				const { data, paging } = response.data; //@TODO Implement pagination
+				const { id, name, ranges, message } = data;
 				console.log(ranges);
 
 				let formattedRanges = [];

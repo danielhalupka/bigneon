@@ -59,7 +59,7 @@ class Event extends Component {
 		Bigneon()
 			.organizations.index()
 			.then(response => {
-				const { data } = response;
+				const { data, paging } = response.data; //@TODO Implement pagination
 				const organizations = {};
 				data.forEach(organization => {
 					organizations[organization.id] = organization.name;

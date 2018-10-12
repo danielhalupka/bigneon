@@ -40,7 +40,8 @@ class TicketsCard extends Component {
 		Bigneon()
 			.events.ticketTypes.index({ event_id: eventId })
 			.then(response => {
-				const { ticket_types } = response.data;
+				const { data, paging } = response.data; //@TODO Implement pagination
+				const ticket_types = data;
 
 				let tickets = [];
 
@@ -308,7 +309,8 @@ class TicketsCard extends Component {
 		axios
 			.all(ticketTypePromises)
 			.then(results => {
-				results.forEach(({ data }) => {});
+				results.forEach(({ data }) => {
+				});
 
 				notifications.show({
 					message: "Event tickets updated.",
@@ -365,7 +367,7 @@ class TicketsCard extends Component {
 							//Only add a divider between ticket sections
 							const bottomDivider =
 								tickets.length - 1 > index ? (
-									<Divider style={{ marginBottom: 60, marginTop: 60 }} dashed />
+									<Divider style={{ marginBottom: 60, marginTop: 60 }} dashed/>
 								) : null;
 							return (
 								<div key={`ticket_${index}`}>
