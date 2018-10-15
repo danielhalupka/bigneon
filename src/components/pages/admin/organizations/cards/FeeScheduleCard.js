@@ -51,13 +51,12 @@ class FeeScheduleCard extends Component {
 
 	componentDidMount() {
 		const { organizationId } = this.props;
-
 		Bigneon()
-			.organizations.feeSchedule.index({ id: organizationId })
+			.organizations.feeSchedules.index({ organization_id: organizationId })
 			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
+				const { data, paging } = response; //@TODO Implement pagination
+
 				const { id, name, ranges, message } = data;
-				console.log(ranges);
 
 				let formattedRanges = [];
 				ranges.forEach(range => {
@@ -185,8 +184,8 @@ class FeeScheduleCard extends Component {
 		}));
 
 		Bigneon()
-			.organizations.feeSchedule.create({
-				id: organizationId,
+			.organizations.feeSchedules.create({
+				organization_id: organizationId,
 				name,
 				ranges: formattedRanges
 			})

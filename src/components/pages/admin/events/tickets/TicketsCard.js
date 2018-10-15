@@ -62,18 +62,12 @@ class TicketsCard extends Component {
 
 							let startDate = null;
 							if (pricePoint.start_date) {
-								startDate = moment.utc(
-									pricePoint.start_date,
-									moment.HTML5_FMT.DATETIME_LOCAL_MS
-								);
+								startDate = moment.utc(pricePoint.start_date).local();
 							}
 
 							let endDate = null;
 							if (pricePoint.end_date) {
-								endDate = moment.utc(
-									pricePoint.end_date,
-									moment.HTML5_FMT.DATETIME_LOCAL_MS
-								);
+								endDate = moment.utc(pricePoint.end_date).local();
 							}
 
 							pricing.push({
@@ -85,17 +79,22 @@ class TicketsCard extends Component {
 								value: price_in_cents / 100
 							});
 						});
+
+						const ticketStartDate = start_date
+							? moment.utc(start_date).local()
+							: null;
+
+						const ticketEndDate = end_date
+							? moment.utc(end_date).local()
+							: null;
+
 						tickets.push(
 							Ticket.Structure({
 								id,
 								name,
 								capacity: capacity ? capacity : 0,
-								startDate: start_date
-									? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-									: null,
-								endDate: end_date
-									? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-									: null,
+								startDate: ticketStartDate,
+								endDate: ticketEndDate,
 								pricing
 							})
 						);
@@ -262,16 +261,15 @@ class TicketsCard extends Component {
 			let ticket_pricing = [];
 			pricing.forEach(pricePoint => {
 				const { id, name, startDate, endDate, value } = pricePoint;
-
 				ticket_pricing.push({
 					id: id ? id : undefined,
 					name,
 					price_in_cents: Math.round(Number(value) * 100),
-					start_date: moment
-						.utc(startDate)
+					start_date: moment(startDate)
+						.utc()
 						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-					end_date: moment
-						.utc(endDate)
+					end_date: moment(endDate)
+						.utc()
 						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 				});
 			});
@@ -279,11 +277,11 @@ class TicketsCard extends Component {
 			const ticketDetails = {
 				name,
 				capacity: Number(capacity),
-				start_date: moment
-					.utc(startDate)
+				start_date: moment(startDate)
+					.utc()
 					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-				end_date: moment
-					.utc(endDate)
+				end_date: moment(endDate)
+					.utc()
 					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 				ticket_pricing
 			};
@@ -309,8 +307,7 @@ class TicketsCard extends Component {
 		axios
 			.all(ticketTypePromises)
 			.then(results => {
-				results.forEach(({ data }) => {
-				});
+				results.forEach(({ data }) => {});
 
 				notifications.show({
 					message: "Event tickets updated.",
@@ -367,7 +364,7 @@ class TicketsCard extends Component {
 							//Only add a divider between ticket sections
 							const bottomDivider =
 								tickets.length - 1 > index ? (
-									<Divider style={{ marginBottom: 60, marginTop: 60 }} dashed/>
+									<Divider style={{ marginBottom: 60, marginTop: 60 }} dashed />
 								) : null;
 							return (
 								<div key={`ticket_${index}`}>

@@ -239,7 +239,7 @@ class OrganizationUpdateCard extends Component {
 
 		//If we're creating an org, we need to lookup the users ID with their email address
 		Bigneon()
-			.users.find({ email })
+			.users.findByEmail({ email })
 			.then(response => {
 				const { id } = response.data;
 				if (!id) {

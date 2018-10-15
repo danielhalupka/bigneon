@@ -1,9 +1,23 @@
 import React, { Component } from "react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import {
+	Typography,
+	withStyles,
+	CardMedia,
+	IconButton,
+	Menu,
+	MenuItem,
+	ListItemIcon,
+	ListItemText
+} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import { Link } from "react-router-dom";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import EditIcon from "@material-ui/icons/Edit";
+import ViewIcon from "@material-ui/icons/Link";
+import CancelIcon from "@material-ui/icons/Cancel";
+import CreateWidgetIcon from "@material-ui/icons/Code";
 
 import notifications from "../../../../stores/notifications";
 import Button from "../../../common/Button";
@@ -21,8 +35,8 @@ const styles = theme => ({
 	},
 	media: {
 		width: "100%",
-		maxWidth: 150,
-		height: 150
+		maxWidth: 350,
+		height: 240
 	},
 	actionButtons: {
 		display: "flex",
@@ -37,13 +51,22 @@ class EventsList extends Component {
 
 		this.state = {
 			events: null,
-			cancelEventId: null
+			cancelEventId: null,
+			optionsAnchorEl: null
 		};
 	}
 
 	componentDidMount() {
 		this.updateEvents();
 	}
+
+	handleMenuClick = event => {
+		this.setState({ optionsAnchorEl: event.currentTarget });
+	};
+
+	handleOptionsClose = () => {
+		this.setState({ optionsAnchorEl: null });
+	};
 
 	updateEvents() {
 		this.setState({ events: null }, () => {
@@ -62,7 +85,7 @@ class EventsList extends Component {
 								this.setState(({ events }) => {
 									const previousEvents = events ? events : [];
 									return {
-										events: [...previousEvents, ...eventResponse.data]
+										events: [...previousEvents, ...eventResponse.data.data] //@TODO Implement pagination
 									};
 								});
 							})
@@ -109,6 +132,8 @@ class EventsList extends Component {
 		const { events } = this.state;
 		const { classes } = this.props;
 
+		const { optionsAnchorEl } = this.state;
+
 		if (events === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
@@ -121,6 +146,36 @@ class EventsList extends Component {
 			return events.map(eventData => {
 				const { venue, ...event } = eventData;
 				const { id, name, promo_image_url, cancelled_at } = event;
+				const eventOptions = [
+					{
+						text: "Edit event",
+						onClick: () =>
+							this.props.history.push(
+								`/admin/events/${this.eventMenuSelected}`
+							),
+						MenuOptionIcon: EditIcon
+					},
+					{
+						text: "View event",
+						onClick: () =>
+							this.props.history.push(`/events/${this.eventMenuSelected}`),
+						MenuOptionIcon: ViewIcon
+					},
+					{
+						text: "Cancel event",
+						onClick: () =>
+							this.setState({ cancelEventId: this.eventMenuSelected }),
+						MenuOptionIcon: CancelIcon
+					},
+					{
+						text: "Create widget",
+						onClick: () =>
+							this.props.history.push(
+								`/admin/widget-builder/${this.eventMenuSelected}`
+							),
+						MenuOptionIcon: CreateWidgetIcon
+					}
+				];
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
@@ -140,40 +195,39 @@ class EventsList extends Component {
 								</Typography>
 							</CardContent>
 
-							<div className={classes.actionButtons}>
-								{!cancelled_at ? (
-									<Button
-										onClick={() => this.setState({ cancelEventId: id })}
-										customClassName="warning"
-										style={{ marginRight: 10 }}
-									>
-										Cancel event
-									</Button>
-								) : null}
-								<Link
-									to={`/admin/events/${id}`}
-									style={{ textDecoration: "none", marginRight: 10 }}
+							<div>
+								<IconButton
+									onClick={e => {
+										this.eventMenuSelected = id;
+										this.handleMenuClick(e);
+									}}
 								>
-									<Button customClassName="primary">Edit details</Button>
-								</Link>
-								{!cancelled_at ? (
-									<Button
-										target="_blank"
-										href={`/events/${id}`}
-										customClassName="primary"
-										style={{ marginRight: 10 }}
-									>
-										Open event page
-									</Button>
-								) : null}
-								{!cancelled_at ? (
-									<Link
-										to={`/admin/widget-builder/${id}`}
-										style={{ textDecoration: "none", marginRight: 10 }}
-									>
-										<Button customClassName="primary">Create widget</Button>
-									</Link>
-								) : null}
+									<MoreHorizIcon />
+								</IconButton>
+
+								<Menu
+									id="long-menu"
+									anchorEl={optionsAnchorEl}
+									open={Boolean(optionsAnchorEl)}
+									onClose={this.handleOptionsClose}
+								>
+									{eventOptions.map(({ text, onClick, MenuOptionIcon }) => {
+										return (
+											<MenuItem
+												key={text}
+												onClick={() => {
+													this.handleOptionsClose();
+													onClick();
+												}}
+											>
+												<ListItemIcon>
+													<MenuOptionIcon />
+												</ListItemIcon>
+												<ListItemText inset primary={text} />
+											</MenuItem>
+										);
+									})}
+								</Menu>
 							</div>
 						</Card>
 					</Grid>
@@ -201,7 +255,7 @@ class EventsList extends Component {
 				/>
 				<Typography variant="display3">Events</Typography>
 
-				<Grid container spacing={24}>
+				<Grid container spacing={16}>
 					<Grid item xs={12} sm={12} lg={12}>
 						<Link
 							to={"/admin/events/create"}

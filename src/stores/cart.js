@@ -26,11 +26,13 @@ class Cart {
 			.cart.read()
 			.then(response => {
 				const { data } = response;
-				const { id, items, total_in_cents } = data;
+				if (data) {
+					const { id, items, total_in_cents } = data;
 
-				this.id = id;
-				this.items = items;
-				this.total_in_cents = total_in_cents;
+					this.id = id;
+					this.items = items;
+					this.total_in_cents = total_in_cents;
+				}
 			})
 			.catch(error => {
 				console.error(error);

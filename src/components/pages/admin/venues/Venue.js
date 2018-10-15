@@ -187,7 +187,7 @@ class Venue extends Component {
 
 	updateVenue(id, params, onSuccess) {
 		Bigneon()
-			.venues.edit({ ...params, id })
+			.venues.update({ ...params, id })
 			.then(() => {
 				onSuccess(id);
 			})
