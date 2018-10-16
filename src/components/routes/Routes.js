@@ -49,6 +49,7 @@ import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import EventQR from "../widgets/EventQR";
 import EmbeddedWidget from "../widgets/Embedded";
+import ReceiveTransfer from "../pages/tickets/ReceiveTransfer";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -113,6 +114,7 @@ class Routes extends Component {
 						<Route exact path="/password-reset" component={PasswordReset} />
 						<Route exact path="/invites/decline" component={InviteDecline} />
 						<Route exact path="/invites/accept" component={InviteAccept} />
+						<Route exact path="/tickets/receive" component={ReceiveTransfer} />
 						<PrivateRoute
 							exact
 							path="/dashboard"
