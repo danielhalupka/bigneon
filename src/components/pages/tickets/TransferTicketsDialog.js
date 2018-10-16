@@ -16,6 +16,8 @@ import Button from "../../common/Button";
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail } from "../../../validators";
 import notification from "../../../stores/notifications";
+import Bigneon from "../../../helpers/bigneon";
+import Divider from "../../common/Divider";
 
 const styles = {
 	content: {
@@ -29,20 +31,90 @@ class TransferTicketsDialog extends React.Component {
 		super(props);
 
 		this.defaultState = {
-			transferOption: null,
 			email: "",
 			errors: {},
+			qrText: "",
 			isSubmitting: false
 		};
 
 		this.state = this.defaultState;
-
 		this.onClose = this.onClose.bind(this);
-		this.changeTransferOption = this.changeTransferOption.bind(this);
 	}
 
-	changeTransferOption(e) {
-		this.setState({ transferOption: e.target.value });
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		const { ticketIds } = this.props;
+
+		if (ticketIds) {
+			if (!prevProps.ticketIds) {
+				//No original state to compare just get the new QR text
+				this.refreshQrText();
+			} else if (ticketIds.length !== prevProps.ticketIds.length) {
+				this.refreshQrText();
+			} else {
+				//If the user changed the checked ticket IDs at all then we need to refresh the claiming QR text
+				let differentTicketIds = false;
+
+				for (let index = 0; index < ticketIds.length; index++) {
+					if (ticketIds[index] !== prevProps.ticketIds[index]) {
+						differentTicketIds = true;
+					}
+				}
+
+				if (differentTicketIds) {
+					this.refreshQrText();
+				}
+			}
+		}
+	}
+
+	refreshQrText() {
+		this.setState({ qrText: "" }, () => {
+			const { ticketIds } = this.props;
+
+			Bigneon()
+				.tickets.transfer.transfer({
+					ticket_ids: ticketIds,
+					validity_period_in_seconds: 60 * 60
+				}) //TODO make this config based
+				.then(response => {
+					const {
+						transfer_key,
+						signature,
+						sender_user_id,
+						num_tickets
+					} = response.data;
+
+					const qrObj = {
+						type: 0,
+						data: {
+							transfer_key,
+							signature,
+							sender_user_id,
+							num_tickets,
+							extra: ""
+						}
+					};
+
+					const qrText = JSON.stringify(qrObj);
+
+					this.setState({ qrText });
+				})
+				.catch(error => {
+					console.error(error);
+					let message = "Creating QR code failed failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+					notification.show({
+						message,
+						variant: "error"
+					});
+				});
+		});
 	}
 
 	onClose() {
@@ -93,26 +165,49 @@ class TransferTicketsDialog extends React.Component {
 		}
 
 		this.setState({ isSubmitting: true });
+		const { ticketIds } = this.props;
 
-		//TODO hook in api
-		setTimeout(() => {
-			this.setState({ isSubmitting: false }, () => {
-				this.onClose();
-				notification.show({ message: "Feature coming soon" });
+		Bigneon()
+			.tickets.transfer.send({
+				ticket_ids: ticketIds,
+				validity_period_in_seconds: 60 * 60 * 24, //TODO make this config based
+				email
+			})
+			.then(response => {
+				this.setState({ isSubmitting: false }, () => {
+					this.onClose();
+
+					notification.show({
+						message: "Email sent.",
+						variant: "success"
+					});
+				});
+			})
+			.catch(error => {
+				this.setState({ isSubmitting: false });
+				console.error(error);
+				let message = "Send tickets via email failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+				notification.show({
+					message,
+					variant: "error"
+				});
 			});
-		}, 1000);
 	}
 
 	renderQRCode() {
 		const { ticketIds } = this.props;
+		const { qrText } = this.state;
 
-		if (!ticketIds) {
+		if (!ticketIds || !qrText) {
 			return null;
 		}
-
-		const ticketIdsString = ticketIds.join();
-
-		const qrText = `Coming soon (TM) :${ticketIdsString}`;
 
 		return (
 			<div
@@ -141,7 +236,7 @@ class TransferTicketsDialog extends React.Component {
 				error={errors.email}
 				value={email}
 				name="email"
-				label="Email address"
+				label="Send via email address"
 				type="email"
 				onChange={e => this.setState({ email: e.target.value })}
 				onBlur={this.validateFields.bind(this)}
@@ -151,7 +246,7 @@ class TransferTicketsDialog extends React.Component {
 
 	render() {
 		const { ticketIds, classes, ...other } = this.props;
-		const { transferOption, isSubmitting } = this.state;
+		const { isSubmitting } = this.state;
 
 		let heading = "";
 		if (ticketIds) {
@@ -171,40 +266,25 @@ class TransferTicketsDialog extends React.Component {
 				<DialogContent className={classes.content}>
 					<Typography variant="headline">{heading}</Typography>
 
-					<RadioGroup
-						aria-label="Ringtone"
-						name="ringtone"
-						value={transferOption}
-						onChange={this.changeTransferOption}
-					>
-						<FormControlLabel
-							value={"email"}
-							control={<Radio />}
-							label={"Via email"}
-						/>
-						<FormControlLabel
-							value={"qr"}
-							control={<Radio />}
-							label={"Via QR code"}
-						/>
-					</RadioGroup>
+					<Typography variant="subheading">Scan with the mobile app</Typography>
 
-					{transferOption === "qr" ? this.renderQRCode() : null}
-					{transferOption === "email" ? this.renderEmail() : null}
+					{this.renderQRCode()}
+
+					<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
+
+					{this.renderEmail()}
 				</DialogContent>
 				<DialogActions>
 					<Button disabled={isSubmitting} onClick={this.onClose}>
 						Cancel
 					</Button>
-					{transferOption === "email" ? (
-						<Button
-							onClick={this.onSubmitEmail.bind(this)}
-							customClassName="callToAction"
-							disabled={isSubmitting}
-						>
-							{isSubmitting ? "Sending..." : "Send tickets"}
-						</Button>
-					) : null}
+					<Button
+						onClick={this.onSubmitEmail.bind(this)}
+						customClassName="callToAction"
+						disabled={isSubmitting}
+					>
+						{isSubmitting ? "Sending..." : "Send tickets"}
+					</Button>
 				</DialogActions>
 			</Dialog>
 		);

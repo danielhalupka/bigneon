@@ -6,10 +6,10 @@ import moment from "moment";
 
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
-import TicketDialog from "./TicketDialog";
 import TicketGroup from "./TicketGroup";
 import TransferTicketsDialog from "./TransferTicketsDialog";
 import SelectGroup from "../../common/form/SelectGroup";
+import TicketDialog from "./TicketDialog";
 
 const styles = theme => ({});
 
@@ -22,7 +22,8 @@ class TicketList extends Component {
 			ticketGroups: null,
 			filteredTicketGroups: null,
 			expandedTicketGroupId: null,
-			selectedTransferTicketIds: null
+			selectedTransferTicketIds: null,
+			selectedTicket: null
 		};
 	}
 
@@ -183,11 +184,12 @@ class TicketList extends Component {
 
 	render() {
 		const {
-			selectedTicket,
 			selectedEventName,
+			selectedTicket,
 			selectedTransferTicketIds
 		} = this.state;
 
+		console.log(selectedTicket);
 		return (
 			<div>
 				<Typography variant="display3">My tickets</Typography>

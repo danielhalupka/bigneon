@@ -76,8 +76,12 @@ class TicketGroup extends Component {
 		const newChecked = []; //Default them all to unselected
 
 		if (!this.allSelected()) {
-			tickets.forEach(({ id }) => {
-				newChecked.push(id);
+			tickets.forEach(({ id, status }) => {
+				const disabled = status && status !== "Purchased";
+
+				if (!disabled) {
+					newChecked.push(id);
+				}
 			});
 		}
 
@@ -88,7 +92,16 @@ class TicketGroup extends Component {
 		const { tickets } = this.props;
 		const { checkedTicketsIds } = this.state;
 
-		return tickets.length === checkedTicketsIds.length;
+		let availableTickets = 0;
+		tickets.forEach(({ status }) => {
+			const disabled = status && status !== "Purchased";
+
+			if (!disabled) {
+				availableTickets++;
+			}
+		});
+
+		return availableTickets === checkedTicketsIds.length;
 	}
 
 	render() {
@@ -151,11 +164,15 @@ class TicketGroup extends Component {
 							</ListItem>
 
 							{tickets.map((ticket, index) => {
-								const { id, ticket_type_name } = ticket;
+								const { id, ticket_type_name, status } = ticket;
+
+								const disabled = status && status !== "Purchased";
+
 								return (
 									<span key={id}>
 										<Divider />
 										<ListItem
+											disabled={disabled}
 											button
 											onClick={() => this.toggleTicketCheckbox(id)}
 										>
@@ -173,6 +190,7 @@ class TicketGroup extends Component {
 											/>
 											<ListItemSecondaryAction>
 												<Checkbox
+													disabled={disabled}
 													onChange={() => this.toggleTicketCheckbox(id)}
 													checked={checkedTicketsIds.indexOf(id) !== -1}
 												/>
