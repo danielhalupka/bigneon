@@ -39,6 +39,7 @@ import AdminArtist from "../pages/admin/artists/Artist";
 
 import AdminEventsList from "../pages/admin/events/List";
 import AdminEvent from "../pages/admin/events/Event";
+import AdminGuestList from "../pages/admin/events/guests/List";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
@@ -238,6 +239,12 @@ class Routes extends Component {
 							exact
 							path="/admin/events/:id"
 							component={AdminEvent}
+							isAuthenticated={isAuthenticated}
+						/>
+						<PrivateRoute
+							exact
+							path="/admin/events/:id/guests"
+							component={AdminGuestList}
 							isAuthenticated={isAuthenticated}
 						/>
 						<PrivateRoute

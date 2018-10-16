@@ -16,6 +16,7 @@ import CardContent from "@material-ui/core/CardContent";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import EditIcon from "@material-ui/icons/Edit";
 import ViewIcon from "@material-ui/icons/Link";
+import GuestListIcon from "@material-ui/icons/People";
 import CancelIcon from "@material-ui/icons/Cancel";
 import CreateWidgetIcon from "@material-ui/icons/Code";
 
@@ -160,6 +161,14 @@ class EventsList extends Component {
 						onClick: () =>
 							this.props.history.push(`/events/${this.eventMenuSelected}`),
 						MenuOptionIcon: ViewIcon
+					},
+					{
+						text: "Guest list",
+						onClick: () =>
+							this.props.history.push(
+								`/admin/events/${this.eventMenuSelected}/guests`
+							),
+						MenuOptionIcon: GuestListIcon
 					},
 					{
 						text: "Cancel event",
