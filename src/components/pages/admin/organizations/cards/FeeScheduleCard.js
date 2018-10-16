@@ -256,6 +256,7 @@ class FeeScheduleCard extends Component {
 				onClose={onClose}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<DialogTitle id="alert-dialog-title">
 					Are you sure you want to create this new fee schedule?

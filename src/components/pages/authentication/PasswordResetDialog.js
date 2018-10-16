@@ -117,6 +117,7 @@ class PasswordResetDialog extends React.Component {
 				open={open}
 				onClose={onClose}
 				aria-labelledby="simple-dialog-title"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<DialogTitle id="simple-dialog-title">Reset password</DialogTitle>

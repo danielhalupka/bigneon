@@ -124,7 +124,7 @@ class EditCartItemDialog extends React.Component {
 			priceInCents,
 			name,
 			ticketTypeId,
-			...other
+			...rest
 		} = this.props;
 		const { quantity, isSubmitting, error } = this.state;
 
@@ -134,7 +134,8 @@ class EditCartItemDialog extends React.Component {
 				onClose={this.attemptClose}
 				aria-labelledby="simple-dialog-title"
 				open={!!id}
-				{...other}
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				{...rest}
 			>
 				<DialogTitle id="simple-dialog-title">
 					Edit ticket quantities

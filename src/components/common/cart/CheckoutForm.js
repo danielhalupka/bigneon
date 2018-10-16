@@ -84,6 +84,7 @@ class CheckoutForm extends Component {
 				TransitionComponent={DialogTransition}
 				aria-labelledby="please-authenticate"
 				open={!!statusMessage}
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<DialogTitle id="please-authenticate">
 					{statusMessage || ""}

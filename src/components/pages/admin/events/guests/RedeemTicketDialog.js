@@ -78,6 +78,7 @@ class RedeemTicketDialog extends React.Component {
 				onClose={onClose}
 				open={!!ticket}
 				aria-labelledby="simple-dialog-title"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<DialogTitle id="simple-dialog-title">Redeem ticket</DialogTitle>

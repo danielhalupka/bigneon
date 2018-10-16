@@ -31,6 +31,7 @@ class TicketDialog extends React.Component {
 				TransitionComponent={DialogTransition}
 				onClose={onClose}
 				aria-labelledby="dialog-title"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 				{...other}
 			>
 				<DialogContent>

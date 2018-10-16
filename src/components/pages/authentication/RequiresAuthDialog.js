@@ -125,6 +125,7 @@ class RequiresAuthDialog extends Component {
 
 		return (
 			<Dialog
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 				TransitionComponent={DialogTransition}
 				open={open}
 				onClose={this.onClose}

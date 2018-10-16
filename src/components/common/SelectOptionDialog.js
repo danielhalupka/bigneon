@@ -37,6 +37,7 @@ class SelectOptionDialog extends React.Component {
 				TransitionComponent={DialogTransition}
 				onClose={onClose}
 				aria-labelledby="simple-dialog-title"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 				{...other}
 			>
 				<DialogTitle id="simple-dialog-title">{heading}</DialogTitle>

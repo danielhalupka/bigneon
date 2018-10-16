@@ -22,6 +22,7 @@ class AuthenticateCheckDialog extends React.Component {
 				aria-labelledby="please-authenticate"
 				open={true}
 				className={classes.root}
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<DialogTitle id="please-authenticate">{"Loading..."}</DialogTitle>
 			</Dialog>

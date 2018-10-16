@@ -164,6 +164,7 @@ class TransferTicketsDialog extends React.Component {
 			<Dialog
 				TransitionComponent={DialogTransition}
 				aria-labelledby="dialog-title"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 				{...other}
 				onClose={this.onClose}
 			>

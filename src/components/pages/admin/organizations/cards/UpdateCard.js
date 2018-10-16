@@ -3,6 +3,7 @@ import { withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
+import InputAdornment from "@material-ui/core/InputAdornment";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../common/Button";
@@ -35,6 +36,7 @@ class OrganizationUpdateCard extends Component {
 			state: "",
 			country: "",
 			zip: "",
+			eventFee: "",
 			errors: {},
 			isSubmitting: false
 		};
@@ -58,7 +60,8 @@ class OrganizationUpdateCard extends Component {
 						city,
 						state,
 						country,
-						zip
+						zip,
+						event_fee_in_cents
 					} = response.data;
 
 					this.setState({
@@ -69,7 +72,10 @@ class OrganizationUpdateCard extends Component {
 						city: city || "",
 						state: state || "",
 						country: country || "",
-						zip: zip || ""
+						zip: zip || "",
+						eventFee: event_fee_in_cents
+							? (event_fee_in_cents / 100).toFixed(2)
+							: ""
 					});
 				})
 				.catch(error => {
@@ -99,7 +105,7 @@ class OrganizationUpdateCard extends Component {
 			return true;
 		}
 
-		const { name, email, address, phone } = this.state;
+		const { name, email, address, phone, eventFee } = this.state;
 		const { organizationId } = this.props;
 
 		const errors = {};
@@ -124,6 +130,10 @@ class OrganizationUpdateCard extends Component {
 			errors.phone = "Missing phone number.";
 		} else if (!validPhone(phone)) {
 			errors.phone = "Invalid phone number.";
+		}
+
+		if (!eventFee) {
+			errors.eventFee = "Missing event fee.";
 		}
 
 		this.setState({ errors });
@@ -207,7 +217,8 @@ class OrganizationUpdateCard extends Component {
 			city,
 			state,
 			country,
-			zip
+			zip,
+			eventFee
 		} = this.state;
 		const { organizationId } = this.props;
 
@@ -218,7 +229,8 @@ class OrganizationUpdateCard extends Component {
 			city,
 			state,
 			country,
-			zip
+			zip,
+			event_fee_in_cents: Number(eventFee) * 100
 		};
 
 		//If we're updating an existing org
@@ -289,6 +301,7 @@ class OrganizationUpdateCard extends Component {
 			latitude = "",
 			longitude = "",
 			phone,
+			eventFee,
 			errors,
 			isSubmitting
 		} = this.state;
@@ -334,6 +347,21 @@ class OrganizationUpdateCard extends Component {
 								onBlur={this.validateFields.bind(this)}
 							/>
 						) : null}
+
+						<InputGroup
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">$</InputAdornment>
+								)
+							}}
+							error={errors.eventFee}
+							value={eventFee}
+							name="eventFee"
+							label="Event flat fee"
+							type="number"
+							onChange={e => this.setState({ eventFee: e.target.value })}
+							onBlur={this.validateFields.bind(this)}
+						/>
 
 						<InputGroup
 							error={errors.phone}

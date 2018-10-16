@@ -78,6 +78,7 @@ class PromoCodeDialog extends React.Component {
 				onClose={onCancel}
 				aria-labelledby="form-dialog-title"
 				TransitionComponent={Transition}
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<DialogTitle id="form-dialog-title">Enter a promo code</DialogTitle>

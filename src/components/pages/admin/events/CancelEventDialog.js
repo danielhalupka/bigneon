@@ -102,6 +102,7 @@ class CancelEventDialog extends React.Component {
 				open={!!id}
 				onClose={onClose}
 				aria-labelledby="simple-dialog-title"
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<DialogTitle id="simple-dialog-title">Cancel event</DialogTitle>
