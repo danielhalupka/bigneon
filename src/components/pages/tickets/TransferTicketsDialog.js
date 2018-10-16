@@ -85,7 +85,7 @@ class TransferTicketsDialog extends React.Component {
 					} = response.data;
 
 					const qrObj = {
-						type: 0,
+						type: 1,
 						data: {
 							transfer_key,
 							signature,
