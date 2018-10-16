@@ -5,6 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { Link } from "react-router-dom";
 
+import RedeemTicketDialog from "./RedeemTicketDialog";
 import notifications from "../../../../../stores/notifications";
 import Button from "../../../../common/Button";
 import Bigneon from "../../../../../helpers/bigneon";
@@ -40,7 +41,8 @@ class GuestList extends Component {
 		super(props);
 
 		this.state = {
-			guests: null
+			guestTickets: null,
+			selectedTicket: null
 		};
 	}
 
@@ -48,15 +50,20 @@ class GuestList extends Component {
 		const { match } = this.props;
 
 		if (match && match.params && match.params.id) {
-			let event_id = null;
+			this.eventId = match.params.id;
+			this.refreshGuests();
+		} else {
+			//TODO 404
+		}
+	}
 
-			event_id = match.params.id;
-
+	refreshGuests() {
+		if (this.eventId) {
 			Bigneon()
-				.events.guests.index({ event_id, query: "" })
+				.events.guests.index({ event_id: this.eventId, query: "" })
 				.then(response => {
 					const { data, paging } = response.data; //@TODO Implement pagination
-					this.setState({ guests: data });
+					this.setState({ guestTickets: data });
 				})
 				.catch(error => {
 					console.error(error);
@@ -73,16 +80,14 @@ class GuestList extends Component {
 						variant: "error"
 					});
 				});
-		} else {
-			//TODO 404
 		}
 	}
 
 	renderGuests() {
-		const { guests } = this.state;
+		const { guestTickets } = this.state;
 		const { classes } = this.props;
 
-		if (guests === null) {
+		if (guestTickets === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">Loading...</Typography>
@@ -90,8 +95,8 @@ class GuestList extends Component {
 			);
 		}
 
-		if (guests && guests.length > 0) {
-			return guests.map(guest => {
+		if (guestTickets && guestTickets.length > 0) {
+			return guestTickets.map(ticket => {
 				const {
 					id,
 					email,
@@ -102,7 +107,7 @@ class GuestList extends Component {
 					ticket_type,
 					user_id,
 					thumb_profile_pic_url
-				} = guest;
+				} = ticket;
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
@@ -135,7 +140,13 @@ class GuestList extends Component {
 							</CardContent>
 
 							<div className={classes.actionButtons}>
-								<Button customClassName="primary">Redeem ticket</Button>
+								<Button
+									disabled={status === "Redeemed"}
+									onClick={() => this.setState({ selectedTicket: ticket })}
+									customClassName="primary"
+								>
+									Redeem ticket
+								</Button>
 							</div>
 						</Card>
 					</Grid>
@@ -151,10 +162,21 @@ class GuestList extends Component {
 	}
 
 	render() {
+		const { selectedTicket } = this.state;
 		return (
 			<div>
-				<Typography variant="display3">Guests</Typography>
-
+				<RedeemTicketDialog
+					ticket={selectedTicket}
+					onClose={() =>
+						this.setState(
+							{ selectedTicket: null },
+							this.refreshGuests.bind(this)
+						)
+					}
+				/>
+				<Typography variant="display3">Guest list</Typography>
+				<Typography variant="subheading">Event name</Typography>
+				<br />
 				<Grid container spacing={24}>
 					{this.renderGuests()}
 				</Grid>

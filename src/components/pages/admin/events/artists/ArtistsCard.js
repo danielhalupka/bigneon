@@ -7,7 +7,6 @@ import Card from "@material-ui/core/Card";
 import moment from "moment";
 
 import Button from "../../../../common/Button";
-import api from "../../../../../helpers/api";
 import notifications from "../../../../../stores/notifications";
 import EventArtist from "./EventArtist";
 import FormSubHeading from "../../../../common/FormSubHeading";
