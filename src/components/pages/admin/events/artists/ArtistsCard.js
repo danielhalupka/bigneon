@@ -111,11 +111,8 @@ class ArtistsCard extends Component {
 			set_time: moment.utc(setTime).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 		}));
 
-		//TODO implement bn-api-node when this works
-		// Bigneon()
-		// 	.events.artists.update({ event_id: eventId, artists: artistArray })
-		api()
-			.put(`/events/${eventId}/artists`, artistArray)
+		Bigneon()
+			.events.artists.update({ event_id: eventId, artists: artistArray })
 			.then(response => {
 				const { data } = response;
 
