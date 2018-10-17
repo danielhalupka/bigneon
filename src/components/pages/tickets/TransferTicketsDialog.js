@@ -14,7 +14,7 @@ import { primaryHex } from "../../styles/theme";
 import DialogTransition from "../../common/DialogTransition";
 import Button from "../../common/Button";
 import InputGroup from "../../common/form/InputGroup";
-import { validEmail } from "../../../validators";
+import { validEmail, validPhone } from "../../../validators";
 import notification from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import Divider from "../../common/Divider";
@@ -31,7 +31,7 @@ class TransferTicketsDialog extends React.Component {
 		super(props);
 
 		this.defaultState = {
-			email: "",
+			emailOrCellphoneNumber: "",
 			errors: {},
 			qrText: "",
 			isSubmitting: false
@@ -134,14 +134,19 @@ class TransferTicketsDialog extends React.Component {
 			return true;
 		}
 
-		const { email } = this.state;
+		const { emailOrCellphoneNumber } = this.state;
 
 		const errors = {};
 
-		if (!email) {
-			errors.email = "Missing email.";
-		} else if (!validEmail(email)) {
-			errors.email = "Invalid email address.";
+		if (!emailOrCellphoneNumber) {
+			errors.emailOrCellphoneNumber =
+				"Missing cellphone number or email address.";
+		} else if (
+			!validEmail(emailOrCellphoneNumber) &&
+			!validPhone(emailOrCellphoneNumber)
+		) {
+			errors.emailOrCellphoneNumber =
+				"Invalid cellphone number or email address.";
 		}
 
 		this.setState({ errors });
@@ -153,10 +158,10 @@ class TransferTicketsDialog extends React.Component {
 		return true;
 	}
 
-	onSubmitEmail(e) {
+	onSubmitEmailOrCellphoneNumber(e) {
 		e.preventDefault();
 
-		const { email } = this.state;
+		const { emailOrCellphoneNumber } = this.state;
 
 		this.submitAttempted = true;
 
@@ -171,14 +176,14 @@ class TransferTicketsDialog extends React.Component {
 			.tickets.transfer.send({
 				ticket_ids: ticketIds,
 				validity_period_in_seconds: 60 * 60 * 24, //TODO make this config based
-				email
+				email: emailOrCellphoneNumber
 			})
 			.then(response => {
 				this.setState({ isSubmitting: false }, () => {
 					this.onClose();
 
 					notification.show({
-						message: "Email sent.",
+						message: "Ticket transfer link sent.",
 						variant: "success"
 					});
 				});
@@ -222,23 +227,25 @@ class TransferTicketsDialog extends React.Component {
 		);
 	}
 
-	renderEmail() {
+	renderEmailOrCellphoneNumber() {
 		const { ticketIds } = this.props;
 
 		if (!ticketIds) {
 			return null;
 		}
 
-		const { email, errors } = this.state;
+		const { emailOrCellphoneNumber, errors } = this.state;
 
 		return (
 			<InputGroup
-				error={errors.email}
-				value={email}
-				name="email"
-				label="Send via email address"
-				type="email"
-				onChange={e => this.setState({ email: e.target.value })}
+				error={errors.emailOrCellphoneNumber}
+				value={emailOrCellphoneNumber}
+				name="emailOrCellNumber"
+				label="Send via cell number email address"
+				type="text"
+				onChange={e =>
+					this.setState({ emailOrCellphoneNumber: e.target.value })
+				}
 				onBlur={this.validateFields.bind(this)}
 			/>
 		);
@@ -272,14 +279,14 @@ class TransferTicketsDialog extends React.Component {
 
 					<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
 
-					{this.renderEmail()}
+					{this.renderEmailOrCellphoneNumber()}
 				</DialogContent>
 				<DialogActions>
 					<Button disabled={isSubmitting} onClick={this.onClose}>
 						Cancel
 					</Button>
 					<Button
-						onClick={this.onSubmitEmail.bind(this)}
+						onClick={this.onSubmitEmailOrCellphoneNumber.bind(this)}
 						customClassName="callToAction"
 						disabled={isSubmitting}
 					>
