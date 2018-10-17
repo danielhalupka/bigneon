@@ -82,7 +82,6 @@ class CheckoutSelection extends Component {
 		}
 
 		this.setState({ isSubmitting: true });
-
 		cart.addToCart(
 			ticketSelection,
 			() => {

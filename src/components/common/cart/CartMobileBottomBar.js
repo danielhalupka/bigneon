@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import TimerIcon from "@material-ui/icons/Timer";
+
 import { Typography, Hidden } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
@@ -20,7 +22,7 @@ const styles = theme => {
 			textDecoration: "none"
 		},
 		bar: {
-			justifyContent: "center",
+			justifyContent: "space-around",
 			display: "flex",
 			flex: 1,
 			padding: theme.spacing.unit,
@@ -28,13 +30,15 @@ const styles = theme => {
 			borderTopRightRadius: theme.shape.borderRadius,
 			borderTopLeftRadius: theme.shape.borderRadius
 		},
-		icon: { color: "#fff" },
-		label: { color: "#fff" }
+		icon: { color: "#fff", marginRight: theme.spacing.unit / 2 },
+		label: { color: "#fff" },
+		iconLabelSpan: { display: "flex" },
+		expiryTimeSpan: { minWidth: 40 }
 	};
 };
 
 const CartMobileBottomBar = observer(({ classes }) => {
-	const { ticketCount } = cart;
+	const { ticketCount, formattedExpiryTime } = cart;
 	if (ticketCount < 1) {
 		return null;
 	}
@@ -43,11 +47,22 @@ const CartMobileBottomBar = observer(({ classes }) => {
 		<Hidden smUp implementation="css">
 			<Link to="/cart" className={classes.link}>
 				<div className={classes.bar}>
-					<ShoppingCartIcon className={classes.icon} />
-					<Typography className={classes.label}>
-						{ticketCount} ticket
-						{ticketCount > 1 ? "s" : ""} reserved
-					</Typography>
+					<span className={classes.iconLabelSpan}>
+						<ShoppingCartIcon className={classes.icon} />
+						<Typography className={classes.label}>
+							{ticketCount} ticket
+							{ticketCount > 1 ? "s" : ""}
+						</Typography>
+					</span>
+
+					<span className={classes.iconLabelSpan}>
+						<TimerIcon className={classes.icon} />
+						<Typography className={classes.label}>
+							<span className={classes.expiryTimeSpan}>
+								{formattedExpiryTime}
+							</span>
+						</Typography>
+					</span>
 				</div>
 			</Link>
 		</Hidden>

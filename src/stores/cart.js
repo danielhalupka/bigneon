@@ -14,6 +14,31 @@ class Cart {
 	@observable
 	total_in_cents = 0;
 
+	@observable
+	seconds_until_expiry = null;
+
+	cartExpiryTicker = null;
+
+	startExpiryTicker() {
+		if (this.cartExpiryTicker) {
+			clearInterval(this.cartExpiryTicker);
+		}
+
+		this.cartExpiryTicker = setInterval(() => {
+			if (!this.seconds_until_expiry || this.seconds_until_expiry < 1) {
+				clearInterval(this.cartExpiryTicker);
+				this.refreshCart();
+			} else {
+				this.seconds_until_expiry--;
+
+				//Refresh the cart from server every 30 seconds as JS can be paused in browsers
+				if (this.seconds_until_expiry % 30 === 0) {
+					this.refreshCart();
+				}
+			}
+		}, 1000);
+	}
+
 	@action
 	refreshCart() {
 		//Right now carts only work for authed users
@@ -27,11 +52,18 @@ class Cart {
 			.then(response => {
 				const { data } = response;
 				if (data) {
-					const { id, items, total_in_cents } = data;
+					const { id, items, total_in_cents, seconds_until_expiry } = data;
 
 					this.id = id;
 					this.items = items;
 					this.total_in_cents = total_in_cents;
+
+					if (seconds_until_expiry) {
+						this.seconds_until_expiry = seconds_until_expiry;
+						this.startExpiryTicker();
+					} else {
+						this.seconds_until_expiry = null;
+					}
 				}
 			})
 			.catch(error => {
@@ -66,6 +98,7 @@ class Cart {
 				quantity
 			};
 
+			console.log("Request: ", ticketRequestParams);
 			cartAddPromises.push(Bigneon().cart.add(ticketRequestParams));
 		});
 
@@ -86,7 +119,7 @@ class Cart {
 	@action
 	removeFromCart(cart_item_id, quantity, onSuccess, onError) {
 		Bigneon()
-			.cart.delete({ cart_item_id, quantity })
+			.cart.del({ cart_item_id, quantity })
 			.then(() => {
 				//TODO maybe update the store variable quickly, then refresh from cart for that zippy feeling
 				this.refreshCart();
@@ -134,6 +167,19 @@ class Cart {
 		});
 
 		return fees / 100;
+	}
+
+	@computed
+	get formattedExpiryTime() {
+		if (!this.seconds_until_expiry) {
+			return null;
+		}
+		const minutes = Math.floor(this.seconds_until_expiry / 60);
+		const seconds = this.seconds_until_expiry - minutes * 60;
+
+		return `${minutes > 0 ? `${minutes}:` : ""}${
+			seconds >= 10 ? seconds : `0${seconds}`
+		}`;
 	}
 }
 

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { Link } from "react-router-dom";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
@@ -18,7 +17,6 @@ import Divider from "../../common/Divider";
 import cart from "../../../stores/cart";
 import EditCartItemDialog from "./EditCartItemDialog";
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
-import api from "../../../helpers/api";
 import Bigneon from "../../../helpers/bigneon";
 
 const styles = theme => ({
@@ -34,7 +32,7 @@ const styles = theme => ({
 	},
 	ticketLineEntry: {
 		marginTop: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit * 2
+		marginBottom: theme.spacing.unit
 	},
 	userContainer: {
 		marginTop: theme.spacing.unit * 2,
@@ -45,6 +43,10 @@ const styles = theme => ({
 	userName: {
 		color: primaryHex
 		//paddingTop: 2
+	},
+	cartExpiry: {
+		color: primaryHex,
+		marginTop: theme.spacing.unit
 	},
 	userIcon: {
 		color: primaryHex,
@@ -251,7 +253,7 @@ class CheckoutConfirmation extends Component {
 	}
 
 	render() {
-		const { fees, total_in_cents } = cart;
+		const { fees, total_in_cents, formattedExpiryTime } = cart;
 
 		const { classes } = this.props;
 		const {
@@ -333,8 +335,22 @@ class CheckoutConfirmation extends Component {
 					{user.isAuthenticated && total_in_cents ? (
 						<Grid item xs={12} sm={12} lg={12} style={{ padding: 0 }}>
 							<CheckoutForm onToken={this.onCheckout.bind(this)} />
+
+							{formattedExpiryTime ? (
+								<Typography className={classes.cartExpiry} variant="body1">
+									Cart expires in {formattedExpiryTime}
+								</Typography>
+							) : null}
 						</Grid>
 					) : null}
+
+					{/* {formattedExpiryTime ? (
+						<Grid item xs={12} sm={12} lg={12} style={{ padding: 0 }}>
+							<Typography className={classes.cartExpiry} variant="body1">
+								Cart expires in {formattedExpiryTime}
+							</Typography>
+						</Grid>
+					) : null} */}
 				</Grid>
 			</Paper>
 		);
