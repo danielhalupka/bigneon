@@ -285,9 +285,11 @@ class ViewEvent extends Component {
 
 						<Typography variant="body1">{venue.name}</Typography>
 						<Typography variant="body1">{venue.address}</Typography>
-						<a target="_blank" href={venue.googleMapsLink}>
-							<Typography variant="body1">View map</Typography>
-						</a>
+						{venue.googleMapsLink ? (
+							<a target="_blank" href={venue.googleMapsLink}>
+								<Typography variant="body1">View map</Typography>
+							</a>
+						) : null}
 
 						<div style={{ marginBottom: 30 }} />
 
