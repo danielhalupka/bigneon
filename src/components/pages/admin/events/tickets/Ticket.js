@@ -107,6 +107,7 @@ class Ticket extends Component {
 			startDate,
 			endDate,
 			capacity,
+			increment,
 			//limit,
 			pricing
 		} = data;
@@ -152,20 +153,20 @@ class Ticket extends Component {
 						</span>
 					</Tooltip>
 				</Grid>
-				{/* <Grid item xs={2}>
+				<Grid item xs={2}>
 					<InputGroup
-						error={errors.limit}
-						value={limit}
-						name="limit"
-						label="Maximum Allowed"
-						placeholder="10"
+						error={errors.increment}
+						value={increment}
+						name="increment"
+						label="Increment"
+						placeholder="1"
 						type="number"
 						onChange={e => {
-							this.setField("limit", e.target.value);
+							this.setField("increment", e.target.value);
 						}}
 						onBlur={validateFields}
 					/>
-				</Grid> */}
+				</Grid>
 				{onDelete ? (
 					<Grid item xs>
 						<div style={{ flex: 1 }} />
@@ -225,6 +226,7 @@ Ticket.Structure = (ticket = {}) => {
 		startDate: null,
 		endDate: null,
 		capacity: 0,
+		increment: 1,
 		//limit: 0, //Limit per purchase
 		pricing: [],
 		submitAttempted: false

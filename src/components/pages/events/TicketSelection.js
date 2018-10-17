@@ -21,20 +21,28 @@ const TicketSelection = props => {
 		description,
 		price,
 		amount,
-		onNumberChange
+		increment,
+		onNumberChange,
+		validateFields
 	} = props;
+
+	const incrementText =
+		increment > 1 ? `(Tickets must be bought in groups of ${increment})` : "";
 
 	return (
 		<Grid alignItems="center" className={classes.container} container>
 			<Grid item xs={8} sm={8} md={6} lg={8}>
 				<Typography variant="subheading">{name}</Typography>
-				<Typography variant="caption">{description}</Typography>
+				<Typography variant="caption">
+					{description} {incrementText}
+				</Typography>
 			</Grid>
 			<Grid item xs={2} sm={2} md={6} lg={2}>
 				<Typography variant="title">{available ? `$${price}` : ""}</Typography>
 			</Grid>
 			<Grid item xs={2} sm={2} md={6} lg={2} style={{ paddingTop: 10 }}>
 				<InputGroup
+					autoComplete="off"
 					disabled={!available}
 					error={error}
 					value={amount || ""}
@@ -44,6 +52,7 @@ const TicketSelection = props => {
 						onNumberChange(Number(e.target.value));
 					}}
 					placeholder="0"
+					onBlur={validateFields}
 				/>
 			</Grid>
 		</Grid>
@@ -58,6 +67,8 @@ TicketSelection.propTypes = {
 	price: PropTypes.number.isRequired,
 	error: PropTypes.string,
 	amount: PropTypes.number,
+	increment: PropTypes.number.isRequired,
+	validateFields: PropTypes.func.isRequired,
 	classes: PropTypes.object.isRequired
 };
 

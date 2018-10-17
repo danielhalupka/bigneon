@@ -33,7 +33,6 @@ class SelectedEvent {
 			this.venue = null;
 			this.artists = [];
 			this.organization = null;
-			this.tickets = null;
 			this.user_is_interested = null;
 		}
 

@@ -98,7 +98,6 @@ class Cart {
 				quantity
 			};
 
-			console.log("Request: ", ticketRequestParams);
 			cartAddPromises.push(Bigneon().cart.add(ticketRequestParams));
 		});
 

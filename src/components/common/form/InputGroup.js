@@ -33,7 +33,8 @@ const InputGroup = props => {
 		onFocus,
 		multiline,
 		autoFocus,
-		InputProps = {}
+		InputProps = {},
+		autoComplete
 	} = props;
 
 	let inputPropClasses = {};
@@ -65,6 +66,7 @@ const InputGroup = props => {
 				multiline={multiline}
 				autoFocus={autoFocus}
 				disabled={disabled}
+				autoComplete={autoComplete}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -86,7 +88,8 @@ InputGroup.propTypes = {
 	multiline: PropTypes.bool,
 	autoFocus: PropTypes.bool,
 	InputProps: PropTypes.object,
-	disabled: PropTypes.bool
+	disabled: PropTypes.bool,
+	autoComplete: PropTypes.string
 };
 
 export default withStyles(styles)(InputGroup);

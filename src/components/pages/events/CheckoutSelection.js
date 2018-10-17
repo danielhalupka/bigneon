@@ -30,6 +30,7 @@ class CheckoutSelection extends Component {
 		super(props);
 
 		this.state = {
+			errors: {},
 			openPromo: false,
 			ticketSelection: {},
 			isSubmitting: false
@@ -57,9 +58,50 @@ class CheckoutSelection extends Component {
 		}
 	}
 
+	validateFields() {
+		//Don't validate every field if the user has not tried to submit at least once
+		if (!this.submitAttempted) {
+			return true;
+		}
+
+		const { ticketSelection } = this.state;
+		const { ticket_types } = selectedEvent;
+
+		let errors = {};
+
+		Object.keys(ticketSelection).forEach(ticketTypeId => {
+			const selectedTicketCount = ticketSelection[ticketTypeId];
+			if (selectedTicketCount && selectedTicketCount > 0) {
+				//Validate the user is buying in the correct increments
+				const { increment } = ticket_types.find(({ id }) => {
+					return id === ticketTypeId;
+				});
+
+				if (selectedTicketCount % increment !== 0) {
+					errors[ticketTypeId] = `Please order in increments of ${increment}`;
+				}
+			}
+		});
+
+		this.setState({ errors });
+
+		if (Object.keys(errors).length > 0) {
+			return false;
+		}
+
+		return true;
+	}
+
 	onSubmit() {
 		const { id } = selectedEvent;
 		const { ticketSelection } = this.state;
+
+		this.submitAttempted = true;
+		if (!this.validateFields()) {
+			console.warn("Validation errors: ");
+			console.warn(this.state.errors);
+			return false;
+		}
 
 		if (!user.isAuthenticated) {
 			//Show dialog for the user to signup/login, try again on success
@@ -113,41 +155,45 @@ class CheckoutSelection extends Component {
 
 	renderTicketPricing() {
 		const { ticket_types } = selectedEvent;
-		const { ticketSelection } = this.state;
+		const { ticketSelection, errors } = this.state;
 
 		if (!ticket_types) {
 			//TODO use a loader
 			return null; //Still loading this
 		}
 
-		return ticket_types.map(({ id, name, status, ticket_pricing }) => {
-			let description = "";
-			let price = 0;
-			if (ticket_pricing) {
-				price = ticket_pricing.price_in_cents / 100;
-				description = ticket_pricing.name;
-			} else {
-				description = "(Tickets currently unavailable)";
-			}
+		return ticket_types.map(
+			({ id, name, status, ticket_pricing, increment }) => {
+				let description = "";
+				let price = 0;
+				if (ticket_pricing) {
+					price = ticket_pricing.price_in_cents / 100;
+					description = ticket_pricing.name;
+				} else {
+					description = "(Tickets currently unavailable)";
+				}
 
-			return (
-				<TicketSelection
-					key={id}
-					name={name}
-					description={description}
-					available={!!ticket_pricing}
-					price={price}
-					error={null}
-					amount={ticketSelection[id]}
-					onNumberChange={amount =>
-						this.setState(({ ticketSelection }) => {
-							ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
-							return { ticketSelection };
-						})
-					}
-				/>
-			);
-		});
+				return (
+					<TicketSelection
+						key={id}
+						name={name}
+						description={description}
+						available={!!ticket_pricing}
+						price={price}
+						error={errors[id]}
+						amount={ticketSelection[id]}
+						increment={increment}
+						onNumberChange={amount =>
+							this.setState(({ ticketSelection }) => {
+								ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
+								return { ticketSelection };
+							})
+						}
+						validateFields={this.validateFields.bind(this)}
+					/>
+				);
+			}
+		);
 	}
 
 	render() {

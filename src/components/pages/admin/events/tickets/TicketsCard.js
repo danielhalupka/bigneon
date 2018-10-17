@@ -51,6 +51,7 @@ class TicketsCard extends Component {
 							id,
 							name,
 							capacity,
+							increment,
 							ticket_pricing,
 							start_date,
 							end_date
@@ -93,6 +94,7 @@ class TicketsCard extends Component {
 								id,
 								name,
 								capacity: capacity ? capacity : 0,
+								increment: increment ? increment : 1,
 								startDate: ticketStartDate,
 								endDate: ticketEndDate,
 								pricing
@@ -143,6 +145,7 @@ class TicketsCard extends Component {
 				startDate,
 				endDate,
 				capacity,
+				increment,
 				//limit,
 				pricing
 			} = ticket;
@@ -167,6 +170,10 @@ class TicketsCard extends Component {
 
 			if (!capacity) {
 				ticketErrors.capacity = "Specify a valid capacity.";
+			}
+
+			if (!increment || increment < 1) {
+				ticketErrors.increment = "Increment must be more than 1";
 			}
 
 			if (!pricing) {
@@ -256,7 +263,15 @@ class TicketsCard extends Component {
 		//Build an array of promises to execute
 		let ticketTypePromises = [];
 		tickets.forEach(ticket => {
-			const { id, capacity, name, pricing, startDate, endDate } = ticket;
+			const {
+				id,
+				capacity,
+				increment,
+				name,
+				pricing,
+				startDate,
+				endDate
+			} = ticket;
 
 			let ticket_pricing = [];
 			pricing.forEach(pricePoint => {
@@ -277,6 +292,7 @@ class TicketsCard extends Component {
 			const ticketDetails = {
 				name,
 				capacity: Number(capacity),
+				increment: Number(increment),
 				start_date: moment(startDate)
 					.utc()
 					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
