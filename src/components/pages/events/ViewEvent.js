@@ -192,6 +192,7 @@ class ViewEvent extends Component {
 			name,
 			displayEventStartDate,
 			additional_info,
+			top_line_info,
 			age_limit,
 			promo_image_url,
 			displayDoorTime,
@@ -209,9 +210,7 @@ class ViewEvent extends Component {
 					</Grid>
 
 					<Grid item xs={12} sm={12} lg={12}>
-						<Typography variant="caption">
-							{organization.name} presents
-						</Typography>
+						<Typography variant="caption">{top_line_info}</Typography>
 
 						<Typography variant="display3" component="h3">
 							{name}

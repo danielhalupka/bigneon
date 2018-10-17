@@ -210,6 +210,7 @@ class Event extends Component {
 							{activeStep === 1 ? (
 								<DetailsCard
 									organizationId={organizationId}
+									organizationName={organization.name}
 									history={history}
 									eventId={eventId}
 									eventDetails={event}

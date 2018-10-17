@@ -31,7 +31,7 @@ class DetailsCard extends Component {
 	constructor(props) {
 		super(props);
 
-		const { eventDetails } = props;
+		const { eventDetails, organizationName } = props;
 
 		const {
 			age_limit,
@@ -41,7 +41,8 @@ class DetailsCard extends Component {
 			promo_image_url,
 			venue_id,
 			organization_id,
-			additional_info
+			additional_info,
+			top_line_info
 		} = eventDetails;
 
 		this.state = {
@@ -58,6 +59,9 @@ class DetailsCard extends Component {
 			ageLimit: age_limit || "",
 			venueId: venue_id || "",
 			additionalInfo: additional_info || "",
+			topLineInfo: top_line_info
+				? top_line_info
+				: `${organizationName} presents`,
 			promoImageUrl: promo_image_url,
 
 			errors: {},
@@ -78,7 +82,28 @@ class DetailsCard extends Component {
 		}
 
 		const errors = {};
-		//TODO validation
+
+		const {
+			name,
+			eventDate,
+			venueId,
+			artists,
+			doorTime,
+			ageLimit,
+			additionalInfo,
+			topLineInfo,
+			promoImageUrl
+		} = this.state;
+
+		if (!name) {
+			errors.name = "Event name required.";
+		}
+
+		if (topLineInfo) {
+			if (topLineInfo.length > 100) {
+				errors.topLineInfo = "Top line info is limited to 100 characters.";
+			}
+		}
 
 		this.setState({ errors });
 
@@ -143,7 +168,7 @@ class DetailsCard extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
-			tickets,
+			topLineInfo,
 			promoImageUrl
 		} = this.state;
 
@@ -163,7 +188,7 @@ class DetailsCard extends Component {
 				.utc(new Date())
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //TODO make publish date selectable on in a date field
 			additional_info: additionalInfo,
-			tickets,
+			top_line_info: topLineInfo,
 			promo_image_url: promoImageUrl
 		};
 
@@ -281,6 +306,7 @@ class DetailsCard extends Component {
 			doorTime,
 			ageLimit,
 			additionalInfo,
+			topLineInfo,
 			promoImageUrl,
 			isSubmitting,
 			errors
@@ -372,6 +398,21 @@ class DetailsCard extends Component {
 								/>
 							</Grid>
 
+							<Grid item xs={12} sm={12} lg={6}>
+								<InputGroup
+									error={errors.topLineInfo}
+									value={topLineInfo}
+									name="topLineInfo"
+									label="Top line info"
+									type="text"
+									onChange={e => this.setState({ topLineInfo: e.target.value })}
+									onBlur={this.validateFields.bind(this)}
+									multiline
+								/>
+							</Grid>
+						</Grid>
+
+						<Grid container spacing={24}>
 							<Grid item xs={12} sm={6} lg={6}>
 								<div style={{ marginTop: 20, marginBottom: 10 }}>
 									<InputLabel>Event promo image</InputLabel>
@@ -413,6 +454,7 @@ class DetailsCard extends Component {
 DetailsCard.propTypes = {
 	eventId: PropTypes.string,
 	organizationId: PropTypes.string.isRequired,
+	organizationName: PropTypes.string.isRequired,
 	onNext: PropTypes.func.isRequired,
 	eventDetails: PropTypes.object,
 	history: PropTypes.object.isRequired
