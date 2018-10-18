@@ -147,22 +147,25 @@ class User {
 				onSuccess();
 			})
 			.catch(error => {
-				notifications.show({
-					message: "Failed to refresh session.",
-					variant: "error"
-				});
 				console.error(error);
 
-				//If it's a 404 the user is now gone
 				if (
 					error.response &&
 					error.response.status &&
 					error.response.status === 404
 				) {
-					console.log("Delete refresh token");
-					localStorage.removeItem("access_token");
-					localStorage.removeItem("refresh_token");
+					//If it's a 404 the user is now gone
+					notifications.show({
+						message: "User no longer exists.",
+						variant: "error"
+					});
+					this.onLogout();
 				} else {
+					notifications.show({
+						message: "Failed to refresh session.",
+						variant: "error"
+					});
+
 					onError(error);
 				}
 			});
@@ -180,6 +183,7 @@ class User {
 		this.roles = [];
 
 		localStorage.removeItem("access_token");
+		localStorage.removeItem("refresh_token");
 
 		//If they logged in with facebook, kill that session also
 		if (window.FB) {

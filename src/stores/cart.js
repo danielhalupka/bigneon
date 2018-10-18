@@ -90,23 +90,20 @@ class Cart {
 		const ticketIds = Object.keys(selectedTickets);
 
 		//Promises array of posts to the add cart function and iterate through them
-		let cartAddPromises = [];
+		let items = [];
 		ticketIds.forEach(id => {
 			const quantity = selectedTickets[id];
-			const ticketRequestParams = {
+			items.push({
 				ticket_type_id: id,
 				quantity
-			};
-
-			cartAddPromises.push(Bigneon().cart.add(ticketRequestParams));
+			});
 		});
 
-		axios
-			.all(cartAddPromises)
+		Bigneon()
+			.cart.add({ items })
 			.then(results => {
 				//Refresh cart from the API to make sure we in sync
 				this.refreshCart();
-
 				onSuccess();
 			})
 			.catch(error => {

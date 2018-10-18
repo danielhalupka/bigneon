@@ -357,7 +357,7 @@ class OrganizationUpdateCard extends Component {
 							error={errors.eventFee}
 							value={eventFee}
 							name="eventFee"
-							label="Event flat fee"
+							label="Per event fee"
 							type="number"
 							onChange={e => this.setState({ eventFee: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
