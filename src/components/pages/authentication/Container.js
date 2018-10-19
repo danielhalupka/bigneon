@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
+import Card from "../../elements/Card";
 
 import AppBar from "../../elements/header/AppBar";
 import { toolBarHeight } from "../../styles/theme";
@@ -61,7 +61,9 @@ const Container = props => {
 
 				<Grid container justify="center">
 					<Grid item xs={12} sm={12} md={6} lg={4}>
-						<Card className={classes.paper}>{children}</Card>
+						<Card variant="raised" className={classes.paper}>
+							{children}
+						</Card>
 					</Grid>
 				</Grid>
 			</main>
