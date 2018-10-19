@@ -251,7 +251,6 @@ class DetailsCard extends Component {
 			result => {
 				const imgResult = result[0];
 				const { secure_url } = imgResult;
-				console.log(secure_url);
 				this.setState({ promoImageUrl: secure_url });
 			},
 			error => {

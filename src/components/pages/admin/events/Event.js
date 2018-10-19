@@ -60,9 +60,9 @@ class Event extends Component {
 			.organizations.index()
 			.then(response => {
 				const { data, paging } = response.data; //@TODO Implement pagination
-				const organizations = {};
+				const organizationSelectObj = {};
 				data.forEach(organization => {
-					organizations[organization.id] = organization.name;
+					organizationSelectObj[organization.id] = organization.name;
 				});
 
 				//If there's only org then assume that ID
@@ -70,7 +70,7 @@ class Event extends Component {
 					this.setState({ organizationId: data[0].id });
 				}
 
-				this.setState({ organizations });
+				this.setState({ organizations: data, organizationSelectObj });
 			})
 			.catch(error => {
 				console.error(error);
@@ -150,6 +150,7 @@ class Event extends Component {
 			activeStep,
 			eventId,
 			organizations,
+			organizationSelectObj,
 			organizationId
 		} = this.state;
 		const { classes, history } = this.props;
@@ -161,12 +162,18 @@ class Event extends Component {
 				<SelectOptionDialog
 					iconComponent={<OrganizationIcon />}
 					heading={
-						organizations
+						organizationSelectObj
 							? "Which organization does this event belong to?"
 							: "Loading..."
 					}
-					items={organizations || {}}
-					onSelect={organizationId => this.setState({ organizationId })}
+					items={organizationSelectObj || {}}
+					onSelect={organizationId => {
+						this.setState({ organizationId });
+						const organization = organizations.find(o => {
+							return o.id === organizationId;
+						});
+						this.setState({ organization });
+					}}
 					open={!organizationId}
 					onClose={() => {}}
 				/>
