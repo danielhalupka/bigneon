@@ -29,7 +29,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import OrdersIcon from "@material-ui/icons/List";
 
 import user from "../../stores/user";
-import Button from "./Button";
+import Button from "../common/Button";
 
 const styles = theme => ({
 	nested: {
@@ -478,9 +478,6 @@ class MenuContent extends Component {
 					</Link>
 				</div>
 				<Divider />
-				{/* <MenuItem to="/" icon={<HomeIcon />} toggleDrawer={toggleDrawer}>
-					Home
-				</MenuItem> */}
 
 				<MenuItem
 					to="/events"
@@ -506,6 +503,7 @@ class MenuContent extends Component {
 	}
 
 	renderMenuItems() {
+		//TODO split these menu items into their own components
 		const { isAdmin, isOrgOwner, isGuest, isUser } = user;
 		if (isAdmin) {
 			return this.renderAdminMenu();
@@ -529,13 +527,10 @@ class MenuContent extends Component {
 
 		return (
 			<List component="nav">
-				<Link to={"/"} onClick={toggleDrawer}>
-					<img
-						style={{ width: "100%", padding: 5 }}
-						src="/images/bn-logo-text.png"
-						alt="Logo"
-					/>
-				</Link>
+				{/* TODO make this dynamic */}
+				<div style={{ height: 80 }} />
+
+				{/* TODO Profile details go here */}
 				{this.renderMenuItems()}
 			</List>
 		);

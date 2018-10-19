@@ -8,7 +8,7 @@ import {
 import { observer } from "mobx-react";
 
 import withRoot from "./withRoot";
-import Container from "../common/Container";
+import Container from "../elements/Container";
 import NotFound from "../common/NotFound";
 import Dashboard from "../pages/dashboard/Index";
 import Account from "../pages/account/Index";

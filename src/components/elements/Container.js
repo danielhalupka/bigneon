@@ -9,18 +9,15 @@ import MomentUtils from "material-ui-pickers/utils/moment-utils";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
-import MenuIcon from "@material-ui/icons/Menu";
 
+import AppBar from "./header/AppBar";
 import MenuContent from "./MenuContent";
-import RightHeaderMenu from "./RightHeaderMenu";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
-import CartMobileBottomBar from "./cart/CartMobileBottomBar";
+import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";
 import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
+import { toolBarHeight } from "../../components/styles/theme";
 
 const drawerWidth = 240;
 
@@ -34,22 +31,7 @@ const styles = theme => ({
 		display: "flex",
 		width: "100%"
 	},
-	appBar: {
-		position: "absolute",
-		marginLeft: drawerWidth,
-		[theme.breakpoints.up("md")]: {
-			width: `calc(100% - ${drawerWidth}px)`
-		}
-	},
-	headerImage: {
-		width: 180
-	},
-	navIconHide: {
-		[theme.breakpoints.up("md")]: {
-			display: "none"
-		}
-	},
-	toolbar: theme.mixins.toolbar,
+	toolbar: toolBarHeight,
 	drawerPaper: {
 		width: drawerWidth,
 		minHeight: window.innerHeight * 1.1,
@@ -80,7 +62,7 @@ class Container extends React.Component {
 		//This component mounts every time the browser is refreshed, so we need to check we still have a valid token
 		user.refreshUser();
 
-		const isWidget = window.location.pathname.includes("/widget/");
+		const isWidget = window.location.pathname.includes("/widget/"); //TODO remove this in the future when widgets are in their own react app
 		this.setState({ isWidget });
 	}
 
@@ -98,39 +80,17 @@ class Container extends React.Component {
 		}
 
 		const drawer = (
-			<div>
-				<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)} />
-			</div>
+			<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)} />
 		);
 
 		return (
 			<MuiPickersUtilsProvider utils={MomentUtils}>
-				<div className={classes.root}>
-					<AppBar className={classes.appBar}>
-						<Toolbar>
-							<IconButton
-								color="inherit"
-								aria-label="open drawer"
-								onClick={this.handleDrawerToggle.bind(this)}
-								className={classes.navIconHide}
-							>
-								<MenuIcon color="action" />
-							</IconButton>
-							<div style={{ flex: 1 }}>
-								<Hidden mdUp implementation="css">
-									<Link to={"/"}>
-										<img
-											alt="Header logo"
-											className={classes.headerImage}
-											src="/images/bn-logo-text.png"
-										/>
-									</Link>
-								</Hidden>
-							</div>
+				<AppBar
+					handleDrawerToggle={this.handleDrawerToggle.bind(this)}
+					history={history}
+				/>
 
-							<RightHeaderMenu history={history} />
-						</Toolbar>
-					</AppBar>
+				<div className={classes.root}>
 					<Hidden mdUp>
 						<SwipeableDrawer
 							variant="temporary"

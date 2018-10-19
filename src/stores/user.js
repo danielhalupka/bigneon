@@ -86,7 +86,8 @@ class User {
 						this.email = email;
 						this.phone = phone;
 						this.roles = globalRoles;
-						this.profilePicUrl = profile_pic_url;
+						this.profilePicUrl =
+							profile_pic_url || "/images/profile-pic-placeholder.png";
 
 						if (onSuccess) {
 							onSuccess({
@@ -95,7 +96,7 @@ class User {
 								lastName: last_name,
 								email,
 								phone,
-								profilePicUrl: profile_pic_url
+								profilePicUrl: this.profilePicUrl
 							});
 						}
 

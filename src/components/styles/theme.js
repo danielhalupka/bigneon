@@ -25,6 +25,14 @@ for (let index = 0; index < 24; index++) {
 	);
 }
 
+const toolBarHeight = {
+	minHeight: 56,
+	"@media (min-width:0px) and (orientation: landscape)": {
+		minHeight: 48
+	},
+	"@media (min-width:600px)": { minHeight: 70 }
+};
+
 const theme = createMuiTheme({
 	typography: {
 		fontFamily: "TTCommons-Regular",
@@ -58,8 +66,15 @@ const theme = createMuiTheme({
 			root: {
 				background: `linear-gradient(45deg, #FFF 30%, #FFF 90%)`,
 				color: textColorPrimary,
-				boxShadow: shadows[1]
+				boxShadow: shadows[0],
+				borderStyle: "solid",
+				borderWidth: 0.6,
+				borderColor: "rgba(157,163,180,0.25)",
+				padding: 0
 			}
+		},
+		MuiToolbar: {
+			root: {}
 		},
 		MuiInput: {
 			root: {
@@ -100,5 +115,6 @@ export {
 	textColorPrimary,
 	textColorSecondary,
 	warningHex,
+	toolBarHeight,
 	theme
 };
