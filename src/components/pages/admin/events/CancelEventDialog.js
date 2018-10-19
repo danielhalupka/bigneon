@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 
 import notifications from "../../../../stores/notifications";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 import DialogTransition from "../../../common/DialogTransition";
 

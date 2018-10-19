@@ -5,7 +5,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 
 import InputGroup from "../../common/form/InputGroup";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import Container from "./Container";
 import notifications from "../../../stores/notifications";
 import user from "../../../stores/user";

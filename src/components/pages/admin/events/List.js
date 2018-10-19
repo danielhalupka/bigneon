@@ -21,7 +21,7 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import CreateWidgetIcon from "@material-ui/icons/Code";
 
 import notifications from "../../../../stores/notifications";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import CancelEventDialog from "./CancelEventDialog";
 import Bigneon from "../../../../helpers/bigneon";
 

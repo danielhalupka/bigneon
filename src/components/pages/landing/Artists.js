@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 import notifications from "../../../stores/notifications";
 import api from "../../../helpers/api";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import Bigneon from "../../../helpers/bigneon";
 
 const styles = theme => ({

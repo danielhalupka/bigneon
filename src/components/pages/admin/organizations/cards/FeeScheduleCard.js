@@ -22,7 +22,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import MoneyIcon from "@material-ui/icons/MonetizationOn";
 
 import InputGroup from "../../../../common/form/InputGroup";
-import Button from "../../../../common/Button";
+import Button from "../../../../elements/Button";
 import DialogTransition from "../../../../common/DialogTransition";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";

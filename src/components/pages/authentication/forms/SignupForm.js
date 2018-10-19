@@ -6,7 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import PropTypes from "prop-types";
 
 import InputGroup from "../../../common/form/InputGroup";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import { validEmail, validPhone } from "../../../../validators";

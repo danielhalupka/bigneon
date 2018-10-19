@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import user from "../../../../stores/user";
 import Bigneon from "../../../../helpers/bigneon";

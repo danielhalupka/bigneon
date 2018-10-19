@@ -13,7 +13,7 @@ import user from "../../../stores/user";
 import NotificationList from "../../common/NotificationList";
 import { primaryHex } from "../../styles/theme";
 import { toolBarHeight } from "../../styles/theme";
-import Button from "../../common/Button";
+import Button from "../Button";
 
 const styles = theme => ({
 	root: {
@@ -171,8 +171,6 @@ class RightHeaderMenu extends React.Component {
 					className={classes.dropdownIcon}
 					src="/icons/arrow-down.svg"
 				/>
-
-				{this.renderUserMenu()}
 			</span>
 		);
 	}
@@ -191,7 +189,9 @@ class RightHeaderMenu extends React.Component {
 				</Link>
 
 				<Link to="/help" className={classes.menuLink}>
-					<Button customClassName="callToAction">Get the App</Button>
+					<Button size="large" customClassName="callToAction">
+						Get the App
+					</Button>
 				</Link>
 			</span>
 		);
@@ -207,6 +207,8 @@ class RightHeaderMenu extends React.Component {
 
 				{isAuthenticated === true ? this.renderAuthenticated() : null}
 				{isAuthenticated === false ? this.renderUnAuthenticated() : null}
+
+				{this.renderUserMenu()}
 			</div>
 		);
 	}

@@ -1,3 +1,4 @@
+//Base component https://material-ui.com/api/button/
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -9,25 +10,26 @@ import {
 	textColorSecondary,
 	primaryHex,
 	secondaryHex,
-	warningHex
+	warningHex,
+	callToActionBackground
 } from "../styles/theme";
 
 const styles = {
 	root: {
-		borderRadius: 3,
+		borderRadius: 4,
 		border: 0,
 		paddingLeft: 30,
 		paddingRight: 30,
-		paddingTop: 5,
-		paddingBottom: 5,
+		paddingTop: 10,
+		paddingBottom: 10,
 		textDecoration: "none"
 	},
 	primary: {
-		background: `linear-gradient(45deg, ${primaryHex} 10%, ${primaryHex} 90%)`,
+		background: primaryHex,
 		color: "#FFF"
 	},
 	secondary: {
-		background: `linear-gradient(45deg, ${textColorSecondary} 10%, ${textColorSecondary} 90%)`,
+		background: secondaryHex,
 		color: "#FFF"
 	},
 	default: {
@@ -35,8 +37,9 @@ const styles = {
 		color: textColorPrimary
 	},
 	callToAction: {
-		background: `linear-gradient(45deg, ${textColorSecondary} 10%, ${primaryHex} 30%, ${secondaryHex} 90%)`,
-		color: "#FFF"
+		background: callToActionBackground,
+		color: "#FFF",
+		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.47)"
 	},
 	warning: {
 		background: `linear-gradient(45deg, ${warningHex} 10%, ${warningHex} 90%)`,

@@ -6,7 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 import InputGroup from "../../../../common/form/InputGroup";
-import Button from "../../../../common/Button";
+import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
 import { validEmail } from "../../../../../validators";
 import Bigneon from "../../../../../helpers/bigneon";

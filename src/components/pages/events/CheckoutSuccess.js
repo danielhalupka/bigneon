@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import user from "../../../stores/user";

@@ -12,7 +12,7 @@ import QRCode from "qrcode.react";
 
 import { primaryHex } from "../../styles/theme";
 import DialogTransition from "../../common/DialogTransition";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail, validPhone } from "../../../validators";
 import notification from "../../../stores/notifications";

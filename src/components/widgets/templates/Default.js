@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 
 const styles = theme => {
 	return {

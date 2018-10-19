@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 import { observer } from "mobx-react";
 
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import SocialButton from "../../common/social/SocialButton";
 import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";

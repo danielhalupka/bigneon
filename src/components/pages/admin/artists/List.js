@@ -6,7 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({
@@ -115,9 +115,6 @@ class ArtistsList extends Component {
 									style={{ textDecoration: "none", marginRight: 10 }}
 								>
 									<Button customClassName="primary">Edit details</Button>
-								</Link>
-								<Link to={`/artists/${id}`} style={{ textDecoration: "none" }}>
-									<Button customClassName="secondary">View more</Button>
 								</Link>
 							</div>
 						</Card>

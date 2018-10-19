@@ -10,7 +10,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import AttendanceIcon from "@material-ui/icons/PersonAdd";
 
 import { Hidden } from "@material-ui/core";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 
 const styles = theme => ({
 	card: {

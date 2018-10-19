@@ -7,7 +7,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import { Link } from "react-router-dom";
 
 import PropTypes from "prop-types";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 
 const styles = theme => ({
 	card: {

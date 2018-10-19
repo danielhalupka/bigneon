@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import CardMedia from "@material-ui/core/CardMedia";
 
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
-import Button from "../../../../common/Button";
+import Button from "../../../../elements/Button";
 
 const styles = theme => ({
 	grid: {

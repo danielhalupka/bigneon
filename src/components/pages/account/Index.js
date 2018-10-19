@@ -6,7 +6,7 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import InputGroup from "../../common/form/InputGroup";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import { validEmail, validPhone } from "../../../validators";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";

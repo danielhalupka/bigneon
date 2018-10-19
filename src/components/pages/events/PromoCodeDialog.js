@@ -7,7 +7,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import DialogTransition from "../../common/DialogTransition";
 import InputGroup from "../../common/form/InputGroup";
 import Bigneon from "../../../helpers/bigneon";

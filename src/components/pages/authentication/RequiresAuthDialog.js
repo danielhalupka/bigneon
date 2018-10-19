@@ -5,7 +5,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import { DialogContent, DialogContentText } from "@material-ui/core";
 
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import DialogTransition from "../../common/DialogTransition";
 import FacebookButton from "./social/FacebookButton";
 import Divider from "../../common/Divider";

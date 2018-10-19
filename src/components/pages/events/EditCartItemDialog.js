@@ -10,7 +10,7 @@ import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
 
 import InputGroup from "../../common/form/InputGroup";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import DialogTransition from "../../common/DialogTransition";
 import cart from "../../../stores/cart";
 import notification from "../../../stores/notifications";

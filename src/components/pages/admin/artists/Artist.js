@@ -9,7 +9,7 @@ import RemoveIcon from "@material-ui/icons/RemoveCircleOutline";
 
 import InputGroup from "../../../common/form/InputGroup";
 import FormSubHeading from "../../../common/FormSubHeading";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import { validUrl } from "../../../../validators";
 import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";

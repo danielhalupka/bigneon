@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import { Paper } from "@material-ui/core";
 
 import InputGroup from "../../../common/form/InputGroup";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import eventResults from "../../../../stores/eventResults";
 import changeUrlParam from "../../../../helpers/changeUrlParam";

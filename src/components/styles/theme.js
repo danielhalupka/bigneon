@@ -1,16 +1,13 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
 const primaryHex = "#707CED";
-
 const secondaryHex = "#FF20B1";
 const textColorPrimary = "#1E1E1E";
-
 const textColorSecondary = "#4EB0E5";
 const warningHex = "#ff6333";
-
 const borderRadius = 3;
-
 const dialogBackgroundColor = "rgba(112, 124, 237, 0.7)";
+const callToActionBackground = "linear-gradient(to left, #e53d96, #5491cc)";
 
 let shadows = ["none"];
 let baseShadow = 0.4;
@@ -89,7 +86,7 @@ const theme = createMuiTheme({
 		},
 		MuiButton: {
 			root: {
-				boxShadow: shadows[2],
+				boxShadow: shadows[1],
 				borderRadius
 			}
 		},
@@ -116,5 +113,6 @@ export {
 	textColorSecondary,
 	warningHex,
 	toolBarHeight,
-	theme
+	theme,
+	callToActionBackground
 };

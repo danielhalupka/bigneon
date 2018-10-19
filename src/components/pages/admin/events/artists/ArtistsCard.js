@@ -6,7 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 import moment from "moment";
 
-import Button from "../../../../common/Button";
+import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
 import EventArtist from "./EventArtist";
 import FormSubHeading from "../../../../common/FormSubHeading";

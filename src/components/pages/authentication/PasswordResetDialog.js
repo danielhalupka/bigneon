@@ -12,7 +12,7 @@ import {
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail } from "../../../validators";
 import notifications from "../../../stores/notifications";
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import DialogTransition from "../../common/DialogTransition";
 import Bigneon from "../../../helpers/bigneon";
 

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 import notification from "../../../stores/notifications";
 import { Grid, Typography, Dialog, DialogTitle } from "@material-ui/core";
-import Button from "../Button";
+import Button from "../../elements/Button";
 import user from "../../../stores/user";
 import DialogTransition from "../DialogTransition";
 

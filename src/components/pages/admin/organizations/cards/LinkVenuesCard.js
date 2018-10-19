@@ -8,7 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 import SelectGroup from "../../../../common/form/SelectGroup";
-import Button from "../../../../common/Button";
+import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 

@@ -29,7 +29,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import OrdersIcon from "@material-ui/icons/List";
 
 import user from "../../stores/user";
-import Button from "../common/Button";
+import Button from "./Button";
 
 const styles = theme => ({
 	nested: {

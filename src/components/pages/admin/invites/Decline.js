@@ -3,7 +3,7 @@ import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 
 import notifications from "../../../../stores/notifications";
-import Button from "../../../common/Button";
+import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 
 const styles = theme => ({});

@@ -20,7 +20,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Checkbox from "@material-ui/core/Checkbox";
 import QRIcon from "@material-ui/icons/Receipt";
 
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 
 const styles = theme => ({
 	paper: {

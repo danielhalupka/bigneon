@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 
-import Button from "../../common/Button";
+import Button from "../../elements/Button";
 import notifications from "../../../stores/notifications";
 import TicketSelection from "./TicketSelection";
 import PromoCodeDialog from "./PromoCodeDialog";
