@@ -34,7 +34,7 @@ const CartHeaderLink = observer(({ classes }) => {
 	}
 
 	return (
-		<Link to="/cart" style={{ textDecoration: "none" }}>
+		<Link to="/cart">
 			<Button className={classes.menuButton}>
 				<ShoppingCartIcon className={classes.rightIcon} />
 				{ticketCount}

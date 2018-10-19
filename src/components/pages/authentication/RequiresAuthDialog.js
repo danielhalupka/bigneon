@@ -13,13 +13,14 @@ import LoginForm from "../authentication/forms/LoginForm";
 import SignupForm from "../authentication/forms/SignupForm";
 
 const styles = {
+	dialog: {
+		maxWidth: 500
+	},
 	dialogTitle: {
 		textAlign: "center"
 	},
-	changeStateText: {
-		textAlign: "center",
-		cursor: "pointer",
-		marginBottom: 40
+	dialogContent: {
+		textAlign: "center"
 	}
 };
 
@@ -48,23 +49,23 @@ class RequiresAuthDialog extends Component {
 	}
 
 	renderContent() {
-		const { onClose, classes } = this.props;
+		const { classes } = this.props;
 		const { isNewUser } = this.state;
 
 		if (isNewUser === true) {
 			return (
-				<div>
+				<div className={classes.dialog}>
 					<DialogTitle className={classes.dialogTitle} id="dialog-title">
 						Create a free account
 					</DialogTitle>
 
-					<DialogContent>
-						<DialogContentText
+					<DialogContent className={classes.dialogContent}>
+						<Button
+							variant="text"
 							onClick={() => this.setState({ isNewUser: false })}
-							className={classes.changeStateText}
 						>
 							Already have an account?
-						</DialogContentText>
+						</Button>
 						<SignupForm onSuccess={this.onSuccess} />
 					</DialogContent>
 				</div>
@@ -73,18 +74,18 @@ class RequiresAuthDialog extends Component {
 
 		if (isNewUser === false) {
 			return (
-				<div>
+				<div className={classes.dialog}>
 					<DialogTitle className={classes.dialogTitle} id="dialog-title">
 						Login to your bigNEON account
 					</DialogTitle>
 
-					<DialogContent>
-						<DialogContentText
+					<DialogContent className={classes.dialogContent}>
+						<Button
+							variant="text"
 							onClick={() => this.setState({ isNewUser: true })}
-							className={classes.changeStateText}
 						>
 							New here? Create a free account.
-						</DialogContentText>
+						</Button>
 						<LoginForm onSuccess={this.onSuccess} />
 					</DialogContent>
 				</div>
@@ -92,25 +93,27 @@ class RequiresAuthDialog extends Component {
 		}
 
 		return (
-			<div>
+			<div className={classes.dialog}>
 				<DialogTitle className={classes.dialogTitle} id="dialog-title">
 					Create a free bigNEON account
 				</DialogTitle>
 
-				<DialogContent>
-					<DialogContentText
+				<DialogContent className={classes.dialogContent}>
+					<Button
+						variant="text"
 						onClick={() => this.setState({ isNewUser: false })}
-						className={classes.changeStateText}
 					>
 						Already have an account?
-					</DialogContentText>
+					</Button>
+
+					<div style={{ marginTop: 20 }} />
 
 					<FacebookButton onSuccess={this.onSuccess} />
 
 					<Divider style={{ marginTop: 20, marginBottom: 20 }}> or </Divider>
 
 					<Button
-						style={{ width: "100%" }}
+						variant="text"
 						onClick={() => this.setState({ isNewUser: true })}
 					>
 						Sign up with email

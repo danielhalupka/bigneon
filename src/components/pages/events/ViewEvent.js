@@ -168,7 +168,7 @@ class ViewEvent extends Component {
 			<Button
 				size="large"
 				style={{ width: "100%", marginTop: 10 }}
-				customClassName={user_is_interested ? "default" : "primary"}
+				variant={user_is_interested ? "default" : "primary"}
 				onClick={this.toggleUserInterest.bind(this)}
 			>
 				{user_is_interested ? "I'm not interested" : "I'm interested"}
@@ -246,14 +246,11 @@ class ViewEvent extends Component {
 							$10 - $50
 						</Typography>
 
-						<Link
-							style={{ textDecoration: "none" }}
-							to={`/events/${id}/tickets`}
-						>
+						<Link to={`/events/${id}/tickets`}>
 							<Button
 								size="large"
 								style={{ width: "100%" }}
-								customClassName="callToAction"
+								variant="callToAction"
 							>
 								Book now
 							</Button>

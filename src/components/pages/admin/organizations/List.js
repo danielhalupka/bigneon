@@ -89,17 +89,13 @@ class OrganizationsList extends Component {
 							</CardContent>
 
 							<CardActions>
-								<Link
-									to={`/admin/organizations/${id}`}
-									style={{ textDecoration: "none" }}
-								>
-									<Button customClassName="primary">Edit details</Button>
+								<Link to={`/admin/organizations/${id}`}>
+									<Button variant="primary">Edit details</Button>
 								</Link>
 								{/* <Link
 									to={`/organizations/events/${id}`}
-									style={{ textDecoration: "none" }}
 								>
-									<Button customClassName="secondary">Events</Button>
+									<Button variant="secondary">Events</Button>
 								</Link> */}
 							</CardActions>
 						</Card>
@@ -111,11 +107,8 @@ class OrganizationsList extends Component {
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">No organizations found</Typography>
 
-					<Link
-						to={"/admin/organizations/create"}
-						style={{ textDecoration: "none" }}
-					>
-						<Button customClassName="callToAction">Create organization</Button>
+					<Link to={"/admin/organizations/create"}>
+						<Button variant="callToAction">Create organization</Button>
 					</Link>
 				</Grid>
 			);

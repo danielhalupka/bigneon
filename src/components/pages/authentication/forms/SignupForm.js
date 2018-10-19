@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { withStyles, Grid } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -194,7 +193,6 @@ class SignupForm extends Component {
 			isSubmitting,
 			errors
 		} = this.state;
-		const { showLoginLink } = this.props;
 
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
@@ -282,21 +280,11 @@ class SignupForm extends Component {
 								disabled={isSubmitting}
 								type="submit"
 								style={{ marginRight: 10, width: "100%" }}
-								customClassName="callToAction"
+								variant="callToAction"
 							>
-								{isSubmitting ? "Submitting..." : <span>Sign&nbsp;up</span>}
+								{isSubmitting ? "Submitting..." : <span>Create</span>}
 							</Button>
 						</Grid>
-
-						{showLoginLink ? (
-							<Grid item xs={12} sm={12} lg={12}>
-								<Link to={"/login"} style={{ textDecoration: "none" }}>
-									<Button style={{ width: "100%" }} disabled={isSubmitting}>
-										I already have an account
-									</Button>
-								</Link>
-							</Grid>
-						) : null}
 					</Grid>
 				</CardActions>
 			</form>
@@ -305,8 +293,7 @@ class SignupForm extends Component {
 }
 
 SignupForm.propTypes = {
-	onSuccess: PropTypes.func.isRequired,
-	showLoginLink: PropTypes.bool
+	onSuccess: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(SignupForm);

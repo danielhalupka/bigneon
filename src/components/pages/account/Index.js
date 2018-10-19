@@ -264,7 +264,7 @@ class Account extends Component {
 										disabled={isSubmitting}
 										type="submit"
 										style={{ marginRight: 10 }}
-										customClassName="callToAction"
+										variant="callToAction"
 									>
 										{isSubmitting ? "Updating..." : <span>Update</span>}
 									</Button>

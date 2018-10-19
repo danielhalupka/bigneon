@@ -70,7 +70,7 @@ const Default = props => {
 					href={`/events/${id}`}
 					target="_blank"
 					style={{ width: "100%" }}
-					customClassName="primary"
+					variant="primary"
 				>
 					Details
 				</Button>
@@ -81,7 +81,7 @@ const Default = props => {
 					href={`/events/${id}/tickets`}
 					target="_blank"
 					style={{ width: "100%" }}
-					customClassName="callToAction"
+					variant="callToAction"
 				>
 					Buy tickets
 				</Button>

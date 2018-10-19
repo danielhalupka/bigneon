@@ -287,7 +287,7 @@ class TransferTicketsDialog extends React.Component {
 					</Button>
 					<Button
 						onClick={this.onSubmitEmailOrCellphoneNumber.bind(this)}
-						customClassName="callToAction"
+						variant="callToAction"
 						disabled={isSubmitting}
 					>
 						{isSubmitting ? "Sending..." : "Send tickets"}

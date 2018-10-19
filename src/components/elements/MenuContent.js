@@ -54,11 +54,7 @@ const MenuItem = ({
 	);
 
 	if (to) {
-		return (
-			<Link to={to} style={{ textDecoration: "none" }}>
-				{listItem}
-			</Link>
-		);
+		return <Link to={to}>{listItem}</Link>;
 	}
 
 	return listItem;
@@ -69,11 +65,7 @@ const SubMenuItems = ({ isExpanded, classes, items, toggleDrawer }) => {
 		<Collapse in={isExpanded} timeout="auto" unmountOnExit>
 			<List component="div" disablePadding>
 				{Object.keys(items).map(label => (
-					<Link
-						key={label}
-						to={items[label]}
-						style={{ textDecoration: "none" }}
-					>
+					<Link key={label} to={items[label]}>
 						<ListItem button className={classes.nested} onClick={toggleDrawer}>
 							<ListItemIcon>
 								<SubMenuIcon />
@@ -118,14 +110,9 @@ class MenuContent extends Component {
 						padding: 15
 					}}
 				>
-					<Link
-						to={"/admin/dashboard"}
-						style={{
-							textDecoration: "none"
-						}}
-					>
+					<Link to={"/admin/dashboard"}>
 						<Button
-							customClassName="callToAction"
+							variant="callToAction"
 							onClick={toggleDrawer}
 							style={{ width: "100%" }}
 						>
@@ -237,14 +224,9 @@ class MenuContent extends Component {
 						padding: 15
 					}}
 				>
-					<Link
-						to={"/admin/events/create"}
-						style={{
-							textDecoration: "none"
-						}}
-					>
+					<Link to={"/admin/events/create"}>
 						<Button
-							customClassName="callToAction"
+							variant="callToAction"
 							onClick={toggleDrawer}
 							style={{ width: "100%" }}
 						>
@@ -381,14 +363,9 @@ class MenuContent extends Component {
 						padding: 15
 					}}
 				>
-					<Link
-						to={"/"}
-						style={{
-							textDecoration: "none"
-						}}
-					>
+					<Link to={"/"}>
 						<Button
-							customClassName="callToAction"
+							variant="callToAction"
 							onClick={toggleDrawer}
 							style={{ width: "100%" }}
 						>
@@ -462,14 +439,9 @@ class MenuContent extends Component {
 						padding: 15
 					}}
 				>
-					<Link
-						to={"/"}
-						style={{
-							textDecoration: "none"
-						}}
-					>
+					<Link to={"/"}>
 						<Button
-							customClassName="callToAction"
+							variant="callToAction"
 							onClick={toggleDrawer}
 							style={{ width: "100%" }}
 						>

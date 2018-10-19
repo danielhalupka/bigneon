@@ -86,7 +86,7 @@ class PublishCard extends Component {
 					<Button
 						disabled={isSubmitting || isPublished}
 						style={{ marginRight: 10 }}
-						customClassName="callToAction"
+						variant="callToAction"
 						onClick={this.onPublish.bind(this)}
 					>
 						{isSubmitting ? "Publishing..." : "Publish event"}

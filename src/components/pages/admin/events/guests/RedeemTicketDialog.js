@@ -109,7 +109,7 @@ class RedeemTicketDialog extends React.Component {
 						<Button
 							disabled={isSubmitting}
 							type="submit"
-							customClassName="callToAction"
+							variant="callToAction"
 						>
 							{isSubmitting ? "Redeeming..." : "Redeem ticket"}
 						</Button>

@@ -143,7 +143,7 @@ class CheckoutForm extends Component {
 							disabled={isSubmitting}
 							onClick={this.onSubmit.bind(this)}
 							size="large"
-							customClassName="callToAction"
+							variant="callToAction"
 						>
 							{isSubmitting ? "Checking out..." : "Purchase tickets"}
 						</Button>

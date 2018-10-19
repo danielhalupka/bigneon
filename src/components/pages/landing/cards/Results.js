@@ -26,7 +26,7 @@ const EventsList = ({ events }) => {
 
 		return (
 			<Grid item xs={12} sm={6} lg={4} key={id}>
-				<Link style={{ textDecoration: "none" }} to={`/events/${id}`}>
+				<Link to={`/events/${id}`}>
 					<SearchResultEventCard
 						imgSrc={promo_image_url}
 						name={name}

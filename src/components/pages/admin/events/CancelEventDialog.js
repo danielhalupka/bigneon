@@ -124,7 +124,7 @@ class CancelEventDialog extends React.Component {
 						<Button
 							disabled={isSubmitting}
 							type="submit"
-							customClassName="warning"
+							variant="warning"
 						>
 							{isSubmitting ? "Cancelling..." : "Cancel event"}
 						</Button>

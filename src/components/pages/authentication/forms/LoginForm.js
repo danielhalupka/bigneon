@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withStyles, Grid } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
@@ -116,7 +115,6 @@ class LoginForm extends Component {
 
 	render() {
 		const { email, password, resetOpen, isSubmitting, errors } = this.state;
-		const { showSignupLink } = this.props;
 
 		return (
 			<div>
@@ -159,31 +157,26 @@ class LoginForm extends Component {
 									disabled={isSubmitting}
 									type="submit"
 									style={{ width: "100%" }}
-									customClassName="callToAction"
+									variant="callToAction"
 								>
 									{isSubmitting ? "Submitting..." : "Login"}
 								</Button>
 							</Grid>
 
-							<Grid item xs={12} sm={12} lg={showSignupLink ? 6 : 12}>
+							<Grid
+								item
+								xs={12}
+								sm={12}
+								lg={12}
+								style={{ justifyContent: "center" }}
+							>
 								<Button
 									onClick={() => this.setState({ resetOpen: true })}
-									style={{ width: "100%" }}
-									disabled={isSubmitting}
+									variant="text"
 								>
-									Forgot password
+									Forgot your password?
 								</Button>
 							</Grid>
-
-							{showSignupLink ? (
-								<Grid item xs={12} sm={12} lg={6}>
-									<Link to={"/sign-up"} style={{ textDecoration: "none" }}>
-										<Button style={{ width: "100%" }} disabled={isSubmitting}>
-											I don't have an account
-										</Button>
-									</Link>
-								</Grid>
-							) : null}
 						</Grid>
 					</CardActions>
 				</form>
@@ -193,8 +186,7 @@ class LoginForm extends Component {
 }
 
 LoginForm.propTypes = {
-	onSuccess: PropTypes.func.isRequired,
-	showSignupLink: PropTypes.bool
+	onSuccess: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(LoginForm);

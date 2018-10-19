@@ -153,12 +153,12 @@ class HappeningNow extends React.Component {
 
 							<Spacer />
 
-							<Button customClassName="primary" style={{ width: "100%" }}>
+							<Button variant="primary" style={{ width: "100%" }}>
 								Box office
 							</Button>
 							<Spacer />
 
-							<Button customClassName="secondary" style={{ width: "100%" }}>
+							<Button variant="secondary" style={{ width: "100%" }}>
 								Fan engagement
 							</Button>
 						</div>

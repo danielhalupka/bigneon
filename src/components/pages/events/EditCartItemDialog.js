@@ -178,7 +178,7 @@ class EditCartItemDialog extends React.Component {
 					</Button>
 					<Button
 						autoFocus
-						customClassName="primary"
+						variant="primary"
 						disabled={isSubmitting}
 						onClick={this.onUpdate.bind(this)}
 					>

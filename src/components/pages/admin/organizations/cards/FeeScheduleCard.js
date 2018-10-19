@@ -271,7 +271,7 @@ class FeeScheduleCard extends Component {
 				<DialogActions>
 					<Button onClick={onClose}>Cancel</Button>
 					<Button
-						customClassName="primary"
+						variant="primary"
 						onClick={this.saveNewFeeSchedule.bind(this)}
 						autoFocus
 					>
@@ -366,7 +366,7 @@ class FeeScheduleCard extends Component {
 						<Button
 							disabled={isSubmitting}
 							type="submit"
-							customClassName="callToAction"
+							variant="callToAction"
 						>
 							{isSubmitting ? "Creating..." : "Create new schedule"}
 						</Button>

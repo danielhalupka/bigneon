@@ -111,12 +111,7 @@ class OrderList extends Component {
 										{formattedDate}
 									</TableCell>
 									<TableCell numeric>
-										<Link
-											style={{ textDecoration: "none" }}
-											to={`/orders/${id}`}
-										>
-											{orderNumber}
-										</Link>
+										<Link to={`/orders/${id}`}>{orderNumber}</Link>
 									</TableCell>
 									{/* <TableCell numeric>{eventName}</TableCell> */}
 									<TableCell numeric>{tickets}</TableCell>

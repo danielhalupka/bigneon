@@ -227,7 +227,7 @@ class CheckoutSelection extends Component {
 							<Button
 								onClick={() => this.setState({ openPromo: true })}
 								size="large"
-								customClassName="default"
+								variant="default"
 							>
 								Apply promo code
 							</Button>
@@ -236,7 +236,7 @@ class CheckoutSelection extends Component {
 								disabled={isSubmitting}
 								onClick={this.onSubmit.bind(this)}
 								size="large"
-								customClassName="primary"
+								variant="primary"
 							>
 								{isSubmitting ? "Adding..." : "Select tickets"}
 							</Button>

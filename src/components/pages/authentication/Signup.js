@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import { Link } from "react-router-dom";
 
 import Container from "./Container";
 import user from "../../../stores/user";
 import SignupForm from "./forms/SignupForm";
-
-const styles = () => ({});
+import Button from "../../elements/Button";
 
 class Signup extends Component {
 	componentDidMount() {
@@ -17,14 +17,17 @@ class Signup extends Component {
 
 	render() {
 		return (
-			<Container>
+			<Container {...this.props} type="signup">
+				<Typography variant="headline">Create your account</Typography>
+				<Link to="/login">
+					<Button variant="text">Already have an account?</Button>
+				</Link>
 				<SignupForm
 					onSuccess={(href = "/") => this.props.history.push(href)} //Can optionally change where to redirect to
-					showLoginLink
 				/>
 			</Container>
 		);
 	}
 }
 
-export default withStyles(styles)(Signup);
+export default Signup;

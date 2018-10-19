@@ -1,48 +1,79 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 
+import AppBar from "../../elements/header/AppBar";
+import { toolBarHeight } from "../../styles/theme";
+
 const styles = theme => ({
+	root: {
+		flexGrow: 1,
+		zIndex: 1,
+		overflow: "hidden",
+		position: "relative",
+		display: "flex",
+		width: "100%",
+		height: "100vh"
+	},
+	content: {
+		height: "100%",
+		flexGrow: 1,
+		backgroundColor: theme.palette.background.default,
+		padding: theme.spacing.unit * 3,
+		backgroundRepeat: "no-repeat",
+		backgroundSize: "cover",
+
+		display: "flex",
+		flexDirection: "column",
+		justifyContent: "center",
+
+		paddingTop: theme.spacing.unit * 2
+	},
+	login: {
+		backgroundImage: `url(/images/login-bg.jpg)`
+	},
+	signup: {
+		backgroundImage: `url(/images/signup-bg.jpg)`
+	},
 	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
+		padding: theme.spacing.unit * 2,
+		marginBottom: theme.spacing.unit,
+		textAlign: "center"
 	},
 	headerImage: {
-		width: "100%",
-		marginBottom: theme.spacing.unit * 2
-	}
+		width: "100%"
+	},
+	toolbar: toolBarHeight
 });
+
 const Container = props => {
-	const { classes, children } = props;
+	const { classes, children, type, history } = props;
 
 	return (
-		<div>
-			<Grid container justify="center">
-				<Grid item xs={12} sm={10} md={6} lg={4}>
-					<img
-						alt="Header logo"
-						className={classes.headerImage}
-						src="/images/bn-logo-text.png"
-					/>
-				</Grid>
-			</Grid>
+		<div className={classes.root}>
+			<AppBar history={history} />
 
-			<Grid container justify="center">
-				<Grid item xs={12} sm={12} md={8} lg={6}>
-					<div>
+			<main className={classnames(classes.content, classes[type])}>
+				<div className={classes.toolbar} />
+
+				<Grid container justify="center">
+					<Grid item xs={12} sm={12} md={6} lg={4}>
 						<Card className={classes.paper}>{children}</Card>
-					</div>
+					</Grid>
 				</Grid>
-			</Grid>
+			</main>
 		</div>
 	);
 };
 
 Container.propTypes = {
+	history: PropTypes.object.isRequired,
+	type: PropTypes.oneOf(["login", "signup"]),
 	classes: PropTypes.object.isRequired,
-	children: PropTypes.element.isRequired
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };
 
 export default withStyles(styles)(Container);

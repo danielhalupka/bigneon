@@ -440,7 +440,7 @@ class DetailsCard extends Component {
 							disabled={isSubmitting}
 							type="submit"
 							style={{ marginRight: 10 }}
-							customClassName="callToAction"
+							variant="callToAction"
 						>
 							{isSubmitting ? "Saving..." : "Save and continue"}
 						</Button>

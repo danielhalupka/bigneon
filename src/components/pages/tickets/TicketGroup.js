@@ -205,13 +205,13 @@ class TicketGroup extends Component {
 							<Button
 								target="_blank"
 								href={`/events/${id}`}
-								customClassName="secondary"
+								variant="secondary"
 								style={{ marginRight: 10 }}
 							>
 								View event page
 							</Button>
 							<Button
-								customClassName="callToAction"
+								variant="callToAction"
 								disabled={checkedTicketsIds.length < 1}
 								onClick={() => onShowTransferQR(checkedTicketsIds)}
 							>

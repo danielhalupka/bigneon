@@ -113,7 +113,7 @@ class PromoCodeDialog extends React.Component {
 						<Button
 							disabled={isSubmitting}
 							type="submit"
-							customClassName="primary"
+							variant="primary"
 						>
 							Use
 						</Button>

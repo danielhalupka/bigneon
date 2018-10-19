@@ -18,8 +18,7 @@ const styles = theme => {
 			bottom: 0,
 			display: "flex",
 			justifyContent: "flex-end",
-			zIndex: "100000; position:relative",
-			textDecoration: "none"
+			zIndex: "100000; position:relative"
 		},
 		bar: {
 			justifyContent: "space-around",

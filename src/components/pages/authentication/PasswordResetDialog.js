@@ -144,7 +144,7 @@ class PasswordResetDialog extends React.Component {
 						>
 							Cancel
 						</Button>
-						<Button type="submit" customClassName="callToAction">
+						<Button type="submit" variant="callToAction">
 							{isSubmitting ? "Resetting..." : "Reset password"}
 						</Button>
 					</DialogActions>

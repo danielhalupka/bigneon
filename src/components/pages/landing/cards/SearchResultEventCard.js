@@ -43,14 +43,14 @@ const SearchResultEventCard = ({
 				}${state}`}</Typography>
 			</CardContent>
 			{/* <CardActions>
-				<Link style={{ textDecoration: "none" }} to={`/events/${id}`}>
-					<Button style={{ marginRight: 4 }} customClassName="primary">
+				<Link to={`/events/${id}`}>
+					<Button style={{ marginRight: 4 }} variant="primary">
 						Details
 					</Button>
 				</Link>
 
-				<Link style={{ textDecoration: "none" }} to={`/events/${id}/tickets`}>
-					<Button customClassName="callToAction">Book now</Button>
+				<Link to={`/events/${id}/tickets`}>
+					<Button variant="callToAction">Book now</Button>
 				</Link>
 			</CardActions> */}
 		</Card>

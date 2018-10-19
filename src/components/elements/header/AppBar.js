@@ -43,16 +43,18 @@ const CustomAppBar = props => {
 	return (
 		<AppBar className={classes.appBar}>
 			<Toolbar className={classes.toolBar}>
-				<Hidden mdUp implementation="css">
-					<IconButton
-						color="inherit"
-						aria-label="open drawer"
-						onClick={handleDrawerToggle}
-						className={classes.navIconHide}
-					>
-						<MenuIcon color="action" />
-					</IconButton>
-				</Hidden>
+				{handleDrawerToggle ? (
+					<Hidden mdUp implementation="css">
+						<IconButton
+							color="inherit"
+							aria-label="open drawer"
+							onClick={handleDrawerToggle}
+							className={classes.navIconHide}
+						>
+							<MenuIcon color="action" />
+						</IconButton>
+					</Hidden>
+				) : null}
 				<div>
 					<Link to={"/"}>
 						<img
@@ -80,7 +82,7 @@ const CustomAppBar = props => {
 
 CustomAppBar.propTypes = {
 	classes: PropTypes.object.isRequired,
-	handleDrawerToggle: PropTypes.func.isRequired,
+	handleDrawerToggle: PropTypes.func,
 	history: PropTypes.object.isRequired
 };
 

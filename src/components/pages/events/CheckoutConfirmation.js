@@ -227,7 +227,6 @@ class CheckoutConfirmation extends Component {
 				// 		null
 				// 		// <Link
 				// 		// 	to={`/events/${id}/tickets`}
-				// 		// 	style={{ textDecoration: "none" }}
 				// 		// >
 				// 		// 	<Button>Change tickets</Button>
 				// 		// </Link>

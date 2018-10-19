@@ -266,11 +266,8 @@ class EventsList extends Component {
 
 				<Grid container spacing={16}>
 					<Grid item xs={12} sm={12} lg={12}>
-						<Link
-							to={"/admin/events/create"}
-							style={{ textDecoration: "none" }}
-						>
-							<Button customClassName="callToAction">Create event</Button>
+						<Link to={"/admin/events/create"}>
+							<Button variant="callToAction">Create event</Button>
 						</Link>
 					</Grid>
 

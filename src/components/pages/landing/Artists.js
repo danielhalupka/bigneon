@@ -114,12 +114,12 @@ class ArtistsList extends Component {
 							<div className={classes.actionButtons}>
 								{/* <Link
 									to={`/admin/artists/${id}`}
-									style={{ textDecoration: "none", marginRight: 10 }}
+									style={{ marginRight: 10 }}
 								>
-									<Button customClassName="primary">Edit details</Button>
+									<Button variant="primary">Edit details</Button>
 								</Link> */}
-								<Link to={`/artists/${id}`} style={{ textDecoration: "none" }}>
-									<Button customClassName="secondary">View more</Button>
+								<Link to={`/artists/${id}`}>
+									<Button variant="secondary">View more</Button>
 								</Link>
 							</div>
 						</Card>
@@ -144,9 +144,8 @@ class ArtistsList extends Component {
 					<Grid item xs={12} sm={12} lg={12}>
 						{/* <Link
 							to={"/admin/artists/create"}
-							style={{ textDecoration: "none" }}
 						>
-							<Button customClassName="callToAction">Create artist</Button>
+							<Button variant="callToAction">Create artist</Button>
 						</Link> */}
 					</Grid>
 

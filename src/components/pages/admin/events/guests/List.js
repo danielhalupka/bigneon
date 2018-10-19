@@ -143,7 +143,7 @@ class GuestList extends Component {
 								<Button
 									disabled={status === "Redeemed"}
 									onClick={() => this.setState({ selectedTicket: ticket })}
-									customClassName="primary"
+									variant="primary"
 								>
 									Redeem ticket
 								</Button>

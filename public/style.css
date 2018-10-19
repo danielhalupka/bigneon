@@ -2,3 +2,8 @@
   font-family: TTCommons-Regular;
   src: url("/fonts/TypeType - TT Commons Regular.otf") format("opentype");
 }
+
+a {
+  text-decoration: none;
+  outline: none;
+}

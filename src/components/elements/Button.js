@@ -7,7 +7,6 @@ import classNames from "classnames";
 
 import {
 	textColorPrimary,
-	textColorSecondary,
 	primaryHex,
 	secondaryHex,
 	warningHex,
@@ -21,8 +20,7 @@ const styles = {
 		paddingLeft: 30,
 		paddingRight: 30,
 		paddingTop: 10,
-		paddingBottom: 10,
-		textDecoration: "none"
+		paddingBottom: 10
 	},
 	primary: {
 		background: primaryHex,
@@ -45,22 +43,24 @@ const styles = {
 		background: `linear-gradient(45deg, ${warningHex} 10%, ${warningHex} 90%)`,
 		color: "#FFF"
 	},
+	text: {
+		background: "transparent",
+		boxShadow: "none"
+	},
 	label: {
-		textTransform: "capitalize"
+		textTransform: "none"
 	}
 };
 
 const CustomButton = props => {
-	const { classes, children, customClassName, disabled, ...rest } = props;
+	const { classes, children, variant, disabled, ...rest } = props;
 
 	return (
 		<Button
 			classes={{
 				root: classNames(
 					classes.root,
-					!disabled
-						? classes[customClassName] || classes.default
-						: classes.default
+					!disabled ? classes[variant] || classes.default : classes.default
 				),
 				label: classes.label
 			}}
@@ -74,7 +74,14 @@ const CustomButton = props => {
 
 CustomButton.propTypes = {
 	classes: PropTypes.object.isRequired,
-	customClassName: PropTypes.string,
+	variant: PropTypes.oneOf([
+		"primary",
+		"secondary",
+		"default",
+		"callToAction",
+		"warning",
+		"text"
+	]),
 	disabled: PropTypes.bool,
 	children: PropTypes.oneOfType([
 		PropTypes.string,

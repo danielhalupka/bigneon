@@ -38,7 +38,6 @@ const styles = theme => ({
 		height: 10
 	},
 	menuLink: {
-		textDecoration: "none",
 		outline: "none",
 		marginLeft: theme.spacing.unit * 2
 	}
@@ -121,7 +120,7 @@ class RightHeaderMenu extends React.Component {
 				open={open}
 				onClose={this.handleClose.bind(this)}
 			>
-				<Link to="/account" style={{ textDecoration: "none", outline: "none" }}>
+				<Link to="/account">
 					<MenuItem onClick={this.handleClose.bind(this)}>Account</MenuItem>
 				</Link>
 
@@ -189,7 +188,7 @@ class RightHeaderMenu extends React.Component {
 				</Link>
 
 				<Link to="/help" className={classes.menuLink}>
-					<Button size="large" customClassName="callToAction">
+					<Button size="large" variant="callToAction">
 						Get the App
 					</Button>
 				</Link>

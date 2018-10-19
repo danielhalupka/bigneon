@@ -80,17 +80,13 @@ class VenuesList extends Component {
 							</CardContent>
 
 							<CardActions>
-								<Link
-									to={`/admin/venues/${id}`}
-									style={{ textDecoration: "none" }}
-								>
-									<Button customClassName="primary">Edit details</Button>
+								<Link to={`/admin/venues/${id}`}>
+									<Button variant="primary">Edit details</Button>
 								</Link>
 								{/* <Link
 									to={`/organizations/venues/${id}`}
-									style={{ textDecoration: "none" }}
 								>
-									<Button customClassName="secondary">Events</Button>
+									<Button variant="secondary">Events</Button>
 								</Link> */}
 							</CardActions>
 						</Card>
@@ -113,11 +109,8 @@ class VenuesList extends Component {
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
-						<Link
-							to={"/admin/venues/create"}
-							style={{ textDecoration: "none" }}
-						>
-							<Button customClassName="callToAction">Create venue</Button>
+						<Link to={"/admin/venues/create"}>
+							<Button variant="callToAction">Create venue</Button>
 						</Link>
 					</Grid>
 

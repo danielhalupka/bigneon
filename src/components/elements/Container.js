@@ -4,8 +4,7 @@ import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { Link } from "react-router-dom";
 // import DevTools from "mobx-react-devtools";
-import MuiPickersUtilsProvider from "material-ui-pickers/utils/MuiPickersUtilsProvider";
-import MomentUtils from "material-ui-pickers/utils/moment-utils";
+
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
@@ -63,6 +62,7 @@ class Container extends React.Component {
 		user.refreshUser();
 
 		const isWidget = window.location.pathname.includes("/widget/"); //TODO remove this in the future when widgets are in their own react app
+
 		this.setState({ isWidget });
 	}
 
@@ -74,9 +74,18 @@ class Container extends React.Component {
 		const { classes, history, children } = this.props;
 		const { mobileOpen, isWidget } = this.state;
 
+		const isAuthRoute =
+			window.location.pathname.includes("/login") ||
+			window.location.pathname.includes("/sign-up"); //TODO might be a better way to do this but new designs require a different container
+
 		//Don't render container things if we're in a widget
-		if (isWidget) {
-			return <div>{children}</div>;
+		if (isWidget || isAuthRoute) {
+			return (
+				<div>
+					{children}
+					<Notification />
+				</div>
+			);
 		}
 
 		const drawer = (
@@ -84,7 +93,7 @@ class Container extends React.Component {
 		);
 
 		return (
-			<MuiPickersUtilsProvider utils={MomentUtils}>
+			<div>
 				<AppBar
 					handleDrawerToggle={this.handleDrawerToggle.bind(this)}
 					history={history}
@@ -131,7 +140,7 @@ class Container extends React.Component {
 					</main>
 				</div>
 				<CartMobileBottomBar />
-			</MuiPickersUtilsProvider>
+			</div>
 		);
 	}
 }

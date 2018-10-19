@@ -105,7 +105,7 @@ class SearchCard extends Component {
 						<Grid item xs={12} sm={6} lg={4}>
 							<Button
 								type="submit"
-								customClassName="callToAction"
+								variant="callToAction"
 								style={{ width: "100%" }}
 								disabled={isSearching}
 							>

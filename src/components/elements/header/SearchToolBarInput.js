@@ -32,6 +32,10 @@ class SearchToolBarInput extends Component {
 
 	componentDidMount() {}
 
+	componentWillUnmount() {
+		this.componentUnmounted = true;
+	}
+
 	onEventSearch(e) {
 		e.preventDefault();
 
@@ -51,7 +55,7 @@ class SearchToolBarInput extends Component {
 		eventResults.refreshResults(
 			{ query },
 			() => {
-				this.setState({ isSearching: false });
+				this.componentUnmounted || this.setState({ isSearching: false });
 			},
 			message => {
 				this.setState({ isSearching: false });
