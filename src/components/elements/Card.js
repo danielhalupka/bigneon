@@ -1,17 +1,12 @@
-//Base component https://material-ui.com/api/button/
+//Base component https://material-ui.com/api/card/
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import classNames from "classnames";
 
-import {
-	textColorPrimary,
-	primaryHex,
-	secondaryHex,
-	warningHex,
-	callToActionBackground
-} from "../styles/theme";
+import { raisedCardBoxShadow } from "../styles/theme";
+import TopCardIcon from "./TopCardIcon";
 
 const styles = {
 	root: {
@@ -23,31 +18,46 @@ const styles = {
 		border: "solid 0.5px #dee2e8"
 	},
 	raised: {
-		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)" //TODO move this to theme.js
+		boxShadow: raisedCardBoxShadow
+	},
+	iconSpacer: {
+		marginTop: 30
 	}
 };
 
 const CustomCard = props => {
-	const { classes, children, variant, ...rest } = props;
+	const { classes, children, variant, iconUrl, ...rest } = props;
+
+	let topIconSpan;
+	let topIconSpacer;
+	if (iconUrl) {
+		topIconSpacer = <div className={classes.iconSpacer} />;
+		topIconSpan = <TopCardIcon iconUrl={iconUrl} />;
+	}
 
 	return (
-		<Card
-			classes={{
-				root: classNames(
-					classes.root,
-					classes[variant] ? classes[variant] : classes.default
-				),
-				label: classes.label
-			}}
-			{...rest}
-		>
-			{children}
-		</Card>
+		<div>
+			{topIconSpan}
+			<Card
+				classes={{
+					root: classNames(
+						classes.root,
+						classes[variant] ? classes[variant] : classes.default
+					),
+					label: classes.label
+				}}
+				{...rest}
+			>
+				{topIconSpacer}
+				{children}
+			</Card>
+		</div>
 	);
 };
 
 CustomCard.propTypes = {
 	classes: PropTypes.object.isRequired,
+	iconUrl: PropTypes.string,
 	variant: PropTypes.oneOf(["default", "raised"]),
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };

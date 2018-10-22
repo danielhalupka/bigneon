@@ -61,7 +61,11 @@ const Container = props => {
 
 				<Grid container justify="center">
 					<Grid item xs={12} sm={12} md={6} lg={4}>
-						<Card variant="raised" className={classes.paper}>
+						<Card
+							iconUrl="/icons/user-white.svg"
+							variant="raised"
+							className={classes.paper}
+						>
 							{children}
 						</Card>
 					</Grid>

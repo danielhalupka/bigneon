@@ -182,6 +182,7 @@ class User {
 		this.email = "";
 		this.phone = "";
 		this.roles = [];
+		this.profilePicUrl = "";
 
 		localStorage.removeItem("access_token");
 		localStorage.removeItem("refresh_token");

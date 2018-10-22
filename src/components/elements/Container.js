@@ -11,7 +11,7 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Hidden from "@material-ui/core/Hidden";
 
 import AppBar from "./header/AppBar";
-import MenuContent from "./MenuContent";
+import MenuContent from "./menu/MenuContent";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
 import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";

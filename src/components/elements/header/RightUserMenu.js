@@ -8,6 +8,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Warning from "@material-ui/icons/Warning";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+import Hidden from "@material-ui/core/Hidden";
 
 import user from "../../../stores/user";
 import NotificationList from "../../common/NotificationList";
@@ -30,11 +31,14 @@ const styles = theme => ({
 		flexDirection: "row",
 		alignItems: "center"
 	},
-	avatar: {
-		marginRight: theme.spacing.unit * 2
+	avatar: {},
+	nameDiv: {
+		paddingTop: 4,
+		paddingLeft: theme.spacing.unit * 2,
+		paddingRight: theme.spacing.unit * 2
 	},
 	dropdownIcon: {
-		marginLeft: theme.spacing.unit * 2,
+		marginLeft: theme.spacing.unit,
 		height: 10
 	},
 	menuLink: {
@@ -154,16 +158,19 @@ class RightHeaderMenu extends React.Component {
 					className={classes.avatar}
 				/>
 
-				<span>
-					<Typography style={{ paddingTop: 4 }} variant="caption">
-						Welcome back
-					</Typography>
-					<Typography variant="subheading">
-						{firstName}
-						&nbsp;
-						{lastName}
-					</Typography>
-				</span>
+				<Hidden smDown implementation="css">
+					<div className={classes.nameDiv}>
+						<Typography style={{}} variant="caption">
+							Welcome back
+						</Typography>
+
+						<Typography variant="subheading">
+							{firstName}
+							&nbsp;
+							{lastName}
+						</Typography>
+					</div>
+				</Hidden>
 
 				<img
 					alt="Search icon"
@@ -183,15 +190,19 @@ class RightHeaderMenu extends React.Component {
 					<Typography variant="subheading">Sign In</Typography>
 				</Link>
 
-				<Link to="/help" className={classes.menuLink}>
-					<Typography variant="subheading">help</Typography>
-				</Link>
+				<Hidden smDown implementation="css" className={classes.menuLink}>
+					<Link to="/help">
+						<Typography variant="subheading">help</Typography>
+					</Link>
+				</Hidden>
 
-				<Link to="/help" className={classes.menuLink}>
-					<Button size="large" variant="callToAction">
-						Get the App
-					</Button>
-				</Link>
+				<Hidden smDown implementation="css" className={classes.menuLink}>
+					<Link to="/help">
+						<Button size="large" variant="callToAction">
+							Get the App
+						</Button>
+					</Link>
+				</Hidden>
 			</span>
 		);
 	}

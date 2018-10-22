@@ -189,7 +189,6 @@ class TicketList extends Component {
 			selectedTransferTicketIds
 		} = this.state;
 
-		console.log(selectedTicket);
 		return (
 			<div>
 				<Typography variant="display3">My tickets</Typography>
