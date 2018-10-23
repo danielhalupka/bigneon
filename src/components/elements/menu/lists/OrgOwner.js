@@ -3,18 +3,6 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import SendIcon from "@material-ui/icons/Send";
-import EventsIcon from "@material-ui/icons/Event";
-import SubMenuIcon from "@material-ui/icons/FiberManualRecord";
-import ChartIcon from "@material-ui/icons/PieChart";
-import FansIcon from "@material-ui/icons/People";
-import ArtistsIcon from "@material-ui/icons/MusicNote";
-import MarketingIcon from "@material-ui/icons/Notifications";
-import OrganizationIcon from "@material-ui/icons/GroupWork";
-import VenueIcon from "@material-ui/icons/Room";
-
 import MenuItem from "../MenuItem";
 import Button from "../../Button";
 import SubMenuItems from "../SubMenuItems";
@@ -48,20 +36,14 @@ const OrgOwnerList = props => {
 
 			{/* <Divider className={classes.divider} /> */}
 
-			<MenuItem
-				to="/admin/dashboard"
-				icon={<SendIcon />}
-				onClick={toggleDrawer}
-			>
+			<MenuItem to="/admin/dashboard" iconName="account" onClick={toggleDrawer}>
 				Dashboard
 			</MenuItem>
 
 			<MenuItem
-				icon={<VenueIcon />}
+				iconName="account"
 				onClick={() => this.changeOpenMenu("admin-venues")}
-				expandIcon={
-					openMenuItem === "admin-venues" ? <ExpandLess /> : <ExpandMore />
-				}
+				expand={openMenuItem === "admin-venues"}
 				onClick={toggleDrawer}
 			>
 				Venues
@@ -75,11 +57,9 @@ const OrgOwnerList = props => {
 				onClick={toggleDrawer}
 			/>
 			<MenuItem
-				icon={<ArtistsIcon />}
+				iconName="account"
 				onClick={() => this.changeOpenMenu("admin-artists")}
-				expandIcon={
-					openMenuItem === "admin-artists" ? <ExpandLess /> : <ExpandMore />
-				}
+				expand={openMenuItem === "admin-artists"}
 				onClick={toggleDrawer}
 			>
 				Artists
@@ -94,9 +74,9 @@ const OrgOwnerList = props => {
 			/>
 
 			<MenuItem
-				icon={<EventsIcon />}
+				iconName="account"
 				onClick={() => this.changeOpenMenu("events")}
-				expandIcon={openMenuItem === "events" ? <ExpandLess /> : <ExpandMore />}
+				expand={openMenuItem === "events"}
 				onClick={toggleDrawer}
 			>
 				Events
@@ -110,19 +90,17 @@ const OrgOwnerList = props => {
 				onClick={toggleDrawer}
 			/>
 
-			<MenuItem to="/admin/reports" icon={<ChartIcon />} onClick={toggleDrawer}>
+			<MenuItem to="/admin/reports" iconName={"account"} onClick={toggleDrawer}>
 				Reports
 			</MenuItem>
-			<MenuItem to="/admin/fans" icon={<FansIcon />} onClick={toggleDrawer}>
+			<MenuItem to="/admin/fans" iconName={"account"} onClick={toggleDrawer}>
 				Fans
 			</MenuItem>
 
 			<MenuItem
-				icon={<MarketingIcon />}
+				iconName="account"
 				onClick={() => this.changeOpenMenu("marketing")}
-				expandIcon={
-					openMenuItem === "marketing" ? <ExpandLess /> : <ExpandMore />
-				}
+				expand={openMenuItem === "marketing"}
 				onClick={toggleDrawer}
 			>
 				Marketing
@@ -140,7 +118,7 @@ const OrgOwnerList = props => {
 			/>
 			<MenuItem
 				to="/admin/organizations"
-				icon={<OrganizationIcon />}
+				iconName="account"
 				onClick={toggleDrawer}
 			>
 				My organizations

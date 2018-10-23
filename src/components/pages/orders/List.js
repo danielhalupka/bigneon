@@ -41,7 +41,7 @@ class OrderList extends Component {
 			.orders.index()
 			.then(response => {
 				const { data, paging } = response.data; //@TODO Implement pagination
-				this.setState({ orders: data });
+				this.setState({ orders: data || response.data }); //TODO remove 'response.data' when bn-api-node is updated
 			})
 			.catch(error => {
 				console.error(error);

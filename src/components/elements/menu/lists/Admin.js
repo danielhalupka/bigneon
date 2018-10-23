@@ -3,13 +3,6 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import EventsIcon from "@material-ui/icons/Event";
-import ArtistsIcon from "@material-ui/icons/MusicNote";
-import OrganizationIcon from "@material-ui/icons/GroupWork";
-import VenueIcon from "@material-ui/icons/Room";
-
 import Button from "../../Button";
 import MenuItem from "../MenuItem";
 import SubMenuItems from "../SubMenuItems";
@@ -46,15 +39,9 @@ const AdminList = props => {
 			{/* <Divider className={classes.divider} /> */}
 
 			<MenuItem
-				icon={<OrganizationIcon />}
+				iconName="account"
 				onClick={() => changeOpenMenu("admin-organizations")}
-				expandIcon={
-					openMenuItem === "admin-organizations" ? (
-						<ExpandLess />
-					) : (
-						<ExpandMore />
-					)
-				}
+				expand={openMenuItem === "admin-organizations"}
 			>
 				Organizations
 			</MenuItem>
@@ -67,11 +54,9 @@ const AdminList = props => {
 				onClick={toggleDrawer}
 			/>
 			<MenuItem
-				icon={<VenueIcon />}
+				iconName="venues"
 				onClick={() => changeOpenMenu("admin-venues")}
-				expandIcon={
-					openMenuItem === "admin-venues" ? <ExpandLess /> : <ExpandMore />
-				}
+				expand={openMenuItem === "admin-venues"}
 			>
 				Venues
 			</MenuItem>
@@ -84,11 +69,9 @@ const AdminList = props => {
 				onClick={toggleDrawer}
 			/>
 			<MenuItem
-				icon={<ArtistsIcon />}
+				iconName="artists"
 				onClick={() => changeOpenMenu("admin-artists")}
-				expandIcon={
-					openMenuItem === "admin-artists" ? <ExpandLess /> : <ExpandMore />
-				}
+				expand={openMenuItem === "admin-artists"}
 			>
 				Artists
 			</MenuItem>
@@ -101,11 +84,9 @@ const AdminList = props => {
 				onClick={toggleDrawer}
 			/>
 			<MenuItem
-				icon={<EventsIcon />}
+				iconName="events"
 				onClick={() => changeOpenMenu("admin-events")}
-				expandIcon={
-					openMenuItem === "admin-events" ? <ExpandLess /> : <ExpandMore />
-				}
+				expand={openMenuItem === "admin-events"}
 			>
 				Events
 			</MenuItem>

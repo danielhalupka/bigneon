@@ -9,6 +9,7 @@ import Collapse from "@material-ui/core/Collapse";
 import List from "@material-ui/core/List";
 import SubMenuIcon from "@material-ui/icons/FiberManualRecord";
 import Divider from "@material-ui/core/Divider";
+import Typography from "@material-ui/core/Typography";
 
 const styles = theme => {
 	return {
@@ -18,6 +19,9 @@ const styles = theme => {
 		divider: {
 			marginRight: theme.spacing.unit * 3,
 			marginLeft: theme.spacing.unit * 3
+		},
+		text: {
+			paddingTop: 3
 		}
 	};
 };
@@ -28,16 +32,33 @@ const SubMenuItems = props => {
 	return (
 		<Collapse in={isExpanded} timeout="auto" unmountOnExit>
 			<List component="div" disablePadding>
-				{Object.keys(items).map(label => (
-					<Link key={label} to={items[label]}>
-						<ListItem button className={classes.nested} onClick={onClick}>
-							<ListItemIcon>
+				{Object.keys(items).map(label => {
+					const to = items[label];
+					const active = window.location.pathname === to;
+
+					return (
+						<Link key={label} to={to}>
+							<ListItem button className={classes.nested} onClick={onClick}>
+								{/* <ListItemIcon>
 								<SubMenuIcon />
-							</ListItemIcon>
-							<ListItemText inset primary={label} />
-						</ListItem>
-					</Link>
-				))}
+							</ListItemIcon> */}
+								<ListItemText
+									inset
+									disableTypography
+									primary={
+										<Typography
+											className={classes.text}
+											variant="body1"
+											color={active ? "secondary" : "textSecondary"}
+										>
+											{label}
+										</Typography>
+									}
+								/>
+							</ListItem>
+						</Link>
+					);
+				})}
 			</List>
 			<Divider className={classes.divider} />
 		</Collapse>

@@ -25,7 +25,8 @@ const styles = theme => {
 		},
 		divider: {
 			marginRight: theme.spacing.unit * 3,
-			marginLeft: theme.spacing.unit * 3
+			marginLeft: theme.spacing.unit * 3,
+			marginBottom: theme.spacing.unit
 		}
 	};
 };
