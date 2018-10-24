@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
+import { withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -10,9 +10,9 @@ import Button from "../../elements/Button";
 import { validEmail, validPhone } from "../../../validators";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
-import api from "../../../helpers/api";
 import Bigneon from "../../../helpers/bigneon";
 import cloudinaryWidget from "../../../helpers/cloudinaryWidget";
+import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -187,7 +187,7 @@ class Account extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">Account</Typography>
+				<PageHeading iconUrl="/icons/account-multi.svg">Account</PageHeading>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={10}>

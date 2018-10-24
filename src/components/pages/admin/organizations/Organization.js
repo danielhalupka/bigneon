@@ -7,6 +7,7 @@ import UpdateCard from "./cards/UpdateCard";
 // import LinkVenuesCard from "./cards/LinkVenuesCard";
 import InviteUserCard from "./cards/InviteUserCard";
 import FeeScheduleCard from "./cards/FeeScheduleCard";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -36,13 +37,13 @@ class Organization extends Component {
 
 	render() {
 		const { activeTab, organizationId } = this.state;
-		const { classes, history } = this.props;
+		const { history } = this.props;
 
 		return (
 			<div>
-				<Typography variant="display3">
+				<PageHeading>
 					{organizationId ? "Update" : "New"} organization
-				</Typography>
+				</PageHeading>
 
 				{organizationId ? (
 					<Tabs

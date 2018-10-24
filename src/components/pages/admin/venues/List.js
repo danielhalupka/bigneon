@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {},
@@ -105,7 +106,7 @@ class VenuesList extends Component {
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">Venues</Typography>
+				<PageHeading iconUrl="/icons/venues-active.svg">Venues</PageHeading>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>

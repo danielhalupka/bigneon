@@ -7,6 +7,7 @@ import selectedEvent from "../../stores/selectedEvent";
 import DefaultTemplate from "./templates/Default";
 import InputGroup from "../common/form/InputGroup";
 import SelectGroup from "../common/form/SelectGroup";
+import PageHeading from "../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -152,7 +153,7 @@ class WidgetLinkBuilder extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">Widget builder</Typography>
+				<PageHeading>Widget builder</PageHeading>
 				<Typography variant="title">{event ? event.name : ""}</Typography>
 				<br />
 				<Grid container spacing={24}>

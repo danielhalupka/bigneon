@@ -13,6 +13,7 @@ import TicketsCard from "./tickets/TicketsCard";
 import PublishCard from "./publish/PublishCard";
 import SelectOptionDialog from "../../../common/SelectOptionDialog";
 import Bigneon from "../../../../helpers/bigneon";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -178,9 +179,9 @@ class Event extends Component {
 					onClose={() => {}}
 				/>
 
-				<Typography variant="display3">
+				<PageHeading iconUrl="/icons/events-active.svg">
 					{eventId ? "Update" : "New"} event
-				</Typography>
+				</PageHeading>
 
 				<Stepper
 					nonLinear

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default (options = {}) => {
-	console.warn("api.js is deprecated. Use bigneon.js module instead.");
+	console.warn("api.js is deprecated. Use bn-api-node instead.");
 	const { auth } = options;
 	let headers = {};
 
@@ -13,7 +13,6 @@ export default (options = {}) => {
 				Authorization: `Bearer ${accessToken}`
 			};
 		}
-		//TODO if the token is missing find a way to gracefully throw an error globally without adding a try/catch to each api call
 	}
 
 	const baseURL = `${process.env.REACT_APP_API_PROTOCOL}://${

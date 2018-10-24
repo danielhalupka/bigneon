@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import SalesCard from "./cards/Sales";
 import TicketsCard from "./cards/Tickets";
 import AttendanceCard from "./cards/Attendance";
 import HappeningNow from "./cards/HappeningNow";
+import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -20,7 +21,7 @@ class Dashboard extends Component {
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">Dashboard</Typography>
+				<PageHeading iconUrl="/icons/account-multi.svg">Dashboard</PageHeading>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={6} lg={3}>

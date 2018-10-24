@@ -3,13 +3,12 @@ import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
 import { Link } from "react-router-dom";
 
 import notifications from "../../../stores/notifications";
-import api from "../../../helpers/api";
 import Button from "../../elements/Button";
 import Bigneon from "../../../helpers/bigneon";
+import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -138,7 +137,7 @@ class ArtistsList extends Component {
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">Artists</Typography>
+				<PageHeading iconUrl="/icons/artists-active.svg">Artists</PageHeading>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>

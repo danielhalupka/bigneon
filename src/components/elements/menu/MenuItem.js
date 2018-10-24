@@ -22,7 +22,7 @@ const styles = theme => {
 			borderColor: theme.palette.secondary.main
 		},
 		iconContainer: {},
-		icon: { borderRadius: 0, width: 28, height: 28 },
+		icon: { width: 28, height: 28 },
 		text: { paddingTop: 3 },
 		expandIcon: { color: theme.palette.grey[500], width: 22, height: 22 }
 	};

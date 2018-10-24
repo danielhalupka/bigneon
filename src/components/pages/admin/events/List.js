@@ -24,6 +24,7 @@ import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import CancelEventDialog from "./CancelEventDialog";
 import Bigneon from "../../../../helpers/bigneon";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -262,7 +263,8 @@ class EventsList extends Component {
 						this.setState({ cancelEventId: null }, this.updateEvents.bind(this))
 					}
 				/>
-				<Typography variant="display3">Events</Typography>
+
+				<PageHeading iconUrl="/icons/events-active.svg">Events</PageHeading>
 
 				<Grid container spacing={16}>
 					<Grid item xs={12} sm={12} lg={12}>

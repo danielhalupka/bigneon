@@ -9,6 +9,7 @@ import RedeemTicketDialog from "./RedeemTicketDialog";
 import notifications from "../../../../../stores/notifications";
 import Button from "../../../../elements/Button";
 import Bigneon from "../../../../../helpers/bigneon";
+import PageHeading from "../../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -174,7 +175,7 @@ class GuestList extends Component {
 						)
 					}
 				/>
-				<Typography variant="display3">Guest list</Typography>
+				<PageHeading>Guest list</PageHeading>
 				<Typography variant="subheading">Event name</Typography>
 				<br />
 				<Grid container spacing={24}>

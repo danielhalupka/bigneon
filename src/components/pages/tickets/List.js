@@ -10,6 +10,7 @@ import TicketGroup from "./TicketGroup";
 import TransferTicketsDialog from "./TransferTicketsDialog";
 import SelectGroup from "../../common/form/SelectGroup";
 import TicketDialog from "./TicketDialog";
+import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({});
 
@@ -191,7 +192,9 @@ class TicketList extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">My tickets</Typography>
+				<PageHeading iconUrl="/icons/tickets-active.svg">
+					My tickets
+				</PageHeading>
 				{this.renderSelectFilter()}
 				<TicketDialog
 					open={!!selectedTicket}

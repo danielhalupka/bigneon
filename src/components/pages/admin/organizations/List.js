@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {},
@@ -118,7 +119,7 @@ class OrganizationsList extends Component {
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">Organizations</Typography>
+				<PageHeading>Organizations</PageHeading>
 
 				<Grid container spacing={24}>
 					{this.renderOrganizations()}

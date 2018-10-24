@@ -14,6 +14,7 @@ import {
 
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
+import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {}
@@ -94,9 +95,14 @@ class Order extends Component {
 
 		return (
 			<div>
-				<Typography variant="display2">Order #{orderNumber}</Typography>
+				<PageHeading iconUrl="/icons/orders-multi.svg">
+					Order details
+				</PageHeading>
+
 				<Card className={classes.paper}>
 					<CardContent>
+						<Typography variant="display2">Order #{orderNumber}</Typography>
+
 						<Typography variant="headline">{eventName}</Typography>
 						<Typography variant="caption">Ordered {date}</Typography>
 

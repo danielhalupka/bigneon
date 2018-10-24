@@ -13,6 +13,7 @@ import notifications from "../../../../stores/notifications";
 import Bigneon from "../../../../helpers/bigneon";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 import { validPhone } from "../../../../validators";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -324,9 +325,9 @@ class Venue extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">
+				<PageHeading iconUrl="/icons/venues-active.svg">
 					{venueId ? "Update" : "New"} venue
-				</Typography>
+				</PageHeading>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={10} lg={8}>

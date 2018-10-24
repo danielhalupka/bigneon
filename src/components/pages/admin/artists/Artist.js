@@ -14,6 +14,7 @@ import notifications from "../../../../stores/notifications";
 import { validUrl } from "../../../../validators";
 import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
 import Bigneon from "../../../../helpers/bigneon";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
 	paper: {
@@ -331,9 +332,9 @@ class Artist extends Component {
 
 		return (
 			<div>
-				<Typography variant="display3">
+				<PageHeading iconUrl="/icons/artists-active.svg">
 					{artistId ? "Update" : "New"} artist
-				</Typography>
+				</PageHeading>
 
 				<Card className={classes.paper}>
 					<form

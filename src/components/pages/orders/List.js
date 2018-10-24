@@ -6,6 +6,7 @@ import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import OrderRow from "./OrderRow";
 import UnderlinedLink from "../../elements/UnderlinedLink";
+import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({
 	cardContent: {
@@ -114,7 +115,7 @@ class OrderList extends Component {
 	render() {
 		return (
 			<div>
-				<Typography variant="display3">My orders</Typography>
+				<PageHeading iconUrl="/icons/orders-multi.svg">My orders</PageHeading>
 
 				{this.renderOrders()}
 			</div>
