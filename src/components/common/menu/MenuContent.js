@@ -6,7 +6,7 @@ import List from "@material-ui/core/List";
 import Hidden from "@material-ui/core/Hidden";
 
 //Icons
-import MenuUserProfile from "./MenuUserProfile";
+import MenuUserProfile from "../../elements/menu/MenuUserProfile";
 import user from "../../../stores/user";
 
 import AdminMenuList from "./lists/Admin";

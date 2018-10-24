@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import MenuItem from "../MenuItem";
-import Button from "../../Button";
+import MenuItem from "../../../elements/menu/MenuItem";
+import Button from "../../../elements/Button";
 
 const styles = theme => {
 	return {};

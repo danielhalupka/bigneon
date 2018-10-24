@@ -25,8 +25,6 @@ const styles = theme => {
 		row: {
 			paddingTop: theme.spacing.unit / 2,
 			display: "flex"
-			// borderStyle: "solid",
-			// borderWidth: 0.1
 		},
 		value: {
 			marginLeft: theme.spacing.unit,

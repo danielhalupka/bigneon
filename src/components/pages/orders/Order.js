@@ -71,7 +71,6 @@ class Order extends Component {
 		}
 
 		const { id, date, total_in_cents, items } = order;
-		console.log(order);
 
 		//We can only get the event name from fields in the items array. Append a list if there's more than one.
 		let eventName = "";

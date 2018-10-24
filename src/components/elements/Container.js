@@ -7,11 +7,12 @@ import { Link } from "react-router-dom";
 
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
+import Grid from "@material-ui/core/Grid";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Hidden from "@material-ui/core/Hidden";
 
 import AppBar from "./header/AppBar";
-import MenuContent from "./menu/MenuContent";
+import MenuContent from "../common/menu/MenuContent";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
 import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";
@@ -130,7 +131,19 @@ class Container extends React.Component {
 					</Hidden>
 					<main className={classes.content}>
 						<div className={classes.toolbar} />
-						{children}
+
+						<Grid
+							container
+							spacing={0}
+							direction="row"
+							justify="center"
+							alignItems="center"
+						>
+							<Grid item xs={12} sm={12} md={12} lg={9}>
+								{children}
+							</Grid>
+						</Grid>
+
 						<RequiresAuthDialog
 							onAuthSuccess={() => user.onSuccessAuthRequiredDialog()}
 							open={user.showRequiresAuthDialog}

@@ -5,9 +5,9 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 
-import MenuItem from "../MenuItem";
-import StatsCard from "../StatsCard";
-import Button from "../../Button";
+import MenuItem from "../../../elements/menu/MenuItem";
+import StatsCard from "../../../elements/menu/StatsCard";
+import Button from "../../../elements/Button";
 
 const styles = theme => {
 	return {

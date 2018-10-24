@@ -62,8 +62,9 @@ class SelectedEvent {
 
 				//TODO maybe this data gets added to the first api call to make it a little smoother
 
-				artists.forEach(({ artist_id }) => {
-					this.loadArtist(artist_id);
+				artists.forEach(artist => {
+					const { id } = artist;
+					this.loadArtist(id);
 				});
 
 				const displayEventStartDate = moment(event_start).format(
