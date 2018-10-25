@@ -1,7 +1,6 @@
-import { observable, computed, action } from "mobx";
+import { observable, action } from "mobx";
 import moment from "moment";
 import Bigneon from "../helpers/bigneon";
-import notifications from "./notifications";
 
 class SelectedEvent {
 	@observable
@@ -36,8 +35,10 @@ class SelectedEvent {
 			this.user_is_interested = null;
 		}
 
+		//If this call becomes slow, change 'readFull' to 'read' and
+		//load the artists in separate calls later as it was in previous commits
 		Bigneon()
-			.events.read({ id })
+			.events.readFull({ id })
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 
@@ -59,13 +60,7 @@ class SelectedEvent {
 				this.ticket_types = ticket_types;
 				this.organization = organization;
 				this.user_is_interested = user_is_interested;
-
-				//TODO maybe this data gets added to the first api call to make it a little smoother
-
-				artists.forEach(artist => {
-					const { id } = artist;
-					this.loadArtist(id);
-				});
+				this.artists = artists;
 
 				const displayEventStartDate = moment(event_start).format(
 					"dddd, MMMM Do YYYY"
@@ -111,48 +106,6 @@ class SelectedEvent {
 				}
 
 				onError(message);
-			});
-	}
-
-	@action
-	loadArtist(id) {
-		Bigneon()
-			.artists.read({ id })
-			.then(response => {
-				const currentArtists = this.artists;
-
-				//Check if we have it in the array, if we do overwrite it. If we don't push it in.
-				let existingIndex = null;
-				currentArtists.forEach((artist, index) => {
-					if (artist.id === id) {
-						existingIndex = index;
-					}
-				});
-
-				if (existingIndex !== null) {
-					currentArtists[existingIndex] = response.data;
-				} else {
-					currentArtists.push(response.data);
-				}
-				//Have to recreate the array else the observer doesn't detect the update
-				this.artists = currentArtists.map(artist => artist);
-			})
-			.catch(error => {
-				console.error(error);
-
-				let message = "Loading artist details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
 			});
 	}
 
