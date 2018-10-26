@@ -33,25 +33,25 @@ import CheckoutSuccess from "../pages/events/CheckoutSuccess";
 //Admin
 import AdminOrganizationsList from "../pages/admin/organizations/List";
 import AdminOrganization from "../pages/admin/organizations/Organization";
-
 import AdminVenuesList from "../pages/admin/venues/List";
 import AdminVenue from "../pages/admin/venues/Venue";
-
 import AdminArtistsList from "../pages/admin/artists/List";
 import AdminArtist from "../pages/admin/artists/Artist";
-
 import AdminEventsList from "../pages/admin/events/List";
 import AdminEvent from "../pages/admin/events/Event";
 import AdminGuestList from "../pages/admin/events/guests/List";
+import AdminEventTicketHolds from "../pages/admin/events/holds/List";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
 
+//Embedded widgets
+import EventQR from "../widgets/EventQR";
+import EmbeddedWidget from "../widgets/Embedded";
+
 import user from "../../stores/user";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
-import EventQR from "../widgets/EventQR";
-import EmbeddedWidget from "../widgets/Embedded";
 import ReceiveTransfer from "../pages/tickets/ReceiveTransfer";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
@@ -255,6 +255,12 @@ class Routes extends Component {
 								exact
 								path="/admin/events/:id/guests"
 								component={AdminGuestList}
+								isAuthenticated={isAuthenticated}
+							/>
+							<PrivateRoute
+								exact
+								path="/admin/events/:id/holds"
+								component={AdminEventTicketHolds}
 								isAuthenticated={isAuthenticated}
 							/>
 							<PrivateRoute

@@ -42,7 +42,11 @@ const MenuUserProfile = observer(props => {
 	return (
 		<div>
 			<Link to="/account" className={classes.root} onClick={onClick}>
-				<Avatar alt={fullName} src={profilePicUrl} className={classes.avatar} />
+				<Avatar
+					alt={fullName}
+					src={profilePicUrl || "/images/profile-pic-placeholder.png"}
+					className={classes.avatar}
+				/>
 
 				<Typography variant="title">{fullName}</Typography>
 				<Typography variant="caption">{email}</Typography>

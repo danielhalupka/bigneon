@@ -143,6 +143,7 @@ class Account extends Component {
 					error.response.data.error
 				) {
 					message = error.response.data.error;
+					console.error(error.response.data);
 				}
 
 				notifications.show({

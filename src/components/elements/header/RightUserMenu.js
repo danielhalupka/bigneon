@@ -154,7 +154,7 @@ class RightHeaderMenu extends React.Component {
 			>
 				<Avatar
 					alt={firstName}
-					src={profilePicUrl}
+					src={profilePicUrl || "/images/profile-pic-placeholder.png"}
 					className={classes.avatar}
 				/>
 

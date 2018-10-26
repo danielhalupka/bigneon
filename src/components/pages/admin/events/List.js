@@ -19,6 +19,7 @@ import ViewIcon from "@material-ui/icons/Link";
 import GuestListIcon from "@material-ui/icons/People";
 import CancelIcon from "@material-ui/icons/Cancel";
 import CreateWidgetIcon from "@material-ui/icons/Code";
+import TicketHoldsIcon from "@material-ui/icons/List";
 
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
@@ -158,6 +159,14 @@ class EventsList extends Component {
 						MenuOptionIcon: EditIcon
 					},
 					{
+						text: "Ticket holds",
+						onClick: () =>
+							this.props.history.push(
+								`/admin/events/${this.eventMenuSelected}/holds`
+							),
+						MenuOptionIcon: TicketHoldsIcon
+					},
+					{
 						text: "View event",
 						onClick: () =>
 							this.props.history.push(`/events/${this.eventMenuSelected}`),
@@ -201,7 +210,7 @@ class EventsList extends Component {
 									{name} {cancelled_at ? "(Cancelled)" : ""}
 								</Typography>
 								<Typography variant="body1">
-									{venue && venue.address ? venue.address : "*Missing address"}
+									{venue && venue.address ? venue.address : ""}
 								</Typography>
 							</CardContent>
 

@@ -76,6 +76,7 @@ class Order extends Component {
 		//We can only get the event name from fields in the items array. Append a list if there's more than one.
 		let eventName = "";
 		let fee_total_in_cents = 0;
+		console.log(items);
 		items.forEach(
 			({ description, item_type, unit_price_in_cents, quantity }) => {
 				if (item_type === "Tickets") {
@@ -84,7 +85,7 @@ class Order extends Component {
 					} else {
 						eventName = `${eventName}, ${description}`;
 					}
-				} else if (item_type === "Fees") {
+				} else if (item_type === "Fees" || item_type === "EventFees") {
 					fee_total_in_cents =
 						fee_total_in_cents + unit_price_in_cents * quantity;
 				}

@@ -1,5 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
+import MUIDivider from "@material-ui/core/Divider";
 
 import {
 	textColorPrimary,
@@ -18,11 +19,8 @@ export default ({ children, style = {}, dashed = false }) => {
 	}
 
 	const Hr = () => (
-		<hr
+		<MUIDivider
 			style={{
-				backgroundColor: "#d6d6d6",
-				height: 1,
-				borderRadius: 4,
 				flex: 1,
 				marginTop: 12,
 				...dashedStyle
