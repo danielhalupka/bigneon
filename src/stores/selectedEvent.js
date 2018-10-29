@@ -35,10 +35,8 @@ class SelectedEvent {
 			this.user_is_interested = null;
 		}
 
-		//If this call becomes slow, change 'readFull' to 'read' and
-		//load the artists in separate calls later as it was in previous commits
 		Bigneon()
-			.events.readFull({ id })
+			.events.read({ id })
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 
