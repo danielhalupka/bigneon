@@ -11,6 +11,12 @@ import Bigneon from "../../../../../helpers/bigneon";
 import PageHeading from "../../../../elements/PageHeading";
 import Divider from "../../../../common/Divider";
 import HoldRow from "./HoldRow";
+import AddIcon from "@material-ui/icons/Add";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import HoldDialog from "./HoldDialog";
+
+import { Mocker } from "bn-api-node/dist/classes/mocker";
+import { createHold } from "bn-api-node/dist/interfaces/resources/hold.interface";
 
 const styles = theme => ({
 	paper: {}
@@ -20,34 +26,13 @@ class TicketHoldList extends Component {
 	constructor(props) {
 		super(props);
 
+
 		this.state = {
+			activeHoldId: null,
+			showHoldDialog: null,
 			eventName: "",
-			holds: [
-				{
-					id: "123",
-					name: "Artist comps",
-					code: "133h3j3j",
-					ticket_type: "General admission",
-					total_held: 100,
-					claimed: 8
-				},
-				{
-					id: "456",
-					name: "Venue comps",
-					code: "393ndnj3j",
-					ticket_type: "General admission",
-					total_held: 200,
-					claimed: 16
-				},
-				{
-					id: "789",
-					name: "Guptas",
-					code: "knks2838",
-					ticket_type: "VIP",
-					total_held: 10,
-					claimed: 3
-				}
-			]
+			ticketTypes: [],
+			holds: []
 		};
 	}
 
@@ -67,9 +52,10 @@ class TicketHoldList extends Component {
 		Bigneon()
 			.events.read({ id: this.eventId })
 			.then(response => {
-				const { name } = response.data;
+				const { name, ticket_types } = response.data;
 				this.setState({
-					eventName: name
+					eventName: name,
+					ticketTypes: ticket_types
 				});
 			})
 			.catch(error => {
@@ -94,8 +80,39 @@ class TicketHoldList extends Component {
 
 	refreshHolds() {
 		if (this.eventId) {
-			console.log("TODO: pull holds fro, API");
+			let key = `events.holds.index`;
+			console.warn("Remove mocker");
+			Bigneon().client.mocker = new Mocker({
+				[key]: {
+					data: {
+						data: {
+							data: [
+								createHold({
+									id: "bfd337c5-f0d6-4778-85bc-e21e6eed2569",
+									name: "Hold 1",
+									event_id: this.eventId,
+									redemption_code: "ABC123",
+									ticket_type: "General admission",
+									total_held: 100,
+									claimed: 8
+								}),
+							]
+						}
+
+					}
+				}
+			});
+			Bigneon().events.holds.index({ event_id: this.eventId }).then(holds => {
+				//TODO Pagination
+				this.setState({ holds: holds.data.data });
+			});
 		}
+	}
+
+	onAddHold() {
+		this.setState({
+			showHoldDialog: "-1"
+		});
 	}
 
 	renderList() {
@@ -117,15 +134,22 @@ class TicketHoldList extends Component {
 				"Action"
 			];
 
+			const onAction = (action) => {
+				if (action === "Edit") {
+					this.setState({ showHoldDialog: true })
+				}
+				console.log(action, activeHoldId);
+			};
+
 			return (
 				<div>
 					<HoldRow heading>{ths}</HoldRow>
 					{holds.map((ticket, index) => {
-						const { id, name, code, ticket_type, total_held, claimed } = ticket;
+						const { id, name, redemption_code, ticket_type, total_held, claimed } = ticket;
 
 						const tds = [
 							name,
-							code,
+							redemption_code,
 							ticket_type,
 							total_held,
 							claimed,
@@ -134,16 +158,17 @@ class TicketHoldList extends Component {
 
 						return (
 							<HoldRow
+								// onClick={() => this.setState({ showHoldDialog: true })}
 								onMouseEnter={() => this.setState({ activeHoldId: id })}
 								onMouseLeave={() => this.setState({ activeHoldId: null })}
 								active={activeHoldId === id}
 								gray={!(index % 2)}
 								key={id}
 								actions={[
-									{ name: "Split", iconUrl: "/icons/split-gray.svg" },
-									{ name: "Link", iconUrl: "/icons/link-gray.svg" },
-									{ name: "Edit", iconUrl: "/icons/edit-gray.svg" },
-									{ name: "Delete", iconUrl: "/icons/delete-gray.svg" }
+									{ name: "Split", iconUrl: "/icons/split-gray.svg", onClick: onAction.bind(this) },
+									{ name: "Link", iconUrl: "/icons/link-gray.svg", onClick: onAction.bind(this) },
+									{ name: "Edit", iconUrl: "/icons/edit-gray.svg", onClick: onAction.bind(this) },
+									{ name: "Delete", iconUrl: "/icons/delete-gray.svg", onClick: onAction.bind(this) }
 								]}
 							>
 								{tds}
@@ -157,18 +182,44 @@ class TicketHoldList extends Component {
 		}
 	}
 
+
+	renderDialog() {
+		const { ticketTypes, activeHoldId } = this.state;
+		let eventId = this.eventId;
+		return (
+			<HoldDialog
+				open={true}
+				eventId={eventId}
+				holdId={activeHoldId}
+				ticketTypes={ticketTypes}
+				onSuccess={(id) => {
+					this.setState({ showHoldDialog: null });
+				}}
+				onClose={() => this.setState({ showHoldDialog: null })}
+			/>
+		);
+	}
+
 	render() {
-		const { eventName } = this.state;
+		const { eventName, showHoldDialog } = this.state;
 		const { classes } = this.props;
 
 		return (
 			//TODO eventually this component will move to it's own component
 			<div>
+
 				<PageHeading iconUrl="/icons/events-multi.svg">{eventName}</PageHeading>
+				{ showHoldDialog && this.renderDialog() }
+
 				<Card className={classes.paper}>
 					<CardContent>
-						<Typography variant="title">Manage Ticket Holds</Typography>
-						<Divider style={{ marginBottom: 40 }} />
+						<div style={{ display: "flex" }}>
+							<Typography variant="title">Manage Ticket Holds</Typography>
+							<span style={{ flex: 1 }}></span>
+							<Button onClick={e => this.onAddHold()}>Create Hold</Button>
+						</div>
+
+						<Divider style={{ marginBottom: 40 }}/>
 
 						{this.renderList()}
 					</CardContent>

@@ -26,7 +26,7 @@ const styles = theme => {
 		headingText: {
 			fontSize: theme.typography.caption.fontSize
 		},
-		icon: { marginRight: theme.spacing.unit, width: 14, height: 14 }
+		icon: { marginRight: theme.spacing.unit, width: 14, height: 14, cursor: "pointer" }
 	};
 };
 
@@ -59,8 +59,8 @@ const HoldRow = props => {
 	if (actions) {
 		actionButtons = (
 			<span>
-				{actions.map(({ name, iconUrl }) => (
-					<span key={name}>
+				{actions.map(({ name, iconUrl, onClick }) => (
+					<span key={name} onClick={() => {onClick && onClick(name)}}>
 						<img alt={name} src={iconUrl} className={classes.icon} />
 					</span>
 				))}

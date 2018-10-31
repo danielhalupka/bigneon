@@ -202,7 +202,7 @@ class AutoCompleteGroup extends React.Component {
 AutoCompleteGroup.propTypes = {
 	items: PropTypes.object.isRequired,
 	error: PropTypes.string,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 	onCreateOption: PropTypes.func,
 	formatCreateLabel: PropTypes.func,
 	name: PropTypes.string.isRequired,
