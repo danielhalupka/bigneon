@@ -4,6 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
+import FormatInputLabel from "../../elements/form/FormatInputLabel";
 
 const styles = theme => {
 	return {
@@ -51,7 +52,7 @@ const InputGroup = props => {
 			<TextField
 				error={!!error}
 				id={name}
-				label={label}
+				label={<FormatInputLabel>{label}</FormatInputLabel>}
 				type={type}
 				value={value}
 				onChange={onChange}

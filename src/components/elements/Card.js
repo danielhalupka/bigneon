@@ -17,6 +17,11 @@ const styles = {
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.07)",
 		border: "solid 0.5px #dee2e8"
 	},
+	form: {
+		borderRadius: 0,
+		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.07)",
+		border: "none"
+	},
 	raised: {
 		boxShadow: raisedCardBoxShadow
 	},
@@ -58,7 +63,7 @@ const CustomCard = props => {
 CustomCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	iconUrl: PropTypes.string,
-	variant: PropTypes.oneOf(["default", "raised"]),
+	variant: PropTypes.oneOf(["default", "raised", "form"]),
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };
 

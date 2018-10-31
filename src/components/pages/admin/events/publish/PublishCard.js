@@ -1,3 +1,5 @@
+//TODO delete this when not needed
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles, Grid, Typography } from "@material-ui/core";
@@ -7,7 +9,7 @@ import Card from "@material-ui/core/Card";
 
 import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
-import FormSubHeading from "../../../../common/FormSubHeading";
+import FormSubHeading from "../../../../elements/FormSubHeading";
 import Bigneon from "../../../../../helpers/bigneon";
 
 const styles = theme => ({

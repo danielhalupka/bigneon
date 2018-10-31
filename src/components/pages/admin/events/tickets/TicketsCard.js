@@ -1,3 +1,5 @@
+//TODO delete this when not needed
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
@@ -11,7 +13,7 @@ import Button from "../../../../elements/Button";
 import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
 import Ticket from "./Ticket";
-import FormSubHeading from "../../../../common/FormSubHeading";
+import FormSubHeading from "../../../../elements/FormSubHeading";
 import Divider from "../../../../common/Divider";
 
 //TODO consider a sliding mechanism for choosing pricing periods. Easy to see and no overlaps caused by UI.

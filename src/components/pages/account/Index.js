@@ -205,7 +205,7 @@ class Account extends Component {
 												error={errors.firstName}
 												value={firstName}
 												name="firstName"
-												label="First name"
+												label="First name*"
 												type="text"
 												onChange={e =>
 													this.setState({ firstName: e.target.value })
@@ -216,7 +216,7 @@ class Account extends Component {
 												error={errors.lastName}
 												value={lastName}
 												name="lastName"
-												label="Last name"
+												label="Last name*"
 												type="text"
 												onChange={e =>
 													this.setState({ lastName: e.target.value })
@@ -227,7 +227,7 @@ class Account extends Component {
 												error={errors.email}
 												value={email}
 												name="email"
-												label="Email address"
+												label="Email address*"
 												type="text"
 												onChange={e => this.setState({ email: e.target.value })}
 												onBlur={this.validateFields.bind(this)}
@@ -264,7 +264,7 @@ class Account extends Component {
 									<Button
 										disabled={isSubmitting}
 										type="submit"
-										style={{ marginRight: 10 }}
+										style={{ minWidth: 150 }}
 										variant="callToAction"
 									>
 										{isSubmitting ? "Updating..." : <span>Update</span>}

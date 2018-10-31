@@ -1,3 +1,5 @@
+//TODO issue created to remove this picker and place a simple text based one/
+//https://github.com/big-neon/bn-web/issues/316
 import React from "react";
 import PropTypes from "prop-types";
 import { DateTimePicker, TimePicker, DatePicker } from "material-ui-pickers";
@@ -25,8 +27,9 @@ const DateTimePickerGroup = props => {
 		onChange,
 		onBlur,
 		onFocus,
-		minDate = new Date(),
-		format = "YYYY/MM/DD HH:mm"
+		minDate,
+		format,
+		margin
 	} = props;
 
 	const { classes } = props;
@@ -39,22 +42,25 @@ const DateTimePickerGroup = props => {
 	const onFocusOverride = value ? onFocus : () => onChange(tomorrow);
 
 	//Certain pickers won't accept some proptypes so we skip them
-	let addtionalProps = {};
+	let additionalProps = {};
 	let Picker;
+	let formatOverride = format;
 	switch (type) {
 		case "date-time":
 			Picker = DateTimePicker;
-			addtionalProps = { animateYearScrolling: false };
+			additionalProps = { animateYearScrolling: false };
 			break;
 		case "time":
 			Picker = TimePicker;
 			break;
 		case "date":
+			formatOverride = "YYYY/MM/DD";
 			Picker = DatePicker;
 			break;
 	}
+
 	if (minDate) {
-		addtionalProps.minDate = minDate;
+		additionalProps.minDate = minDate;
 	}
 
 	return (
@@ -69,13 +75,14 @@ const DateTimePickerGroup = props => {
 				label={label}
 				value={value}
 				onChange={onChange}
-				margin="normal"
+				margin={margin}
 				onBlur={onBlur}
 				onFocus={onFocusOverride}
-				placeholder={placeholder || format}
-				format={format}
+				placeholder={placeholder || formatOverride}
+				format={formatOverride}
 				keyboard
-				{...addtionalProps}
+				{...additionalProps}
+				keyboardIcon={null}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
@@ -84,13 +91,14 @@ const DateTimePickerGroup = props => {
 };
 
 DateTimePickerGroup.defaultProps = {
+	minDate: null,
 	type: "date-time",
 	format: "YYYY/MM/DD HH:mm",
-	minDate: new Date()
+	margin: "normal"
 };
 
 DateTimePickerGroup.propTypes = {
-	type: PropTypes.oneOf(["date-time", "time"]), //TODO add date option if required
+	type: PropTypes.oneOf(["date", "date-time", "time"]), //TODO add date option if required
 	error: PropTypes.string,
 	value: PropTypes.object,
 	name: PropTypes.string.isRequired,
@@ -100,7 +108,8 @@ DateTimePickerGroup.propTypes = {
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
 	minDate: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-	format: PropTypes.string
+	format: PropTypes.string,
+	margin: PropTypes.string
 };
 
 export default withStyles(styles)(DateTimePickerGroup);

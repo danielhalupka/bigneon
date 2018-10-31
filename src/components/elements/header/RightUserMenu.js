@@ -175,7 +175,7 @@ class RightHeaderMenu extends React.Component {
 				<img
 					alt="Search icon"
 					className={classes.dropdownIcon}
-					src="/icons/arrow-down.svg"
+					src="/icons/down-active.svg"
 				/>
 			</span>
 		);
@@ -197,7 +197,7 @@ class RightHeaderMenu extends React.Component {
 				</Hidden>
 
 				<Hidden smDown implementation="css" className={classes.menuLink}>
-					<Link to="/help">
+					<Link to="/app">
 						<Button size="large" variant="callToAction">
 							Get the App
 						</Button>

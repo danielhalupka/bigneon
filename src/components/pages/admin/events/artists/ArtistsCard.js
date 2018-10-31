@@ -1,3 +1,4 @@
+//TODO remove when not needed
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Typography, withStyles, Grid } from "@material-ui/core";
@@ -9,7 +10,7 @@ import moment from "moment";
 import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
 import EventArtist from "./EventArtist";
-import FormSubHeading from "../../../../common/FormSubHeading";
+import FormSubHeading from "../../../../elements/FormSubHeading";
 import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 

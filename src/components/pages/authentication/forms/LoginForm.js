@@ -159,7 +159,7 @@ class LoginForm extends Component {
 									style={{ width: "100%" }}
 									variant="callToAction"
 								>
-									{isSubmitting ? "Submitting..." : "Login"}
+									{isSubmitting ? "Logging in..." : "Login"}
 								</Button>
 							</Grid>
 

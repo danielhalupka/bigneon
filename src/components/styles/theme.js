@@ -42,6 +42,9 @@ const theme = createMuiTheme({
 	},
 	shadows,
 	palette: {
+		background: {
+			default: "rgba(245, 247, 250)"
+		},
 		primary: {
 			light: primaryHex,
 			main: primaryHex,
@@ -79,6 +82,13 @@ const theme = createMuiTheme({
 			root: {
 				fontFamily: "TTCommons-Regular",
 				fontSize: 17
+			}
+		},
+		MuiInputLabel: {
+			root: {
+				fontFamily: "TTCommons-Regular",
+				color: textColorPrimary,
+				textTransform: "capitalize"
 			}
 		},
 		MuiFormHelperText: {

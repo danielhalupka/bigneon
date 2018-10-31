@@ -1,3 +1,6 @@
+//TODO remove this once EventUpdate.js is done
+//This will eventually became and overview of the event
+
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
@@ -30,53 +33,40 @@ class Event extends Component {
 		super(props);
 
 		this.state = {
-			eventId: null,
-			organizationId: null,
-			organizations: null,
-			artists: [],
-			event: {},
-			organization: {},
-			venue: null,
-			activeStep: 0,
-			completed: {}
+			eventId: null
 		};
 	}
 
 	componentDidMount() {
-		this.loadEventDetails();
-	}
-
-	static getDerivedStateFromProps(props, state) {
-		//Check if we're editing an existing organization
-		let eventId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			eventId = props.match.params.id;
+		if (
+			this.props.match &&
+			this.props.match.params &&
+			this.props.match.params.id
+		) {
+			const eventId = this.props.match.params.id;
+			this.loadEventDetails(eventId);
 		}
-
-		return { eventId };
 	}
 
-	loadOrganizations() {
+	loadEventDetails(eventId) {
 		Bigneon()
-			.organizations.index()
+			.events.read({ id: eventId })
 			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
-				const organizationSelectObj = {};
-				data.forEach(organization => {
-					organizationSelectObj[organization.id] = organization.name;
+				const { artists, organization, venue, ...event } = response.data;
+				const { organization_id } = event;
+				this.setState({
+					artists,
+					event,
+					organization,
+					venue,
+					organizationId: organization_id
 				});
-
-				//If there's only org then assume that ID
-				if (data.length === 1) {
-					this.setState({ organizationId: data[0].id });
-				}
-
-				this.setState({ organizations: data, organizationSelectObj });
 			})
 			.catch(error => {
 				console.error(error);
+				this.setState({ isSubmitting: false });
 
-				let message = "Loading organizations failed.";
+				let message = "Loading event details failed.";
 				if (
 					error.response &&
 					error.response.data &&
@@ -90,56 +80,6 @@ class Event extends Component {
 					variant: "error"
 				});
 			});
-	}
-
-	loadEventDetails() {
-		const { eventId } = this.state;
-
-		if (eventId) {
-			Bigneon()
-				.events.read({ id: eventId })
-				.then(response => {
-					const { artists, organization, venue, ...event } = response.data;
-					const { organization_id } = event;
-					this.setState({
-						artists,
-						event,
-						organization,
-						venue,
-						organizationId: organization_id
-					});
-				})
-				.catch(error => {
-					console.error(error);
-					this.setState({ isSubmitting: false });
-
-					let message = "Loading event details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
-					});
-				});
-		} else {
-			this.loadOrganizations();
-		}
-	}
-
-	handleStep(activeStep) {
-		this.setState({ activeStep });
-
-		this.loadEventDetails();
-	}
-
-	onComplete() {
-		this.props.history.push("/admin/events");
 	}
 
 	render() {
@@ -156,97 +96,17 @@ class Event extends Component {
 		} = this.state;
 		const { classes, history } = this.props;
 
-		const steps = ["Artists", "Event details", "Ticketing", "Publish"];
+		if (!event) {
+			return <Typography>Loading...</Typography>; //TODO get a spinner or something
+		}
 
 		return (
 			<div>
-				<SelectOptionDialog
-					iconComponent={<OrganizationIcon />}
-					heading={
-						organizationSelectObj
-							? "Which organization does this event belong to?"
-							: "Loading..."
-					}
-					items={organizationSelectObj || {}}
-					onSelect={organizationId => {
-						this.setState({ organizationId });
-						const organization = organizations.find(o => {
-							return o.id === organizationId;
-						});
-						this.setState({ organization });
-					}}
-					open={!organizationId}
-					onClose={() => {}}
-				/>
-
-				<PageHeading iconUrl="/icons/events-active.svg">
-					{eventId ? "Update" : "New"} event
+				<PageHeading iconUrl="/icons/events-multi.svg">
+					{event.name}
 				</PageHeading>
 
-				<Stepper
-					nonLinear
-					activeStep={activeStep}
-					className={classes.stepperContainer}
-				>
-					{steps.map((label, index) => {
-						return (
-							<Step key={label}>
-								<StepButton
-									disabled={!eventId && (index === 2 || index === 3)}
-									onClick={() => this.handleStep(index)}
-								>
-									{label}
-								</StepButton>
-							</Step>
-						);
-					})}
-				</Stepper>
-
-				{organizationId ? (
-					<Grid container spacing={24}>
-						<Grid item xs={12} sm={12} lg={12}>
-							{activeStep === 0 ? (
-								<ArtistCard
-									organizationId={organizationId}
-									history={history}
-									eventId={eventId}
-									artists={artists}
-									onNext={() => this.handleStep(activeStep + 1)}
-								/>
-							) : null}
-
-							{activeStep === 1 ? (
-								<DetailsCard
-									organizationId={organizationId}
-									organizationName={organization.name}
-									history={history}
-									eventId={eventId}
-									eventDetails={event}
-									onNext={() => this.handleStep(activeStep + 1)}
-								/>
-							) : null}
-
-							{activeStep === 2 ? (
-								<TicketsCard
-									organizationId={organizationId}
-									history={history}
-									eventId={eventId}
-									onNext={() => this.handleStep(activeStep + 1)}
-								/>
-							) : null}
-
-							{activeStep === 3 ? (
-								<PublishCard
-									organizationId={organizationId}
-									history={history}
-									eventId={eventId}
-									eventDetails={event}
-									onNext={this.onComplete.bind(this)}
-								/>
-							) : null}
-						</Grid>
-					</Grid>
-				) : null}
+				<Typography>Event dashboard coming soon.</Typography>
 			</div>
 		);
 	}

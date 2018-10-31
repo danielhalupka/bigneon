@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import RemoveIcon from "@material-ui/icons/RemoveCircleOutline";
 
 import InputGroup from "../../../common/form/InputGroup";
-import FormSubHeading from "../../../common/FormSubHeading";
+import FormSubHeading from "../../../elements/FormSubHeading";
 import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import { validUrl } from "../../../../validators";

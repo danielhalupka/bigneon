@@ -1,3 +1,5 @@
+//TODO delete this when not needed
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles, Grid, InputLabel, CardMedia } from "@material-ui/core";
@@ -11,7 +13,7 @@ import notifications from "../../../../../stores/notifications";
 import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../common/form/SelectGroup";
-import FormSubHeading from "../../../../common/FormSubHeading";
+import FormSubHeading from "../../../../elements/FormSubHeading";
 import cloudinaryWidget from "../../../../../helpers/cloudinaryWidget";
 import Bigneon from "../../../../../helpers/bigneon";
 

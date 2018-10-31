@@ -154,7 +154,7 @@ class EventsList extends Component {
 						text: "Edit event",
 						onClick: () =>
 							this.props.history.push(
-								`/admin/events/${this.eventMenuSelected}`
+								`/admin/events/${this.eventMenuSelected}/edit`
 							),
 						MenuOptionIcon: EditIcon
 					},

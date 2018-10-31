@@ -9,6 +9,8 @@ import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormatInputLabel from "../../elements/form/FormatInputLabel";
 
 const styles = theme => {
 	return {
@@ -151,6 +153,7 @@ class AutoCompleteGroup extends React.Component {
 			onCreateOption,
 			formatCreateLabel,
 			label,
+			placeholder,
 			onChange,
 			onBlur,
 			onFocus,
@@ -173,28 +176,35 @@ class AutoCompleteGroup extends React.Component {
 		const SelectComponent = onCreateOption ? Creatable : Select;
 
 		return (
-			<FormControl
-				className={classes.formControl}
-				error={!!error}
-				aria-describedby={`%${name}-error-text`}
-				style={style}
-			>
-				<SelectComponent
-					classes={classes}
-					styles={selectStyles}
-					options={suggestions}
-					components={components}
-					value={value}
-					onChange={({ value, label }) => onChange(value, label)}
-					onCreateOption={onCreateOption}
-					isClearable
-					formatCreateLabel={formatCreateLabel}
-					placeholder={label}
-					onBlur={onBlur}
-					onFocus={onFocus}
-				/>
-				<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
-			</FormControl>
+			<div>
+				{label ? (
+					<InputLabel>
+						<FormatInputLabel>{label}</FormatInputLabel>
+					</InputLabel>
+				) : null}
+				<FormControl
+					className={classes.formControl}
+					error={!!error}
+					aria-describedby={`%${name}-error-text`}
+					style={style}
+				>
+					<SelectComponent
+						classes={classes}
+						styles={selectStyles}
+						options={suggestions}
+						components={components}
+						value={value}
+						onChange={({ value, label }) => onChange(value, label)}
+						onCreateOption={onCreateOption}
+						isClearable
+						formatCreateLabel={formatCreateLabel}
+						placeholder={placeholder}
+						onBlur={onBlur}
+						onFocus={onFocus}
+					/>
+					<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
+				</FormControl>
+			</div>
 		);
 	}
 }
@@ -207,6 +217,7 @@ AutoCompleteGroup.propTypes = {
 	formatCreateLabel: PropTypes.func,
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
+	placeholder: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,

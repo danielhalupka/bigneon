@@ -3,6 +3,16 @@
   src: url("/fonts/TypeType - TT Commons Regular.otf") format("opentype");
 }
 
+@font-face {
+  font-family: TTCommons-DemiBold;
+  src: url("/fonts/TypeType - TT Commons DemiBold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: TTCommons-Bold;
+  src: url("/fonts/TypeType - TT Commons Bold.otf") format("opentype");
+}
+
 a {
   text-decoration: none;
   outline: none;
