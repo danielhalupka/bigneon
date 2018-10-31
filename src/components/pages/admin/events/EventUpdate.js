@@ -29,6 +29,7 @@ import FormSubHeading from "../../../elements/FormSubHeading";
 import Button from "../../../elements/Button";
 import RadioButton from "../../../elements/form/RadioButton";
 import InputGroup from "../../../common/form/InputGroup";
+import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 
 const styles = theme => ({
 	paper: {
@@ -418,6 +419,20 @@ class Event extends Component {
 									Future date
 								</RadioButton>
 							</div>
+
+							{!publishNow ? (
+								<DateTimePickerGroup
+									type="date-time"
+									//error={errors.publishDate} //FIXME
+									value={event.publishDate}
+									name="eventDate"
+									label="Event date"
+									onChange={publishDate => {
+										this.onEventDetailsChange({ publishDate });
+									}}
+									onBlur={this.validateFields.bind(this)}
+								/>
+							) : null}
 
 							<Divider style={{ marginTop: 20, marginBottom: 40 }} />
 

@@ -49,6 +49,7 @@ const formatDataForSaving = (event, organizationId) => {
 	const {
 		name,
 		eventDate,
+		publishDate,
 		venueId,
 		doorTime,
 		showTime,
@@ -83,6 +84,12 @@ const formatDataForSaving = (event, organizationId) => {
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
+	if (publishDate) {
+		eventDetails.publish_date = moment
+			.utc(publishDate)
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+	}
+
 	if (promoImageUrl) {
 		eventDetails.promo_image_url = promoImageUrl;
 	}
@@ -105,7 +112,8 @@ const formatDataForInputs = event => {
 		additional_info,
 		top_line_info,
 		video_url,
-		promo_image_url
+		promo_image_url,
+		publish_date
 	} = event;
 
 	const eventDetails = {
@@ -118,6 +126,9 @@ const formatDataForInputs = event => {
 			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,
 		doorTime: door_time
+			? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			: null,
+		publishDate: publish_date
 			? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,
 		ageLimit: age_limit || "",
