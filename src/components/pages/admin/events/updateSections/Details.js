@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react";
 import { withStyles, Grid, Collapse } from "@material-ui/core";
 import moment from "moment";
 
@@ -9,6 +10,7 @@ import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import Bigneon from "../../../../../helpers/bigneon";
+import eventUpdateStore from "../../../../../stores/eventUpdate";
 
 const styles = theme => ({});
 
@@ -113,6 +115,7 @@ const formatDataForInputs = event => {
 		top_line_info,
 		video_url,
 		promo_image_url,
+		external_url,
 		publish_date
 	} = event;
 
@@ -121,7 +124,7 @@ const formatDataForInputs = event => {
 		name: name || "",
 		eventDate: event_start
 			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: null,
+			: new Date(),
 		showTime: event_start
 			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,
@@ -137,50 +140,14 @@ const formatDataForInputs = event => {
 		topLineInfo: top_line_info ? top_line_info : "",
 		videoUrl: video_url || "",
 		showTopLineInfo: !!top_line_info,
-		promoImageUrl: promo_image_url
+		promoImageUrl: promo_image_url,
+		externalTicketsUrl: external_url || ""
 	};
 
 	return eventDetails;
 };
 
-const createEvent = async params => {
-	console.log(params);
-	return new Promise(resolve => {
-		Bigneon()
-			.events.create(params)
-			.then(response => {
-				const { id } = response.data;
-				resolve(id);
-			})
-			.catch(error => {
-				console.error(error);
-				notifications.show({
-					message: "Create event failed.",
-					variant: "error"
-				});
-				resolve(false);
-			});
-	});
-};
-
-const updateEvent = async (id, params) => {
-	return new Promise(resolve => {
-		Bigneon()
-			.events.update({ ...params, id })
-			.then(() => {
-				resolve(id);
-			})
-			.catch(error => {
-				console.error(error);
-				notifications.show({
-					message: "Update event failed.",
-					variant: "error"
-				});
-				resolve(false);
-			});
-	});
-};
-
+@observer
 class Details extends Component {
 	constructor(props) {
 		super(props);
@@ -193,7 +160,7 @@ class Details extends Component {
 	}
 
 	changeDetails(details) {
-		this.props.onEventDetailsChange(details);
+		eventUpdateStore.updateEvent(details);
 	}
 
 	componentDidMount() {
@@ -201,8 +168,6 @@ class Details extends Component {
 	}
 
 	loadVenues() {
-		const { organizationId } = this.props;
-
 		this.setState({ venues: null }, () => {
 			Bigneon()
 				.venues.index()
@@ -232,9 +197,9 @@ class Details extends Component {
 
 	renderVenues() {
 		const { venues } = this.state;
-		const { event, errors } = this.props;
+		const { errors } = this.props;
 
-		const { venueId } = event;
+		const { venueId } = eventUpdateStore.event;
 
 		const venuesObj = {};
 
@@ -270,8 +235,8 @@ class Details extends Component {
 	}
 
 	renderStatus() {
-		const { event, errors } = this.props;
-		const { status } = event;
+		const { errors } = this.props;
+		const { status } = eventUpdateStore.event;
 
 		const statusesObj = { Buy: "Buy" };
 
@@ -293,7 +258,7 @@ class Details extends Component {
 	}
 
 	render() {
-		const { event, errors, validateFields } = this.props;
+		const { errors, validateFields } = this.props;
 
 		const {
 			name,
@@ -305,7 +270,7 @@ class Details extends Component {
 			topLineInfo,
 			videoUrl,
 			showTopLineInfo
-		} = event;
+		} = eventUpdateStore.event;
 
 		return (
 			<Grid container spacing={24}>
@@ -471,11 +436,7 @@ Details.defaultProps = {
 };
 
 Details.propTypes = {
-	event: PropTypes.object.isRequired,
 	errors: PropTypes.object.isRequired,
-	organizationId: PropTypes.string.isRequired,
-	eventDetails: PropTypes.object,
-	onEventDetailsChange: PropTypes.func.isRequired,
 	validateFields: PropTypes.func.isRequired
 };
 
@@ -483,5 +444,3 @@ export const EventDetails = withStyles(styles)(Details);
 export const validateEventFields = validateFields;
 export const formatEventDataForSaving = formatDataForSaving;
 export const formatEventDataForInputs = formatDataForInputs;
-export const updateEventDetails = updateEvent;
-export const createNewEvent = createEvent;

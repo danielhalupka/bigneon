@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { observer } from "mobx-react";
 import { Divider, withStyles } from "@material-ui/core";
 import OrganizationIcon from "@material-ui/icons/GroupWork";
 
@@ -31,6 +32,8 @@ import RadioButton from "../../../elements/form/RadioButton";
 import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 
+import eventUpdateStore from "../../../../stores/eventUpdate";
+
 const styles = theme => ({
 	paper: {
 		marginBottom: theme.spacing.unit,
@@ -55,29 +58,31 @@ class Event extends Component {
 		super(props);
 
 		this.state = {
-			eventId: null,
-			organizationId: null,
 			organizations: null,
-			artists: null,
-			event: formatEventDataForInputs({}),
-			organization: {},
-			venue: null,
 			errors: {},
-			externalEvent: false,
-			externalTicketsUrl: "",
-			publishNow: true
+			publishNow: true,
+			isSubmitting: false
 		};
-
-		this.onEventDetailsChange = this.onEventDetailsChange.bind(this);
 	}
 
 	componentDidMount() {
-		this.loadEventDetails();
+		if (
+			this.props.match &&
+			this.props.match.params &&
+			this.props.match.params.id
+		) {
+			const eventId = this.props.match.params.id;
+			eventUpdateStore.loadDetails(eventId);
+		} else {
+			eventUpdateStore.clearDetails();
+		}
+
+		this.loadOrganizations();
 	}
 
 	validateFields() {
 		if (this.hasSubmitted) {
-			const { event } = this.state;
+			const { event } = eventUpdateStore;
 			const eventDetailErrors = validateEventFields(event);
 			if (eventDetailErrors) {
 				console.log("Update error state");
@@ -96,14 +101,25 @@ class Event extends Component {
 		return true;
 	}
 
-	static getDerivedStateFromProps(props, state) {
-		//Check if we're editing an existing organization
-		let eventId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			eventId = props.match.params.id;
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		const prevId =
+			prevProps.match && prevProps.match.params && prevProps.match.params.id
+				? prevProps.match.params.id
+				: null;
+		const currentId =
+			this.props.match && this.props.match.params && this.props.match.params.id
+				? this.props.match.params.id
+				: null;
+
+		//Check if the ID in the URL changed
+		if (currentId && currentId !== prevId) {
+			eventUpdateStore.updateEvent({ id: currentId });
 		}
 
-		return { eventId };
+		//We've navigated to a url without an event id
+		if (prevId && currentId === null) {
+			eventUpdateStore.clearDetails();
+		}
 	}
 
 	loadOrganizations() {
@@ -118,11 +134,12 @@ class Event extends Component {
 
 				//If there's only org then assume that ID
 				if (data.length === 1) {
-					this.setState({ organizationId: data[0].id });
+					eventUpdateStore.organizationId = data[0].id;
 				}
+
 				//FIXME remove this when not developing
 				else if (process.env.NODE_ENV === "development") {
-					this.setState({ organizationId: data[0].id });
+					eventUpdateStore.organizationId = data[0].id;
 				}
 
 				this.setState({ organizations: data, organizationSelectObj });
@@ -146,51 +163,34 @@ class Event extends Component {
 			});
 	}
 
-	loadEventDetails() {
-		const { eventId } = this.state;
+	async saveEventDetails() {
+		this.hasSubmitted = true;
 
-		if (eventId) {
-			Bigneon()
-				.events.read({ id: eventId })
-				.then(response => {
-					const { artists, organization, venue, ...event } = response.data;
-					const { organization_id } = event;
-					this.setState({
-						event: formatEventDataForInputs(event),
-						artists: formatArtistsForInputs(artists),
-						organization,
-						venue,
-						organizationId: organization_id
-					});
-				})
-				.catch(error => {
-					console.error(error);
-					this.setState({ isSubmitting: false });
-
-					let message = "Loading event details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
-					});
-				});
-		} else {
-			this.setState({ artists: [] });
-			this.loadOrganizations();
+		if (!this.validateFields()) {
+			return notifications.show({
+				variant: "warning",
+				message: "There are invalid event details."
+			});
 		}
+
+		const result = await eventUpdateStore.saveEventDetails();
+		if (!result) {
+			return false;
+		}
+
+		const { id } = eventUpdateStore;
+		if (id) {
+			this.props.history.push(`/admin/events/${id}/edit`);
+		}
+
+		return true;
 	}
 
 	async onSaveDraft() {
 		this.setState({ isSubmitting: true });
 
 		const result = await this.saveEventDetails();
+
 		if (result) {
 			notifications.show({ variant: "success", message: "Draft saved." });
 		}
@@ -211,77 +211,19 @@ class Event extends Component {
 		this.setState({ isSubmitting: false });
 	}
 
-	async saveEventDetails() {
-		this.hasSubmitted = true;
-
-		const {
-			eventId,
-			artists,
-			event,
-			organization,
-			venue,
-			organizations,
-			organizationSelectObj,
-			organizationId
-		} = this.state;
-
-		if (!this.validateFields()) {
-			return notifications.show({
-				variant: "warning",
-				message: "There are invalid event details."
-			});
-		}
-
-		const formattedEventDetails = formatEventDataForSaving(
-			event,
-			organizationId
-		);
-
-		if (eventId) {
-			const result = await updateEventDetails(eventId, formattedEventDetails);
-			if (!result) {
-				return false;
-			}
-		} else {
-			const id = await createNewEvent(formattedEventDetails);
-			if (!id) {
-				return false;
-			} else {
-				this.props.history.push(`/admin/events/${id}/edit`);
-			}
-		}
-
-		const formattedArtists = formatArtistsForSaving(artists);
-
-		const result = updateArtistList(eventId, formattedArtists);
-		if (!result) {
-			return false;
-		}
-
-		//TODO save/update tickets
-
-		return true;
-	}
-
-	onEventDetailsChange(updatedEvent) {
-		this.setState(({ event }) => ({ event: { ...event, ...updatedEvent } }));
-	}
-
+	@observer
 	render() {
 		const {
-			artists,
-			event,
-			organization,
-			venue,
 			organizations,
 			organizationSelectObj,
-			organizationId,
+			publishNow,
 			errors,
-			externalEvent,
-			externalTicketsUrl,
-			eventId,
-			publishNow
+			isSubmitting
 		} = this.state;
+
+		const { id, event, artists, organizationId } = eventUpdateStore;
+		const { externalTicketsUrl, eventDate } = event;
+
 		const { classes } = this.props;
 
 		return (
@@ -299,7 +241,8 @@ class Event extends Component {
 						const organization = organizations.find(o => {
 							return o.id === organizationId;
 						});
-						this.setState({ organization });
+
+						eventUpdateStore.updateOrganizationId(organization.id);
 					}}
 					open={!organizationId}
 					onClose={() => {}}
@@ -315,9 +258,9 @@ class Event extends Component {
 							src={event.promoImageUrl}
 							alt="Event promo image"
 							caption="Recommended image size 1920 x 1080"
-							onUrlUpdate={promoImageUrl =>
-								this.onEventDetailsChange({ promoImageUrl })
-							}
+							onUrlUpdate={promoImageUrl => {
+								eventUpdateStore.updateEvent({ promoImageUrl });
+							}}
 							noMediaTitle="Upload event image"
 						/>
 
@@ -326,17 +269,7 @@ class Event extends Component {
 						</div>
 
 						{artists !== null ? (
-							<Artists
-								onHeadlineArtistImageUrl={promoImageUrl => {
-									if (!event.promoImageUrl) {
-										//Assume the promo image is the headliner artist
-										this.onEventDetailsChange({ promoImageUrl });
-									}
-								}}
-								onArtistsChange={artists => this.setState({ artists })}
-								organizationId={organizationId}
-								artists={artists}
-							/>
+							<Artists organizationId={organizationId} artists={artists} />
 						) : null}
 
 						<div className={classes.spacer} />
@@ -345,10 +278,6 @@ class Event extends Component {
 							<FormSubHeading>Event details</FormSubHeading>
 
 							<EventDetails
-								event={event}
-								onEventDetailsChange={this.onEventDetailsChange}
-								eventDetails={event}
-								organizationId={organizationId}
 								validateFields={this.validateFields.bind(this)}
 								errors={errors.event}
 							/>
@@ -361,21 +290,25 @@ class Event extends Component {
 
 							<div className={classes.ticketOptions}>
 								<RadioButton
-									active={!externalEvent}
-									onClick={() => this.setState({ externalEvent: false })}
+									active={externalTicketsUrl === null}
+									onClick={() =>
+										eventUpdateStore.updateEvent({ externalTicketsUrl: null })
+									}
 								>
 									BigNeon
 								</RadioButton>
 								<RadioButton
-									active={externalEvent}
-									onClick={() => this.setState({ externalEvent: true })}
+									active={externalTicketsUrl !== null}
+									onClick={() =>
+										eventUpdateStore.updateEvent({ externalTicketsUrl: "" })
+									}
 								>
 									External event
 								</RadioButton>
 							</div>
 						</div>
 
-						{externalEvent ? (
+						{externalTicketsUrl !== null ? (
 							<div className={classes.paddedContent}>
 								<InputGroup
 									error={errors.videoUrl}
@@ -384,7 +317,9 @@ class Event extends Component {
 									label="Link to purchase tickets externally"
 									type="text"
 									onChange={e =>
-										this.setState({ externalTicketsUrl: e.target.value })
+										eventUpdateStore.updateEvent({
+											externalTicketsUrl: e.target.value
+										})
 									}
 									placeholder="https//my-tix.com/event"
 								/>
@@ -393,8 +328,7 @@ class Event extends Component {
 							<div style={{ marginTop: 30 }}>
 								<Tickets
 									validateFields={this.validateFields.bind(this)}
-									eventId={eventId}
-									eventStartDate={event.eventDate || new Date()} //FIXME this might cause problems later assuming the date
+									eventStartDate={eventDate}
 									organizationId={organizationId}
 								/>
 							</div>
@@ -407,7 +341,7 @@ class Event extends Component {
 
 							<div className={classes.ticketOptions}>
 								<RadioButton
-									active={publishNow}
+									active={!!publishNow}
 									onClick={() => this.setState({ publishNow: true })}
 								>
 									Immediately
@@ -439,6 +373,7 @@ class Event extends Component {
 							<div className={classes.actions}>
 								<div style={{ width: "45%" }}>
 									<Button
+										disabled={isSubmitting}
 										onClick={this.onSaveDraft.bind(this)}
 										size="large"
 										fullWidth
@@ -448,6 +383,7 @@ class Event extends Component {
 								</div>
 								<div style={{ width: "45%" }}>
 									<Button
+										disabled={isSubmitting}
 										onClick={this.onPublish.bind(this)}
 										size="large"
 										fullWidth

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
 import moment from "moment";
 
@@ -9,6 +10,7 @@ import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 import EventArtist from "./EventArtist";
 import SubCard from "../../../../elements/SubCard";
+import eventUpdateStore from "../../../../../stores/eventUpdate";
 
 const styles = theme => ({
 	paddedContent: {
@@ -40,24 +42,7 @@ const formatForInput = artistArray => {
 	return artists;
 };
 
-const updateArtists = async (event_id, artists) => {
-	return new Promise(resolve => {
-		Bigneon()
-			.events.artists.update({ event_id, artists })
-			.then(() => {
-				resolve(true);
-			})
-			.catch(error => {
-				console.error(error);
-				notifications.show({
-					message: "Update event failed.",
-					variant: "error"
-				});
-				resolve(false);
-			});
-	});
-};
-
+@observer
 class ArtistDetails extends Component {
 	constructor(props) {
 		super(props);
@@ -101,12 +86,17 @@ class ArtistDetails extends Component {
 		this.setState(({ artists, availableArtists }) => {
 			artists.push({ id, setTime: null });
 
-			this.props.onArtistsChange(artists);
+			eventUpdateStore.updateArtists(artists);
 
 			if (artists.length === 1) {
 				const selectedArtist = availableArtists.find(a => a.id === id);
 				if (selectedArtist && selectedArtist.image_url) {
-					this.props.onHeadlineArtistImageUrl(selectedArtist.image_url);
+					if (!eventUpdateStore.event.promoImageUrl) {
+						//Assume the promo image is the headliner artist
+						eventUpdateStore.updateEvent({
+							promoImageUrl: selectedArtist.image_url
+						});
+					}
 				}
 			}
 
@@ -275,12 +265,9 @@ class ArtistDetails extends Component {
 ArtistDetails.propTypes = {
 	eventId: PropTypes.string,
 	organizationId: PropTypes.string.isRequired,
-	artists: PropTypes.array.isRequired,
-	onArtistsChange: PropTypes.func.isRequired,
-	onHeadlineArtistImageUrl: PropTypes.func.isRequired
+	artists: PropTypes.array.isRequired
 };
 
 export const Artists = withStyles(styles)(ArtistDetails);
 export const formatArtistsForSaving = formatForSaving;
 export const formatArtistsForInputs = formatForInput;
-export const updateArtistList = updateArtists;
