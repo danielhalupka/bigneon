@@ -15,8 +15,7 @@ import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import HoldDialog from "./HoldDialog";
 
-import { Mocker } from "bn-api-node/dist/classes/mocker";
-import { createHold } from "bn-api-node/dist/interfaces/resources/hold.interface";
+
 
 const styles = theme => ({
 	paper: {}
@@ -80,28 +79,6 @@ class TicketHoldList extends Component {
 
 	refreshHolds() {
 		if (this.eventId) {
-			let key = `events.holds.index`;
-			console.warn("Remove mocker");
-			Bigneon().client.mocker = new Mocker({
-				[key]: {
-					data: {
-						data: {
-							data: [
-								createHold({
-									id: "bfd337c5-f0d6-4778-85bc-e21e6eed2569",
-									name: "Hold 1",
-									event_id: this.eventId,
-									redemption_code: "ABC123",
-									ticket_type: "General admission",
-									total_held: 100,
-									claimed: 8
-								}),
-							]
-						}
-
-					}
-				}
-			});
 			Bigneon().events.holds.index({ event_id: this.eventId }).then(holds => {
 				//TODO Pagination
 				this.setState({ holds: holds.data.data });
