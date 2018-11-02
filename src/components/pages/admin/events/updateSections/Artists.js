@@ -32,12 +32,14 @@ const formatForSaving = artists => {
 };
 
 const formatForInput = artistArray => {
-	const artists = artistArray.map(({ artist_id, set_time }) => ({
-		id: artist_id,
-		setTime: set_time
-			? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: null
-	}));
+	const artists = artistArray.map(({ artist, set_time }) => {
+		return {
+			id: artist.id,
+			setTime: set_time
+				? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				: null
+		};
+	});
 
 	return artists;
 };
@@ -83,25 +85,20 @@ class ArtistDetails extends Component {
 	}
 
 	addNewArtist(id) {
-		this.setState(({ artists, availableArtists }) => {
-			artists.push({ id, setTime: null });
+		eventUpdateStore.addArtist(id);
 
-			eventUpdateStore.updateArtists(artists);
-
-			if (artists.length === 1) {
-				const selectedArtist = availableArtists.find(a => a.id === id);
-				if (selectedArtist && selectedArtist.image_url) {
-					if (!eventUpdateStore.event.promoImageUrl) {
-						//Assume the promo image is the headliner artist
-						eventUpdateStore.updateEvent({
-							promoImageUrl: selectedArtist.image_url
-						});
-					}
+		if (eventUpdateStore.artists.length === 1) {
+			const { availableArtists } = this.state;
+			const selectedArtist = availableArtists.find(a => a.id === id);
+			if (selectedArtist && selectedArtist.image_url) {
+				if (!eventUpdateStore.event.promoImageUrl) {
+					//Assume the promo image is the headliner artist
+					eventUpdateStore.updateEvent({
+						promoImageUrl: selectedArtist.image_url
+					});
 				}
 			}
-
-			return { artists };
-		});
+		}
 	}
 
 	createNewArtist(name) {
@@ -145,7 +142,7 @@ class ArtistDetails extends Component {
 
 	renderAddNewArtist() {
 		//Pass through the currently selected artist if one has been selected
-		const { availableArtists, artists } = this.state;
+		const { availableArtists } = this.state;
 		if (availableArtists === null) {
 			return <Typography variant="body1">Loading artists...</Typography>;
 		}
@@ -155,6 +152,8 @@ class ArtistDetails extends Component {
 			artistsObj[artist.id] = artist.name;
 		});
 
+		const { artists } = eventUpdateStore;
+
 		const isHeadline = artists && artists.length < 1;
 
 		return (
@@ -162,9 +161,7 @@ class ArtistDetails extends Component {
 				value={""}
 				items={artistsObj}
 				name={"artists"}
-				label={`Add your ${isHeadline ? "headline" : "supporting"} act${
-					isHeadline ? "*" : ""
-				}`}
+				label={`Add your ${isHeadline ? "headline act*" : "supporting act"}`}
 				placeholder={"eg. Childish Gambino"}
 				onChange={artistId => {
 					if (artistId) {
@@ -180,7 +177,8 @@ class ArtistDetails extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { artists, availableArtists, showArtistSelect, errors } = this.state;
+		const { availableArtists, showArtistSelect, errors } = this.state;
+		const { artists } = eventUpdateStore;
 
 		return (
 			<div>
@@ -223,20 +221,14 @@ class ArtistDetails extends Component {
 								title={name}
 								setTime={setTime}
 								onChangeSetTime={setTime => {
-									this.setState(({ artists }) => {
-										artists[index].setTime = setTime;
-										return { artists };
-									});
+									eventUpdateStore.changeArtistSetTime(index, setTime);
 								}}
 								imgUrl={
 									thumb_image_url || "/images/profile-pic-placeholder.png"
 								}
 								error={errors.artists ? errors.artists[index] : null}
 								onDelete={() => {
-									this.setState(({ artists }) => {
-										artists.splice(index, 1);
-										return { artists };
-									});
+									eventUpdateStore.removeArtist(index);
 								}}
 							/>
 						</SubCard>

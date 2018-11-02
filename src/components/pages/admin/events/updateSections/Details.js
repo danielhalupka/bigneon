@@ -65,9 +65,6 @@ const formatDataForSaving = (event, organizationId) => {
 		name,
 		organization_id: organizationId,
 		age_limit: Number(ageLimit),
-		publish_date: moment
-			.utc(new Date())
-			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS), //TODO make publish date select on in a date field
 		additional_info: additionalInfo,
 		top_line_info: topLineInfo
 	};
@@ -132,8 +129,8 @@ const formatDataForInputs = event => {
 			? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,
 		publishDate: publish_date
-			? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: null,
+			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			: new Date(),
 		ageLimit: age_limit || "",
 		venueId: venue_id || "",
 		additionalInfo: additional_info || "",
@@ -141,7 +138,7 @@ const formatDataForInputs = event => {
 		videoUrl: video_url || "",
 		showTopLineInfo: !!top_line_info,
 		promoImageUrl: promo_image_url,
-		externalTicketsUrl: external_url || ""
+		externalTicketsUrl: external_url ? external_url : null
 	};
 
 	return eventDetails;
@@ -258,7 +255,7 @@ class Details extends Component {
 	}
 
 	render() {
-		const { errors, validateFields } = this.props;
+		const { errors = {}, validateFields } = this.props;
 
 		const {
 			name,

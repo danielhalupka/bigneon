@@ -1,9 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles, Typography, InputAdornment } from "@material-ui/core";
+import { observer } from "mobx-react";
+import {
+	withStyles,
+	Typography,
+	InputAdornment,
+	Collapse
+} from "@material-ui/core";
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
 import IconButton from "../../../../elements/IconButton";
+import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
+import PricePoint from "./PricePoint";
+import eventUpdateStore from "../../../../../stores/eventUpdate";
 
 const styles = theme => {
 	return {
@@ -23,7 +32,7 @@ const styles = theme => {
 			paddingTop: theme.spacing.unit * 3,
 			paddingBottom: theme.spacing.unit * 3
 		},
-		name: {
+		title: {
 			textTransform: "uppercase",
 			fontFamily: "TTCommons-DemiBold"
 		},
@@ -32,10 +41,23 @@ const styles = theme => {
 		},
 		simpleInputContainer: {
 			flex: 1,
-			marginRight: theme.spacing.unit * 4
+			paddingRight: theme.spacing.unit * 4
+		},
+		additionalInputsRow: {
+			display: "flex"
+		},
+		additionalInputContainer: {
+			flex: 1,
+			paddingRight: theme.spacing.unit * 4
 		}
 	};
 };
+
+const FormHeading = ({ classes, children }) => (
+	<Typography className={classes.title} variant="subheading">
+		{children}
+	</Typography>
+);
 
 const TicketHeading = ({
 	classes,
@@ -46,9 +68,9 @@ const TicketHeading = ({
 	active
 }) => (
 	<div className={classes.ticketHeader}>
-		<Typography className={classes.name} variant="subheading">
+		<FormHeading classes={classes}>
 			{name ? `${index + 1}. ${name}` : "Add your new ticket"}
-		</Typography>
+		</FormHeading>
 		<div>
 			<IconButton
 				onClick={onEditClick}
@@ -72,7 +94,7 @@ const InactiveContent = props => {
 	);
 };
 
-const TicketDetails = props => {
+const TicketDetails = observer(props => {
 	const {
 		index,
 		classes,
@@ -81,11 +103,21 @@ const TicketDetails = props => {
 		updateTicketType,
 		name,
 		capacity,
+		startDate,
+		endDate,
+		priceAtDoor,
+		showAdditionalOptions,
+		increment,
+		maxTicketsPerCustomer,
+		description,
+		showPricing,
 		pricing
 	} = props;
 
 	const defaultPrice =
 		pricing && pricing[0] && pricing[0].value ? pricing[0].value : "";
+
+	const pricingErrors = errors && errors.pricing ? errors.pricing : {};
 
 	return (
 		<div className={classes.activeContent}>
@@ -136,18 +168,173 @@ const TicketDetails = props => {
 						placeholder="35"
 						type="number"
 						onChange={e => {
-							pricing[0].value = e.target.value;
-							updateTicketType({ pricing });
+							let updatedPricePoint = {
+								...pricing[0],
+								value: e.target.value
+							};
+							let updatedPricing = pricing;
+							updatedPricing[0] = updatedPricePoint;
+							updateTicketType(index, { pricing: updatedPricing });
 						}}
 						onBlur={validateFields}
 					/>
 				</div>
 			</div>
 
-			<Button variant="additional">Additional options</Button>
+			{!showAdditionalOptions ? (
+				<Button
+					variant="additional"
+					onClick={() =>
+						updateTicketType(index, { showAdditionalOptions: true })
+					}
+				>
+					Additional options
+				</Button>
+			) : null}
+
+			<Collapse in={!!showAdditionalOptions}>
+				<div className={classes.additionalInputsRow}>
+					<div className={classes.additionalInputContainer}>
+						<DateTimePickerGroup
+							error={errors.startDate}
+							value={startDate}
+							name="startDate"
+							label="Sale start time"
+							onChange={startDate => updateTicketType(index, { startDate })}
+							onBlur={validateFields}
+							minDate={false}
+						/>
+					</div>
+					<div className={classes.additionalInputContainer}>
+						<DateTimePickerGroup
+							error={errors.endDate}
+							value={endDate}
+							name="endDate"
+							label="Sale end time"
+							onChange={endDate => updateTicketType(index, { endDate })}
+							onBlur={validateFields}
+							minDate={false}
+						/>
+					</div>
+				</div>
+
+				<div className={classes.additionalInputsRow}>
+					<div className={classes.additionalInputContainer}>
+						<InputGroup
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">$</InputAdornment>
+								)
+							}}
+							error={errors.priceAtDoor}
+							value={priceAtDoor}
+							name="value"
+							label="Price at door"
+							placeholder="35"
+							type="number"
+							onChange={e => {
+								updateTicketType(index, { priceAtDoor: e.target.value });
+							}}
+							onBlur={validateFields}
+						/>
+					</div>
+					<div className={classes.additionalInputContainer}>
+						<InputGroup
+							error={errors.maxTicketsPerCustomer}
+							value={maxTicketsPerCustomer}
+							name="maxTicketsPerCustomer"
+							label="Max tickets per customer"
+							placeholder="10"
+							type="number"
+							onChange={e => {
+								updateTicketType(index, {
+									maxTicketsPerCustomer: e.target.value
+								});
+							}}
+							onBlur={validateFields}
+						/>
+					</div>
+				</div>
+
+				<div className={classes.additionalInputsRow}>
+					<div className={classes.additionalInputContainer}>
+						<InputGroup
+							error={errors.increment}
+							value={increment}
+							name="increment"
+							label="Increment"
+							placeholder="1"
+							type="number"
+							onChange={e => {
+								updateTicketType(index, { increment: e.target.value });
+							}}
+							onBlur={validateFields}
+						/>
+					</div>
+
+					<div className={classes.additionalInputContainer}>
+						<InputGroup
+							error={errors.description}
+							value={description}
+							name="description"
+							label="Ticket description"
+							placeholder="More details about this ticket type"
+							type="text"
+							onChange={e => {
+								updateTicketType(index, { description: e.target.value });
+							}}
+							onBlur={validateFields}
+						/>
+					</div>
+				</div>
+
+				{!showPricing ? (
+					<div>
+						<FormHeading classes={classes}>Auto price point</FormHeading>
+
+						<Button
+							variant="additional"
+							onClick={() => updateTicketType(index, { showPricing: true })}
+						>
+							Add auto price update
+						</Button>
+					</div>
+				) : null}
+
+				<Collapse in={!!showPricing}>
+					{pricing.map((pricePoint, pricePointIndex) => (
+						<div key={pricePointIndex}>
+							<FormHeading classes={classes}>
+								Auto price point {pricePointIndex + 1}
+							</FormHeading>
+							<PricePoint
+								updatePricePointDetails={pricePointDetails => {
+									let updatedPricePoint = {
+										...pricePoint,
+										...pricePointDetails
+									};
+									let updatedPricing = pricing;
+									updatedPricing[pricePointIndex] = updatedPricePoint;
+
+									updateTicketType(index, { pricing: updatedPricing });
+								}}
+								errors={pricingErrors[pricePointIndex] || {}}
+								validateFields={validateFields}
+								{...pricePoint}
+							/>
+						</div>
+					))}
+					<Button
+						variant="additional"
+						onClick={() => eventUpdateStore.addTicketPricing(index)}
+					>
+						Add new auto price update
+					</Button>
+				</Collapse>
+			</Collapse>
 		</div>
 	);
-};
+});
 
 const TicketType = props => {
 	const { classes, active } = props;

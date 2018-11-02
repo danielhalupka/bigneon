@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react";
 import moment from "moment";
 import { withStyles, Typography } from "@material-ui/core";
 
@@ -8,6 +9,125 @@ import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
 import SubCard from "../../../../elements/SubCard";
 import TicketType from "./TicketType";
+import eventUpdateStore from "../../../../../stores/eventUpdate";
+
+const formatForSaving = ticketTypes => {
+	let ticket_types = [];
+
+	ticketTypes.forEach(ticketType => {
+		const {
+			id,
+			capacity,
+			increment,
+			name,
+			pricing,
+			startDate,
+			endDate
+		} = ticketType;
+
+		let ticket_pricing = [];
+		pricing.forEach(pricePoint => {
+			const { id, name, startDate, endDate, value } = pricePoint;
+			ticket_pricing.push({
+				id: id ? id : undefined,
+				name,
+				price_in_cents: Math.round(Number(value) * 100),
+				start_date: moment(startDate)
+					.utc()
+					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_date: moment(endDate)
+					.utc()
+					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			});
+		});
+
+		ticket_types.push({
+			id,
+			name,
+			capacity: Number(capacity),
+			increment: Number(increment),
+			start_date: moment(startDate)
+				.utc()
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			end_date: moment(endDate)
+				.utc()
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			ticket_pricing
+		});
+	});
+
+	return ticket_types;
+};
+
+const formatForInput = ticket_types => {
+	const ticketTypes = [];
+	ticket_types.forEach(ticket_type => {
+		const {
+			id,
+			name,
+			description,
+			capacity,
+			increment,
+			max_tickets_per_customer, //TODO check this ends up being the field in the API
+			ticket_pricing,
+			start_date,
+			end_date
+		} = ticket_type;
+
+		let pricing = [];
+		let priceAtDoor = "";
+		ticket_pricing.forEach(pricePoint => {
+			const { name, price_in_cents } = pricePoint;
+
+			let startDate = null;
+			if (pricePoint.start_date) {
+				startDate = moment.utc(pricePoint.start_date).local();
+			}
+
+			let endDate = null;
+			if (pricePoint.end_date) {
+				endDate = moment.utc(pricePoint.end_date).local();
+			}
+
+			pricing.push({
+				id: pricePoint.id,
+				ticketId: id,
+				name,
+				startDate,
+				endDate,
+				value: price_in_cents / 100
+			});
+
+			// if (!priceAtDoor && price_in_cents) {
+			// 	priceAtDoor = price_in_cents / 100;
+			// }
+		});
+
+		const ticketStartDate = start_date ? moment.utc(start_date).local() : null;
+
+		const ticketEndDate = end_date ? moment.utc(end_date).local() : null;
+
+		const ticketType = {
+			id,
+			name,
+			description: description || "",
+			capacity: capacity ? capacity : 0,
+			increment: increment ? increment : 1,
+			maxTicketsPerCustomer: max_tickets_per_customer
+				? max_tickets_per_customer
+				: "",
+			startDate: ticketStartDate,
+			endDate: ticketEndDate,
+			priceAtDoor, //TODO get the actual value when API works
+			pricing,
+			showPricing: pricing.length > 1
+		};
+
+		ticketTypes.push(ticketType);
+	});
+
+	return ticketTypes;
+};
 
 const styles = theme => ({
 	addTicketType: {
@@ -33,10 +153,10 @@ const styles = theme => ({
 	}
 });
 
-const validateFields = tickets => {
+const validateFields = ticketTypes => {
 	let errors = {};
 
-	tickets.forEach((ticket, index) => {
+	ticketTypes.forEach((ticket, index) => {
 		const {
 			id,
 			eventId,
@@ -96,7 +216,7 @@ const validateFields = tickets => {
 					pricingError.startDate = "Specify the pricing start time.";
 				} else if (ticket.startDate) {
 					//On sale date for this pricing can't be sooner than event on sale time
-					if (startDate.diff(ticket.startDate) < 0) {
+					if (startDate && startDate.diff(ticket.startDate) < 0) {
 						pricingError.startDate = "Time must be after ticket on sale time.";
 					} else if (previousPricing && previousPricing.endDate) {
 						//Check on sale time is after off sale time of previous pricing
@@ -140,193 +260,48 @@ const validateFields = tickets => {
 	return null;
 };
 
-class Tickets extends Component {
+@observer
+class EventTickets extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			activeIndex: null,
-			tickets: []
-		};
-
 		this.updateTicketType = this.updateTicketType.bind(this);
 	}
 
-	componentDidMount() {
-		const { eventId } = this.props;
-
-		if (!eventId) {
-			this.addTicketType();
-			return;
-		}
-
-		Bigneon()
-			.events.ticketTypes.index({ event_id: eventId })
-			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
-				const ticket_types = data;
-
-				let tickets = [];
-
-				if (ticket_types) {
-					ticket_types.forEach(ticket_type => {
-						const {
-							id,
-							name,
-							capacity,
-							increment,
-							ticket_pricing,
-							start_date,
-							end_date
-						} = ticket_type;
-
-						let pricing = [];
-						ticket_pricing.forEach(pricePoint => {
-							const { name, price_in_cents } = pricePoint;
-
-							let startDate = null;
-							if (pricePoint.start_date) {
-								startDate = moment.utc(pricePoint.start_date).local();
-							}
-
-							let endDate = null;
-							if (pricePoint.end_date) {
-								endDate = moment.utc(pricePoint.end_date).local();
-							}
-
-							pricing.push({
-								id: pricePoint.id,
-								ticketId: id,
-								name,
-								startDate,
-								endDate,
-								value: price_in_cents / 100
-							});
-						});
-
-						const ticketStartDate = start_date
-							? moment.utc(start_date).local()
-							: null;
-
-						const ticketEndDate = end_date
-							? moment.utc(end_date).local()
-							: null;
-
-						tickets.push({
-							id,
-							name,
-							capacity: capacity ? capacity : 0,
-							increment: increment ? increment : 1,
-							startDate: ticketStartDate,
-							endDate: ticketEndDate,
-							pricing
-						});
-					});
-				}
-				this.setState({ tickets });
-
-				//If there are no tickets, add one
-				if (tickets.length < 1) {
-					this.addTicketType();
-				}
-			})
-			.catch(error => {
-				console.error(error);
-
-				let message = "Loading event tickets failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
-	}
-
-	addTicketType() {
-		const { eventStartDate } = this.props;
-
-		this.setState(({ tickets }) => {
-			tickets.push({
-				name: "",
-				startDate: null,
-				endDate: null,
-				pricing: [
-					{
-						startDate: new Date(),
-						endDate: eventStartDate
-					}
-				]
-			});
-
-			return { tickets, activeIndex: tickets.length - 1 };
-		});
-	}
-
-	addPricing(index) {
-		//TODO check this works and implement
-		const { eventStartDate } = this.props;
-		this.setState(({ tickets }) => {
-			const { pricing = [] } = tickets[index];
-
-			pricing.push({
-				startDate: new Date(),
-				endDate: eventStartDate
-			});
-
-			tickets.pricing = pricing;
-
-			return { tickets };
-		});
-	}
+	componentDidMount() {}
 
 	updateTicketType(index, details) {
-		this.setState(({ tickets }) => {
-			tickets[index] = { ...tickets[index], ...details };
-
-			return { tickets };
-		});
+		eventUpdateStore.updateTicketType(index, details);
 	}
 
 	deleteTicketType(index) {
-		this.setState(({ tickets }) => {
-			tickets.splice(index, 1);
-			return { tickets };
-		});
+		eventUpdateStore.deleteTicketType(index);
 	}
 
 	render() {
-		const { tickets, activeIndex } = this.state;
-		const { classes, validateFields } = this.props;
+		const { classes, validateFields, errors } = this.props;
+		const { ticketTypes, ticketTypeActiveIndex } = eventUpdateStore;
 
 		return (
 			<div>
-				{tickets.map((ticket, index) => {
-					const active = index === activeIndex; //TODO make the tickets selectable
-					const errors = {}; //TODO get errors
+				{ticketTypes.map((ticketType, index) => {
+					const active = index === ticketTypeActiveIndex;
 					return (
 						<SubCard key={index} active={active}>
 							<TicketType
-								onEditClick={() =>
-									this.setState(currentState => {
-										const newIndex =
-											currentState.activeIndex === index ? null : index;
-										return { activeIndex: newIndex };
-									})
-								}
+								onEditClick={() => {
+									const newIndex =
+										eventUpdateStore.ticketTypeActiveIndex === index
+											? null
+											: index;
+									eventUpdateStore.ticketTypeActivate(newIndex);
+								}}
 								updateTicketType={this.updateTicketType}
 								deleteTicketType={() => this.deleteTicketType(index)}
 								active={active}
 								index={index}
 								validateFields={validateFields}
-								errors={errors}
-								{...ticket}
+								errors={errors && errors[index] ? errors[index] : {}}
+								{...ticketType}
 							/>
 						</SubCard>
 					);
@@ -334,7 +309,7 @@ class Tickets extends Component {
 
 				<div
 					className={classes.addTicketType}
-					onClick={this.addTicketType.bind(this)}
+					onClick={() => eventUpdateStore.addTicketType()}
 				>
 					<img className={classes.addIcon} src="/icons/add-ticket.svg" />
 					<Typography className={classes.addText} variant="body2">
@@ -346,11 +321,15 @@ class Tickets extends Component {
 	}
 }
 
-Tickets.propTypes = {
+EventTickets.propTypes = {
 	organizationId: PropTypes.string.isRequired,
 	validateFields: PropTypes.func.isRequired,
 	eventId: PropTypes.string,
-	eventStartDate: PropTypes.object.isRequired
+	eventStartDate: PropTypes.object.isRequired,
+	errors: PropTypes.object
 };
 
-export default withStyles(styles)(Tickets);
+export const Tickets = withStyles(styles)(EventTickets);
+export const formatTicketDataForInputs = formatForInput;
+export const formatTicketDataForSaving = formatForSaving;
+export const validateTicketTypeFields = validateFields;

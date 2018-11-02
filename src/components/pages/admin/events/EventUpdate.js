@@ -24,7 +24,7 @@ import {
 	updateEventDetails,
 	createNewEvent
 } from "./updateSections/Details";
-import Tickets from "./updateSections/Tickets";
+import { Tickets, validateTicketTypeFields } from "./updateSections/Tickets";
 
 import FormSubHeading from "../../../elements/FormSubHeading";
 import Button from "../../../elements/Button";
@@ -82,14 +82,21 @@ class Event extends Component {
 
 	validateFields() {
 		if (this.hasSubmitted) {
-			const { event } = eventUpdateStore;
+			const { event, ticketTypes } = eventUpdateStore;
 			const eventDetailErrors = validateEventFields(event);
-			if (eventDetailErrors) {
+
+			const ticketTypeErrors = validateTicketTypeFields(ticketTypes);
+			if (eventDetailErrors || ticketTypeErrors) {
 				console.log("Update error state");
-				console.warn(eventDetailErrors);
-				this.setState(({ errors }) => ({
-					errors: { ...errors, event: eventDetailErrors }
-				}));
+				this.setState(
+					{
+						errors: {
+							event: eventDetailErrors,
+							ticketTypes: ticketTypeErrors
+						}
+					},
+					() => console.log(this.state.errors)
+				);
 
 				return false;
 			} else {
@@ -205,10 +212,32 @@ class Event extends Component {
 
 		if (result) {
 			console.log("hit publish endpoint");
-			notifications.show({ variant: "success", message: "Event published" });
-		}
 
-		this.setState({ isSubmitting: false });
+			const { id } = eventUpdateStore;
+
+			Bigneon()
+				.events.publish({ id })
+				.then(response => {
+					this.setState({ isSubmitting: false });
+					notifications.show({
+						variant: "success",
+						message: "Event published"
+					});
+				})
+				.catch(error => {
+					console.error(error);
+					this.setState({ isSubmitting: false });
+					notifications.show({
+						message: "Event saved but failed to publish.",
+						variant: "error"
+					});
+				});
+		} else {
+			notifications.show({
+				message: "Event failed to save.",
+				variant: "error"
+			});
+		}
 	}
 
 	@observer
@@ -279,7 +308,7 @@ class Event extends Component {
 
 							<EventDetails
 								validateFields={this.validateFields.bind(this)}
-								errors={errors.event}
+								errors={errors.event || {}}
 							/>
 
 							<div className={classes.spacer} />
@@ -327,6 +356,7 @@ class Event extends Component {
 						) : (
 							<div style={{ marginTop: 30 }}>
 								<Tickets
+									errors={errors.ticketTypes}
 									validateFields={this.validateFields.bind(this)}
 									eventStartDate={eventDate}
 									organizationId={organizationId}
