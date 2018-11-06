@@ -18,3 +18,24 @@ $("#modal-video").on("hidden.bs.modal", function() {
 	// sets the source to nothing, stopping the video
 	$frame.attr("src", "");
 });
+
+$(document).ready(function() {
+	//Replaces social share links with actual links
+	var currentUrl = encodeURIComponent(window.location.href);
+
+	var linkTemplatesIds = {
+		"share-on-linkedin":
+			"https://www.linkedin.com/shareArticle?mini=true&url=SHARE_URL&title=Big%20Neon&summary=&source=",
+		"share-on-facebook":
+			"https://www.facebook.com/sharer/sharer.php?u=SHARE_URL",
+		"share-on-twitter": "https://twitter.com/home?status=SHARE_URL"
+	};
+
+	var ids = Object.keys(linkTemplatesIds);
+	for (let index = 0; index < ids.length; index++) {
+		var id = ids[index];
+		var url = linkTemplatesIds[id].replace("SHARE_URL", currentUrl);
+		$("#" + id).attr("href", url);
+		$("#" + id).attr("target", "_blank");
+	}
+});
