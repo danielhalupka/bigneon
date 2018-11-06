@@ -291,6 +291,11 @@ body {
   color: #979797;
 }
 
+.blog-col a {
+  text-decoration: none;
+  color: black;
+}
+
 .blog-section .more {
   margin-top: 25px;
   text-align: center;
@@ -299,6 +304,11 @@ body {
 a {
   font-family: TTCommons-DemiBold;
   font-size: 1.35rem;
+  color: #ff20b1;
+}
+
+a:hover {
+  text-decoration: none;
   color: #ff20b1;
 }
 
@@ -496,6 +506,7 @@ a {
   color: #ff20b1;
   margin-top: 40px;
   text-align: left;
+  font-size: 1rem;
 }
 
 .blog-intro .back img {

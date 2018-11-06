@@ -21,6 +21,7 @@ $("#modal-video").on("hidden.bs.modal", function() {
 
 $(document).ready(function() {
 	//Replaces social share links with actual links
+	//http://www.sharelinkgenerator.com/
 	var currentUrl = encodeURIComponent(window.location.href);
 
 	var linkTemplatesIds = {
