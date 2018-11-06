@@ -52,18 +52,7 @@ class Cart {
 			.then(response => {
 				const { data } = response;
 				if (data) {
-					const { id, items, total_in_cents, seconds_until_expiry } = data;
-
-					this.id = id;
-					this.items = items;
-					this.total_in_cents = total_in_cents;
-
-					if (seconds_until_expiry) {
-						this.seconds_until_expiry = seconds_until_expiry;
-						this.startExpiryTicker();
-					} else {
-						this.seconds_until_expiry = null;
-					}
+					this.replaceCartData(data);
 				}
 			})
 			.catch(error => {
@@ -85,14 +74,29 @@ class Cart {
 			});
 	}
 
+	replaceCartData(data) {
+		const { id, items, total_in_cents, seconds_until_expiry } = data;
+
+		this.id = id;
+		this.items = items;
+		this.total_in_cents = total_in_cents;
+
+		if (seconds_until_expiry) {
+			this.seconds_until_expiry = seconds_until_expiry;
+			this.startExpiryTicker();
+		} else {
+			this.seconds_until_expiry = null;
+		}
+	}
+
 	@action
-	addToCart(selectedTickets, onSuccess, onError) {
+	update(selectedTickets, onSuccess, onError) {
 		const ticketIds = Object.keys(selectedTickets);
 
 		//Promises array of posts to the add cart function and iterate through them
 		let items = [];
 		ticketIds.forEach(id => {
-			const quantity = selectedTickets[id];
+			const quantity = parseInt(selectedTickets[id]);
 			items.push({
 				ticket_type_id: id,
 				quantity
@@ -100,28 +104,18 @@ class Cart {
 		});
 
 		Bigneon()
-			.cart.add({ items })
-			.then(results => {
-				//Refresh cart from the API to make sure we in sync
-				this.refreshCart();
+			.cart.update({ items })
+			.then(response => {
+				const { data } = response;
+				if (data) {
+					this.replaceCartData(data);
+				}
 				onSuccess();
 			})
 			.catch(error => {
 				console.error(error);
 				onError(error);
 			});
-	}
-
-	@action
-	removeFromCart(cart_item_id, quantity, onSuccess, onError) {
-		Bigneon()
-			.cart.del({ cart_item_id, quantity })
-			.then(() => {
-				//TODO maybe update the store variable quickly, then refresh from cart for that zippy feeling
-				this.refreshCart();
-				onSuccess();
-			})
-			.catch(error => onError(error));
 	}
 
 	@action
@@ -174,8 +168,7 @@ class Cart {
 		const seconds = this.seconds_until_expiry - minutes * 60;
 
 		return `${minutes > 0 ? `${minutes}:` : ""}${
-			seconds >= 10 ? seconds : `0${seconds}`
-		}`;
+			seconds >= 10 ? seconds : `0${seconds}`}`;
 	}
 }
 

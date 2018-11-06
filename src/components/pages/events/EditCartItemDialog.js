@@ -36,67 +36,26 @@ class EditCartItemDialog extends React.Component {
 
 		this.setState({ isSubmitting: true });
 
-		//Check if we have tickets being removed or added
-		const quantityDifference = quantity - this.props.quantity;
-		if (quantityDifference > 0) {
-			if (!ticketTypeId) {
+		const selectedTickets = {};
+		selectedTickets[ticketTypeId] = quantity;
+		cart.update(
+			selectedTickets,
+			() => {
 				notification.show({
-					message: "Missing ticket type from API to required to add tickets.",
-					variant: "warning"
+					message: `Updated ticket quantity.`,
+					variant: "success"
 				});
 				onClose();
-				return;
+			},
+			error => {
+				onClose();
+				notification.show({
+					message: "Failed to add items to cart.",
+					variant: "error"
+				});
+				console.error(error);
 			}
-			const selectedTickets = {};
-			selectedTickets[ticketTypeId] = quantityDifference;
-			cart.addToCart(
-				selectedTickets,
-				() => {
-					notification.show({
-						message: `Added ${quantityDifference} ticket${
-							quantityDifference !== 1 ? "s" : ""
-						}.`,
-						variant: "success"
-					});
-					onClose();
-				},
-				error => {
-					onClose();
-					notification.show({
-						message: "Failed to add items to cart.",
-						variant: "error"
-					});
-					console.error(error);
-				}
-			);
-		} else if (quantityDifference < 0) {
-			const quantityToRemove = quantityDifference * -1;
-
-			cart.removeFromCart(
-				id,
-				quantityToRemove, //Make it a positive to get the number we need to remove from cart
-				() => {
-					notification.show({
-						message: `Removed ${quantityToRemove} ticket${
-							quantityToRemove !== 1 ? "s" : ""
-						}`,
-						variant: "success"
-					});
-					onClose();
-				},
-				error => {
-					onClose();
-					notification.show({
-						message: "Failed to remove items from cart.",
-						variant: "error"
-					});
-					console.error(error);
-				}
-			);
-		} else {
-			//No change, do nothing
-			onClose();
-		}
+		);
 	}
 
 	attemptClose() {
