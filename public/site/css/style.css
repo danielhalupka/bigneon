@@ -45,6 +45,13 @@ body {
   padding-left: 20px;
   padding-right: 20px;
   min-height: 650px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: 140px;
+  padding-top: 60px;
 }
 
 .intro h1 {
@@ -74,11 +81,12 @@ body {
 .cta-button {
   padding-left: 55px;
   padding-right: 55px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: 18px;
+  padding-bottom: 14px;
   font-family: TTCommons-DemiBold;
   font-size: 0.9rem;
   color: #ffffff;
+  cursor: pointer;
 
   border-radius: 2.5px;
   background-color: transparent;
@@ -97,26 +105,35 @@ body {
 
 .intro-video-container {
   z-index: 1;
-
   position: relative;
   top: -100px;
-  padding-left: 100px;
-  padding-right: 100px;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 
 .intro-video-image {
   width: 100%;
-  height: 550px;
+  max-width: 850px;
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   /* cursor: pointer; */
 
+  border-radius: 2.5px;
+  box-shadow: 0 20px 17.5px -15px rgba(0, 0, 0, 0.17);
+
   background-image: url("/site/images/video.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top center;
+}
+
+@media only screen and (max-width: 575.98px) {
+  .intro-video-image {
+    height: 220px;
+  }
 }
 
 .intro-video-image img {
@@ -125,6 +142,7 @@ body {
 }
 
 .as-seen-in {
+  margin-top: -60px;
   text-align: center;
 }
 
@@ -135,8 +153,19 @@ body {
   color: #9e9e9e;
 }
 
+.as-seen-in .img-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.as-seen-in img {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
 .explained-section {
-  margin-top: 120px;
+  margin-top: 100px;
 }
 
 .explained-col {
@@ -144,20 +173,23 @@ body {
   margin-bottom: 40px;
 }
 
+.explained-col .img-container {
+  padding-right: 40px;
+  flex: 1;
+}
+
 .explained-col img {
   /* max-width: 48px; */
-  max-height: 55px;
-  width: auto;
+  height: 55px;
+  width: 100%;
   height: auto;
-  margin-right: 20px;
 }
 
 .explained-col .info-text {
-  max-width: 450px;
-
+  flex: 8;
   display: flex;
   flex-direction: column;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .explained-col h3 {
@@ -165,6 +197,17 @@ body {
   font-family: TTCommons-DemiBold;
   font-size: 2rem;
   color: #000000;
+}
+
+@media only screen and (max-width: 575.98px) {
+  .explained-col h3 {
+    font-size: 1.5rem;
+  }
+
+  .explained-col .img-container {
+    padding-right: 20px;
+    flex: 1;
+  }
 }
 
 .explained-col p {
@@ -175,7 +218,7 @@ body {
 }
 
 .testimonial-section {
-  margin-top: 120px;
+  margin-top: 60px;
 }
 
 .testimonial-col {
@@ -198,6 +241,18 @@ body {
   height: auto;
   position: relative;
   top: -70px;
+}
+
+@media only screen and (max-width: 575.98px) {
+  .testimonial-col .text {
+    font-family: TTCommons-Regular;
+    top: 0px;
+    padding: 0px;
+    padding-top: 15px;
+    width: 100%;
+    margin-bottom: 10px;
+    color: #979797;
+  }
 }
 
 .testimonial-col .text .author {
@@ -296,6 +351,34 @@ a {
   color: #867e8d;
 }
 
+@media only screen and (max-width: 575.98px) {
+  .team-background {
+    background-image: none;
+    padding-top: 0px;
+    padding-bottom: 40px;
+    margin-top: 100px;
+  }
+
+  .team-col {
+    padding: 10px;
+  }
+
+  .team-panel {
+    box-shadow: none;
+    border: none;
+    background-color: #ffffff;
+  }
+
+  .team-section h2 {
+    font-size: 2rem;
+  }
+
+  .team-panel p {
+    padding-left: 0px;
+    padding-top: 10px;
+  }
+}
+
 .footer-section {
   padding-top: 100px;
   padding-bottom: 60px;
@@ -329,6 +412,7 @@ a {
   font-size: 0.7rem;
   color: #ffffff;
   text-transform: uppercase;
+  opacity: 0.5;
 }
 
 /***** Modal *****/
