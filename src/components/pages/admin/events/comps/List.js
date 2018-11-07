@@ -10,29 +10,28 @@ import Button from "../../../../elements/Button";
 import Bigneon from "../../../../../helpers/bigneon";
 import PageHeading from "../../../../elements/PageHeading";
 import Divider from "../../../../common/Divider";
-import HoldRow from "./HoldRow";
+import HoldRow from "./CompRow";
 import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton/IconButton";
-import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
-
+import CompDialog from "./CompDialog";
 
 
 const styles = theme => ({
 	paper: {}
 });
 
-class TicketHoldList extends Component {
+class CompList extends Component {
 	constructor(props) {
 		super(props);
 
 
 		this.state = {
-			holdType: HOLD_TYPES.NEW,
 			activeHoldId: null,
-			showHoldDialog: null,
+			showDialog: null,
 			eventName: "",
 			ticketTypes: [],
-			holds: []
+			comps: [],
+			holdDetails: {}
 		};
 	}
 
@@ -41,11 +40,19 @@ class TicketHoldList extends Component {
 
 		if (match && match.params && match.params.id) {
 			this.eventId = match.params.id;
+			this.holdId = match.params.holdId;
 			this.loadEventDetails();
-			this.refreshHolds();
+			this.loadHoldDetails();
+			this.refreshComps();
 		} else {
 			//TODO 404
 		}
+	}
+
+	async loadHoldDetails() {
+		let holdDetails = (await Bigneon().holds.read({ id: this.holdId })).data;
+		console.log(holdDetails);
+		this.setState({ holdDetails });
 	}
 
 	loadEventDetails() {
@@ -78,11 +85,11 @@ class TicketHoldList extends Component {
 			});
 	}
 
-	refreshHolds() {
-		if (this.eventId) {
-			Bigneon().events.holds.index({ event_id: this.eventId }).then(holds => {
+	refreshComps() {
+		if (this.eventId && this.holdId) {
+			Bigneon().holds.comps.index({ hold_id: this.holdId }).then(comps => {
 				//TODO Pagination
-				this.setState({ holds: holds.data.data });
+				this.setState({ comps: comps.data.data });
 			});
 		}
 	}
@@ -90,73 +97,80 @@ class TicketHoldList extends Component {
 	onAddHold() {
 		this.setState({
 			activeHoldId: null,
-			holdType: HOLD_TYPES.NEW,
-			showHoldDialog: "-1"
+			showDialog: "-1"
 		});
 	}
 
 	renderList() {
-		const { holds, hoverId } = this.state;
+		const { comps, hoverId } = this.state;
 		const { classes } = this.props;
-		const eventId = this.eventId;
 
-		if (holds === null) {
+		if (comps === null) {
 			return <Typography variant="body1">Loading...</Typography>;
 		}
 
-		if (holds && holds.length > 0) {
+		if (comps && comps.length > 0) {
 			const ths = [
 				"Name",
 				"Code",
-				"Ticket Type",
-				"Claimed from hold",
-				"Remaining",
+				"Status",
+				"Total Held",
+				"Claimed",
 				"Remaining",
 				"Action"
 			];
 
 			const onAction = (id, action) => {
-				if (action === "Edit") {
-					this.setState({ activeHoldId: id, showHoldDialog: true, holdType: HOLD_TYPES.EDIT })
-				}
-				if (action === "Split") {
-					this.setState({ activeHoldId: id, showHoldDialog: true, holdType: HOLD_TYPES.SPLIT });
-				}
-				console.log(action, id);
+				// if (action === "Edit") {
+				// 	this.setState({ activeHoldId: id, showDialog: true, holdType: HOLD_TYPES.EDIT })
+				// }
+				// if (action === "Split") {
+				// 	this.setState({ activeHoldId: id, showDialog: true, holdType: HOLD_TYPES.SPLIT });
+				// }
+				// console.log(action, id);
 			};
 
 			return (
 				<div style={{ cursor: "pointer" }}>
 					<HoldRow heading>{ths}</HoldRow>
-					{holds.map((ticket, index) => {
-						const { id, name, redemption_code, ticket_type, total_held, claimed } = ticket;
+					{comps.map((ticket, index) => {
+						const { id, name, redemption_code, status = "Unclaimed", quantity, claimed = 0 } = ticket;
 
 						const tds = [
 							name,
 							redemption_code,
-							ticket_type,
-							total_held,
+							status,
+							quantity,
 							claimed,
-							`${(total_held - claimed) || 0}`
+							`${(quantity - claimed) }`
 						];
 
 						return (
 							<HoldRow
-								onClick={e => {
-									this.props.history.push(
-										`/admin/events/${eventId}/comps/${id}`
-									);
-								}}
 								onMouseEnter={e => this.setState({ hoverId: id })}
 								onMouseLeave={e => this.setState({ hoverId: null })}
-								active={ hoverId === id }
+								active={hoverId === id}
 								gray={!(index % 2)}
 								key={id}
 								actions={[
-									{ id: id, name: "Split", iconUrl: "/icons/split-gray.svg", onClick: onAction.bind(this) },
-									{ id: id, name: "Link", iconUrl: "/icons/link-gray.svg", onClick: onAction.bind(this) },
-									{ id: id, name: "Edit", iconUrl: "/icons/edit-gray.svg", onClick: onAction.bind(this) },
-									{ id: id, name: "Delete", iconUrl: "/icons/delete-gray.svg", onClick: onAction.bind(this) }
+									{
+										id: id,
+										name: "Link",
+										iconUrl: "/icons/link-gray.svg",
+										onClick: onAction.bind(this)
+									},
+									{
+										id: id,
+										name: "Edit",
+										iconUrl: "/icons/edit-gray.svg",
+										onClick: onAction.bind(this)
+									},
+									{
+										id: id,
+										name: "Delete",
+										iconUrl: "/icons/delete-gray.svg",
+										onClick: onAction.bind(this)
+									}
 								]}
 							>
 								{tds}
@@ -166,32 +180,32 @@ class TicketHoldList extends Component {
 				</div>
 			);
 		} else {
-			return <Typography variant="body1">No holds created yet</Typography>;
+			return <Typography variant="body1">No comps created yet</Typography>;
 		}
 	}
 
 
 	renderDialog() {
-		const { ticketTypes, activeHoldId, holdType } = this.state;
+		const { ticketTypes, activeHoldId } = this.state;
 		let eventId = this.eventId;
+		let holdId = this.holdId;
 		return (
-			<HoldDialog
-				holdType={holdType}
+			<CompDialog
 				open={true}
 				eventId={eventId}
-				holdId={activeHoldId}
+				holdId={holdId}
 				ticketTypes={ticketTypes}
 				onSuccess={(id) => {
-					this.refreshHolds();
-					this.setState({ showHoldDialog: null });
+					this.refreshComps();
+					this.setState({ showDialog: null });
 				}}
-				onClose={() => this.setState({ showHoldDialog: null })}
+				onClose={() => this.setState({ showDialog: null })}
 			/>
 		);
 	}
 
 	render() {
-		const { eventName, showHoldDialog } = this.state;
+		const { eventName, showDialog, holdDetails } = this.state;
 		const { classes } = this.props;
 
 		return (
@@ -199,14 +213,14 @@ class TicketHoldList extends Component {
 			<div>
 
 				<PageHeading iconUrl="/icons/events-multi.svg">{eventName}</PageHeading>
-				{ showHoldDialog && this.renderDialog() }
+				{ showDialog && this.renderDialog() }
 
 				<Card className={classes.paper}>
 					<CardContent>
 						<div style={{ display: "flex" }}>
-							<Typography variant="title">Manage Ticket Holds</Typography>
+							<Typography variant="title">{holdDetails.name}</Typography>
 							<span style={{ flex: 1 }}></span>
-							<Button onClick={e => this.onAddHold()}>Create Hold</Button>
+							<Button onClick={e => this.onAddHold()}>Assign Name To List</Button>
 						</div>
 
 						<Divider style={{ marginBottom: 40 }}/>
@@ -219,4 +233,4 @@ class TicketHoldList extends Component {
 	}
 }
 
-export default withStyles(styles)(TicketHoldList);
+export default withStyles(styles)(CompList);

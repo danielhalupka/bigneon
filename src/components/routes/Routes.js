@@ -44,6 +44,7 @@ import AdminEventUpdateOld from "../pages/admin/events/Event_old";
 
 import AdminGuestList from "../pages/admin/events/guests/List";
 import AdminEventTicketHolds from "../pages/admin/events/holds/List";
+import AdminEventComps from "../pages/admin/events/comps/List";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
@@ -276,6 +277,12 @@ class Routes extends Component {
 								exact
 								path="/admin/events/:id/holds"
 								component={AdminEventTicketHolds}
+								isAuthenticated={isAuthenticated}
+							/>
+							<PrivateRoute
+								exact
+								path="/admin/events/:id/comps/:holdId"
+								component={AdminEventComps}
 								isAuthenticated={isAuthenticated}
 							/>
 							<PrivateRoute
