@@ -13,7 +13,7 @@ import Divider from "../../../../common/Divider";
 import HoldRow from "./HoldRow";
 import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton/IconButton";
-import HoldDialog from "./HoldDialog";
+import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
 
 
 
@@ -27,6 +27,7 @@ class TicketHoldList extends Component {
 
 
 		this.state = {
+			holdType: HOLD_TYPES.NEW,
 			activeHoldId: null,
 			showHoldDialog: null,
 			eventName: "",
@@ -88,6 +89,8 @@ class TicketHoldList extends Component {
 
 	onAddHold() {
 		this.setState({
+			activeHoldId: null,
+			holdType: HOLD_TYPES.NEW,
 			showHoldDialog: "-1"
 		});
 	}
@@ -111,11 +114,14 @@ class TicketHoldList extends Component {
 				"Action"
 			];
 
-			const onAction = (action) => {
+			const onAction = (id, action) => {
 				if (action === "Edit") {
-					this.setState({ showHoldDialog: true })
+					this.setState({ activeHoldId: id, showHoldDialog: true, holdType: HOLD_TYPES.EDIT })
 				}
-				console.log(action, activeHoldId);
+				if (action === "Split") {
+					this.setState({ activeHoldId: id, showHoldDialog: true, holdType: HOLD_TYPES.SPLIT });
+				}
+				console.log(action, id);
 			};
 
 			return (
@@ -135,17 +141,13 @@ class TicketHoldList extends Component {
 
 						return (
 							<HoldRow
-								// onClick={() => this.setState({ showHoldDialog: true })}
-								onMouseEnter={() => this.setState({ activeHoldId: id })}
-								onMouseLeave={() => this.setState({ activeHoldId: null })}
-								active={activeHoldId === id}
 								gray={!(index % 2)}
 								key={id}
 								actions={[
-									{ name: "Split", iconUrl: "/icons/split-gray.svg", onClick: onAction.bind(this) },
-									{ name: "Link", iconUrl: "/icons/link-gray.svg", onClick: onAction.bind(this) },
-									{ name: "Edit", iconUrl: "/icons/edit-gray.svg", onClick: onAction.bind(this) },
-									{ name: "Delete", iconUrl: "/icons/delete-gray.svg", onClick: onAction.bind(this) }
+									{ id: id, name: "Split", iconUrl: "/icons/split-gray.svg", onClick: onAction.bind(this) },
+									{ id: id, name: "Link", iconUrl: "/icons/link-gray.svg", onClick: onAction.bind(this) },
+									{ id: id, name: "Edit", iconUrl: "/icons/edit-gray.svg", onClick: onAction.bind(this) },
+									{ id: id, name: "Delete", iconUrl: "/icons/delete-gray.svg", onClick: onAction.bind(this) }
 								]}
 							>
 								{tds}
@@ -161,15 +163,17 @@ class TicketHoldList extends Component {
 
 
 	renderDialog() {
-		const { ticketTypes, activeHoldId } = this.state;
+		const { ticketTypes, activeHoldId, holdType } = this.state;
 		let eventId = this.eventId;
 		return (
 			<HoldDialog
+				holdType={holdType}
 				open={true}
 				eventId={eventId}
 				holdId={activeHoldId}
 				ticketTypes={ticketTypes}
 				onSuccess={(id) => {
+					this.refreshHolds();
 					this.setState({ showHoldDialog: null });
 				}}
 				onClose={() => this.setState({ showHoldDialog: null })}
