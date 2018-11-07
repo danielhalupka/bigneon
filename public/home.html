@@ -15,30 +15,30 @@
     <link rel="stylesheet" href="site/css/style.css">
     <!-- Start of Async Drift Code -->
     <script>
-    "use strict";
+        "use strict";
 
-    !function() {
-      var t = window.driftt = window.drift = window.driftt || [];
-      if (!t.init) {
-        if (t.invoked) return void (window.console && console.error && console.error("Drift snippet included twice."));
-        t.invoked = !0, t.methods = [ "identify", "config", "track", "reset", "debug", "show", "ping", "page", "hide", "off", "on" ], 
-        t.factory = function(e) {
-          return function() {
-            var n = Array.prototype.slice.call(arguments);
-            return n.unshift(e), t.push(n), t;
-          };
-        }, t.methods.forEach(function(e) {
-          t[e] = t.factory(e);
-        }), t.load = function(t) {
-          var e = 3e5, n = Math.ceil(new Date() / e) * e, o = document.createElement("script");
-          o.type = "text/javascript", o.async = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + n + "/" + t + ".js";
-          var i = document.getElementsByTagName("script")[0];
-          i.parentNode.insertBefore(o, i);
-        };
-      }
-    }();
-    drift.SNIPPET_VERSION = '0.3.1';
-    drift.load('53weur4xbb57');
+        !function () {
+            var t = window.driftt = window.drift = window.driftt || [];
+            if (!t.init) {
+                if (t.invoked) return void (window.console && console.error && console.error("Drift snippet included twice."));
+                t.invoked = !0, t.methods = ["identify", "config", "track", "reset", "debug", "show", "ping", "page", "hide", "off", "on"],
+                    t.factory = function (e) {
+                        return function () {
+                            var n = Array.prototype.slice.call(arguments);
+                            return n.unshift(e), t.push(n), t;
+                        };
+                    }, t.methods.forEach(function (e) {
+                        t[e] = t.factory(e);
+                    }), t.load = function (t) {
+                        var e = 3e5, n = Math.ceil(new Date() / e) * e, o = document.createElement("script");
+                        o.type = "text/javascript", o.async = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + n + "/" + t + ".js";
+                        var i = document.getElementsByTagName("script")[0];
+                        i.parentNode.insertBefore(o, i);
+                    };
+            }
+        }();
+        drift.SNIPPET_VERSION = '0.3.1';
+        drift.load('53weur4xbb57');
     </script>
     <!-- End of Async Drift Code -->
 </head>
@@ -49,9 +49,13 @@
     <div class="d-none d-md-block d-lg-block">
         <div class="intro" id="intro">
             <img class="intro-logo" alt="Big Neon" src="/site/images/home-logo.png" />
-            <h1>Introducing<br />Big Neon</h1>
-            <p>Big Neon is built to maximize revenue for music promoters.</p>
-            <a href="#contact-chat"><button type="button" class="cta-button">Get in Touch</button></a>
+
+            <div class="intro-text">
+                <h1>Introducing<br />Big Neon</h1>
+                <p>Big Neon is built to maximize revenue for music promoters.</p>
+                <a href="#contact-chat"><button type="button" class="cta-button">Get in Touch</button></a>
+            </div>
+
         </div>
     </div>
 
@@ -61,8 +65,8 @@
             <img class="intro-logo" alt="Big Neon" src="/site/images/home-logo.png" />
             <h3>Introducing<br />Big Neon</h3>
             <p>Big Neon is built to maximize revenue for music promoters.</p>
-            <a href="#contact-chat" class="cta-button-full-width">
-                <button type="button" class="cta-button cta-button-mobile">
+            <a href="#contact-chat" class="cta-a-full-width">
+                <button type="button" class="cta-button">
                     Get in Touch
                 </button>
             </a>
@@ -70,13 +74,13 @@
     </div>
 
     <!-- EXPLAINER VIDEO IMAGE LINK -->
-    <a href="#" class="launch-video-modal" data-modal-id="modal-video">
-        <div class="row justify-content-lg-center intro-video-container">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8 intro-video-image">
+    <div class="intro-video-container">
+        <div class="intro-video-image clickable-image">
+            <a href="#" class="launch-video-modal" data-modal-id="modal-video">
                 <img src="/site/images/video-play.png" />
-            </div>
+            </a>
         </div>
-    </a>
+    </div>
 
     <!-- VIDEO MODAL -->
     <div class="modal fade" id="modal-video" tabindex="-1" role="dialog" aria-labelledby="modal-video-label">
@@ -101,33 +105,33 @@
 
 
     <!-- PRESS -->
-    <div class="row justify-content-center" id="as-seen-in">
+    <div class="" id="as-seen-in">
         <div class="col-11 col-sm-10 col-md-10 col-lg-10 as-seen-in">
             <p>As seen in</p>
             <div class="row justify-content-center">
                 <div class="col-4 col-md-4 col-lg-2 img-container">
                     <a target="_blank" href="#">
-                        <img alt="As seen in" src="/site/images/press/VentureBeat@2x.png" />
+                        <img class="clickable-image" alt="As seen in" src="/site/images/press/VentureBeat@2x.png" />
                     </a>
                 </div>
                 <div class="col-4 col-md-4 col-lg-2 img-container">
                     <a target="_blank" href="#">
-                        <img alt="As seen in" src="/site/images/press/TechCrunch@2x.png" />
+                        <img class="clickable-image" alt="As seen in" src="/site/images/press/TechCrunch@2x.png" />
                     </a>
                 </div>
                 <div class="col-4 col-md-4 col-lg-2 img-container">
                     <a target="_blank" href="#">
-                        <img alt="As seen in" src="/site/images/press/LogoPlaceholder@2x.png" />
+                        <img class="clickable-image" alt="As seen in" src="/site/images/press/LogoPlaceholder@2x.png" />
                     </a>
                 </div>
                 <div class="col-4 col-md-4 col-lg-2 img-container">
                     <a target="_blank" href="#">
-                        <img alt="As seen in" src="/site/images/press/LogoPlaceholder@2x.png" />
+                        <img class="clickable-image" alt="As seen in" src="/site/images/press/LogoPlaceholder@2x.png" />
                     </a>
                 </div>
                 <div class="col-4 col-md-4 col-lg-2 img-container">
                     <a target="_blank" href="#">
-                        <img alt="As seen in" src="/site/images/press/LogoPlaceholder@2x.png" />
+                        <img class="clickable-image" alt="As seen in" src="/site/images/press/LogoPlaceholder@2x.png" />
                     </a>
                 </div>
             </div>
@@ -139,13 +143,13 @@
     <div class="container explained-section" id="explained">
         <div class="row justify-content-start">
             <div class="col-lg-7 explained-col">
-                <div class="img-container">
+                <div class="explained-img-container">
                     <img src="/site/images/music.png" />
                 </div>
                 <div class="info-text">
                     <h3>Music promoters deserve better</h3>
                     <p>
-                        Today’s ticketing platforms do not position music promoters for success. With BigNeon, we
+                        Today’s ticketing platforms do not position music promoters for success. With Big Neon, we
                         deliver innovative features to help promoters earn more revenue and connect with fans.
                     </p>
                 </div>
@@ -155,14 +159,14 @@
 
         <div class="row justify-content-end">
             <div class="col-lg-7 explained-col">
-                <div class="img-container">
+                <div class="explained-img-container">
                     <img src="/site/images/phone.png" />
                 </div>
                 <div class="info-text">
                     <h3>A mobile-first ticketing experience that prioritizes their safety and security.</h3>
                     <p>
-                        With BigNeon, consumers can say goodbye to print-at-home tickets (and duplicated tickets)
-                        forever. With BigNeon’s best-in-class security features, fans can skip the worry and have a
+                        With Big Neon, consumers can say goodbye to print-at-home tickets (and duplicated tickets)
+                        forever. With Big Neon’s best-in-class security features, fans can skip the worry and have a
                         great time at their show.
                     </p>
                 </div>
@@ -171,13 +175,13 @@
 
         <div class="row justify-content-start">
             <div class="col-lg-7 explained-col">
-                <div class="img-container">
+                <div class="explained-img-container">
                     <img src="/site/images/blockchain.png" />
                 </div>
                 <div class="info-text">
                     <h3>Blockchain is revolutionary technology that will re-shape live entertainment forever.</h3>
                     <p>
-                        Today’s ticketing platforms do not position music promoters for success. With BigNeon, we
+                        Today’s ticketing platforms do not position music promoters for success. With Big Neon, we
                         deliver
                         innovative features to help promoters earn more revenue and connect with fans.
                     </p>
@@ -188,13 +192,13 @@
 
         <div class="row justify-content-end">
             <div class="col-lg-7 explained-col">
-                <div class="img-container">
+                <div class="explained-img-container">
                     <img src="/site/images/lightbulb.png" />
                 </div>
                 <div class="info-text">
                     <h3>We’re committed to building the best user experience for our promoters.</h3>
                     <p>
-                        Like you, we’re both in the experience business. BigNeon’s intuitive interface will be
+                        Like you, we’re both in the experience business. Big Neon’s intuitive interface will be
                         visually-pleasing and a joy to use, and its design will continue to evolve over time to meet
                         our promoters’ changing needs.
                     </p>
@@ -204,13 +208,13 @@
 
         <div class="row justify-content-start">
             <div class="col-lg-7 explained-col">
-                <div class="img-container">
+                <div class="explained-img-container">
                     <img src="/site/images/globe.png" />
                 </div>
                 <div class="info-text">
                     <h3>Music is a global movement that requires relentless focus.</h3>
                     <p>
-                        BigNeon’s global team is committed to building the best platform for live music promoters —
+                        Big Neon’s global team is committed to building the best platform for live music promoters —
                         ONLY. We believe our customers deserve a platform that enables them to deliver amazing live
                         music experiences.
 
@@ -228,7 +232,7 @@
                 <img src="/site/images/testimonial-1.png" />
                 <div class="text">
                     <p>
-                        “I am so excited to offer BigNeon to my consumers. The event dashboard is amazing - it’s never
+                        “I am so excited to offer Big Neon to my consumers. The event dashboard is amazing - it’s never
                         been easier to track all aspects of my live event! Not to mention, I’m on track to make the
                         most revenue I’ve ever made in a single year.”
                     </p>
@@ -244,7 +248,7 @@
                 <img src="/site/images/testimonial-2.png" />
                 <div class="text">
                     <p>
-                        “I am so excited to offer BigNeon to my consumers. The event dashboard is amazing - it’s never
+                        “I am so excited to offer Big Neon to my consumers. The event dashboard is amazing - it’s never
                         been easier to track all aspects of my live event! Not to mention, I’m on track to make.”
                     </p>
                     <p class="author">
@@ -262,7 +266,7 @@
         <div class="row">
             <div class="col-12 col-lg-4 blog-col">
                 <a href="/blog-post.html">
-                    <img src="/site/images/blog-1.png" />
+                    <img class="clickable-image" src="/site/images/blog-1.png" />
                     <h3>Blog Post Title</h3>
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris bibendum aliquet nisi eu
@@ -274,7 +278,7 @@
 
             <div class="col-12 col-lg-4 blog-col">
                 <a href="/blog-post.html">
-                    <img src="/site/images/blog-2.png" />
+                    <img class="clickable-image" src="/site/images/blog-2.png" />
                     <h3>Blog Post Title</h3>
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris bibendum aliquet nisi eu
@@ -285,7 +289,7 @@
 
             <div class="col-12 col-lg-4 blog-col">
                 <a href="/blog-post.html">
-                    <img src="/site/images/blog-3.png" />
+                    <img class="clickable-image" src="/site/images/blog-3.png" />
                     <h3>Blog Post Title</h3>
                     <p>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris bibendum aliquet nisi eu
@@ -303,7 +307,7 @@
     <!-- TEAM -->
     <div class="team-background" id="team">
         <div class="container team-section">
-            <h2>BigNeon is led by some of the world’s top entertainment and technology innovators.</h2>
+            <h2>Big Neon is led by some of the world’s top entertainment and technology innovators.</h2>
             <div class="row">
                 <div class="col col-6 col-lg-3 team-col">
                     <div class="team-panel">
@@ -364,17 +368,21 @@
     <!-- FOOTER -->
     <div class="footer-section" id="footer">
         <p>
-            At BigNeon, we’re relentlessly focused on serving the needs of independent live music promoters. For a
-            preview of BigNeon’s platform, please leave your email below.
+            At Big Neon, we’re relentlessly focused on serving the needs of independent live music promoters. For a
+            preview of Big Neon’s platform, please leave your email below.
         </p>
 
-        <a href="#contact-chat">
-            <button type="button" class="cta-button cta-button-mobile">
-                Get in Touch
+        <a href="#contact-chat" class="cta-a-full-width">
+            <button type="button" class="cta-button cta-button">
+                Get&nbsp;in&nbsp;Touch
             </button>
         </a>
 
         <img class="footer-logo" alt="Big Neon" src="/site/images/footer-logo.png" />
+
+        <p class="policies">
+            <a href="/privacy-policy">Privacy policy</a> | <a href="/terms">Terms of service</a>
+        </p>
 
         <p class="footer-copyright">
             Copyright &copy; 2018 Big Neon. All rights reserved.
