@@ -60,7 +60,12 @@ const HoldRow = props => {
 		actionButtons = (
 			<span>
 				{actions.map(({ id, name, iconUrl, onClick }) => (
-					<span key={name} onClick={() => {onClick && onClick(id, name)}}>
+					<span key={name} onClick={(e) => {
+						e.stopPropagation();
+						e.nativeEvent.stopImmediatePropagation();
+						console.log(e);
+						onClick && onClick(id, name)
+					}}>
 						<img alt={name} src={iconUrl} className={classes.icon} />
 					</span>
 				))}

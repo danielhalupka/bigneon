@@ -111,7 +111,6 @@ class TicketHoldList extends Component {
 				"Ticket Type",
 				"Claimed from hold",
 				"Remaining",
-				"Remaining",
 				"Action"
 			];
 
@@ -125,24 +124,25 @@ class TicketHoldList extends Component {
 				console.log(action, id);
 			};
 
+			console.log(holds);
 			return (
 				<div style={{ cursor: "pointer" }}>
 					<HoldRow heading>{ths}</HoldRow>
 					{holds.map((ticket, index) => {
-						const { id, name, redemption_code, ticket_type, total_held, claimed } = ticket;
+						const { id, name, redemption_code, hold_type, quantity, available } = ticket;
 
 						const tds = [
 							name,
 							redemption_code,
-							ticket_type,
-							total_held,
-							claimed,
-							`${(total_held - claimed) || 0}`
+							hold_type,
+							quantity - available,
+							available
 						];
 
 						return (
 							<HoldRow
 								onClick={e => {
+
 									this.props.history.push(
 										`/admin/events/${eventId}/comps/${id}`
 									);
