@@ -233,6 +233,7 @@ class Event extends Component {
 					});
 				});
 		} else {
+			this.setState({ isSubmitting: false });
 			notifications.show({
 				message: "Event failed to save.",
 				variant: "error"
