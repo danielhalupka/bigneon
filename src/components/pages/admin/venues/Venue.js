@@ -39,7 +39,7 @@ class Venue extends Component {
 			city: "",
 			state: "",
 			country: "",
-			zip: "",
+			postal_code: "",
 			place_id: "",
 			phone: "",
 			organizationId: "",
@@ -62,7 +62,7 @@ class Venue extends Component {
 						city,
 						country,
 						state,
-						zip,
+						postal_code,
 						phone
 					} = response.data;
 
@@ -72,7 +72,7 @@ class Venue extends Component {
 						city: city || "",
 						country: country || "",
 						state: state || "",
-						zip: zip || "",
+						postal_code: postal_code || "",
 						phone: phone || ""
 					});
 				})
@@ -231,7 +231,7 @@ class Venue extends Component {
 			state,
 			country,
 			place_id,
-			zip
+			postal_code
 		} = this.state;
 
 		const venueDetails = {
@@ -241,7 +241,7 @@ class Venue extends Component {
 			city,
 			state,
 			country,
-			zip,
+			postal_code,
 			place_id
 		};
 
@@ -308,7 +308,7 @@ class Venue extends Component {
 			city = "",
 			state = "",
 			country = "",
-			zip = "",
+			postal_code = "",
 			latitude = "",
 			longitude = ""
 		} = this.state;
@@ -317,7 +317,7 @@ class Venue extends Component {
 			city,
 			state,
 			country,
-			zip,
+			postal_code,
 			latitude,
 			longitude
 		};
@@ -396,12 +396,12 @@ class Venue extends Component {
 												"country"
 											);
 
-											const zip = addressTypeFromGoogleResult(
+											const postal_code = addressTypeFromGoogleResult(
 												result,
 												"postal_code"
 											);
 
-											this.setState({ city, state, country, zip, place_id });
+											this.setState({ city, state, country, postal_code, place_id });
 										}}
 									/>
 								</CardContent>

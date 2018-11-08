@@ -200,11 +200,14 @@ const validateFields = ticketTypes => {
 		} else {
 			let pricingErrors = {};
 
-			pricing.forEach((pricingItem, index) => {
+			console.log(pricing);
+			let sorted = pricing.sort((a, b) => !a.startDate || !b.startDate ? 1 : a.startDate - b.startDate);
+			console.log(sorted);
+			sorted.forEach((pricingItem, index) => {
 				const { name, startDate, endDate, value } = pricingItem;
 
 				//Previous pricing dates needed for current row
-				const previousPricing = index > 0 ? pricing[index - 1] : null;
+				const previousPricing = index > 0 ? sorted[index - 1] : null;
 
 				let pricingError = {};
 
@@ -267,7 +270,7 @@ class EventTickets extends Component {
 		this.updateTicketType = this.updateTicketType.bind(this);
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);

@@ -205,6 +205,25 @@ class Event extends Component {
 		this.setState({ isSubmitting: false });
 	}
 
+	mapValidationErrorResponse(data) {
+		let fields = Object.keys(data.fields);
+		let errors = {};
+		for (let i = 0; i < fields.length; i++) {
+
+
+			if (/venue\./.test(fields[i])) {
+
+				errors.venueId = data.fields[fields[i]][0].code;
+			}
+		}
+
+		return	{
+			errors: {
+				event: errors
+			}
+		};
+	}
+
 	async onPublish() {
 		this.setState({ isSubmitting: true });
 
@@ -227,10 +246,22 @@ class Event extends Component {
 				.catch(error => {
 					console.error(error);
 					this.setState({ isSubmitting: false });
-					notifications.show({
-						message: "Event saved but failed to publish.",
-						variant: "error"
-					});
+					if (error.response && error.response.status === 422) {
+						let errors = this.mapValidationErrorResponse(error.response.data);
+
+						this.setState(errors);
+
+
+						notifications.show({
+							message: "Validation error.",
+							variant: "error"
+						});
+					} else {
+						notifications.show({
+							message: "Event saved but failed to publish.",
+							variant: "error"
+						});
+					}
 				});
 		} else {
 			this.setState({ isSubmitting: false });
@@ -275,7 +306,7 @@ class Event extends Component {
 						eventUpdateStore.updateOrganizationId(organization.id);
 					}}
 					open={!organizationId}
-					onClose={() => {}}
+					onClose={() => { }}
 				/>
 
 				<PageHeading iconUrl="/icons/events-multi.svg">
