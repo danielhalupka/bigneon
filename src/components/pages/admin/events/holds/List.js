@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import { Link } from "react-router-dom";
 
 import notifications from "../../../../../stores/notifications";
 import Button from "../../../../elements/Button";
@@ -11,11 +9,8 @@ import Bigneon from "../../../../../helpers/bigneon";
 import PageHeading from "../../../../elements/PageHeading";
 import Divider from "../../../../common/Divider";
 import HoldRow from "./HoldRow";
-import AddIcon from "@material-ui/icons/Add";
-import IconButton from "@material-ui/core/IconButton/IconButton";
 import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
-
-
+import UnderlinedLink from "../../../../elements/UnderlinedLink";
 
 const styles = theme => ({
 	paper: {}
@@ -24,7 +19,6 @@ const styles = theme => ({
 class TicketHoldList extends Component {
 	constructor(props) {
 		super(props);
-
 
 		this.state = {
 			holdType: HOLD_TYPES.NEW,
@@ -80,10 +74,12 @@ class TicketHoldList extends Component {
 
 	refreshHolds() {
 		if (this.eventId) {
-			Bigneon().events.holds.index({ event_id: this.eventId }).then(holds => {
-				//TODO Pagination
-				this.setState({ holds: holds.data.data });
-			});
+			Bigneon()
+				.events.holds.index({ event_id: this.eventId })
+				.then(holds => {
+					//TODO Pagination
+					this.setState({ holds: holds.data.data });
+				});
 		}
 	}
 
@@ -95,8 +91,36 @@ class TicketHoldList extends Component {
 		});
 	}
 
+	deleteHold(id) {
+		console.log("D: ", id);
+
+		Bigneon()
+			.holds.delete({ id })
+			.then(response => {
+				notifications.show({ message: "Hold deleted.", variant: "success" });
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+
+				let message = "Deleting hold failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
+	}
+
 	renderList() {
-		const { holds, hoverId } = this.state;
+		const { holds, activeHoldId, showHoldDialog } = this.state;
 		const { classes } = this.props;
 		const eventId = this.eventId;
 
@@ -116,47 +140,87 @@ class TicketHoldList extends Component {
 
 			const onAction = (id, action) => {
 				if (action === "Edit") {
-					this.setState({ activeHoldId: id, showHoldDialog: true, holdType: HOLD_TYPES.EDIT })
+					return this.setState({
+						activeHoldId: id,
+						showHoldDialog: true,
+						holdType: HOLD_TYPES.EDIT
+					});
 				}
 				if (action === "Split") {
-					this.setState({ activeHoldId: id, showHoldDialog: true, holdType: HOLD_TYPES.SPLIT });
+					return this.setState({
+						activeHoldId: id,
+						showHoldDialog: true,
+						holdType: HOLD_TYPES.SPLIT
+					});
 				}
+
+				if (action === "Delete") {
+					return this.deleteHold(id);
+				}
+
 				console.log(action, id);
 			};
 
-			console.log(holds);
 			return (
-				<div style={{ cursor: "pointer" }}>
+				<div>
 					<HoldRow heading>{ths}</HoldRow>
 					{holds.map((ticket, index) => {
-						const { id, name, redemption_code, hold_type, quantity, available } = ticket;
+						const {
+							id,
+							name,
+							redemption_code,
+							hold_type,
+							quantity,
+							available
+						} = ticket;
 
 						const tds = [
-							name,
+							<UnderlinedLink
+								key={id}
+								to={`/admin/events/${eventId}/comps/${id}`}
+							>
+								{name}
+							</UnderlinedLink>,
 							redemption_code,
 							hold_type,
 							quantity - available,
 							available
 						];
 
+						const active = activeHoldId === id && showHoldDialog;
+						const iconColor = active ? "white" : "gray";
 						return (
 							<HoldRow
-								onClick={e => {
-
-									this.props.history.push(
-										`/admin/events/${eventId}/comps/${id}`
-									);
-								}}
-								onMouseEnter={e => this.setState({ hoverId: id })}
-								onMouseLeave={e => this.setState({ hoverId: null })}
-								active={ hoverId === id }
+								// onMouseEnter={e => this.setState({ hoverId: id })}
+								// onMouseLeave={e => this.setState({ hoverId: null })}
+								active={active}
 								gray={!(index % 2)}
 								key={id}
 								actions={[
-									{ id: id, name: "Split", iconUrl: "/icons/split-gray.svg", onClick: onAction.bind(this) },
-									{ id: id, name: "Link", iconUrl: "/icons/link-gray.svg", onClick: onAction.bind(this) },
-									{ id: id, name: "Edit", iconUrl: "/icons/edit-gray.svg", onClick: onAction.bind(this) },
-									{ id: id, name: "Delete", iconUrl: "/icons/delete-gray.svg", onClick: onAction.bind(this) }
+									{
+										id: id,
+										name: "Split",
+										iconUrl: `/icons/split-${iconColor}.svg`,
+										onClick: onAction.bind(this)
+									},
+									{
+										id: id,
+										name: "Link",
+										iconUrl: `/icons/link-${iconColor}.svg`,
+										onClick: onAction.bind(this)
+									},
+									{
+										id: id,
+										name: "Edit",
+										iconUrl: `/icons/edit-${iconColor}.svg`,
+										onClick: onAction.bind(this)
+									},
+									{
+										id: id,
+										name: "Delete",
+										iconUrl: `/icons/delete-${iconColor}.svg`,
+										onClick: onAction.bind(this)
+									}
 								]}
 							>
 								{tds}
@@ -170,7 +234,6 @@ class TicketHoldList extends Component {
 		}
 	}
 
-
 	renderDialog() {
 		const { ticketTypes, activeHoldId, holdType } = this.state;
 		let eventId = this.eventId;
@@ -181,7 +244,7 @@ class TicketHoldList extends Component {
 				eventId={eventId}
 				holdId={activeHoldId}
 				ticketTypes={ticketTypes}
-				onSuccess={(id) => {
+				onSuccess={id => {
 					this.refreshHolds();
 					this.setState({ showHoldDialog: null });
 				}}
@@ -197,19 +260,18 @@ class TicketHoldList extends Component {
 		return (
 			//TODO eventually this component will move to it's own component
 			<div>
-
 				<PageHeading iconUrl="/icons/events-multi.svg">{eventName}</PageHeading>
-				{ showHoldDialog && this.renderDialog() }
+				{showHoldDialog && this.renderDialog()}
 
 				<Card className={classes.paper}>
 					<CardContent>
 						<div style={{ display: "flex" }}>
 							<Typography variant="title">Manage Ticket Holds</Typography>
-							<span style={{ flex: 1 }}></span>
+							<span style={{ flex: 1 }} />
 							<Button onClick={e => this.onAddHold()}>Create Hold</Button>
 						</div>
 
-						<Divider style={{ marginBottom: 40 }}/>
+						<Divider style={{ marginBottom: 40 }} />
 
 						{this.renderList()}
 					</CardContent>

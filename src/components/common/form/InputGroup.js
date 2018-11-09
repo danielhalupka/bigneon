@@ -75,9 +75,13 @@ const InputGroup = props => {
 	);
 };
 
+InputGroup.defaultProps = {
+	value: ""
+};
+
 InputGroup.propTypes = {
 	error: PropTypes.string,
-	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
 	placeholder: PropTypes.string,

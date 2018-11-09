@@ -11,14 +11,15 @@ const styles = {
 	iconOuter: {
 		position: "relative",
 		top: 30,
-		width: 70,
-		height: 70,
+		width: 60,
+		height: 60,
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.47)",
 		backgroundImage: "linear-gradient(224deg, #e53d96, #5491cc)"
 	},
 	icon: {
 		width: 35,
-		height: 35
+		height: 35,
+		borderRadius: 0
 	}
 };
 

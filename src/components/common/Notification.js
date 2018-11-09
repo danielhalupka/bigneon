@@ -2,6 +2,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Snackbar from "@material-ui/core/Snackbar";
+import Portal from "@material-ui/core/Portal";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
@@ -91,23 +92,25 @@ CustomSnackbarContent.propTypes = {
 const SnackbarContentWrapper = withStyles(styles)(CustomSnackbarContent);
 
 const Notification = observer(() => (
-	<Snackbar
-		anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-		open={notification.isOpen}
-		onClose={() => notification.hide()}
-		ContentProps={{
-			"aria-describedby": `message-${notification.message}`
-		}}
-		message={<span id="message-id">{notification.message}</span>}
-	>
-		<SnackbarContentWrapper
-			variant={notification.variant}
-			message="This is a warning message!"
+	<Portal>
+		<Snackbar
+			anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
 			open={notification.isOpen}
 			onClose={() => notification.hide()}
+			ContentProps={{
+				"aria-describedby": `message-${notification.message}`
+			}}
 			message={<span id="message-id">{notification.message}</span>}
-		/>
-	</Snackbar>
+		>
+			<SnackbarContentWrapper
+				variant={notification.variant}
+				message="This is a warning message!"
+				open={notification.isOpen}
+				onClose={() => notification.hide()}
+				message={<span id="message-id">{notification.message}</span>}
+			/>
+		</Snackbar>
+	</Portal>
 ));
 
 export default Notification;

@@ -23,10 +23,18 @@ const styles = theme => {
 			backgroundColor: theme.palette.secondary.main
 		},
 		text: {},
+		activeText: {
+			color: "#FFFFFF"
+		},
 		headingText: {
 			fontSize: theme.typography.caption.fontSize
 		},
-		icon: { marginRight: theme.spacing.unit, width: 14, height: 14, cursor: "pointer" }
+		icon: {
+			marginLeft: theme.spacing.unit * 2,
+			width: 14,
+			height: 14,
+			cursor: "pointer"
+		}
 	};
 };
 
@@ -44,12 +52,14 @@ const CompRow = props => {
 	];
 
 	const columns = children.map((text, index) => {
+		const className = heading
+			? classes.headingText
+			: active
+				? classes.activeText
+				: classes.text;
+
 		return (
-			<Typography
-				className={heading ? classes.headingText : classes.text}
-				key={index}
-				style={columnStyles[index]}
-			>
+			<Typography className={className} key={index} style={columnStyles[index]}>
 				{text}
 			</Typography>
 		);
@@ -60,7 +70,12 @@ const CompRow = props => {
 		actionButtons = (
 			<span>
 				{actions.map(({ id, name, iconUrl, onClick }) => (
-					<span key={name} onClick={() => {onClick && onClick(id, name)}}>
+					<span
+						key={name}
+						onClick={() => {
+							onClick && onClick(id, name);
+						}}
+					>
 						<img alt={name} src={iconUrl} className={classes.icon} />
 					</span>
 				))}

@@ -32,6 +32,9 @@ const toolBarHeight = {
 
 const raisedCardBoxShadow = "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)";
 
+const fontFamilyBold = "TTCommons-Bold";
+const fontFamilyDemiBold = "TTCommons-DemiBold";
+
 const theme = createMuiTheme({
 	typography: {
 		fontFamily: "TTCommons-Regular",
@@ -127,5 +130,7 @@ export {
 	toolBarHeight,
 	theme,
 	callToActionBackground,
-	raisedCardBoxShadow
+	raisedCardBoxShadow,
+	fontFamilyBold,
+	fontFamilyDemiBold
 };

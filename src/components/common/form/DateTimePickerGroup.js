@@ -73,7 +73,7 @@ const DateTimePickerGroup = props => {
 				id={name}
 				error={!!error}
 				label={label}
-				value={value}
+				value={value ? value : null}
 				onChange={onChange}
 				margin={margin}
 				onBlur={onBlur}
@@ -98,7 +98,7 @@ DateTimePickerGroup.defaultProps = {
 };
 
 DateTimePickerGroup.propTypes = {
-	type: PropTypes.oneOf(["date", "date-time", "time"]), //TODO add date option if required
+	type: PropTypes.oneOf(["date", "date-time", "time"]),
 	error: PropTypes.string,
 	value: PropTypes.object,
 	name: PropTypes.string.isRequired,

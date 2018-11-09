@@ -16,8 +16,8 @@ import {
 const styles = theme => {
 	return {
 		root: {
-			borderRadius: 4,
-			border: 0,
+			borderRadius: 8,
+			borderStyle: "none",
 			paddingLeft: 30,
 			paddingRight: 30,
 			paddingTop: 10,

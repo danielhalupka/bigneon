@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles, Card, Typography } from "@material-ui/core";
+import { withStyles, Typography } from "@material-ui/core";
 import classNames from "classnames";
 
 const styles = theme => {
@@ -20,13 +20,22 @@ const styles = theme => {
 			backgroundColor: "#f5f7fa"
 		},
 		active: {
-			backgroundColor: theme.palette.secondary.main
+			backgroundColor: theme.palette.secondary.main,
+			color: "#FFFFFF"
 		},
 		text: {},
+		activeText: {
+			color: "#FFFFFF"
+		},
 		headingText: {
 			fontSize: theme.typography.caption.fontSize
 		},
-		icon: { marginRight: theme.spacing.unit, width: 14, height: 14, cursor: "pointer" }
+		icon: {
+			marginLeft: theme.spacing.unit * 2,
+			width: 14,
+			height: 14,
+			cursor: "pointer"
+		}
 	};
 };
 
@@ -44,12 +53,13 @@ const HoldRow = props => {
 	];
 
 	const columns = children.map((text, index) => {
+		const className = heading
+			? classes.headingText
+			: active
+				? classes.activeText
+				: classes.text;
 		return (
-			<Typography
-				className={heading ? classes.headingText : classes.text}
-				key={index}
-				style={columnStyles[index]}
-			>
+			<Typography className={className} key={index} style={columnStyles[index]}>
 				{text}
 			</Typography>
 		);
@@ -60,12 +70,14 @@ const HoldRow = props => {
 		actionButtons = (
 			<span>
 				{actions.map(({ id, name, iconUrl, onClick }) => (
-					<span key={name} onClick={(e) => {
-						e.stopPropagation();
-						e.nativeEvent.stopImmediatePropagation();
-						console.log(e);
-						onClick && onClick(id, name)
-					}}>
+					<span
+						key={name}
+						onClick={e => {
+							// e.stopPropagation();
+							// e.nativeEvent.stopImmediatePropagation();
+							onClick && onClick(id, name);
+						}}
+					>
 						<img alt={name} src={iconUrl} className={classes.icon} />
 					</span>
 				))}

@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import { Link } from "react-router-dom";
 
 import notifications from "../../../../../stores/notifications";
 import Button from "../../../../elements/Button";
@@ -11,10 +9,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import PageHeading from "../../../../elements/PageHeading";
 import Divider from "../../../../common/Divider";
 import HoldRow from "./CompRow";
-import AddIcon from "@material-ui/icons/Add";
-import IconButton from "@material-ui/core/IconButton/IconButton";
 import CompDialog from "./CompDialog";
-
 
 const styles = theme => ({
 	paper: {}
@@ -23,7 +18,6 @@ const styles = theme => ({
 class CompList extends Component {
 	constructor(props) {
 		super(props);
-
 
 		this.state = {
 			activeHoldId: null,
@@ -51,7 +45,6 @@ class CompList extends Component {
 
 	async loadHoldDetails() {
 		let holdDetails = (await Bigneon().holds.read({ id: this.holdId })).data;
-		console.log(holdDetails);
 		this.setState({ holdDetails });
 	}
 
@@ -87,10 +80,12 @@ class CompList extends Component {
 
 	refreshComps() {
 		if (this.eventId && this.holdId) {
-			Bigneon().holds.comps.index({ hold_id: this.holdId }).then(comps => {
-				//TODO Pagination
-				this.setState({ comps: comps.data.data });
-			});
+			Bigneon()
+				.holds.comps.index({ hold_id: this.holdId })
+				.then(comps => {
+					//TODO Pagination
+					this.setState({ comps: comps.data.data });
+				});
 		}
 	}
 
@@ -131,10 +126,17 @@ class CompList extends Component {
 			};
 
 			return (
-				<div style={{ cursor: "pointer" }}>
+				<div>
 					<HoldRow heading>{ths}</HoldRow>
 					{comps.map((ticket, index) => {
-						const { id, name, redemption_code, status = "Unclaimed", quantity, claimed = 0 } = ticket;
+						const {
+							id,
+							name,
+							redemption_code,
+							status = "Unclaimed",
+							quantity,
+							claimed = 0
+						} = ticket;
 
 						const tds = [
 							name,
@@ -142,33 +144,35 @@ class CompList extends Component {
 							status,
 							quantity,
 							claimed,
-							`${(quantity - claimed) }`
+							`${quantity - claimed}`
 						];
 
+						const active = false; //Might use this later, right now no need to highlight
+						const iconColor = active ? "white" : "gray";
 						return (
 							<HoldRow
 								onMouseEnter={e => this.setState({ hoverId: id })}
 								onMouseLeave={e => this.setState({ hoverId: null })}
-								active={hoverId === id}
+								active={active}
 								gray={!(index % 2)}
 								key={id}
 								actions={[
 									{
 										id: id,
 										name: "Link",
-										iconUrl: "/icons/link-gray.svg",
+										iconUrl: `/icons/link-${iconColor}.svg`,
 										onClick: onAction.bind(this)
 									},
 									{
 										id: id,
 										name: "Edit",
-										iconUrl: "/icons/edit-gray.svg",
+										iconUrl: `/icons/edit-${iconColor}.svg`,
 										onClick: onAction.bind(this)
 									},
 									{
 										id: id,
 										name: "Delete",
-										iconUrl: "/icons/delete-gray.svg",
+										iconUrl: `/icons/delete-${iconColor}.svg`,
 										onClick: onAction.bind(this)
 									}
 								]}
@@ -184,7 +188,6 @@ class CompList extends Component {
 		}
 	}
 
-
 	renderDialog() {
 		const { ticketTypes, activeHoldId } = this.state;
 		let eventId = this.eventId;
@@ -195,7 +198,7 @@ class CompList extends Component {
 				eventId={eventId}
 				holdId={holdId}
 				ticketTypes={ticketTypes}
-				onSuccess={(id) => {
+				onSuccess={id => {
 					this.refreshComps();
 					this.setState({ showDialog: null });
 				}}
@@ -211,19 +214,20 @@ class CompList extends Component {
 		return (
 			//TODO eventually this component will move to it's own component
 			<div>
-
 				<PageHeading iconUrl="/icons/events-multi.svg">{eventName}</PageHeading>
-				{ showDialog && this.renderDialog() }
+				{showDialog && this.renderDialog()}
 
 				<Card className={classes.paper}>
 					<CardContent>
 						<div style={{ display: "flex" }}>
 							<Typography variant="title">{holdDetails.name}</Typography>
-							<span style={{ flex: 1 }}></span>
-							<Button onClick={e => this.onAddHold()}>Assign Name To List</Button>
+							<span style={{ flex: 1 }} />
+							<Button onClick={e => this.onAddHold()}>
+								Assign Name To List
+							</Button>
 						</div>
 
-						<Divider style={{ marginBottom: 40 }}/>
+						<Divider style={{ marginBottom: 40 }} />
 
 						{this.renderList()}
 					</CardContent>
