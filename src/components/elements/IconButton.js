@@ -9,7 +9,8 @@ const styles = theme => {
 	return {
 		root: {
 			border: 0
-		}
+		},
+		icon: {}
 	};
 };
 
@@ -23,7 +24,7 @@ const CustomIconButton = props => {
 			}}
 			{...rest}
 		>
-			<img alt={children || ""} className={classes.leftIcon} src={iconUrl} />
+			<img alt={children || ""} className={classes.icon} src={iconUrl} />
 		</IconButton>
 	);
 };

@@ -26,6 +26,7 @@ import Button from "../../../elements/Button";
 import CancelEventDialog from "./CancelEventDialog";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
+import EventSummaryCard from "./EventSummaryCard";
 
 const styles = theme => ({
 	paper: {
@@ -57,6 +58,8 @@ class EventsList extends Component {
 			cancelEventId: null,
 			optionsAnchorEl: null
 		};
+
+		this.expandCardDetails = this.expandCardDetails.bind(this);
 	}
 
 	componentDidMount() {
@@ -131,8 +134,12 @@ class EventsList extends Component {
 		});
 	}
 
+	expandCardDetails(expandedCardId) {
+		this.setState({ expandedCardId });
+	}
+
 	renderEvents() {
-		const { events } = this.state;
+		const { events, expandedCardId } = this.state;
 		const { classes } = this.props;
 
 		const { optionsAnchorEl } = this.state;
@@ -196,61 +203,119 @@ class EventsList extends Component {
 					}
 				];
 
+				const MenuButton = (
+					<div>
+						<IconButton
+							onClick={e => {
+								this.eventMenuSelected = id;
+								this.handleMenuClick(e);
+							}}
+						>
+							<MoreHorizIcon fontSize={"large"} nativeColor="#9da3b4" />
+						</IconButton>
+
+						<Menu
+							id="long-menu"
+							anchorEl={optionsAnchorEl}
+							open={Boolean(optionsAnchorEl)}
+							onClose={this.handleOptionsClose}
+						>
+							{eventOptions.map(({ text, onClick, MenuOptionIcon }) => {
+								return (
+									<MenuItem
+										key={text}
+										onClick={() => {
+											this.handleOptionsClose();
+											onClick();
+										}}
+									>
+										<ListItemIcon>
+											<MenuOptionIcon />
+										</ListItemIcon>
+										<ListItemText inset primary={text} />
+									</MenuItem>
+								);
+							})}
+						</Menu>
+					</div>
+				);
+
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
-						<Card className={classes.paper}>
-							<CardMedia
-								className={classes.media}
-								image={promo_image_url || "/images/event-placeholder.png"}
-								title={name}
-							/>
-
-							<CardContent className={classes.cardContent}>
-								<Typography variant="display1">
-									{name} {cancelled_at ? "(Cancelled)" : ""}
-								</Typography>
-								<Typography variant="body1">
-									{venue && venue.address ? venue.address : ""}
-								</Typography>
-							</CardContent>
-
-							<div>
-								<IconButton
-									onClick={e => {
-										this.eventMenuSelected = id;
-										this.handleMenuClick(e);
-									}}
-								>
-									<MoreHorizIcon />
-								</IconButton>
-
-								<Menu
-									id="long-menu"
-									anchorEl={optionsAnchorEl}
-									open={Boolean(optionsAnchorEl)}
-									onClose={this.handleOptionsClose}
-								>
-									{eventOptions.map(({ text, onClick, MenuOptionIcon }) => {
-										return (
-											<MenuItem
-												key={text}
-												onClick={() => {
-													this.handleOptionsClose();
-													onClick();
-												}}
-											>
-												<ListItemIcon>
-													<MenuOptionIcon />
-												</ListItemIcon>
-												<ListItemText inset primary={text} />
-											</MenuItem>
-										);
-									})}
-								</Menu>
-							</div>
-						</Card>
+						<EventSummaryCard
+							id={id}
+							imageUrl={promo_image_url}
+							name={name}
+							eventDate={"Wed 2/21/18. 9:30 PM EST"}
+							menuButton={MenuButton}
+							isPublished={true}
+							isOnSale={false}
+							totalSold={100}
+							totalOpen={200}
+							totalHeld={50}
+							totalCapacity={350}
+							totalSales={120}
+							isExpanded={expandedCardId === id}
+							onExpandClick={this.expandCardDetails}
+						/>
 					</Grid>
 				);
+
+				// return (
+				// 	<Grid key={id} item xs={12} sm={12} lg={12}>
+				// 		<Card className={classes.paper}>
+				// 			<CardMedia
+				// 				className={classes.media}
+				// 				image={promo_image_url || "/images/event-placeholder.png"}
+				// 				title={name}
+				// 			/>
+
+				// 			<CardContent className={classes.cardContent}>
+				// 				<Typography variant="display1">
+				// 					{name} {cancelled_at ? "(Cancelled)" : ""}
+				// 				</Typography>
+				// 				<Typography variant="body1">
+				// 					{venue && venue.address ? venue.address : ""}
+				// 				</Typography>
+				// 			</CardContent>
+
+				// <div>
+				// 	<IconButton
+				// 		onClick={e => {
+				// 			this.eventMenuSelected = id;
+				// 			this.handleMenuClick(e);
+				// 		}}
+				// 	>
+				// 		<MoreHorizIcon />
+				// 	</IconButton>
+
+				// 	<Menu
+				// 		id="long-menu"
+				// 		anchorEl={optionsAnchorEl}
+				// 		open={Boolean(optionsAnchorEl)}
+				// 		onClose={this.handleOptionsClose}
+				// 	>
+				// 		{eventOptions.map(({ text, onClick, MenuOptionIcon }) => {
+				// 			return (
+				// 				<MenuItem
+				// 					key={text}
+				// 					onClick={() => {
+				// 						this.handleOptionsClose();
+				// 						onClick();
+				// 					}}
+				// 				>
+				// 					<ListItemIcon>
+				// 						<MenuOptionIcon />
+				// 					</ListItemIcon>
+				// 					<ListItemText inset primary={text} />
+				// 				</MenuItem>
+				// 			);
+				// 		})}
+				// 	</Menu>
+				// </div>
+				// 		</Card>
+				// 	</Grid>
+				// );
 			});
 		} else {
 			return (
@@ -273,10 +338,20 @@ class EventsList extends Component {
 					}
 				/>
 
-				<PageHeading iconUrl="/icons/events-active.svg">Events</PageHeading>
-
 				<Grid container spacing={16}>
-					<Grid item xs={12} sm={12} lg={12}>
+					<Grid item xs={12} sm={12} lg={6}>
+						<PageHeading iconUrl="/icons/events-multi.svg">Events</PageHeading>
+					</Grid>
+					<Grid
+						item
+						xs={12}
+						sm={12}
+						lg={6}
+						style={{
+							display: "flex",
+							justifyContent: "flex-end"
+						}}
+					>
 						<Link to={"/admin/events/create"}>
 							<Button variant="callToAction">Create event</Button>
 						</Link>

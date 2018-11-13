@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import { fontFamilyDemiBold } from "../../styles/theme";
 
 const styles = theme => {
 	return {
@@ -12,7 +13,7 @@ const styles = theme => {
 		},
 		label: { color: "#868f9b" },
 		labelActive: {
-			fontFamily: "TTCommons-DemiBold"
+			fontFamily: fontFamilyDemiBold
 		},
 		circle: {
 			marginRight: theme.spacing.unit,

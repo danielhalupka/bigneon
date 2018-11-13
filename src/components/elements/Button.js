@@ -10,7 +10,8 @@ import {
 	primaryHex,
 	secondaryHex,
 	warningHex,
-	callToActionBackground
+	callToActionBackground,
+	fontFamilyDemiBold
 } from "../styles/theme";
 
 const styles = theme => {
@@ -61,11 +62,11 @@ const styles = theme => {
 			boxShadow: "none"
 		},
 		label: {
-			textTransform: "none"
+			textTransform: "capitalize"
 		},
 		boldLabel: {
-			textTransform: "none",
-			fontFamily: "TTCommons-DemiBold"
+			textTransform: "capitalize",
+			fontFamily: fontFamilyDemiBold
 		},
 		leftIcon: {
 			marginRight: theme.spacing.unit,

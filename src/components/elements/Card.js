@@ -25,6 +25,16 @@ const styles = {
 	raised: {
 		boxShadow: raisedCardBoxShadow
 	},
+	block: {
+		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.07)",
+		borderRadius: 0,
+		border: "none"
+	},
+	subCard: {
+		boxShadow: "0 2px 7px 1px rgba(112, 124, 237, 0.17)",
+		borderRadius: 8,
+		border: "none"
+	},
 	dialog: {
 		borderRadius: 8,
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)",
@@ -70,7 +80,14 @@ const CustomCard = props => {
 CustomCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	iconUrl: PropTypes.string,
-	variant: PropTypes.oneOf(["default", "raised", "form", "dialog"]),
+	variant: PropTypes.oneOf([
+		"default",
+		"raised",
+		"form",
+		"dialog",
+		"block",
+		"subCard"
+	]),
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };
 

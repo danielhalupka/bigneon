@@ -16,28 +16,8 @@ const OrgOwnerList = props => {
 
 	return (
 		<div>
-			<div
-				style={{
-					width: "100%",
-					textAlign: "center",
-					padding: 15
-				}}
-			>
-				<Link to={"/admin/events/create"}>
-					<Button
-						variant="callToAction"
-						onClick={toggleDrawer}
-						style={{ width: "100%" }}
-					>
-						Create new event
-					</Button>
-				</Link>
-			</div>
-
-			{/* <Divider className={classes.divider} /> */}
-
-			<MenuItem to="/admin/dashboard" iconName="account" onClick={toggleDrawer}>
-				Dashboard
+			<MenuItem iconName="events" to="/admin/events">
+				Events
 			</MenuItem>
 
 			<MenuItem
@@ -69,23 +49,6 @@ const OrgOwnerList = props => {
 				items={{
 					All: "/admin/artists",
 					Create: "/admin/artists/create"
-				}}
-				onClick={toggleDrawer}
-			/>
-
-			<MenuItem
-				iconName="account"
-				onClick={() => this.changeOpenMenu("events")}
-				expand={openMenuItem === "events"}
-				onClick={toggleDrawer}
-			>
-				Events
-			</MenuItem>
-			<SubMenuItems
-				isExpanded={openMenuItem === "events"}
-				items={{
-					"All events": "/admin/events",
-					Create: "/admin/events/create"
 				}}
 				onClick={toggleDrawer}
 			/>

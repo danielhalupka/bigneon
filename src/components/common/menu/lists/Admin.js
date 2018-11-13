@@ -37,7 +37,9 @@ const AdminList = props => {
 			</div>
 
 			{/* <Divider className={classes.divider} /> */}
-
+			<MenuItem iconName="events" to="/admin/events">
+				Events
+			</MenuItem>
 			<MenuItem
 				iconName="account"
 				onClick={() => changeOpenMenu("admin-organizations")}
@@ -80,21 +82,6 @@ const AdminList = props => {
 				items={{
 					All: "/admin/artists",
 					Create: "/admin/artists/create"
-				}}
-				onClick={toggleDrawer}
-			/>
-			<MenuItem
-				iconName="events"
-				onClick={() => changeOpenMenu("admin-events")}
-				expand={openMenuItem === "admin-events"}
-			>
-				Events
-			</MenuItem>
-			<SubMenuItems
-				isExpanded={openMenuItem === "admin-events"}
-				items={{
-					All: "/admin/events",
-					Create: "/admin/events/create"
 				}}
 				onClick={toggleDrawer}
 			/>
