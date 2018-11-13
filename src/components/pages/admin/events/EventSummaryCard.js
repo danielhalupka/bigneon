@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import CardMedia from "@material-ui/core/CardMedia";
+import Grid from "@material-ui/core/Grid";
+import Collapse from "@material-ui/core/Collapse";
 
 import { fontFamilyDemiBold } from "../../../styles/theme";
 import CheckBox from "../../../elements/form/CheckBox";
 import Card from "../../../elements/Card";
 import HorizontalBreakdownBar from "../../../elements/charts/HorizontalBreakdownBar";
-import IconButton from "../../../elements/IconButton";
-import { Collapse, Grid } from "@material-ui/core";
 import TicketTypeSalesBarChart from "../../../elements/charts/TicketTypeSalesBarChart";
 
 const styles = theme => {
@@ -54,6 +54,12 @@ const styles = theme => {
 			display: "flex",
 			justifyContent: "center",
 			cursor: "pointer",
+			paddingBottom: theme.spacing.unit * 2,
+			paddingTop: theme.spacing.unit * 2
+		},
+		expandIconRowPlaceholder: {
+			display: "flex",
+			justifyContent: "center",
 			paddingBottom: theme.spacing.unit * 2,
 			paddingTop: theme.spacing.unit * 2
 		},
@@ -197,7 +203,7 @@ const EventSummaryCard = props => {
 								<img src={"/icons/down-active.svg"} />
 							</div>
 						) : (
-							<div>&nbsp;</div>
+							<div className={classes.expandIconRowPlaceholder}>&nbsp;</div>
 						)}
 					</div>
 				</div>
@@ -212,7 +218,7 @@ const EventSummaryCard = props => {
 									values={[
 										{ label: "Sold", value: 123 },
 										{ label: "Open", value: 345 },
-										{ label: "Held", value: 5 }
+										{ label: "Held", value: 90 }
 									]}
 								/>
 							</Grid>
@@ -223,7 +229,7 @@ const EventSummaryCard = props => {
 									values={[
 										{ label: "Sold", value: 355 },
 										{ label: "Open", value: 455 },
-										{ label: "Held", value: 52 }
+										{ label: "Held", value: 72 }
 									]}
 								/>
 							</Grid>
@@ -234,7 +240,7 @@ const EventSummaryCard = props => {
 									values={[
 										{ label: "Sold", value: 234 },
 										{ label: "Open", value: 33 },
-										{ label: "Held", value: 51 }
+										{ label: "Held", value: 76 }
 									]}
 								/>
 							</Grid>

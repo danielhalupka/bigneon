@@ -7,7 +7,7 @@ import { withStyles, Typography } from "@material-ui/core";
 import Button from "../../../../elements/Button";
 import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
-import SubCard from "../../../../elements/SubCard";
+import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import TicketType from "./TicketType";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 
@@ -201,7 +201,9 @@ const validateFields = ticketTypes => {
 			let pricingErrors = {};
 
 			console.log(pricing);
-			let sorted = pricing.sort((a, b) => !a.startDate || !b.startDate ? 1 : a.startDate - b.startDate);
+			let sorted = pricing.sort(
+				(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
+			);
 			console.log(sorted);
 			sorted.forEach((pricingItem, index) => {
 				const { name, startDate, endDate, value } = pricingItem;
@@ -270,7 +272,7 @@ class EventTickets extends Component {
 		this.updateTicketType = this.updateTicketType.bind(this);
 	}
 
-	componentDidMount() { }
+	componentDidMount() {}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);
@@ -289,7 +291,7 @@ class EventTickets extends Component {
 				{ticketTypes.map((ticketType, index) => {
 					const active = index === ticketTypeActiveIndex;
 					return (
-						<SubCard key={index} active={active}>
+						<LeftAlignedSubCard key={index} active={active}>
 							<TicketType
 								onEditClick={() => {
 									const newIndex =
@@ -306,7 +308,7 @@ class EventTickets extends Component {
 								errors={errors && errors[index] ? errors[index] : {}}
 								{...ticketType}
 							/>
-						</SubCard>
+						</LeftAlignedSubCard>
 					);
 				})}
 

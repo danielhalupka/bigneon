@@ -24,7 +24,7 @@ const styles = theme => ({
 	}
 });
 
-const SubCard = props => {
+const LeftAlignedSubCard = props => {
 	const { classes, children, variant, active, ...rest } = props;
 
 	return (
@@ -40,7 +40,7 @@ const SubCard = props => {
 	);
 };
 
-SubCard.propTypes = {
+LeftAlignedSubCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	variant: PropTypes.oneOf(["default"]),
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
@@ -48,4 +48,4 @@ SubCard.propTypes = {
 	active: PropTypes.bool
 };
 
-export default withStyles(styles)(SubCard);
+export default withStyles(styles)(LeftAlignedSubCard);

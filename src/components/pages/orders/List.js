@@ -5,7 +5,7 @@ import moment from "moment";
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import OrderRow from "./OrderRow";
-import UnderlinedLink from "../../elements/UnderlinedLink";
+import StyledLink from "../../elements/StyledLink";
 import PageHeading from "../../elements/PageHeading";
 
 const styles = theme => ({
@@ -95,9 +95,9 @@ class OrderList extends Component {
 							<OrderRow item key={id}>
 								<Typography>{formattedDate}</Typography>
 								<Typography>
-									<UnderlinedLink to={`/orders/${id}`}>
+									<StyledLink underlined to={`/orders/${id}`}>
 										{orderNumber}
-									</UnderlinedLink>
+									</StyledLink>
 								</Typography>
 								<Typography>{eventName}</Typography>
 								<Typography>{ticketCount}</Typography>

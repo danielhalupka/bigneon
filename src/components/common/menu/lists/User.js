@@ -60,7 +60,7 @@ const UserList = props => {
 				<div className={classes.spacer} />
 
 				<StatsCard
-					iconUrl="/icons/orders-active.svg"
+					iconUrl="/icons/chart-active.svg"
 					label="My orders"
 					value={2}
 				/>

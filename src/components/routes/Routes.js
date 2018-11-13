@@ -38,9 +38,8 @@ import AdminVenue from "../pages/admin/venues/Venue";
 import AdminArtistsList from "../pages/admin/artists/List";
 import AdminArtist from "../pages/admin/artists/Artist";
 import AdminEventsList from "../pages/admin/events/List";
-import AdminEvent from "../pages/admin/events/Event_old";
+import AdminEventDashboard from "../pages/admin/events/Dashboard";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
-import AdminEventUpdateOld from "../pages/admin/events/Event_old";
 
 import AdminGuestList from "../pages/admin/events/guests/List";
 import AdminEventTicketHolds from "../pages/admin/events/holds/List";
@@ -245,6 +244,12 @@ class Routes extends Component {
 							/>
 							<PrivateRoute
 								exact
+								path="/admin/events/:id/dashboard/:subheading?"
+								component={AdminEventDashboard}
+								isAuthenticated={isAuthenticated}
+							/>
+							<PrivateRoute
+								exact
 								path="/admin/events/create"
 								component={AdminEventUpdate}
 								isAuthenticated={isAuthenticated}
@@ -253,18 +258,6 @@ class Routes extends Component {
 								exact
 								path="/admin/events/:id/edit"
 								component={AdminEventUpdate}
-								isAuthenticated={isAuthenticated}
-							/>
-							<PrivateRoute
-								exact
-								path="/admin/events/:id/edit/old" //TODO remove this when new one is ready
-								component={AdminEventUpdateOld}
-								isAuthenticated={isAuthenticated}
-							/>
-							<PrivateRoute
-								exact
-								path="/admin/events/:id"
-								component={AdminEvent}
 								isAuthenticated={isAuthenticated}
 							/>
 							<PrivateRoute

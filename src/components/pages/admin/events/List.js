@@ -11,9 +11,8 @@ import {
 	ListItemText
 } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import DashboardIcon from "@material-ui/icons/Dashboard";
 import EditIcon from "@material-ui/icons/Edit";
 import ViewIcon from "@material-ui/icons/Link";
 import GuestListIcon from "@material-ui/icons/People";
@@ -158,6 +157,14 @@ class EventsList extends Component {
 				const { id, name, promo_image_url, cancelled_at } = event;
 				const eventOptions = [
 					{
+						text: "Dashboard",
+						onClick: () =>
+							this.props.history.push(
+								`/admin/events/${this.eventMenuSelected}/dashboard`
+							),
+						MenuOptionIcon: DashboardIcon
+					},
+					{
 						text: "Edit event",
 						onClick: () =>
 							this.props.history.push(
@@ -260,62 +267,6 @@ class EventsList extends Component {
 						/>
 					</Grid>
 				);
-
-				// return (
-				// 	<Grid key={id} item xs={12} sm={12} lg={12}>
-				// 		<Card className={classes.paper}>
-				// 			<CardMedia
-				// 				className={classes.media}
-				// 				image={promo_image_url || "/images/event-placeholder.png"}
-				// 				title={name}
-				// 			/>
-
-				// 			<CardContent className={classes.cardContent}>
-				// 				<Typography variant="display1">
-				// 					{name} {cancelled_at ? "(Cancelled)" : ""}
-				// 				</Typography>
-				// 				<Typography variant="body1">
-				// 					{venue && venue.address ? venue.address : ""}
-				// 				</Typography>
-				// 			</CardContent>
-
-				// <div>
-				// 	<IconButton
-				// 		onClick={e => {
-				// 			this.eventMenuSelected = id;
-				// 			this.handleMenuClick(e);
-				// 		}}
-				// 	>
-				// 		<MoreHorizIcon />
-				// 	</IconButton>
-
-				// 	<Menu
-				// 		id="long-menu"
-				// 		anchorEl={optionsAnchorEl}
-				// 		open={Boolean(optionsAnchorEl)}
-				// 		onClose={this.handleOptionsClose}
-				// 	>
-				// 		{eventOptions.map(({ text, onClick, MenuOptionIcon }) => {
-				// 			return (
-				// 				<MenuItem
-				// 					key={text}
-				// 					onClick={() => {
-				// 						this.handleOptionsClose();
-				// 						onClick();
-				// 					}}
-				// 				>
-				// 					<ListItemIcon>
-				// 						<MenuOptionIcon />
-				// 					</ListItemIcon>
-				// 					<ListItemText inset primary={text} />
-				// 				</MenuItem>
-				// 			);
-				// 		})}
-				// 	</Menu>
-				// </div>
-				// 		</Card>
-				// 	</Grid>
-				// );
 			});
 		} else {
 			return (

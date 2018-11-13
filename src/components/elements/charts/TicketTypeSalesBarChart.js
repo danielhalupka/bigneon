@@ -12,7 +12,7 @@ const styles = theme => ({
 	root: {
 		flex: 1,
 		padding: theme.spacing.unit * 2,
-		height: chartHeight + 150
+		height: chartHeight + 130
 	},
 	header: {
 		display: "flex",
@@ -20,8 +20,12 @@ const styles = theme => ({
 		margin: theme.spacing.unit * 2
 	},
 	name: {
+		fontSize: theme.typography.fontSize * 0.85,
 		fontFamily: fontFamilyDemiBold,
 		textTransform: "uppercase"
+	},
+	totalRevenue: {
+		fontSize: theme.typography.fontSize * 0.82
 	},
 	chartBackground: {
 		paddingTop: theme.spacing.unit * 2,
@@ -33,7 +37,9 @@ const styles = theme => ({
 	horizontalLine: {
 		borderTop: "1px solid",
 		borderColor: "#9da3b4",
-		opacity: 0.5
+		opacity: 0.5,
+		marginLeft: theme.spacing.unit * 2,
+		marginRight: theme.spacing.unit * 2
 	},
 	chartOverlay: {
 		position: "relative",
@@ -50,10 +56,12 @@ const styles = theme => ({
 	},
 	totalLabel: {
 		fontSize: theme.typography.fontSize * 0.85,
-		color: "#9da3b4"
+		color: "#9da3b4",
+		textAlign: "center"
 	},
-	totalRevenue: {
-		fontSize: theme.typography.fontSize * 0.8
+	totalValue: {
+		textAlign: "center",
+		fontFamily: fontFamilyDemiBold
 	},
 	bar: {
 		width: 30,
@@ -71,8 +79,8 @@ const Label = ({ children, value, classes }) => (
 );
 
 const Bar = ({ classes, value, maxValue, index }) => {
-	const height = (value / maxValue) * chartHeight;
-	const topSpace = chartHeight - height;
+	const height = Math.round((value / maxValue) * chartHeight);
+	const topSpace = chartHeight - height - 1;
 	return (
 		<div
 			className={classes.bar}

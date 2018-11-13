@@ -96,7 +96,7 @@ class Order extends Component {
 
 		return (
 			<div>
-				<PageHeading iconUrl="/icons/orders-multi.svg">
+				<PageHeading iconUrl="/icons/chart-multi.svg">
 					Order details
 				</PageHeading>
 

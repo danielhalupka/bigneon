@@ -5,7 +5,13 @@ import { Link } from "react-router-dom";
 
 const styles = theme => {
 	return {
-		root: {
+		default: {
+			borderBottom: "solid",
+			borderWidth: 1.5,
+			borderColor: "transparent",
+			color: "transparent"
+		},
+		underlined: {
 			borderBottom: "solid",
 			borderWidth: 1.5,
 			borderColor: theme.palette.secondary.main,
@@ -17,20 +23,21 @@ const styles = theme => {
 	};
 };
 
-const UnderlinedLink = props => {
-	const { classes, children, to } = props;
+const StyledLink = props => {
+	const { classes, children, to, underlined } = props;
 
 	return (
-		<Link to={to} className={classes.root}>
+		<Link to={to} className={classes[underlined ? "underlined" : "default"]}>
 			<span className={classes.text}>{children}</span>
 		</Link>
 	);
 };
 
-UnderlinedLink.propTypes = {
+StyledLink.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.string.isRequired,
-	to: PropTypes.string.isRequired
+	to: PropTypes.string.isRequired,
+	underlined: PropTypes.bool
 };
 
-export default withStyles(styles)(UnderlinedLink);
+export default withStyles(styles)(StyledLink);

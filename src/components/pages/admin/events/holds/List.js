@@ -10,7 +10,7 @@ import PageHeading from "../../../../elements/PageHeading";
 import Divider from "../../../../common/Divider";
 import HoldRow from "./HoldRow";
 import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
-import UnderlinedLink from "../../../../elements/UnderlinedLink";
+import StyledLink from "../../../../elements/StyledLink";
 
 const styles = theme => ({
 	paper: {}
@@ -175,12 +175,13 @@ class TicketHoldList extends Component {
 						} = ticket;
 
 						const tds = [
-							<UnderlinedLink
+							<StyledLink
+								underlined
 								key={id}
 								to={`/admin/events/${eventId}/comps/${id}`}
 							>
 								{name}
-							</UnderlinedLink>,
+							</StyledLink>,
 							redemption_code,
 							hold_type,
 							quantity - available,

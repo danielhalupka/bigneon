@@ -9,7 +9,7 @@ import notifications from "../../../../../stores/notifications";
 import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 import EventArtist from "./EventArtist";
-import SubCard from "../../../../elements/SubCard";
+import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 
 const styles = theme => ({
@@ -214,7 +214,7 @@ class ArtistDetails extends Component {
 					}
 
 					return (
-						<SubCard key={index}>
+						<LeftAlignedSubCard key={index}>
 							<EventArtist
 								socialAccounts={socialAccounts}
 								typeHeading={index === 0 ? "Headline act *" : "Supporting act"}
@@ -231,7 +231,7 @@ class ArtistDetails extends Component {
 									eventUpdateStore.removeArtist(index);
 								}}
 							/>
-						</SubCard>
+						</LeftAlignedSubCard>
 					);
 				})}
 
