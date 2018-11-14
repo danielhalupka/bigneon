@@ -118,17 +118,20 @@ class Container extends React.Component {
 							{drawer}
 						</SwipeableDrawer>
 					</Hidden>
-					<Hidden smDown implementation="css">
-						<Drawer
-							variant="permanent"
-							open
-							classes={{
-								paper: classes.drawerPaper
-							}}
-						>
-							{drawer}
-						</Drawer>
-					</Hidden>
+					{user.showSideMenu ? (
+						<Hidden smDown implementation="css">
+							<Drawer
+								variant="permanent"
+								open
+								classes={{
+									paper: classes.drawerPaper
+								}}
+							>
+								{drawer}
+							</Drawer>
+						</Hidden>
+					) : null}
+
 					<main className={classes.content}>
 						<div className={classes.toolbar} />
 

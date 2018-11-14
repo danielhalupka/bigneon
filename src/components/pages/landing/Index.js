@@ -3,6 +3,7 @@ import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import SearchCard from "./cards/Search";
 import Results from "./cards/Results";
+import user from "../../../stores/user";
 
 const styles = theme => ({
 	searchGrid: {
@@ -11,6 +12,10 @@ const styles = theme => ({
 });
 
 class Home extends Component {
+	componentDidMount() {
+		user.toggleSideMenu(false);
+	}
+
 	render() {
 		const { classes } = this.props;
 

@@ -18,7 +18,7 @@ import Account from "../pages/account/Index";
 import Artists from "../pages/landing/Artists";
 import OrderList from "../pages/orders/List";
 import Order from "../pages/orders/Order";
-import TicketList from "../pages/tickets/List";
+import FanHub from "../pages/fanhub/Index";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 import PasswordReset from "../pages/authentication/PasswordReset";
@@ -140,8 +140,8 @@ class Routes extends Component {
 							/>
 							<PrivateRoute
 								exact
-								path="/tickets"
-								component={TicketList}
+								path="/hub"
+								component={FanHub}
 								isAuthenticated={isAuthenticated}
 							/>
 							<PrivateRoute

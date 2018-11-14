@@ -37,11 +37,7 @@ const UserList = props => {
 				Account
 			</MenuItem>
 
-			<MenuItem to="/tickets" iconName="tickets" onClick={toggleDrawer}>
-				My tickets
-			</MenuItem>
-
-			<MenuItem to="/orders" iconName="orders" onClick={toggleDrawer}>
+			<MenuItem to="/orders" iconName="chart" onClick={toggleDrawer}>
 				My orders
 			</MenuItem>
 

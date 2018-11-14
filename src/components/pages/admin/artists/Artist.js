@@ -15,6 +15,7 @@ import { validUrl } from "../../../../validators";
 import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -56,6 +57,8 @@ class Artist extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
+
 		const { artistId } = this.state;
 
 		if (artistId) {

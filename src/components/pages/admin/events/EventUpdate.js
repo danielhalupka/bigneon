@@ -33,6 +33,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 
 import eventUpdateStore from "../../../../stores/eventUpdate";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -66,6 +67,7 @@ class Event extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
 		if (
 			this.props.match &&
 			this.props.match.params &&
@@ -209,15 +211,12 @@ class Event extends Component {
 		let fields = Object.keys(data.fields);
 		let errors = {};
 		for (let i = 0; i < fields.length; i++) {
-
-
 			if (/venue\./.test(fields[i])) {
-
 				errors.venueId = data.fields[fields[i]][0].code;
 			}
 		}
 
-		return	{
+		return {
 			errors: {
 				event: errors
 			}
@@ -250,7 +249,6 @@ class Event extends Component {
 						let errors = this.mapValidationErrorResponse(error.response.data);
 
 						this.setState(errors);
-
 
 						notifications.show({
 							message: "Validation error.",
@@ -306,7 +304,7 @@ class Event extends Component {
 						eventUpdateStore.updateOrganizationId(organization.id);
 					}}
 					open={!organizationId}
-					onClose={() => { }}
+					onClose={() => {}}
 				/>
 
 				<PageHeading iconUrl="/icons/events-multi.svg">

@@ -38,6 +38,7 @@ class CheckoutSelection extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(false);
 		cart.refreshCart();
 
 		if (

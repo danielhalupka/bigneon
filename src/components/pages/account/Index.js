@@ -43,6 +43,8 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
+
 		//Initially load from current store
 		const { firstName, lastName, email, phone, profilePicUrl } = user;
 		this.setState({

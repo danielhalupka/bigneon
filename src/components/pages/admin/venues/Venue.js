@@ -14,6 +14,7 @@ import Bigneon from "../../../../helpers/bigneon";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 import { validPhone } from "../../../../validators";
 import PageHeading from "../../../elements/PageHeading";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -50,6 +51,8 @@ class Venue extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
+
 		const { venueId } = this.state;
 
 		if (venueId) {
@@ -401,7 +404,13 @@ class Venue extends Component {
 												"postal_code"
 											);
 
-											this.setState({ city, state, country, postal_code, place_id });
+											this.setState({
+												city,
+												state,
+												country,
+												postal_code,
+												place_id
+											});
 										}}
 									/>
 								</CardContent>

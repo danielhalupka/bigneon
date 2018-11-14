@@ -15,6 +15,7 @@ import {
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import PageHeading from "../../elements/PageHeading";
+import user from "../../../stores/user";
 
 const styles = theme => ({
 	paper: {}
@@ -30,6 +31,8 @@ class Order extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
+
 		if (
 			this.props.match &&
 			this.props.match.params &&

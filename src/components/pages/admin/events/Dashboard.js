@@ -12,6 +12,7 @@ import CheckBox from "../../../elements/form/CheckBox";
 import StyledLink from "../../../elements/StyledLink";
 import Divider from "../../../common/Divider";
 import Summary from "./dashboardContent/Summary";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	rightHeaderOptions: {
@@ -42,6 +43,7 @@ class EventDashboard extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
 		this.loadEventDetails(this.props.match.params.id);
 	}
 

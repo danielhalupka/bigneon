@@ -8,6 +8,7 @@ import UpdateCard from "./cards/UpdateCard";
 import InviteUserCard from "./cards/InviteUserCard";
 import FeeScheduleCard from "./cards/FeeScheduleCard";
 import PageHeading from "../../../elements/PageHeading";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -24,6 +25,10 @@ class Organization extends Component {
 			activeTab: 0,
 			organizationId: null
 		};
+	}
+
+	componentDidMount() {
+		user.toggleSideMenu(true);
 	}
 
 	static getDerivedStateFromProps(props, state) {

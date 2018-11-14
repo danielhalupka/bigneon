@@ -82,6 +82,7 @@ class CheckoutConfirmation extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(false);
 		cart.refreshCart();
 
 		if (

@@ -10,6 +10,7 @@ import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {},
@@ -29,6 +30,7 @@ class OrganizationsList extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
 		Bigneon()
 			.organizations.index()
 			.then(response => {

@@ -32,6 +32,14 @@ class User {
 	@observable
 	showRequiresAuthDialog = false;
 
+	@observable
+	showSideMenu = false;
+
+	@action
+	toggleSideMenu(state) {
+		this.showSideMenu = state;
+	}
+
 	@action
 	refreshUser(onSuccess = null, onError = null) {
 		const token = localStorage.getItem("access_token");

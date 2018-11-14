@@ -109,6 +109,8 @@ class ViewEvent extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(false);
+
 		if (
 			this.props.match &&
 			this.props.match.params &&

@@ -11,10 +11,11 @@ import TransferTicketsDialog from "./TransferTicketsDialog";
 import SelectGroup from "../../common/form/SelectGroup";
 import TicketDialog from "./TicketDialog";
 import PageHeading from "../../elements/PageHeading";
+import user from "../../../stores/user";
 
 const styles = theme => ({});
 
-class TicketList extends Component {
+class FanHub extends Component {
 	constructor(props) {
 		super(props);
 
@@ -29,6 +30,8 @@ class TicketList extends Component {
 	}
 
 	componentDidMount() {
+		user.toggleSideMenu(true);
+
 		Bigneon()
 			.tickets.index()
 			.then(response => {
@@ -216,4 +219,4 @@ class TicketList extends Component {
 	}
 }
 
-export default withStyles(styles)(TicketList);
+export default withStyles(styles)(FanHub);

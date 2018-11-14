@@ -168,7 +168,8 @@ class Cart {
 		const seconds = this.seconds_until_expiry - minutes * 60;
 
 		return `${minutes > 0 ? `${minutes}:` : ""}${
-			seconds >= 10 ? seconds : `0${seconds}`}`;
+			seconds >= 10 ? seconds : `0${seconds}`
+		}`;
 	}
 }
 

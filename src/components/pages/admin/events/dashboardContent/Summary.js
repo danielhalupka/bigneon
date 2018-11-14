@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -84,7 +84,7 @@ const NumberCard = ({ classes, label, active, value, iconName }) => {
 	);
 };
 
-class Summary extends React.Component {
+class Summary extends Component {
 	constructor(props) {
 		super(props);
 
@@ -100,6 +100,12 @@ class Summary extends React.Component {
 
 	getDailyBreakdownValues() {
 		let result = [];
+
+		// let test =
+		// [
+		// 	{ day: 1, ticketSales: 99, revenue_in_cents: 3000 },
+		// 	{ day: 2, ticketSales: 120, revenue_in_cents: 4000 }
+		// ];
 
 		for (let index = 0; index < 30; index++) {
 			const ticketsSales =
