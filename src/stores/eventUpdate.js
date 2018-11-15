@@ -78,12 +78,11 @@ class EventUpdate {
 	}
 
 	@action
-	loadTicketTypes() {
+	loadTicketTypes(ticket_types) {
 		if (!this.id) {
 			//No event yet, add one ticket by default
 			this.addTicketType();
 		}
-
 		Bigneon()
 			.events.ticketTypes.index({ event_id: this.id })
 			.then(response => {
@@ -133,7 +132,7 @@ class EventUpdate {
 			capacity: "",
 			priceAtDoor: "",
 			increment: 1,
-			maxTicketsPerCustomer: 10,
+			limitPerPerson: 10,
 			startDate: moment(), //TODO use the event date for defaults
 			endDate: moment(),
 

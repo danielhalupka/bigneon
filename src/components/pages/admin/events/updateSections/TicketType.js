@@ -108,7 +108,7 @@ const TicketDetails = observer(props => {
 		priceAtDoor,
 		showAdditionalOptions,
 		increment,
-		maxTicketsPerCustomer,
+		limitPerPerson,
 		description,
 		showPricing,
 		pricing
@@ -240,15 +240,15 @@ const TicketDetails = observer(props => {
 					</div>
 					<div className={classes.additionalInputContainer}>
 						<InputGroup
-							error={errors.maxTicketsPerCustomer}
-							value={maxTicketsPerCustomer}
+							error={errors.limitPerPerson}
+							value={limitPerPerson}
 							name="maxTicketsPerCustomer"
 							label="Max tickets per customer"
 							placeholder="10"
 							type="number"
 							onChange={e => {
 								updateTicketType(index, {
-									maxTicketsPerCustomer: e.target.value
+									limitPerPerson: e.target.value
 								});
 							}}
 							onBlur={validateFields}
