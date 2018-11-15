@@ -12,6 +12,7 @@ import selectedEvent from "../../../stores/selectedEvent";
 import user from "../../../stores/user";
 import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({
 	card: {
@@ -37,7 +38,7 @@ class CheckoutSuccess extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(false);
+		layout.toggleSideMenu(false);
 		cart.emptyCart(); //TODO move this to after they've submitted the final form
 
 		if (

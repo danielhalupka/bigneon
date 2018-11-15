@@ -40,11 +40,13 @@ const styles = theme => {
 		callToAction: {
 			background: callToActionBackground,
 			color: "#FFF",
-			boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.47)"
+			boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.47)",
+			backgroundRepeat: "no-repeat"
 		},
 		warning: {
 			background: `linear-gradient(45deg, ${warningHex} 10%, ${warningHex} 90%)`,
-			color: "#FFF"
+			color: "#FFF",
+			backgroundRepeat: "no-repeat"
 		},
 		additional: {
 			height: 20,

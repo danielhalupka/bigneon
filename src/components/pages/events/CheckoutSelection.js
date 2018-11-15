@@ -13,6 +13,7 @@ import selectedEvent from "../../../stores/selectedEvent";
 import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({
 	card: {
@@ -38,7 +39,7 @@ class CheckoutSelection extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(false);
+		layout.toggleSideMenu(false);
 		cart.refreshCart();
 
 		if (

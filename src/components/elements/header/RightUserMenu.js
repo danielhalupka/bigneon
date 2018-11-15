@@ -211,9 +211,7 @@ class RightHeaderMenu extends React.Component {
 
 				<Hidden smDown implementation="css" className={classes.menuLink}>
 					<Link to="/app">
-						<Button size="large" variant="callToAction">
-							Get the App
-						</Button>
+						<Button variant="callToAction">Get the App</Button>
 					</Link>
 				</Hidden>
 			</span>

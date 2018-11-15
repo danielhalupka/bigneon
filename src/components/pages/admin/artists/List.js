@@ -9,7 +9,7 @@ import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
-import user from "../../../../stores/user";
+import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -42,7 +42,7 @@ class ArtistsList extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
 
 		Bigneon()
 			.artists.index()

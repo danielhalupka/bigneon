@@ -11,7 +11,7 @@ import TransferTicketsDialog from "./TransferTicketsDialog";
 import SelectGroup from "../../common/form/SelectGroup";
 import TicketDialog from "./TicketDialog";
 import PageHeading from "../../elements/PageHeading";
-import user from "../../../stores/user";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({});
 
@@ -30,7 +30,8 @@ class FanHub extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
+
 
 		Bigneon()
 			.tickets.index()

@@ -60,7 +60,9 @@ class SelectedEvent {
 				this.user_is_interested = user_is_interested;
 				this.artists = artists;
 
-				const displayEventStartDate = moment(event_start).format(
+				const eventStartDateMoment = moment(event_start);
+
+				const displayEventStartDate = eventStartDateMoment.format(
 					"dddd, MMMM Do YYYY"
 				);
 				const displayDoorTime = moment(door_time).format("hA");
@@ -85,6 +87,7 @@ class SelectedEvent {
 
 				this.event = {
 					...event,
+					eventStartDateMoment,
 					displayEventStartDate,
 					displayDoorTime,
 					displayShowTime,

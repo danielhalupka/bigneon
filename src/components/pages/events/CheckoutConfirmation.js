@@ -18,6 +18,7 @@ import cart from "../../../stores/cart";
 import EditCartItemDialog from "./EditCartItemDialog";
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
 import Bigneon from "../../../helpers/bigneon";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({
 	card: {
@@ -82,7 +83,7 @@ class CheckoutConfirmation extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(false);
+		layout.toggleSideMenu(false);
 		cart.refreshCart();
 
 		if (

@@ -5,111 +5,117 @@ import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 import { observer } from "mobx-react";
+import Hidden from "@material-ui/core/Hidden";
 
 import Button from "../../elements/Button";
 import SocialButton from "../../common/social/SocialButton";
 import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
-import SupportingArtistsLabel from "./SupportingArtistsLabel";
 import user from "../../../stores/user";
+import Card from "../../elements/Card";
+import EventHeaderImage from "../../elements/event/EventHeaderImage";
+import layout from "../../../stores/layout";
+import { fontFamilyDemiBold } from "../../styles/theme";
+import ArtistSummary from "../../elements/event/ArtistSummary";
+import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
+import DateDropTag from "../../elements/event/DateDropTag";
+import IconLink from "../../elements/social/IconLink";
 
 const styles = theme => ({
-	card: {
-		padding: theme.spacing.unit * 4
+	root: {},
+	container: {
+		paddingBottom: theme.spacing.unit * 15
 	},
-	media: {
-		height: 400,
-		width: "100%",
-		borderRadius: theme.shape.borderRadius
+	eventDetailsContent: {
+		paddingLeft: theme.spacing.unit * 2,
+		paddingRight: theme.spacing.unit * 2,
+		paddingTop: theme.spacing.unit * 4
 	},
-	descriptionDiv: {
-		marginTop: theme.spacing.unit * 4,
-		marginBottom: theme.spacing.unit * 4
+	artistContainer: {
+		marginBottom: theme.spacing.unit * 2
+	},
+	heading: {
+		fontSize: theme.typography.fontSize * 2,
+		fontFamily: fontFamilyDemiBold,
+		marginTop: theme.spacing.unit * 3,
+		marginBottom: theme.spacing.unit * 2
+	},
+	description: {
+		lineHeight: 1.67,
+		fontSize: theme.typography.fontSize * 1.1,
+		marginTop: theme.spacing.unit * 2,
+		color: "#656d78"
+	},
+	eventSubCardContent: {
+		paddingLeft: theme.spacing.unit * 4,
+		paddingRight: theme.spacing.unit * 4,
+		paddingBottom: theme.spacing.unit * 4
+	},
+	eventSubCardRow1: {
+		display: "flex",
+		justifyContent: "space-between"
+	},
+	eventSubCardRow2: { marginTop: theme.spacing.unit * 4 },
+	eventSubCardRow3: { marginTop: theme.spacing.unit * 4 },
+	eventSubCardRow4: { marginTop: theme.spacing.unit * 4 },
+	eventSubCardHeading: {
+		fontSize: theme.typography.fontSize * 1.5,
+		fontFamily: fontFamilyDemiBold,
+		marginTop: theme.spacing.unit * 4
+	},
+	textAndIconRow: {
+		display: "flex",
+		alignContent: "center",
+		alignItems: "center"
+	},
+	eventSubCardIcon: {
+		marginRight: theme.spacing.unit * 2
+	},
+	eventSubCardSubHeading: {
+		textTransform: "uppercase",
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.8,
+		lineHeight: 0,
+		marginTop: 4
+	},
+	eventSubCardSubText: {
+		marginTop: theme.spacing.unit * 2,
+		marginBottom: theme.spacing.unit * 2,
+		fontSize: theme.typography.fontSize * 0.8,
+		color: "#9da3b4",
+		lineHeight: 1.5
+	},
+	eventSubCardSubLink: {
+		fontSize: theme.typography.fontSize * 0.75,
+		color: "#ff22b2"
+	},
+	ticketPricing: {
+		marginTop: theme.spacing.unit * 2,
+		fontSize: theme.typography.fontSize * 1.1,
+		fontFamily: fontFamilyDemiBold
+	},
+	ticketPricingValue: {
+		fontSize: theme.typography.fontSize * 1.8,
+		color: "#ff22b2"
+	},
+	callToAction: {
+		marginTop: theme.spacing.unit * 2,
+		marginBottom: theme.spacing.unit * 2,
+		width: "100%"
+	},
+	socialLinks: {
+		marginTop: theme.spacing.unit * 2,
+		display: "flex",
+		justifyContent: "center"
 	}
 });
 
-const ArtistDescription = props => {
-	const {
-		classes,
-		name,
-		bio,
-		facebook_username,
-		instagram_username,
-		snapchat_username,
-		soundcloud_username,
-		twitter_username,
-		website_url
-	} = props;
-
-	return (
-		<div className={classes.descriptionDiv}>
-			<Typography variant="subheading">{name}</Typography>
-
-			{facebook_username ? (
-				<SocialButton
-					style={{ marginRight: 10 }}
-					icon="facebook"
-					href={`https://facebook.com/${facebook_username}`}
-					size={35}
-				/>
-			) : null}
-
-			{twitter_username ? (
-				<SocialButton
-					style={{ marginRight: 10 }}
-					icon="twitter"
-					href={`https://twitter.com/${twitter_username}`}
-					size={35}
-				/>
-			) : null}
-
-			{instagram_username ? (
-				<SocialButton
-					style={{ marginRight: 10 }}
-					icon="instagram"
-					href={`https://instagram.com/${instagram_username}`}
-					size={35}
-				/>
-			) : null}
-
-			{snapchat_username ? (
-				<SocialButton
-					style={{ marginRight: 10 }}
-					icon="snapchat"
-					href={`https://www.snapchat.com/add/${snapchat_username}`}
-					size={35}
-				/>
-			) : null}
-
-			{soundcloud_username ? (
-				<SocialButton
-					style={{ marginRight: 10 }}
-					icon="soundcloud"
-					href={`https://soundcloud.com/${soundcloud_username}`}
-					size={35}
-				/>
-			) : null}
-
-			{bio ? (
-				<Typography style={{ marginTop: 20 }} variant="body1">
-					{bio}
-				</Typography>
-			) : null}
-		</div>
-	);
-};
-
 @observer
 class ViewEvent extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {};
-	}
-
 	componentDidMount() {
-		user.toggleSideMenu(false);
+		layout.toggleSideMenu(false);
+		layout.toggleContainerPadding(false);
 
 		if (
 			this.props.match &&
@@ -129,6 +135,10 @@ class ViewEvent extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		layout.toggleContainerPadding(true);
+	}
+
 	toggleUserInterest() {
 		if (!user.isAuthenticated) {
 			//Show dialog for the user to signup/login, try again when they're authenticated
@@ -137,21 +147,6 @@ class ViewEvent extends Component {
 		}
 
 		selectedEvent.toggleUserInterest();
-	}
-
-	renderArtists() {
-		const { classes } = this.props;
-		const { artists } = selectedEvent;
-		if (!artists) {
-			return null;
-		}
-
-		return artists.map((artist, index) => (
-			<div key={index}>
-				<ArtistDescription {...artist} classes={classes} />
-				{artists.length > index + 1 ? <Divider /> : null}
-			</div>
-		));
 	}
 
 	renderInterestedButton() {
@@ -168,7 +163,6 @@ class ViewEvent extends Component {
 
 		return (
 			<Button
-				size="large"
 				style={{ width: "100%", marginTop: 10 }}
 				variant={user_is_interested ? "default" : "primary"}
 				onClick={this.toggleUserInterest.bind(this)}
@@ -180,7 +174,14 @@ class ViewEvent extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { event, venue, artists, organization, id } = selectedEvent;
+		const {
+			event,
+			venue,
+			artists,
+			organization,
+			id,
+			ticket_types
+		} = selectedEvent;
 
 		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
@@ -198,120 +199,186 @@ class ViewEvent extends Component {
 			age_limit,
 			promo_image_url,
 			displayDoorTime,
-			displayShowTime
+			displayShowTime,
+			eventStartDateMoment
 		} = event;
 
-		return (
-			<Paper className={classes.card}>
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={12}>
-						<Typography variant="subheading">
-							{displayEventStartDate}
-						</Typography>
-						<br />
-					</Grid>
-
-					<Grid item xs={12} sm={12} lg={12}>
-						<Typography variant="caption">{top_line_info}</Typography>
-
-						<Typography variant="display3" component="h3">
-							{name}
-						</Typography>
-
-						<Typography variant="display1" component="h3">
-							<SupportingArtistsLabel artists={artists} />
-						</Typography>
-
-						<Typography variant="subheading">{venue.name}</Typography>
-					</Grid>
-
-					<Grid item xs={12} sm={8} lg={8}>
-						<CardMedia
-							className={classes.media}
-							image={promo_image_url}
-							title={name}
+		const subCardContent = (
+			<div className={classes.eventSubCardContent}>
+				<div className={classes.eventSubCardRow1}>
+					<Typography className={classes.eventSubCardHeading}>
+						Time and location
+					</Typography>
+					<DateDropTag date={eventStartDateMoment} />
+				</div>
+				<div className={classes.eventSubCardRow2}>
+					<div className={classes.textAndIconRow}>
+						<img
+							className={classes.eventSubCardIcon}
+							src="/icons/events-black.svg"
 						/>
-
-						<div className={classes.descriptionDiv}>
-							<Typography variant="headline">Description</Typography>
-							<Typography variant="body1">{additional_info}</Typography>
-						</div>
-
-						<Typography style={{ marginTop: 60 }} variant="headline">
-							Artists
-						</Typography>
-
-						{this.renderArtists()}
-					</Grid>
-					<Grid item xs={12} sm={4} lg={4}>
-						<Typography style={{ textAlign: "center" }} variant="headline">
-							$10 - $50
-						</Typography>
-
-						<Link to={`/events/${id}/tickets`}>
-							<Button
-								size="large"
-								style={{ width: "100%" }}
-								variant="callToAction"
-							>
-								Book now
-							</Button>
-						</Link>
-
-						{this.renderInterestedButton()}
-
-						<div style={{ marginBottom: 30 }} />
-
-						<Typography style={{ marginBottom: 10 }} variant="subheading">
+						<Typography className={classes.eventSubCardSubHeading}>
 							Date and time
 						</Typography>
+					</div>
 
-						<Typography variant="body1">{displayEventStartDate}</Typography>
-						<Typography variant="body1">
-							Doors: {displayDoorTime} / Show: {displayShowTime}
+					<Typography className={classes.eventSubCardSubText}>
+						{displayEventStartDate}
+						<br />
+						Doors {displayDoorTime} - Show {displayShowTime}
+						<br />
+						{age_limit
+							? `This event is for over ${age_limit} year olds`
+							: "This event is for all ages"}
+					</Typography>
+				</div>
+
+				<Divider />
+
+				<div className={classes.eventSubCardRow3}>
+					<div className={classes.textAndIconRow}>
+						<img
+							className={classes.eventSubCardIcon}
+							src="/icons/location-black.svg"
+						/>
+						<Typography className={classes.eventSubCardSubHeading}>
+							{venue.name}
 						</Typography>
-						<Typography variant="body1">
-							{age_limit
-								? `This event is for over ${age_limit} year olds`
-								: "This event is for all ages"}
-						</Typography>
+					</div>
 
-						<div style={{ marginBottom: 30 }} />
-
-						<Typography style={{ marginBottom: 10 }} variant="subheading">
-							Location
-						</Typography>
-
-						<Typography variant="body1">{venue.name}</Typography>
-						<Typography variant="body1">{venue.address}</Typography>
+					<Typography className={classes.eventSubCardSubText}>
+						{venue.address}, {venue.city}.<br />
+						{venue.postal_code}, {venue.state}, {venue.country}
 						{venue.googleMapsLink ? (
 							<a target="_blank" href={venue.googleMapsLink}>
-								<Typography variant="body1">View map</Typography>
+								<span className={classes.eventSubCardSubLink}>
+									&nbsp;-&nbsp;view map
+								</span>
 							</a>
 						) : null}
+					</Typography>
+				</div>
 
-						<div style={{ marginBottom: 30 }} />
+				<Divider />
 
-						<Typography style={{ marginBottom: 10 }} variant="subheading">
-							Share with your friends
-						</Typography>
+				<div className={classes.eventSubCardRow4}>
+					<Typography className={classes.eventSubCardSubHeading}>
+						Tickets
+					</Typography>
+					<br />
 
-						<SocialButton
-							style={{ marginRight: 10 }}
-							icon="facebook"
-							href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-								window.location.href
-							)}`}
+					{ticket_types.map(({ id, name, status, ticket_pricing }) => {
+						let price = "";
+						if (ticket_pricing) {
+							price = ticket_pricing.price_in_cents / 100;
+							//description = ticket_pricing.name;
+							//TODO check if they're available, if none are available change the layout
+						}
+						return (
+							<Typography key={id} className={classes.ticketPricing}>
+								<span className={classes.ticketPricingValue}>${price}</span>
+								&nbsp;&nbsp;
+								{name}
+							</Typography>
+						);
+					})}
+					<Link to={`/events/${id}/tickets`}>
+						<Button className={classes.callToAction} variant="callToAction">
+							Tickets
+						</Button>
+					</Link>
+
+					<div className={classes.socialLinks}>
+						<IconLink
+							color="black"
+							style={{ marginRight: 4 }}
+							icon={"facebook"}
+							size={40}
 						/>
-						<SocialButton
-							icon="twitter"
-							href={`https://twitter.com/home?status=${encodeURIComponent(
-								window.location.href
-							)}`}
+						<IconLink
+							color="black"
+							style={{ marginLeft: 4 }}
+							icon={"twitter"}
+							size={40}
 						/>
+					</div>
+				</div>
+			</div>
+		);
+
+		return (
+			<div>
+				<EventHeaderImage
+					name={name}
+					topLineInfo={top_line_info}
+					src={promo_image_url}
+					artists={artists}
+				/>
+
+				<Grid container spacing={0} direction="row" justify="center">
+					<Grid item xs={12} sm={12} md={11} lg={9}>
+						<Card variant="plain">
+							<Grid
+								container
+								spacing={0}
+								direction="row"
+								justify="center"
+								className={classes.container}
+							>
+								<Grid item xs={12} sm={12} md={6} lg={6}>
+									<div className={classes.eventDetailsContent}>
+										<Typography className={classes.heading}>
+											Description
+										</Typography>
+										<Typography className={classes.description}>
+											{additional_info}
+										</Typography>
+
+										<Typography className={classes.heading}>Artists</Typography>
+										{artists.map(({ artist }, index) => (
+											<div key={index} className={classes.artistContainer}>
+												<ArtistSummary headliner={index === 0} {...artist} />
+											</div>
+										))}
+									</div>
+								</Grid>
+
+								<Grid item xs={12} sm={12} md={6} lg={6}>
+									{/* Desktop */}
+									<Hidden smDown implementation="css">
+										<EventDetailsOverlayCard
+											style={{
+												width: "30%",
+												maxWidth: 550,
+												top: 220,
+												right: 200
+											}}
+											imageSrc={promo_image_url}
+										>
+											{subCardContent}
+										</EventDetailsOverlayCard>
+									</Hidden>
+
+									{/* Mobile */}
+									<Hidden mdUp>
+										<EventDetailsOverlayCard
+											style={{
+												width: "100%",
+												paddingLeft: 20,
+												paddingRight: 20,
+												top: 300
+											}}
+											imageSrc={promo_image_url}
+										>
+											{subCardContent}
+										</EventDetailsOverlayCard>
+									</Hidden>
+								</Grid>
+							</Grid>
+						</Card>
 					</Grid>
 				</Grid>
-			</Paper>
+			</div>
 		);
 	}
 }
