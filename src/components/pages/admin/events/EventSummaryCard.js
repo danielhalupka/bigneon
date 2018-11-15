@@ -124,7 +124,8 @@ const EventSummaryCard = props => {
 		totalCapacity,
 		totalSales,
 		isExpanded,
-		onExpandClick
+		onExpandClick,
+		ticketTypes
 	} = props;
 
 	return (
@@ -211,39 +212,20 @@ const EventSummaryCard = props => {
 				<Collapse in={isExpanded}>
 					<div className={classes.expandedViewContent}>
 						<Grid container spacing={32}>
-							<Grid item xs={12} sm={6} lg={4}>
-								<TicketTypeSalesBarChart
-									name={"General admission"}
-									totalRevenue={2560}
-									values={[
-										{ label: "Sold", value: 123 },
-										{ label: "Open", value: 345 },
-										{ label: "Held", value: 90 }
-									]}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6} lg={4}>
-								<TicketTypeSalesBarChart
-									name={"VIP package"}
-									totalRevenue={1345}
-									values={[
-										{ label: "Sold", value: 355 },
-										{ label: "Open", value: 455 },
-										{ label: "Held", value: 72 }
-									]}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6} lg={4}>
-								<TicketTypeSalesBarChart
-									name={"Fan club"}
-									totalRevenue={1020}
-									values={[
-										{ label: "Sold", value: 234 },
-										{ label: "Open", value: 33 },
-										{ label: "Held", value: 76 }
-									]}
-								/>
-							</Grid>
+
+							{ticketTypes.map(ticketType => (
+								<Grid item xs={12} sm={6} lg={4}>
+									<TicketTypeSalesBarChart
+										name={ticketType.name}
+										totalRevenue={ticketType.sales_total_in_cents}
+										values={[
+											{ label: "Sold", value: ticketType.sold_held+ticketType.sold_unreserved },
+											{ label: "Open", value: ticketType.open },
+											{ label: "Held", value: ticketType.held }
+										]}
+									/>
+								</Grid>
+							))}
 						</Grid>
 						<div
 							className={classes.expandIconRow}
@@ -273,7 +255,8 @@ EventSummaryCard.propTypes = {
 	totalCapacity: PropTypes.number.isRequired,
 	totalSales: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,
-	onExpandClick: PropTypes.func.isRequired
+	onExpandClick: PropTypes.func.isRequired,
+	ticketTypes: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(EventSummaryCard);
