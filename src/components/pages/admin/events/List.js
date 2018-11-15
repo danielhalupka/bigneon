@@ -255,16 +255,16 @@ class EventsList extends Component {
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}
-							eventDate={"Wed 2/21/18. 9:30 PM EST"}
+							eventDate={event.event_start }//.format("DDD M/d/yy. h:mm PM Z")}
 							menuButton={MenuButton}
-							isPublished={true}
-							isOnSale={false}
-							totalSold={100}
-							totalOpen={200}
-							totalHeld={50}
-							totalCapacity={350}
-							totalSales={120}
-							isExpanded={expandedCardId === id}
+							isPublished={event.published_date}
+							isOnSale={event.on_sale}
+							totalSold={event.sold_held+event.sold_unreserved}
+							totalOpen={event.tickets_open}
+							totalHeld={event.tickets_held}
+							totalCapacity={event.total_tickets}
+							totalSales={event.sales_total_in_cents}
+							isExpanded={event.expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
 						/>
 					</Grid>

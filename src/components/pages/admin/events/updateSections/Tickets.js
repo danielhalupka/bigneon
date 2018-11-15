@@ -22,7 +22,8 @@ const formatForSaving = ticketTypes => {
 			name,
 			pricing,
 			startDate,
-			endDate
+			endDate,
+			limitPerPerson
 		} = ticketType;
 
 		let ticket_pricing = [];
@@ -52,6 +53,7 @@ const formatForSaving = ticketTypes => {
 			end_date: moment(endDate)
 				.utc()
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			limit_per_person: limitPerPerson,
 			ticket_pricing
 		});
 	});
@@ -68,7 +70,7 @@ const formatForInput = ticket_types => {
 			description,
 			capacity,
 			increment,
-			max_tickets_per_customer, //TODO check this ends up being the field in the API
+			limit_per_person, 
 			ticket_pricing,
 			start_date,
 			end_date
@@ -88,6 +90,7 @@ const formatForInput = ticket_types => {
 			if (pricePoint.end_date) {
 				endDate = moment.utc(pricePoint.end_date).local();
 			}
+
 
 			pricing.push({
 				id: pricePoint.id,
@@ -113,8 +116,8 @@ const formatForInput = ticket_types => {
 			description: description || "",
 			capacity: capacity ? capacity : 0,
 			increment: increment ? increment : 1,
-			maxTicketsPerCustomer: max_tickets_per_customer
-				? max_tickets_per_customer
+			limitPerPerson: limit_per_person
+				? limit_per_person
 				: "",
 			startDate: ticketStartDate,
 			endDate: ticketEndDate,
