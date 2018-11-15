@@ -259,15 +259,16 @@ class EventsList extends Component {
 							name={name}
 							eventDate={event.event_start }//.format("DDD M/d/yy. h:mm PM Z")}
 							menuButton={MenuButton}
-							isPublished={event.published_date}
-							isOnSale={event.on_sale}
+							isPublished={true}
+							isOnSale={true}
 							totalSold={event.sold_held+event.sold_unreserved}
 							totalOpen={event.tickets_open}
 							totalHeld={event.tickets_held}
 							totalCapacity={event.total_tickets}
 							totalSales={event.sales_total_in_cents}
-							isExpanded={event.expandedCardId === id}
+							isExpanded={expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
+							ticketTypes={event.ticket_types}
 						/>
 					</Grid>
 				);
