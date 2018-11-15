@@ -26,7 +26,7 @@ import CancelEventDialog from "./CancelEventDialog";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import EventSummaryCard from "./EventSummaryCard";
-import user from "../../../../stores/user";
+import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -63,7 +63,7 @@ class EventsList extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
 		this.updateEvents();
 	}
 
@@ -97,6 +97,8 @@ class EventsList extends Component {
 								});
 							})
 							.catch(error => {
+								console.log("error with id: ", id);
+
 								console.error(error);
 
 								let message = "Loading events failed.";

@@ -8,7 +8,7 @@ import UpdateCard from "./cards/UpdateCard";
 import InviteUserCard from "./cards/InviteUserCard";
 import FeeScheduleCard from "./cards/FeeScheduleCard";
 import PageHeading from "../../../elements/PageHeading";
-import user from "../../../../stores/user";
+import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -28,7 +28,7 @@ class Organization extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
 	}
 
 	static getDerivedStateFromProps(props, state) {

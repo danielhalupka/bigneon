@@ -18,6 +18,8 @@ import user from "../../stores/user";
 import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";
 import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
 import { toolBarHeight } from "../../components/styles/theme";
+import layout from "../../stores/layout";
+import classnames from "classnames";
 
 const drawerWidth = 240;
 
@@ -42,8 +44,10 @@ const styles = theme => ({
 	content: {
 		flexGrow: 1,
 		backgroundColor: theme.palette.background.default,
-		padding: theme.spacing.unit * 3,
 		paddingBottom: theme.spacing.unit * 10
+	},
+	paddedContent: {
+		padding: theme.spacing.unit * 3
 	}
 });
 
@@ -72,6 +76,7 @@ class Container extends React.Component {
 	}
 
 	render() {
+		const { showSideMenu, includeContainerPadding } = layout;
 		const { classes, history, children } = this.props;
 		const { mobileOpen, isWidget } = this.state;
 
@@ -118,7 +123,7 @@ class Container extends React.Component {
 							{drawer}
 						</SwipeableDrawer>
 					</Hidden>
-					{user.showSideMenu ? (
+					{showSideMenu ? (
 						<Hidden smDown implementation="css">
 							<Drawer
 								variant="permanent"
@@ -131,8 +136,12 @@ class Container extends React.Component {
 							</Drawer>
 						</Hidden>
 					) : null}
-
-					<main className={classes.content}>
+					<main
+						className={classnames({
+							[classes.content]: true,
+							[classes.paddedContent]: includeContainerPadding
+						})}
+					>
 						<div className={classes.toolbar} />
 
 						<Grid
@@ -142,7 +151,13 @@ class Container extends React.Component {
 							justify="center"
 							alignItems="center"
 						>
-							<Grid item xs={12} sm={12} md={12} lg={9}>
+							<Grid
+								item
+								xs={12}
+								sm={12}
+								md={12}
+								lg={includeContainerPadding ? 9 : 12}
+							>
 								{children}
 							</Grid>
 						</Grid>

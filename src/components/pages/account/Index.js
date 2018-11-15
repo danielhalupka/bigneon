@@ -13,6 +13,7 @@ import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import cloudinaryWidget from "../../../helpers/cloudinaryWidget";
 import PageHeading from "../../elements/PageHeading";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -43,7 +44,7 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
 
 		//Initially load from current store
 		const { firstName, lastName, email, phone, profilePicUrl } = user;

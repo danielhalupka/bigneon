@@ -6,7 +6,7 @@ import TicketsCard from "./cards/Tickets";
 import AttendanceCard from "./cards/Attendance";
 import HappeningNow from "./cards/HappeningNow";
 import PageHeading from "../../elements/PageHeading";
-import user from "../../../stores/user";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -20,7 +20,7 @@ const styles = theme => ({
 
 class Dashboard extends Component {
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
 	}
 
 	render() {

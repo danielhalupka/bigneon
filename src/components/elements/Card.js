@@ -35,6 +35,11 @@ const styles = {
 		borderRadius: 8,
 		border: "none"
 	},
+	plain: {
+		boxShadow: "none",
+		borderRadius: 0,
+		border: "none"
+	},
 	dialog: {
 		borderRadius: 8,
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)",
@@ -86,7 +91,8 @@ CustomCard.propTypes = {
 		"form",
 		"dialog",
 		"block",
-		"subCard"
+		"subCard",
+		"plain"
 	]),
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };

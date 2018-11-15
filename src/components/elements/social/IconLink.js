@@ -13,67 +13,84 @@ import {
 const styles = theme => {
 	return {
 		container: {
-			cursor: "pointer",
-			width: "13.5px",
-			height: "13.5px",
-			borderStyle: "solid",
-			borderWidth: "0.5px",
-			borderImageSource: "linear-gradient(229deg, #e53d96, #5491cc)",
-			borderImageSlice: "1"
+			cursor: "pointer"
+			// width: "13.5px",
+			// height: "13.5px",
+			// borderStyle: "solid",
+			// borderWidth: "0.5px",
+			// borderImageSource: "linear-gradient(229deg, #e53d96, #5491cc)",
+			// borderImageSlice: "1"
 		},
 		icon: {}
 	};
 };
 
 const SocialButton = props => {
-	const { classes, onClick, href, icon, style, size } = props;
+	const { classes, userName, onClick, href, icon, style, size, color } = props;
 
 	let src = "";
+	let socialLink = "";
+
 	switch (icon) {
 		case "facebook":
-			src = "/images/social/facebook-icon-gray.svg";
+			src = `/images/social/facebook-circle-${color}.png`;
+			socialLink = `https://facebook.com/${userName}`;
 			break;
 		case "twitter":
-			src = "/images/social/twitter-icon-gray.svg";
+			src = `/images/social/twitter-circle-${color}.png`;
+			socialLink = `https://twitter.com/${userName}`;
 			break;
 		case "instagram":
-			src = "/images/social/instagram-icon-gray.svg";
+			src = `/images/social/instagram-circle-${color}.png`;
+			socialLink = `https://instagram.com/${userName}`;
 			break;
 		case "soundcloud":
-			src = "/images/social/soundcloud-icon-gray.svg";
+			src = `/images/social/soundcloud-circle-${color}.png`;
+			socialLink = `https://soundcloud.com/${userName}`;
 			break;
 		case "snapchat":
-			src = "/images/social/snapchat-icon-gray.svg";
+			src = `/images/social/snapchat-circle-${color}.png`;
+			socialLink = `https://www.snapchat.com/add/${userName}`;
 			break;
 		case "bandcamp":
-			src = "/images/social/facebook-icon-gray.svg";
+			src = `/images/social/bandcamp-circle-${color}.png`;
+			socialLink = `https://bandcamp.com/${userName}`;
 			break;
 		case "website":
-			src = "/images/social/facebook-icon-gray.svg";
+			src = `/images/social/link-circle-${color}.png`;
 			break;
 		default:
 			break;
 	}
 
-	//TODO href={href}
+	let toLink = href;
+
+	//If they pass a username, use the social link
+	if (userName && socialLink) {
+		toLink = socialLink;
+	}
 
 	return (
-		<div
+		<a
 			className={classes.container}
 			onClick={onClick}
-			target={href ? "_blank" : null}
+			target={toLink ? "_blank" : null}
+			href={toLink ? toLink : null}
+			style={style}
 		>
-			{/* <img
-				style={{ height: size * 0.4, width: size * 0.4 }}
+			<img
+				style={{ height: size, width: size }}
 				className={classes.icon}
 				src={src}
-			/> */}
-		</div>
+			/>
+		</a>
 	);
 };
 
 SocialButton.defaultProps = {
-	size: 25
+	size: 25,
+	style: {},
+	color: "white"
 };
 
 SocialButton.propTypes = {
@@ -89,7 +106,9 @@ SocialButton.propTypes = {
 		"website",
 		"bandcamp"
 	]).isRequired,
-	size: PropTypes.number
+	userName: PropTypes.string,
+	size: PropTypes.number,
+	color: PropTypes.oneOf(["white", "black"])
 };
 
 export default withStyles(styles)(SocialButton);

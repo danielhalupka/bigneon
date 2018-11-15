@@ -10,20 +10,8 @@ import PageHeading from "../../../elements/PageHeading";
 import Card from "../../../elements/Card";
 import CardMedia from "../../../elements/CardMedia";
 
-import {
-	Artists,
-	formatArtistsForSaving,
-	formatArtistsForInputs,
-	updateArtistList
-} from "./updateSections/Artists";
-import {
-	EventDetails,
-	validateEventFields,
-	formatEventDataForSaving,
-	formatEventDataForInputs,
-	updateEventDetails,
-	createNewEvent
-} from "./updateSections/Details";
+import { Artists } from "./updateSections/Artists";
+import { EventDetails, validateEventFields } from "./updateSections/Details";
 import { Tickets, validateTicketTypeFields } from "./updateSections/Tickets";
 
 import FormSubHeading from "../../../elements/FormSubHeading";
@@ -33,7 +21,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 
 import eventUpdateStore from "../../../../stores/eventUpdate";
-import user from "../../../../stores/user";
+import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -67,7 +55,8 @@ class Event extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
+
 		if (
 			this.props.match &&
 			this.props.match.params &&

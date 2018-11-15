@@ -7,14 +7,14 @@ const SupportingArtistsLabel = ({ artists }) => {
 		return null;
 	}
 
-	return artists.map(({ name }, index) => {
+	return artists.map(({ artist }, index) => {
 		if (index === 0) {
-			return <span key={index}>With </span>;
+			return <span key={index}>with </span>;
 		}
 
 		return (
 			<span key={index}>
-				{name}
+				{artist.name}
 				{index + 1 < artists.length ? ", " : ""}
 			</span>
 		);

@@ -7,7 +7,7 @@ import Bigneon from "../../../helpers/bigneon";
 import OrderRow from "./OrderRow";
 import StyledLink from "../../elements/StyledLink";
 import PageHeading from "../../elements/PageHeading";
-import user from "../../../stores/user";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({
 	cardContent: {
@@ -28,7 +28,7 @@ class OrderList extends Component {
 	}
 
 	componentDidMount() {
-		user.toggleSideMenu(true);
+		layout.toggleSideMenu(true);
 
 		Bigneon()
 			.orders.index()
