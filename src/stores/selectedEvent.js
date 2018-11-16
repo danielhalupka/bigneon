@@ -40,17 +40,13 @@ class SelectedEvent {
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 
+				// console.log(response.data);
+
 				const {
 					id,
-					name,
-					created_at,
 					event_start,
-					organization_id,
-					ticket_sell_date,
-					venue_id,
 					door_time,
 					promo_image_url,
-					age_limit,
 					ticket_types,
 					user_is_interested
 				} = event;

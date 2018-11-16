@@ -19,7 +19,7 @@ import layout from "../../../stores/layout";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import ArtistSummary from "../../elements/event/ArtistSummary";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
-import DateDropTag from "../../elements/event/DateDropTag";
+import DateFlag from "../../elements/event/DateFlag";
 import IconLink from "../../elements/social/IconLink";
 
 const styles = theme => ({
@@ -97,7 +97,7 @@ const styles = theme => ({
 	},
 	ticketPricingValue: {
 		fontSize: theme.typography.fontSize * 1.8,
-		color: "#ff22b2"
+		color: theme.palette.secondary.main
 	},
 	callToAction: {
 		marginTop: theme.spacing.unit * 2,
@@ -209,7 +209,7 @@ class ViewEvent extends Component {
 					<Typography className={classes.eventSubCardHeading}>
 						Time and location
 					</Typography>
-					<DateDropTag date={eventStartDateMoment} />
+					<DateFlag date={eventStartDateMoment} />
 				</div>
 				<div className={classes.eventSubCardRow2}>
 					<div className={classes.textAndIconRow}>
@@ -308,12 +308,7 @@ class ViewEvent extends Component {
 
 		return (
 			<div>
-				<EventHeaderImage
-					name={name}
-					topLineInfo={top_line_info}
-					src={promo_image_url}
-					artists={artists}
-				/>
+				<EventHeaderImage {...event} artists={artists} />
 
 				<Grid container spacing={0} direction="row" justify="center">
 					<Grid item xs={12} sm={12} md={11} lg={9}>

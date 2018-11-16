@@ -3,12 +3,23 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
-import InputGroup from "../../common/form/InputGroup";
+import { fontFamilyDemiBold } from "../../styles/theme";
+import Divider from "../../common/Divider";
+import NumberSelect from "../../elements/form/NumberSelect";
 
 const styles = theme => ({
 	container: {
-		marginTop: theme.spacing.unit * 4,
-		marginBottom: theme.spacing.unit * 4
+		marginTop: theme.spacing.unit * 3,
+		marginBottom: theme.spacing.unit
+	},
+	price: {
+		fontSize: theme.typography.fontSize * 2,
+		fontFamily: fontFamilyDemiBold,
+		color: theme.palette.secondary.main
+	},
+	name: {
+		fontSize: theme.typography.fontSize,
+		fontFamily: fontFamilyDemiBold
 	}
 });
 
@@ -23,39 +34,62 @@ const TicketSelection = props => {
 		amount,
 		increment,
 		onNumberChange,
-		validateFields
+		validateFields,
+		limitPerPerson
 	} = props;
 
 	const incrementText =
 		increment > 1 ? `(Tickets must be bought in groups of ${increment})` : "";
 
 	return (
-		<Grid alignItems="center" className={classes.container} container>
-			<Grid item xs={8} sm={8} md={6} lg={8}>
-				<Typography variant="subheading">{name}</Typography>
-				<Typography variant="caption">
+		<div>
+			<Divider style={{ margin: 0 }} />
+			<Grid alignItems="center" className={classes.container} container>
+				<Grid item xs={2} sm={2} md={6} lg={3}>
+					<Typography className={classes.price}>
+						{available ? `$${price}` : ""}
+					</Typography>
+				</Grid>
+				<Grid item xs={8} sm={8} md={6} lg={6}>
+					<Typography className={classes.name}>{name}</Typography>
+					{/* <Typography variant="caption">
 					{description} {incrementText}
-				</Typography>
+				</Typography> */}
+				</Grid>
+
+				<Grid item xs={2} sm={2} md={6} lg={3}>
+					<NumberSelect
+						onIncrement={() => {
+							const currentAmount = amount ? amount : 0;
+							let newAmount = Number(currentAmount) + increment;
+
+							console.log("increment: ", increment);
+
+							if (limitPerPerson) {
+								if (limitPerPerson > newAmount) {
+									newAmount = limitPerPerson;
+								}
+							}
+
+							onNumberChange(newAmount);
+							validateFields();
+						}}
+						onDecrement={() => {
+							const currentAmount = amount ? amount : 0;
+							let newAmount = Number(currentAmount) - increment;
+							if (newAmount < 0) {
+								newAmount = 0;
+							}
+
+							onNumberChange(newAmount);
+							validateFields();
+						}}
+					>
+						{amount}
+					</NumberSelect>
+				</Grid>
 			</Grid>
-			<Grid item xs={2} sm={2} md={6} lg={2}>
-				<Typography variant="title">{available ? `$${price}` : ""}</Typography>
-			</Grid>
-			<Grid item xs={2} sm={2} md={6} lg={2} style={{ paddingTop: 10 }}>
-				<InputGroup
-					autoComplete="off"
-					disabled={!available}
-					error={error}
-					value={amount || ""}
-					name="amount"
-					type="number"
-					onChange={e => {
-						onNumberChange(Number(e.target.value));
-					}}
-					placeholder="0"
-					onBlur={validateFields}
-				/>
-			</Grid>
-		</Grid>
+		</div>
 	);
 };
 
@@ -69,6 +103,7 @@ TicketSelection.propTypes = {
 	amount: PropTypes.number,
 	increment: PropTypes.number.isRequired,
 	validateFields: PropTypes.func.isRequired,
+	limitPerPerson: PropTypes.number,
 	classes: PropTypes.object.isRequired
 };
 

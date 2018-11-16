@@ -335,7 +335,6 @@ class EventUpdate {
 	}
 
 	async saveTicketType(ticketType) {
-		console.log(ticketType);
 		const { id } = ticketType;
 
 		if (id) {

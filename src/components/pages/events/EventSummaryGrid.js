@@ -1,3 +1,4 @@
+//TODO decommission this component
 import React from "react";
 import { Typography, withStyles, CardMedia, Grid } from "@material-ui/core";
 import PropTypes from "prop-types";

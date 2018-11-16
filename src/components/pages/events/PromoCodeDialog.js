@@ -1,3 +1,4 @@
+//TODO decommission this component
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -110,11 +111,7 @@ class PromoCodeDialog extends React.Component {
 							Cancel
 						</Button>
 						&nbsp;
-						<Button
-							disabled={isSubmitting}
-							type="submit"
-							variant="primary"
-						>
+						<Button disabled={isSubmitting} type="submit" variant="primary">
 							Use
 						</Button>
 					</DialogActions>

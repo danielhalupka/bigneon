@@ -11,12 +11,15 @@ const styles = theme => ({
 		width: 60,
 		height: 60,
 
-		borderRadius: "0px 0px 4px 4px",
 		textAlign: "center",
+		borderRadius: "0px 0px 4px 4px",
 
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "space-around"
+	},
+	rounded: {
+		borderRadius: 4
 	},
 	text: {
 		padding: 0,
@@ -33,11 +36,16 @@ const styles = theme => ({
 	}
 });
 
-const DateDropTag = props => {
-	const { classes, date } = props;
+const DateFlag = props => {
+	const { classes, date, variant } = props;
 
 	return (
-		<div className={classes.root}>
+		<div
+			className={classNames({
+				[classes.root]: true,
+				[classes.rounded]: variant === "rounded"
+			})}
+		>
 			<Typography
 				className={classNames({ [classes.text]: true, [classes.month]: true })}
 			>
@@ -52,9 +60,14 @@ const DateDropTag = props => {
 	);
 };
 
-DateDropTag.propTypes = {
-	classes: PropTypes.object.isRequired,
-	date: PropTypes.object.isRequired
+DateFlag.defaultPropTypes = {
+	variant: "default"
 };
 
-export default withStyles(styles)(DateDropTag);
+DateFlag.propTypes = {
+	classes: PropTypes.object.isRequired,
+	date: PropTypes.object.isRequired,
+	variant: PropTypes.oneOf(["default", "rounded"])
+};
+
+export default withStyles(styles)(DateFlag);
