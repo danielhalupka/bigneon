@@ -29,6 +29,7 @@ import ViewEvent from "../pages/events/ViewEvent";
 import CheckoutSelection from "../pages/events/CheckoutSelection";
 import CheckoutConfirmation from "../pages/events/CheckoutConfirmation";
 import CheckoutSuccess from "../pages/events/CheckoutSuccess";
+import MobileStripeAuth from "../pages/authentication/MobileStripeAuth";
 
 //Admin
 import AdminOrganizationsList from "../pages/admin/organizations/List";
@@ -174,6 +175,7 @@ class Routes extends Component {
 								component={CheckoutSuccess}
 								isAuthenticated={isAuthenticated}
 							/>
+							<Route exact path="/mobile_stripe_token_auth/:access_token/:refresh_token" component={MobileStripeAuth} />
 							{/* System admin routes TODO hide these if they don't blong */}
 							<PrivateRoute
 								exact

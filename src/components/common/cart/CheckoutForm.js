@@ -60,13 +60,20 @@ class CheckoutForm extends Component {
 		const { error, token } = await this.props.stripe.createToken({ name });
 		if (error) {
 			const { message, type } = error;
-			console.error(error);
-			notification.show({
-				message,
-				variant: type === "validation_error" ? "warning" : "error"
-			});
 
-			this.setState({ isSubmitting: false, statusMessage: null });
+			console.error(error);
+
+			if (this.props.onMobileError) {
+				// If an error is returned on a mobile app auth attempt, bypass the notification and send it back
+				this.props.onMobileError(message, type)
+			} else {
+				notification.show({
+					message,
+					variant: type === "validation_error" ? "warning" : "error"
+				});
+
+				this.setState({ isSubmitting: false, statusMessage: null });
+			}
 		} else {
 			const { onToken } = this.props;
 			this.setState({ statusMessage: "Processing payment..." });
@@ -91,6 +98,22 @@ class CheckoutForm extends Component {
 				</DialogTitle>
 			</Dialog>
 		);
+	}
+
+	get submitButton() {
+		const { isSubmitting } = this.state;
+
+		if (this.props.mobile) {
+			return isSubmitting ? "Saving details..." : "Save Payment Info"
+		} else {
+			return isSubmitting ? "Checking out..." : "Purchase tickets"
+		}
+	}
+
+	get header() {
+		if (this.props.mobile) { return null }
+
+		return <Typography variant="subheading">Payment details</Typography>
 	}
 
 	render() {
@@ -123,7 +146,7 @@ class CheckoutForm extends Component {
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				{this.renderProcessingDialog()}
 				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={6}>
-					<Typography variant="subheading">Payment details</Typography>
+					{this.header}
 					<br />
 					{/* <input
 						value={name}
@@ -145,7 +168,7 @@ class CheckoutForm extends Component {
 							size="large"
 							variant="callToAction"
 						>
-							{isSubmitting ? "Checking out..." : "Purchase tickets"}
+							{this.submitButton}
 						</Button>
 					</div>
 				</Grid>
@@ -156,7 +179,9 @@ class CheckoutForm extends Component {
 
 CheckoutForm.propTypes = {
 	onToken: PropTypes.func.isRequired,
-	classes: PropTypes.object.isRequired
+	onMobileError: PropTypes.func,
+	classes: PropTypes.object.isRequired,
+	mobile: PropTypes.bool,
 };
 
 export default withStyles(styles, { withTheme: true })(
