@@ -14,7 +14,7 @@ export default class MobileStripeAuth extends Component {
 		localStorage.setItem("refresh_token", decodeURIComponent(refresh_token))
 
 		// Refresh/authorize the user
-		user.refreshToken(() => this.refreshUser(), (error) => {
+		user.refreshToken(() => user.refreshUser(), (error) => {
 			// return an error if the user could not be authorized
 			window.postMessage(JSON.stringify({ error: "User could not be authenticated" }))
 		});
