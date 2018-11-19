@@ -3,22 +3,17 @@ import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Hidden from "@material-ui/core/Hidden";
 import { observer } from "mobx-react";
-import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import { Paper } from "@material-ui/core";
 
 import Button from "../../elements/Button";
 import notifications from "../../../stores/notifications";
 import TicketSelection from "./TicketSelection";
-import PromoCodeDialog from "./PromoCodeDialog";
 import selectedEvent from "../../../stores/selectedEvent";
-import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
 import layout from "../../../stores/layout";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import { fontFamilyDemiBold } from "../../styles/theme";
-import Card from "../../elements/Card";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import InputWithButton from "../../common/form/InputWithButton";
 
@@ -197,28 +192,18 @@ class CheckoutSelection extends Component {
 		cart.update(
 			ticketSelection,
 			() => {
-				// notifications.show({
-				// 	message: "Tickets added to cart",
-				// 	variant: "success"
-				// });
 				this.props.history.push(`/events/${id}/tickets/confirmation`);
 			},
 			error => {
 				this.setState({ isSubmitting: false });
 
-				let message = "Adding to cart failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
+				const formattedError = notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Failed to add to cart.",
 					variant: "error"
 				});
+
+				console.error(formattedError);
 			}
 		);
 	}

@@ -32,10 +32,13 @@ const EventDetailsOverlayCard = props => {
 	return (
 		<div className={classes.root} style={style}>
 			<Card variant="subCard">
-				<div
-					className={classes.media}
-					style={{ backgroundImage: `url(${imageSrc})` }}
-				/>
+				{imageSrc ? (
+					<div
+						className={classes.media}
+						style={{ backgroundImage: `url(${imageSrc})` }}
+					/>
+				) : null}
+
 				<div className={classes.content}>{children}</div>
 			</Card>
 		</div>
@@ -48,7 +51,7 @@ EventDetailsOverlayCard.defaultProps = {
 
 EventDetailsOverlayCard.propTypes = {
 	classes: PropTypes.object.isRequired,
-	imageSrc: PropTypes.string.isRequired,
+	imageSrc: PropTypes.string,
 	top: PropTypes.number,
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };

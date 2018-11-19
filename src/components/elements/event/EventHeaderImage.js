@@ -8,6 +8,9 @@ import Grid from "@material-ui/core/Grid";
 import SupportingArtistsLabel from "../../pages/events/SupportingArtistsLabel";
 import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
 import DateFlag from "./DateFlag";
+import Divider from "../../common/Divider";
+import user from "../../../stores/user";
+import AppButton from "../AppButton";
 
 const styles = theme => ({
 	blurContainer: {
@@ -39,7 +42,7 @@ const styles = theme => ({
 		paddingBottom: theme.spacing.unit * 3,
 		display: "flex",
 		flexDirection: "column",
-		justifyContent: "flex-end"
+		justifyContent: "center"
 	},
 	mobileContent: {
 		padding: theme.spacing.unit * 3,
@@ -97,6 +100,14 @@ const styles = theme => ({
 		color: "#FFFFFF",
 		fontSize: theme.typography.fontSize * 1,
 		lineHeight: 1.4
+	},
+	desktopTextContent: {
+		display: "flex",
+		flexDirection: "column",
+		justifyContent: "flex-end"
+	},
+	email: {
+		color: theme.palette.secondary.main
 	}
 });
 
@@ -116,6 +127,20 @@ const EventHeaderImage = props => {
 		height
 	} = props;
 
+	let desktopTop = 60; // * 0.35;
+
+	let justifyContent = "flex-end";
+
+	if (variant === "details") {
+		//justifyContent = "flex-end";
+		//desktopTop = desktopTop * 0.2;
+	}
+
+	if (variant === "success") {
+		//justifyContent = "flex-end";
+		//desktopTop = 0;
+	}
+
 	return (
 		<div>
 			{/* DESKTOP */}
@@ -133,12 +158,22 @@ const EventHeaderImage = props => {
 				<Grid
 					className={classNames(classes.content, classes.desktopContent)}
 					style={{
-						top: height * 0.35 * (variant === "detailed" ? 0.2 : 1),
-						height
+						top: desktopTop,
+						height,
+						// borderStyle: "solid",
+						// borderColor: "pink",
+						justifyContent
 					}}
 					container
 				>
-					<Grid item xs={12} sm={12} lg={6}>
+					<Grid
+						item
+						xs={12}
+						sm={12}
+						lg={6}
+						className={classes.desktopTextContent}
+						//style={{ borderStyle: "solid", borderColor: "red" }}
+					>
 						{variant === "simple" ? (
 							<div>
 								<Typography className={classes.topLineInfo}>
@@ -173,6 +208,66 @@ const EventHeaderImage = props => {
 										? `This event is for over ${age_limit} year olds`
 										: "This event is for all ages"}
 								</Typography>
+							</div>
+						) : null}
+
+						{variant === "success" ? (
+							<div>
+								<Typography className={classes.topLineInfo}>
+									Success! You're going to
+								</Typography>
+								<Typography className={classes.eventName}>{name}</Typography>
+								<Typography className={classes.withArtistsDetailed}>
+									<SupportingArtistsLabel artists={artists} />
+								</Typography>
+
+								<div className={classes.spaceLine} />
+
+								<Typography className={classes.smallDetailsText}>
+									{displayEventStartDate}
+									<br />
+									Doors {displayDoorTime} - Show {displayShowTime}
+									<br />
+									{age_limit
+										? `This event is for over ${age_limit} year olds`
+										: "This event is for all ages"}
+								</Typography>
+
+								<Typography className={classes.smallDetailsText}>
+									Order #1223444
+									<br />
+									We've send your receipt to{" "}
+									<span className={classes.email}>{user.email}</span>
+								</Typography>
+
+								<Divider
+									light
+									height={1}
+									style={{ marginTop: 20, marginBottom: 30 }}
+								/>
+
+								<Typography className={classes.topLineInfo}>
+									Get the bigNEON app
+									<br />
+									to access your tickets
+								</Typography>
+								<Typography className={classes.smallDetailsText}>
+									The mobile app is required to use your tickets at the show
+								</Typography>
+								<br />
+
+								<AppButton
+									href="https://itunes.apple.com/us/genre/ios/id36?mt=8"
+									variant="ios"
+								>
+									iOS
+								</AppButton>
+
+								<span style={{ marginLeft: 20 }} />
+
+								<AppButton href="https://play.google.com" variant="android">
+									Android
+								</AppButton>
 							</div>
 						) : null}
 					</Grid>
@@ -268,6 +363,54 @@ const EventHeaderImage = props => {
 							</Typography>
 						</div>
 					) : null}
+
+					{variant === "success" ? (
+						<div>
+							<Typography
+								className={classNames({
+									[classes.topLineInfo]: true,
+									[classes.topLineInfoMobile]: true
+								})}
+							>
+								Success! You're going to
+							</Typography>
+							<Typography
+								className={classNames({
+									[classes.eventName]: true,
+									[classes.eventNameMobile]: true
+								})}
+							>
+								{name}
+							</Typography>
+							<Typography
+								className={classNames({
+									[classes.withArtistsMobile]: true,
+									[classes.withArtistsDetailed]: true
+								})}
+							>
+								<SupportingArtistsLabel artists={artists} />
+							</Typography>
+
+							<div className={classes.spaceLine} />
+
+							<Typography className={classes.smallDetailsText}>
+								{displayEventStartDate}
+								<br />
+								Doors {displayDoorTime} - Show {displayShowTime}
+								<br />
+								{age_limit
+									? `This event is for over ${age_limit} year olds`
+									: "This event is for all ages"}
+							</Typography>
+
+							<Typography className={classes.smallDetailsText}>
+								Order #1223444
+								<br />
+								We've send your receipt to{" "}
+								<span className={classes.email}>{user.email}</span>
+							</Typography>
+						</div>
+					) : null}
 				</div>
 			</Hidden>
 		</div>
@@ -281,7 +424,7 @@ EventHeaderImage.defaultProps = {
 
 EventHeaderImage.propTypes = {
 	classes: PropTypes.object.isRequired,
-	variant: PropTypes.oneOf(["simple", "detailed"]),
+	variant: PropTypes.oneOf(["simple", "detailed", "success"]),
 	promo_image_url: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	top_line_info: PropTypes.string,

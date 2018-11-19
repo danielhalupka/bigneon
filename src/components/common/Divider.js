@@ -2,14 +2,13 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import MUIDivider from "@material-ui/core/Divider";
 
-import {
-	textColorPrimary,
-	textColorSecondary,
-	primaryHex,
-	secondaryHex
-} from "../styles/theme";
-
-export default ({ children, style = {}, dashed = false }) => {
+export default ({
+	children,
+	style = {},
+	dashed = false,
+	light = false,
+	height = null
+}) => {
 	let dashedStyle = {};
 	if (dashed) {
 		dashedStyle = {
@@ -20,9 +19,11 @@ export default ({ children, style = {}, dashed = false }) => {
 
 	const Hr = () => (
 		<MUIDivider
+			light={light}
 			style={{
 				flex: 1,
 				marginTop: 12,
+				height,
 				...dashedStyle
 			}}
 		/>

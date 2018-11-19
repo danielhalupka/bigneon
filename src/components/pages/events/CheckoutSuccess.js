@@ -1,31 +1,45 @@
 import React, { Component } from "react";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import { observer } from "mobx-react";
-import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import { Paper } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import Hidden from "@material-ui/core/Hidden";
+import QRCode from "qrcode.react";
 
-import Button from "../../elements/Button";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
-import user from "../../../stores/user";
-import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
 import layout from "../../../stores/layout";
+import EventHeaderImage from "../../elements/event/EventHeaderImage";
+import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
+import { fontFamilyDemiBold } from "../../styles/theme";
+import Card from "../../elements/Card";
+import AppButton from "../../elements/AppButton";
+
+const qrWidth = 300;
 
 const styles = theme => ({
-	card: {
-		padding: theme.spacing.unit * 4
+	eventSubCardContent: {
+		paddingLeft: theme.spacing.unit * 4,
+		paddingRight: theme.spacing.unit * 4,
+		paddingBottom: theme.spacing.unit * 4,
+		backgroundColor: theme.palette.background.default
 	},
-	buttonsContainer: {
-		justifyContent: "flex-end",
-		display: "flex"
+	qrContainer: {
+		padding: theme.spacing.unit
 	},
-	media: {
-		height: 200,
-		width: "100%",
-		borderRadius: theme.shape.borderRadius
+	appDetails: {
+		paddingTop: theme.spacing.unit * 2,
+		textAlign: "center"
+	},
+	appHeading: {
+		textTransform: "uppercase",
+		fontFamily: fontFamilyDemiBold,
+		marginBottom: theme.spacing.unit
+	},
+	appDetail: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9,
+		marginBottom: theme.spacing.unit
 	}
 });
 
@@ -39,6 +53,7 @@ class CheckoutSuccess extends Component {
 
 	componentDidMount() {
 		layout.toggleSideMenu(false);
+		layout.toggleContainerPadding(false);
 		cart.emptyCart(); //TODO move this to after they've submitted the final form
 
 		if (
@@ -54,15 +69,43 @@ class CheckoutSuccess extends Component {
 					variant: "error"
 				});
 			});
+
+			this.setState({ qrText: id }); //TODO find out what goes here
 		} else {
 			//TODO return 404
 		}
 	}
 
+	componentWillUnmount() {
+		layout.toggleContainerPadding(true);
+	}
+
+	renderQRCode() {
+		const { qrText } = this.state;
+
+		if (!qrText) {
+			return null;
+		}
+
+		return (
+			<Card
+				variant="subCard"
+				style={{
+					display: "flex",
+					alignContent: "center",
+					justifyContent: "center",
+					padding: 10
+				}}
+			>
+				<QRCode size={qrWidth} fgColor={"#000000"} value={qrText} />
+			</Card>
+		);
+	}
+
 	render() {
 		const { classes } = this.props;
 
-		const { event } = selectedEvent;
+		const { event, artists } = selectedEvent;
 
 		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
@@ -72,55 +115,94 @@ class CheckoutSuccess extends Component {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
-		const { name, displayEventStartDate, promo_image_url } = event;
+		const {
+			name,
+			displayEventStartDate,
+			additional_info,
+			top_line_info,
+			age_limit,
+			promo_image_url,
+			displayDoorTime,
+			displayShowTime,
+			eventStartDateMoment
+		} = event;
+
+		const headerHeight = 750;
 
 		return (
-			<Paper className={classes.card}>
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={8} lg={8}>
-						<Typography variant="display3" component="h3">
-							Success!
-						</Typography>
+			<div>
+				<EventHeaderImage
+					variant="success"
+					height={headerHeight}
+					{...event}
+					artists={artists}
+				/>
 
-						<Typography variant="display1" component="h3">
-							You're going to this event
-						</Typography>
+				{/* Desktop */}
+				<div>
+					<Hidden smDown implementation="css">
+						<EventDetailsOverlayCard
+							style={{
+								width: "25%",
+								minWidth: qrWidth + 100,
+								maxWidth: 400,
+								top: headerHeight / 3.1,
+								right: 200,
+								height: "100%"
+							}}
+							imageSrc={promo_image_url}
+						>
+							<div className={classes.eventSubCardContent}>
+								<div className={classes.qrContainer}>{this.renderQRCode()}</div>
+							</div>
+						</EventDetailsOverlayCard>
+					</Hidden>
 
-						<Typography variant="body1">{displayEventStartDate}</Typography>
-						<Typography variant="body1">
-							Doors: 8:00PM / Show: 9:00PM
-						</Typography>
-						<Typography variant="body1">This event is all ages</Typography>
-						<Typography variant="body1">Venue name</Typography>
+					{/* Mobile */}
+					<Hidden mdUp>
+						<EventDetailsOverlayCard
+							style={{
+								width: "100%",
+								paddingLeft: 20,
+								paddingRight: 20,
+								top: 500
+							}}
+						>
+							{this.renderQRCode()}
+						</EventDetailsOverlayCard>
 
-						<div style={{ marginBottom: 30 }} />
+						<div className={classes.appDetails}>
+							<Typography className={classes.appHeading}>
+								Get the bigNEON app
+								<br />
+								to access your tickets
+							</Typography>
+							<Typography className={classes.appDetail}>
+								The mobile app is required to use your tickets at the show
+							</Typography>
+							<br />
 
-						<Typography variant="body1">Order #1234</Typography>
-						<Typography variant="body1">
-							We've sent the receipt to {user.email}
-						</Typography>
-					</Grid>
+							<AppButton
+								color="black"
+								href="https://itunes.apple.com/us/genre/ios/id36?mt=8"
+								variant="ios"
+							>
+								iOS
+							</AppButton>
 
-					<Grid item xs={12} sm={4} lg={4}>
-						<CardMedia
-							className={classes.media}
-							image={promo_image_url}
-							title={name}
-						/>
-					</Grid>
-				</Grid>
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={12}>
-						<div className={classes.buttonsContainer}>
-							<Link to="/hub">
-								<Button size="large" variant="primary">
-									My tickets
-								</Button>
-							</Link>
+							<span style={{ marginLeft: 20 }} />
+
+							<AppButton
+								color="black"
+								href="https://play.google.com"
+								variant="android"
+							>
+								Android
+							</AppButton>
 						</div>
-					</Grid>
-				</Grid>
-			</Paper>
+					</Hidden>
+				</div>
+			</div>
 		);
 	}
 }

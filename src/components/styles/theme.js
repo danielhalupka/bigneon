@@ -60,7 +60,8 @@ const theme = createMuiTheme({
 			main: secondaryHex,
 			dark: secondaryHex,
 			contrastText: "#FFF"
-		}
+		},
+		divider: "#d1d1d1"
 	},
 	overrides: {
 		MuiDialog: {

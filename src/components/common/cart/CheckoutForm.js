@@ -70,7 +70,7 @@ class CheckoutForm extends Component {
 
 			if (this.props.onMobileError) {
 				// If an error is returned on a mobile app auth attempt, bypass the notification and send it back
-				this.props.onMobileError(message, type)
+				this.props.onMobileError(message, type);
 			} else {
 				notification.show({
 					message,
@@ -109,16 +109,19 @@ class CheckoutForm extends Component {
 		const { isSubmitting } = this.state;
 
 		if (this.props.mobile) {
-			return isSubmitting ? "Saving details..." : "Save Payment Info"
+			return isSubmitting ? "Saving details..." : "Save Payment Info";
 		} else {
-			return isSubmitting ? "Checking out..." : "Purchase tickets"
+			return isSubmitting ? "Checking out..." : "Purchase tickets";
 		}
 	}
 
 	get header() {
-		if (this.props.mobile) { return null }
+		if (this.props.mobile) {
+			return null;
+		}
 
-		return <Typography variant="subheading">Payment details</Typography>
+		const { classes } = this.props;
+		return <Typography className={classes.heading}>Payment details</Typography>;
 	}
 
 	render() {
@@ -150,17 +153,9 @@ class CheckoutForm extends Component {
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				{this.renderProcessingDialog()}
-				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={6}>
+				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={12}>
 					{this.header}
 					<br />
-					{/* <input
-						value={name}
-						className={classes.cardInput}
-						//style={stripeStyle.base}
-						onChange={e => this.setState({ name: e.target.value })}
-						type="text"
-						placeholder="Jane Doe"
-					/> */}
 					<CardElement style={stripeStyle} />
 				</Grid>
 
@@ -187,7 +182,7 @@ CheckoutForm.propTypes = {
 	onToken: PropTypes.func.isRequired,
 	onMobileError: PropTypes.func,
 	classes: PropTypes.object.isRequired,
-	mobile: PropTypes.bool,
+	mobile: PropTypes.bool
 };
 
 export default withStyles(styles, { withTheme: true })(

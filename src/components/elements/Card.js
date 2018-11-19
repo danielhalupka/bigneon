@@ -53,7 +53,7 @@ const styles = {
 };
 
 const CustomCard = props => {
-	const { classes, children, variant, iconUrl, ...rest } = props;
+	const { classes, children, variant, iconUrl, style, ...rest } = props;
 
 	let topIconSpan;
 	let topIconSpacer;
@@ -73,6 +73,7 @@ const CustomCard = props => {
 					),
 					label: classes.label
 				}}
+				style={style}
 				{...rest}
 			>
 				{topIconSpacer}
@@ -82,9 +83,14 @@ const CustomCard = props => {
 	);
 };
 
+CustomCard.defaultPropTypes = {
+	style: {}
+};
+
 CustomCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	iconUrl: PropTypes.string,
+	style: PropTypes.object,
 	variant: PropTypes.oneOf([
 		"default",
 		"raised",

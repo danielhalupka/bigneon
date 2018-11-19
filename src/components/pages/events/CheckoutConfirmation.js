@@ -5,18 +5,11 @@ import Hidden from "@material-ui/core/Hidden";
 import { observer } from "mobx-react";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import { Paper } from "@material-ui/core";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Link } from "react-router-dom";
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
-import IconButton from "@material-ui/core/IconButton";
 import Bigneon from "../../../helpers/bigneon";
-import Button from "../../elements/Button";
 import notifications from "../../../stores/notifications";
-import TicketSelection from "./TicketSelection";
-import PromoCodeDialog from "./PromoCodeDialog";
 import selectedEvent from "../../../stores/selectedEvent";
-import EventSummaryGrid from "./EventSummaryGrid";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
 import layout from "../../../stores/layout";
@@ -27,13 +20,13 @@ import {
 	secondaryHex,
 	fontFamily
 } from "../../styles/theme";
-import Card from "../../elements/Card";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
-import InputWithButton from "../../common/form/InputWithButton";
 import Divider from "../../common/Divider";
 
 const styles = theme => ({
-	root: {},
+	root: {
+		paddingBottom: theme.spacing.unit * 10
+	},
 	eventSubCardContent: {
 		paddingLeft: theme.spacing.unit * 4,
 		paddingRight: theme.spacing.unit * 4,
@@ -346,7 +339,7 @@ class CheckoutConfirmation extends Component {
 		const headerHeight = 600;
 
 		return (
-			<div>
+			<div className={classes.root}>
 				<EventHeaderImage
 					variant="detailed"
 					height={headerHeight}

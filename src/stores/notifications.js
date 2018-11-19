@@ -1,4 +1,5 @@
 import { observable, computed, action } from "mobx";
+import translateApiErrors from "../helpers/translateApiErrors";
 
 class Notification {
 	@observable
@@ -6,6 +7,18 @@ class Notification {
 
 	@observable
 	variant = "";
+
+	@action
+	showFromErrorResponse({
+		error,
+		defaultMessage = "An error occurred.",
+		variant = "info"
+	}) {
+		const formattedError = translateApiErrors(error, defaultMessage);
+		this.message = formattedError.message;
+		this.variant = variant;
+		return formattedError;
+	}
 
 	@action
 	show({ message, variant = "info" }) {
