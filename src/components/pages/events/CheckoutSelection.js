@@ -197,10 +197,10 @@ class CheckoutSelection extends Component {
 		cart.update(
 			ticketSelection,
 			() => {
-				notifications.show({
-					message: "Tickets added to cart",
-					variant: "success"
-				});
+				// notifications.show({
+				// 	message: "Tickets added to cart",
+				// 	variant: "success"
+				// });
 				this.props.history.push(`/events/${id}/tickets/confirmation`);
 			},
 			error => {

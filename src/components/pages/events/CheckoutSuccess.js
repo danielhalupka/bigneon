@@ -112,7 +112,7 @@ class CheckoutSuccess extends Component {
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						<div className={classes.buttonsContainer}>
-							<Link to="/tickets">
+							<Link to="/hub">
 								<Button size="large" variant="primary">
 									My tickets
 								</Button>

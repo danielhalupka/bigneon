@@ -32,12 +32,13 @@ const toolBarHeight = {
 
 const raisedCardBoxShadow = "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)";
 
+const fontFamily = "TTCommons-Regular";
 const fontFamilyBold = "TTCommons-Bold";
 const fontFamilyDemiBold = "TTCommons-DemiBold";
 
 const theme = createMuiTheme({
 	typography: {
-		fontFamily: "TTCommons-Regular",
+		fontFamily,
 		fontSize: 16
 	},
 	shape: {
@@ -83,13 +84,13 @@ const theme = createMuiTheme({
 		},
 		MuiInput: {
 			root: {
-				fontFamily: "TTCommons-Regular",
+				fontFamily,
 				fontSize: 17
 			}
 		},
 		MuiInputLabel: {
 			root: {
-				fontFamily: "TTCommons-Regular",
+				fontFamily,
 				color: textColorPrimary,
 				textTransform: "capitalize"
 			}
@@ -131,6 +132,7 @@ export {
 	theme,
 	callToActionBackground,
 	raisedCardBoxShadow,
+	fontFamily,
 	fontFamilyBold,
 	fontFamilyDemiBold
 };

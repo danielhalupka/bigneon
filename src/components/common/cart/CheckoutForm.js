@@ -8,15 +8,16 @@ import { Grid, Typography, Dialog, DialogTitle } from "@material-ui/core";
 import Button from "../../elements/Button";
 import user from "../../../stores/user";
 import DialogTransition from "../DialogTransition";
+import { fontFamilyDemiBold } from "../../styles/theme";
 
 const styles = theme => ({
 	paymentContainer: {
 		padding: theme.spacing.unit * 2,
-		marginTop: theme.spacing.unit * 3,
-		borderStyle: "solid",
-		borderWidth: 0.5,
-		borderColor: theme.palette.grey[200],
-		borderRadius: theme.shape.borderRadius
+		marginTop: theme.spacing.unit * 3
+		// borderStyle: "solid",
+		// borderWidth: 0.5,
+		// borderColor: theme.palette.grey[200],
+		// borderRadius: theme.shape.borderRadius
 	},
 	cardInput: {
 		outline: "none",
@@ -28,6 +29,10 @@ const styles = theme => ({
 		justifyContent: "flex-start",
 		display: "flex",
 		marginTop: theme.spacing.unit * 2
+	},
+	heading: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 1.2
 	}
 });
 
@@ -167,6 +172,7 @@ class CheckoutForm extends Component {
 							onClick={this.onSubmit.bind(this)}
 							size="large"
 							variant="callToAction"
+							style={{ width: "100%" }}
 						>
 							{this.submitButton}
 						</Button>

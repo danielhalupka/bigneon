@@ -1,45 +1,71 @@
 import React, { Component } from "react";
+import { withStyles } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Hidden from "@material-ui/core/Hidden";
 import { observer } from "mobx-react";
-import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Paper } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
-
-import notifications from "../../../stores/notifications";
-import selectedEvent from "../../../stores/selectedEvent";
-import user from "../../../stores/user";
-import EventSummaryGrid from "./EventSummaryGrid";
-import { primaryHex } from "../../styles/theme";
-import Divider from "../../common/Divider";
-import cart from "../../../stores/cart";
-import EditCartItemDialog from "./EditCartItemDialog";
+import { Link } from "react-router-dom";
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
+import IconButton from "@material-ui/core/IconButton";
 import Bigneon from "../../../helpers/bigneon";
+import Button from "../../elements/Button";
+import notifications from "../../../stores/notifications";
+import TicketSelection from "./TicketSelection";
+import PromoCodeDialog from "./PromoCodeDialog";
+import selectedEvent from "../../../stores/selectedEvent";
+import EventSummaryGrid from "./EventSummaryGrid";
+import cart from "../../../stores/cart";
+import user from "../../../stores/user";
 import layout from "../../../stores/layout";
+import EventHeaderImage from "../../elements/event/EventHeaderImage";
+import {
+	fontFamilyDemiBold,
+	primaryHex,
+	secondaryHex,
+	fontFamily
+} from "../../styles/theme";
+import Card from "../../elements/Card";
+import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
+import InputWithButton from "../../common/form/InputWithButton";
+import Divider from "../../common/Divider";
 
 const styles = theme => ({
-	card: {
-		padding: theme.spacing.unit * 4
+	root: {},
+	eventSubCardContent: {
+		paddingLeft: theme.spacing.unit * 4,
+		paddingRight: theme.spacing.unit * 4,
+		paddingBottom: theme.spacing.unit * 4
 	},
-	ticketsContainer: {
-		marginTop: theme.spacing.unit * 6,
-		borderStyle: "solid",
-		borderWidth: 0.5,
-		borderColor: theme.palette.grey[200],
-		borderRadius: theme.shape.borderRadius
-	},
+	eventSubCardRow1: {},
 	ticketLineEntry: {
 		marginTop: theme.spacing.unit * 2,
 		marginBottom: theme.spacing.unit
+	},
+	lintEntryTitle: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9,
+		textTransform: "uppercase"
+	},
+	lineEntryText: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9
+	},
+	subTotal: {
+		fontFamily: fontFamily,
+		fontSize: theme.typography.fontSize * 0.9
 	},
 	userContainer: {
 		marginTop: theme.spacing.unit * 2,
 		marginBottom: theme.spacing.unit * 2,
 		display: "flex",
 		alignItems: "center"
+	},
+	userIcon: {
+		color: primaryHex,
+		marginRight: theme.spacing.unit
 	},
 	userName: {
 		color: primaryHex
@@ -49,25 +75,55 @@ const styles = theme => ({
 		color: primaryHex,
 		marginTop: theme.spacing.unit
 	},
-	userIcon: {
-		color: primaryHex,
-		marginRight: theme.spacing.unit
+	backLink: {
+		color: secondaryHex
 	}
 });
 
-const TicketLineEntry = ({ col1, col2, col3, col4, className }) => (
-	<Grid alignItems="center" container className={className}>
-		<Grid item xs={1} sm={1} md={1} lg={1}>
-			{col1}
+const TicketLineEntry = ({ col1, col2, col3, classes }) => (
+	<Grid alignItems="center" container className={classes.ticketLineEntry}>
+		<Grid item xs={8} sm={8} md={8} lg={8}>
+			<Typography className={classes.lineEntryText}>{col1}</Typography>
 		</Grid>
-		<Grid item xs={7} sm={7} md={6} lg={7}>
-			{col2}
+		<Grid item xs={2} sm={2} md={2} lg={2}>
+			<Typography
+				className={classes.lineEntryText}
+				style={{ textAlign: "right" }}
+			>
+				{col2}
+			</Typography>
 		</Grid>
-		<Grid item xs={2} sm={2} md={5} lg={2}>
-			{col3}
+		<Grid item xs={2} sm={2} md={2} lg={2}>
+			<Typography
+				className={classes.lineEntryText}
+				style={{ textAlign: "right" }}
+			>
+				{col3}
+			</Typography>
 		</Grid>
-		<Grid item xs={2} sm={2} md={6} lg={2}>
-			{col4}
+	</Grid>
+);
+
+const TicketLineTotal = ({ col1, col2, col3, classes }) => (
+	<Grid alignItems="center" container className={classes.ticketLineEntry}>
+		<Grid item xs={6} sm={6} md={6} lg={6}>
+			<Typography className={classes.lineEntryText}>{col1}</Typography>
+		</Grid>
+		<Grid item xs={4} sm={4} md={4} lg={4}>
+			<Typography
+				className={classes.lineEntryText}
+				style={{ textAlign: "right" }}
+			>
+				{col2}
+			</Typography>
+		</Grid>
+		<Grid item xs={2} sm={2} md={2} lg={2}>
+			<Typography
+				className={classes.lineEntryText}
+				style={{ textAlign: "right" }}
+			>
+				{col3}
+			</Typography>
 		</Grid>
 	</Grid>
 );
@@ -78,13 +134,19 @@ class CheckoutConfirmation extends Component {
 		super(props);
 
 		this.state = {
-			editingItemId: null
+			errors: {},
+			isSubmitting: false
 		};
 	}
 
 	componentDidMount() {
 		layout.toggleSideMenu(false);
+		layout.toggleContainerPadding(false);
+
 		cart.refreshCart();
+
+		//TODO
+		//https://github.com/big-neon/bn-web/issues/408
 
 		if (
 			this.props.match &&
@@ -100,8 +162,12 @@ class CheckoutConfirmation extends Component {
 				});
 			});
 		} else {
-			//Don't show any event specific details
+			//TODO return 404
 		}
+	}
+
+	componentWillUnmount() {
+		layout.toggleContainerPadding(true);
 	}
 
 	onCheckout(stripeToken, onError) {
@@ -177,41 +243,15 @@ class CheckoutConfirmation extends Component {
 			}
 
 			return (
-				<TicketLineEntry
-					key={id}
-					col1={
-						<IconButton
-							onClick={() =>
-								this.setState({
-									editingItemId: id,
-									editingTicketTypeId: ticket_type_id,
-									editingItemName: description,
-									editingItemQuantity: quantity,
-									editingItemPriceInCents: unit_price_in_cents
-								})
-							}
-							aria-label="Edit"
-						>
-							<EditIcon />
-						</IconButton>
-					}
-					col2={
-						<Typography variant="body1">
-							{quantity} x {description}
-						</Typography>
-					}
-					col3={
-						<Typography variant="body1">
-							$ {Math.round(unit_price_in_cents / 100)}
-						</Typography>
-					}
-					col4={
-						<Typography variant="body1">
-							$ {Math.round((unit_price_in_cents / 100) * quantity)}
-						</Typography>
-					}
-					className={classes.ticketLineEntry}
-				/>
+				<div key={id}>
+					<TicketLineEntry
+						col1={`${quantity} x ${description}`}
+						col2={`$ ${Math.round(unit_price_in_cents / 100)}`}
+						col3={`$ ${Math.round((unit_price_in_cents / 100) * quantity)}`}
+						classes={classes}
+					/>
+					<Divider style={{ marginTop: 15 }} />
+				</div>
 			);
 		});
 	}
@@ -222,138 +262,131 @@ class CheckoutConfirmation extends Component {
 		const { fees, total_in_cents } = cart;
 
 		return (
-			<TicketLineEntry
-				col1={null}
-				// col2={
-				// 	id ? (
-				// 		null
-				// 		// <Link
-				// 		// 	to={`/events/${id}/tickets`}
-				// 		// >
-				// 		// 	<Button>Change tickets</Button>
-				// 		// </Link>
-				// 	) : null
-				// }
-				col3={
-					<span>
-						<Typography variant="body1">Service fees:</Typography>
-						<Typography variant="body1">Order total:</Typography>
-					</span>
-				}
-				col4={
-					<span>
-						<Typography variant="body1">${fees}</Typography>
-						<Typography variant="body1">
-							${total_in_cents ? Math.round(total_in_cents / 100) : 0}
-						</Typography>
-					</span>
-				}
-				className={classes.ticketLineEntry}
-			/>
+			<div>
+				<TicketLineTotal
+					col1={
+						<Link to={`/events/${id}/tickets`}>
+							<span className={classes.backLink}>Change tickets</span>
+						</Link>
+					}
+					col2={<span className={classes.subTotal}>Service fees:</span>}
+					col3={`$ ${fees}`}
+					classes={classes}
+				/>
+
+				<TicketLineTotal
+					col1={null}
+					col2={<span className={classes.subTotal}>Order total:</span>}
+					col3={`$ $${total_in_cents ? Math.round(total_in_cents / 100) : 0}`}
+					classes={classes}
+				/>
+
+				<Divider />
+			</div>
 		);
 	}
 
 	render() {
+		const { classes } = this.props;
+		const { isSubmitting } = this.state;
+
 		const { fees, total_in_cents, formattedExpiryTime } = cart;
 
-		const { classes } = this.props;
-		const {
-			editingItemId,
-			editingTicketTypeId,
-			editingItemName,
-			editingItemQuantity,
-			editingItemPriceInCents
-		} = this.state;
-
-		//If the user has previously selected an event, it'll still be here
-		//If they haven't selected an event but we have tickets in their cart from previously then display a generic checkout page
 		const { event, venue, artists, organization, id } = selectedEvent;
 
-		return (
-			<Paper className={classes.card}>
-				<EditCartItemDialog
-					id={editingItemId}
-					ticketTypeId={editingTicketTypeId}
-					name={editingItemName}
-					quantity={editingItemQuantity}
-					priceInCents={editingItemPriceInCents}
-					onClose={() => this.setState({ editingItemId: null })}
-				/>
-				{event ? (
-					<EventSummaryGrid
-						event={event}
-						venue={venue}
-						organization={organization}
-						artists={artists}
+		if (event === null) {
+			return <Typography variant="subheading">Loading...</Typography>;
+		}
+
+		if (event === false) {
+			return <Typography variant="subheading">Event not found.</Typography>;
+		}
+
+		const {
+			name,
+			displayEventStartDate,
+			additional_info,
+			top_line_info,
+			age_limit,
+			promo_image_url,
+			displayDoorTime,
+			displayShowTime,
+			eventStartDateMoment
+		} = event;
+
+		const subCardContent = (
+			<div className={classes.eventSubCardContent}>
+				<div className={classes.eventSubCardRow1}>
+					<TicketLineEntry
+						key={id}
+						col1={<span className={classes.lintEntryTitle}>Ticket</span>}
+						col2={<span className={classes.lintEntryTitle}>Price</span>}
+						col3={<span className={classes.lintEntryTitle}>Subtotal</span>}
+						classes={classes}
 					/>
-				) : (
-					<Typography variant="display2">Checkout</Typography>
-				)}
 
-				<Grid container spacing={24}>
-					<Grid
-						item
-						xs={12}
-						sm={12}
-						lg={12}
-						className={classes.ticketsContainer}
-					>
-						<TicketLineEntry
-							col1={null}
-							col2={<Typography variant="subheading">Ticket</Typography>}
-							col3={<Typography variant="subheading">Price</Typography>}
-							col4={<Typography variant="subheading">Subtotal</Typography>}
-							className={classes.ticketLineEntry}
-						/>
+					{this.renderTickets()}
+					{this.renderTotals()}
+				</div>
 
-						{this.renderTickets()}
+				{user.isAuthenticated && total_in_cents ? (
+					<div>
+						<CheckoutForm onToken={this.onCheckout.bind(this)} />
 
-						<Divider />
-
-						{this.renderTotals()}
-					</Grid>
-
-					{total_in_cents ? (
-						<Grid
-							item
-							xs={12}
-							sm={12}
-							lg={12}
-							className={classes.userContainer}
-						>
-							<AccountCircle
-								style={{ fontSize: 45 }}
-								className={classes.userIcon}
-							/>
-							<Typography className={classes.userName} variant="body1">
-								{user.isAuthenticated
-									? `Hi, ${user.firstName} ${user.lastName}!`
-									: "Please login first"}
-							</Typography>
-						</Grid>
-					) : null}
-
-					{user.isAuthenticated && total_in_cents ? (
-						<Grid item xs={12} sm={12} lg={12} style={{ padding: 0 }}>
-							<CheckoutForm onToken={this.onCheckout.bind(this)} />
-
-							{formattedExpiryTime ? (
-								<Typography className={classes.cartExpiry} variant="body1">
-									Cart expires in {formattedExpiryTime}
-								</Typography>
-							) : null}
-						</Grid>
-					) : null}
-
-					{/* {formattedExpiryTime ? (
-						<Grid item xs={12} sm={12} lg={12} style={{ padding: 0 }}>
+						{formattedExpiryTime ? (
 							<Typography className={classes.cartExpiry} variant="body1">
 								Cart expires in {formattedExpiryTime}
 							</Typography>
-						</Grid>
-					) : null} */}
-				</Grid>
-			</Paper>
+						) : null}
+					</div>
+				) : null}
+			</div>
+		);
+
+		const headerHeight = 600;
+
+		return (
+			<div>
+				<EventHeaderImage
+					variant="detailed"
+					height={headerHeight}
+					{...event}
+					artists={artists}
+				/>
+
+				{/* Desktop */}
+				<div style={{ height: headerHeight }}>
+					<Hidden smDown implementation="css">
+						<EventDetailsOverlayCard
+							style={{
+								width: "30%",
+								maxWidth: 550,
+								top: 180,
+								right: 200,
+								height: "100%"
+							}}
+							imageSrc={promo_image_url}
+						>
+							{subCardContent}
+						</EventDetailsOverlayCard>
+					</Hidden>
+
+					{/* Mobile */}
+					<Hidden mdUp>
+						<EventDetailsOverlayCard
+							style={{
+								width: "100%",
+								paddingLeft: 20,
+								paddingRight: 20,
+								top: 480
+							}}
+							imageSrc={promo_image_url}
+						>
+							{subCardContent}
+						</EventDetailsOverlayCard>
+					</Hidden>
+				</div>
+			</div>
 		);
 	}
 }
