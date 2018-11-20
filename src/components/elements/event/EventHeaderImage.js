@@ -256,16 +256,16 @@ const EventHeaderImage = props => {
 								</Typography>
 								<br />
 
-								<AppButton
-									href="https://itunes.apple.com/us/genre/ios/id36?mt=8"
-									variant="ios"
-								>
+								<AppButton href={process.env.REACT_APP_STORE_IOS} variant="ios">
 									iOS
 								</AppButton>
 
 								<span style={{ marginLeft: 20 }} />
 
-								<AppButton href="https://play.google.com" variant="android">
+								<AppButton
+									href={process.env.REACT_APP_STORE_ANDROID}
+									variant="android"
+								>
 									Android
 								</AppButton>
 							</div>

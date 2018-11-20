@@ -337,8 +337,6 @@ class EventTicketsCard extends Component {
 			event_start
 		} = event;
 
-		console.log(event);
-
 		//TODO show artists when added to api
 		//https://github.com/big-neon/bn-api/issues/572
 

@@ -26,6 +26,9 @@ const styles = theme => {
 			// WebkitBorderImage:
 			// 	"-webkit-gradient(linear, left top, left bottom, from(#00abeb), to(#fff), color-stop(0.5, #fff), color-stop(0.5, #66cc00)) 21 30 30 21 repeat repeat"
 		},
+		blackBackground: {
+			backgroundColor: "#000000"
+		},
 		black: {
 			border: `solid 0.5px #000000`
 		},
@@ -45,6 +48,13 @@ const styles = theme => {
 		blackLabel: {
 			color: "#000000",
 			textTransform: "capitalize"
+		},
+		blackBackgroundLabel: {
+			color: "#FFFFFF",
+			textTransform: "capitalize"
+		},
+		hover: {
+			backgroundColor: "red"
 		}
 	};
 };
@@ -52,12 +62,14 @@ const styles = theme => {
 const AppButton = props => {
 	const { classes, children, variant, color, ...rest } = props;
 
-	const iconUrl = `/icons/${variant}-${color}.svg`;
+	const iconColor = color === "blackBackground" ? "white" : color;
+
+	const iconUrl = `/icons/${variant}-${iconColor}.svg`;
 
 	return (
 		<Button
 			classes={{
-				root: classNames(classes.button, classes[color]),
+				root: classNames({ [classes.button]: true, [classes[color]]: true }),
 				label: classes[`${color}Label`]
 			}}
 			target="_blank"
@@ -75,7 +87,7 @@ AppButton.defaultProps = {
 };
 
 AppButton.propTypes = {
-	color: PropTypes.oneOf(["white", "black"]),
+	color: PropTypes.oneOf(["white", "black", "blackBackground"]),
 	classes: PropTypes.object.isRequired,
 	variant: PropTypes.oneOf(["ios", "android"]),
 	children: PropTypes.oneOfType([

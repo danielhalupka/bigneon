@@ -12,6 +12,7 @@ import SelectGroup from "../../common/form/SelectGroup";
 import TicketDialog from "./TicketDialog";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
+import AppPromoCard from "../../elements/AppPromoCard";
 
 const styles = theme => ({});
 
@@ -37,8 +38,6 @@ class FanHub extends Component {
 			.then(response => {
 				const { data, paging } = response.data; //@TODO Implement pagination
 				let ticketGroups = [];
-
-				console.log(data);
 
 				//TODO api data structure will eventually change
 				data.forEach(ticketGroup => {
@@ -229,6 +228,8 @@ class FanHub extends Component {
 				<Grid container spacing={24}>
 					{this.renderTickets()}
 				</Grid>
+
+				<AppPromoCard style={{ marginTop: 20 }} />
 			</div>
 		);
 	}

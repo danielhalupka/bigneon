@@ -83,7 +83,9 @@ class RightHeaderMenu extends React.Component {
 				"REACT_APP_CLOUDINARY_CLOUD_NAME",
 				"REACT_APP_CLOUDINARY_UPLOAD_PRESET",
 				"REACT_APP_CLOUDINARY_API_KEY",
-				"REACT_APP_STRIPE_API_KEY"
+				"REACT_APP_STRIPE_API_KEY",
+				"REACT_APP_STORE_IOS",
+				"REACT_APP_STORE_ANDROID"
 			];
 			let items = [];
 			checkEnvKeys.forEach(key => {
