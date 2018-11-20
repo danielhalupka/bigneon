@@ -270,7 +270,7 @@ class Details extends Component {
 		} = eventUpdateStore.event;
 
 		return (
-			<Grid container spacing={24}>
+			<Grid container spacing={8}>
 				<Grid
 					style={{ paddingBottom: 0, marginBottom: 0 }}
 					item

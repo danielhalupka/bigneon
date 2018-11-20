@@ -5,7 +5,6 @@ import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import classNames from "classnames";
 
-import { raisedCardBoxShadow } from "../styles/theme";
 import TopCardIcon from "./TopCardIcon";
 
 const styles = {
@@ -13,7 +12,7 @@ const styles = {
 		borderRadius: 4
 	},
 	default: {
-		borderRadius: 3,
+		borderRadius: 6,
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.07)",
 		border: "solid 0.5px #dee2e8"
 	},
@@ -23,7 +22,10 @@ const styles = {
 		border: "none"
 	},
 	raised: {
-		boxShadow: raisedCardBoxShadow
+		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)"
+	},
+	raisedLight: {
+		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.3)"
 	},
 	block: {
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.07)",
@@ -94,6 +96,7 @@ CustomCard.propTypes = {
 	variant: PropTypes.oneOf([
 		"default",
 		"raised",
+		"raisedLight",
 		"form",
 		"dialog",
 		"block",

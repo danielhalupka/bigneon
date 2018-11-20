@@ -16,8 +16,8 @@ const styles = theme => {
 			fontFamily: fontFamilyDemiBold
 		},
 		icon: {
-			width: 32,
-			height: 32,
+			width: 38,
+			height: 38,
 			marginRight: theme.spacing.unit * 2
 		}
 	};

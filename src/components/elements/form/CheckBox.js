@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { fontFamilyDemiBold } from "../../styles/theme";
+import classNames from "classnames";
 
 const styles = theme => {
 	return {
@@ -36,6 +37,13 @@ const styles = theme => {
 			justifyContent: "center",
 			alignItems: "center"
 		},
+		disabledRoot: {
+			cursor: "default"
+		},
+		disabledActiveSquare: {
+			backgroundImage:
+				"linear-gradient(229deg, rgb(229,61,150,0.5), rgb(84,145,204,0.5))"
+		},
 		checkmark: {
 			width: 12,
 			height: 12
@@ -43,28 +51,50 @@ const styles = theme => {
 	};
 };
 
-const CheckBox = ({ active, children, onClick, classes, style = {} }) => {
+const CheckBox = ({
+	active,
+	children,
+	onClick,
+	classes,
+	disabled,
+	style = {}
+}) => {
 	return (
-		<div className={classes.root} onClick={onClick} style={style}>
+		<div
+			className={classNames({
+				[classes.root]: true,
+				[classes.disabledRoot]: !!disabled
+			})}
+			onClick={!disabled ? onClick : null}
+			style={style}
+		>
 			{active ? (
-				<div className={classes.activeSquare}>
+				<div
+					className={classNames({
+						[classes.activeSquare]: true,
+						[classes.disabledActiveSquare]: !!disabled
+					})}
+				>
 					<img className={classes.checkmark} src="/icons/checkmark-white.svg" />
 				</div>
 			) : (
 				<div className={classes.square} />
 			)}
-			<Typography className={classes[active ? "labelActive" : "label"]}>
-				{children}
-			</Typography>
+			{children ? (
+				<Typography className={classes[active ? "labelActive" : "label"]}>
+					{children}
+				</Typography>
+			) : null}
 		</div>
 	);
 };
 
 CheckBox.propTypes = {
 	active: PropTypes.bool.isRequired,
-	children: PropTypes.string.isRequired,
+	children: PropTypes.string,
 	classes: PropTypes.object.isRequired,
 	onClick: PropTypes.func,
+	disabled: PropTypes.bool,
 	style: PropTypes.object
 };
 

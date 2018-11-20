@@ -30,8 +30,6 @@ const toolBarHeight = {
 	"@media (min-width:600px)": { minHeight: 70 }
 };
 
-const raisedCardBoxShadow = "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)";
-
 const fontFamily = "TTCommons-Regular";
 const fontFamilyBold = "TTCommons-Bold";
 const fontFamilyDemiBold = "TTCommons-DemiBold";
@@ -132,7 +130,6 @@ export {
 	toolBarHeight,
 	theme,
 	callToActionBackground,
-	raisedCardBoxShadow,
 	fontFamily,
 	fontFamilyBold,
 	fontFamilyDemiBold

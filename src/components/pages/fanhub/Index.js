@@ -6,7 +6,7 @@ import moment from "moment";
 
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
-import TicketGroup from "./TicketGroup";
+import EventTicketsCard from "./EventTicketsCard";
 import TransferTicketsDialog from "./TransferTicketsDialog";
 import SelectGroup from "../../common/form/SelectGroup";
 import TicketDialog from "./TicketDialog";
@@ -23,7 +23,7 @@ class FanHub extends Component {
 			showTicketsFor: "upcoming",
 			ticketGroups: null,
 			filteredTicketGroups: null,
-			expandedTicketGroupId: null,
+			expandedEventId: null,
 			selectedTransferTicketIds: null,
 			selectedTicket: null
 		};
@@ -32,21 +32,22 @@ class FanHub extends Component {
 	componentDidMount() {
 		layout.toggleSideMenu(true);
 
-
 		Bigneon()
 			.tickets.index()
 			.then(response => {
 				const { data, paging } = response.data; //@TODO Implement pagination
 				let ticketGroups = [];
 
+				console.log(data);
+
 				//TODO api data structure will eventually change
 				data.forEach(ticketGroup => {
 					const event = ticketGroup[0];
 					const tickets = ticketGroup[1];
 
-					event.formattedData = moment
+					event.formattedDate = moment
 						.utc(event.event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-						.format("dddd, MMM D");
+						.format("ddd MM/DD/YY, h:mm A z");
 
 					ticketGroups.push({ event, tickets });
 				});
@@ -69,6 +70,24 @@ class FanHub extends Component {
 					variant: "error"
 				});
 			});
+	}
+
+	componentDidUpdate(prevProps) {
+		let expandedEventId = null;
+		if (this.props.match && this.props.match.params) {
+			const { eventId } = this.props.match.params;
+			if (
+				prevProps.match &&
+				prevProps.match.params &&
+				prevProps.match.params.eventId === eventId
+			) {
+				if (!(prevProps.match.params.eventId && !this.state.expandedEventId)) {
+					return;
+				}
+			}
+			expandedEventId = eventId;
+		}
+		this.setState({ expandedEventId });
 	}
 
 	filterTicketGroups() {
@@ -113,10 +132,11 @@ class FanHub extends Component {
 
 	renderTickets() {
 		const {
-			expandedTicketGroupId,
+			expandedEventId,
 			showTicketsFor,
 			filteredTicketGroups
 		} = this.state;
+		const { history } = this.props;
 
 		if (filteredTicketGroups === null) {
 			return (
@@ -133,22 +153,16 @@ class FanHub extends Component {
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
-						<TicketGroup
+						<EventTicketsCard
 							{...ticketGroup}
-							expanded={expandedTicketGroupId === id}
-							onExpandedChange={() => {
-								if (expandedTicketGroupId === id) {
-									this.setState({ expandedTicketGroupId: null });
-								} else {
-									this.setState({ expandedTicketGroupId: id });
-								}
-							}}
+							expanded={expandedEventId === id}
 							onTicketSelect={selectedTicket =>
 								this.setState({ selectedTicket, selectedEventName: name })
 							}
 							onShowTransferQR={selectedTransferTicketIds =>
 								this.setState({ selectedTransferTicketIds })
 							}
+							history={history}
 						/>
 					</Grid>
 				);
@@ -196,10 +210,10 @@ class FanHub extends Component {
 
 		return (
 			<div>
-				<PageHeading iconUrl="/icons/tickets-active.svg">
-					My tickets
+				<PageHeading iconUrl="/icons/fan-hub-multi.svg">
+					Upcoming events
 				</PageHeading>
-				{this.renderSelectFilter()}
+				{/* {this.renderSelectFilter()} */}
 				<TicketDialog
 					open={!!selectedTicket}
 					eventName={selectedEventName}

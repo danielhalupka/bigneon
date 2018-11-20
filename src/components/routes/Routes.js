@@ -141,7 +141,7 @@ class Routes extends Component {
 							/>
 							<PrivateRoute
 								exact
-								path="/hub"
+								path="/hub/:eventId?"
 								component={FanHub}
 								isAuthenticated={isAuthenticated}
 							/>
@@ -175,7 +175,11 @@ class Routes extends Component {
 								component={CheckoutSuccess}
 								isAuthenticated={isAuthenticated}
 							/>
-							<Route exact path="/mobile_stripe_token_auth/:access_token/:refresh_token" component={MobileStripeAuth} />
+							<Route
+								exact
+								path="/mobile_stripe_token_auth/:access_token/:refresh_token"
+								component={MobileStripeAuth}
+							/>
 							{/* System admin routes TODO hide these if they don't blong */}
 							<PrivateRoute
 								exact

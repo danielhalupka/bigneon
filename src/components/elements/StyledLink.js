@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import classnames from "classnames";
 
 const styles = theme => {
 	return {
@@ -9,13 +10,15 @@ const styles = theme => {
 			borderBottom: "solid",
 			borderWidth: 1.5,
 			borderColor: "transparent",
-			color: "transparent"
+			color: "transparent",
+			cursor: "pointer"
 		},
 		underlined: {
 			borderBottom: "solid",
 			borderWidth: 1.5,
 			borderColor: theme.palette.secondary.main,
-			color: theme.palette.secondary.main
+			color: theme.palette.secondary.main,
+			cursor: "pointer"
 		},
 		text: {
 			color: theme.palette.text.primary
@@ -24,19 +27,35 @@ const styles = theme => {
 };
 
 const StyledLink = props => {
-	const { classes, children, to, underlined } = props;
+	const { classes, children, to, underlined, onClick } = props;
+
+	const inner = <span className={classes.text}>{children}</span>;
+
+	const outerClasses = classnames({
+		[classes.default]: !underlined,
+		[classes.underlined]: underlined
+	});
+
+	if (to) {
+		return (
+			<Link to={to} className={outerClasses} onClick={onClick}>
+				{inner}
+			</Link>
+		);
+	}
 
 	return (
-		<Link to={to} className={classes[underlined ? "underlined" : "default"]}>
-			<span className={classes.text}>{children}</span>
-		</Link>
+		<a className={outerClasses} onClick={onClick}>
+			{inner}
+		</a>
 	);
 };
 
 StyledLink.propTypes = {
 	classes: PropTypes.object.isRequired,
-	children: PropTypes.string.isRequired,
-	to: PropTypes.string.isRequired,
+	children: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
+	to: PropTypes.string,
+	onClick: PropTypes.func,
 	underlined: PropTypes.bool
 };
 

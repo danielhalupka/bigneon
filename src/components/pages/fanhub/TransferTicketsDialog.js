@@ -1,7 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
@@ -18,15 +17,20 @@ import { validEmail, validPhone } from "../../../validators";
 import notification from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import Divider from "../../common/Divider";
+import Dialog from "../../elements/Dialog";
 
 const styles = {
 	content: {
 		minWidth: 400,
-		alignContent: "center"
+		alignContent: "center",
+		textAlign: "center"
+	},
+	actionButtons: {
+		display: "flex"
 	}
 };
 
-class TransferTicketsDialog extends React.Component {
+class TransferTicketsDialog extends Component {
 	constructor(props) {
 		super(props);
 
@@ -262,17 +266,15 @@ class TransferTicketsDialog extends React.Component {
 			}`;
 		}
 
+		const iconUrl = "/icons/tickets-white.svg";
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
-				aria-labelledby="dialog-title"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
-				{...other}
 				onClose={this.onClose}
+				iconUrl={iconUrl}
+				title={heading}
+				{...other}
 			>
-				<DialogContent className={classes.content}>
-					<Typography variant="headline">{heading}</Typography>
-
+				<div className={classes.content}>
 					<Typography variant="subheading">Scan with the mobile app</Typography>
 
 					{this.renderQRCode()}
@@ -280,19 +282,27 @@ class TransferTicketsDialog extends React.Component {
 					<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
 
 					{this.renderEmailOrCellphoneNumber()}
-				</DialogContent>
-				<DialogActions>
-					<Button disabled={isSubmitting} onClick={this.onClose}>
+				</div>
+
+				<div className={classes.actionButtons}>
+					<Button
+						size="large"
+						style={{ flex: 1, marginRight: 5 }}
+						disabled={isSubmitting}
+						onClick={this.onClose}
+					>
 						Cancel
 					</Button>
 					<Button
+						size="large"
+						style={{ flex: 1, marginLeft: 5 }}
 						onClick={this.onSubmitEmailOrCellphoneNumber.bind(this)}
 						variant="callToAction"
 						disabled={isSubmitting}
 					>
 						{isSubmitting ? "Sending..." : "Send tickets"}
 					</Button>
-				</DialogActions>
+				</div>
 			</Dialog>
 		);
 	}
