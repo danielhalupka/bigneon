@@ -51,17 +51,36 @@ const styles = {
 	},
 	iconSpacer: {
 		marginTop: 30
+	},
+	topBorderHighlight: {
+		height: 6,
+		marginRight: "10%",
+		marginLeft: "10%",
+		backgroundImage: "linear-gradient(to left, #e53d96, #5491cc)"
 	}
 };
 
 const CustomCard = props => {
-	const { classes, children, variant, iconUrl, style, ...rest } = props;
+	const {
+		classes,
+		children,
+		variant,
+		iconUrl,
+		style,
+		topBorderHighlight,
+		...rest
+	} = props;
 
 	let topIconSpan;
 	let topIconSpacer;
 	if (iconUrl) {
 		topIconSpacer = <div className={classes.iconSpacer} />;
 		topIconSpan = <TopCardIcon iconUrl={iconUrl} />;
+	}
+
+	let topBorder;
+	if (topBorderHighlight) {
+		topBorder = <div className={classes.topBorderHighlight} />;
 	}
 
 	return (
@@ -78,6 +97,7 @@ const CustomCard = props => {
 				style={style}
 				{...rest}
 			>
+				{topBorder}
 				{topIconSpacer}
 				{children}
 			</Card>
@@ -90,6 +110,7 @@ CustomCard.defaultPropTypes = {
 };
 
 CustomCard.propTypes = {
+	topBorderHighlight: PropTypes.bool,
 	classes: PropTypes.object.isRequired,
 	iconUrl: PropTypes.string,
 	style: PropTypes.object,

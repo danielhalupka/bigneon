@@ -76,10 +76,10 @@ const styles = theme => {
 		statuses: {
 			display: "flex",
 			justifyContent: "flex-start",
-			flex: 1
+			flex: 2
 		},
 		totalsContainer: {
-			flex: 2,
+			flex: 3,
 			display: "flex",
 			justifyContent: "flex-end"
 		},
@@ -148,12 +148,19 @@ const EventSummaryCard = props => {
 						</div>
 						<div className={classes.row2}>
 							<div className={classes.statuses}>
-								<CheckBox style={{ cursor: "text" }} active={isPublished}>
-									Published
-								</CheckBox>{" "}
-								<CheckBox style={{ cursor: "text" }} active={isOnSale}>
-									On sale
-								</CheckBox>
+								<Grid container spacing={0}>
+									<Grid item xs={12} sm={12} md={6} lg={6}>
+										<CheckBox style={{ cursor: "text" }} active={isPublished}>
+											Published
+										</CheckBox>
+									</Grid>
+
+									<Grid item xs={12} sm={12} md={6} lg={6}>
+										<CheckBox style={{ cursor: "text" }} active={isOnSale}>
+											On&nbsp;sale
+										</CheckBox>
+									</Grid>
+								</Grid>
 							</div>
 							<div className={classes.totalsContainer}>
 								<Total classes={classes} value={totalSold} color={"#707ced"}>

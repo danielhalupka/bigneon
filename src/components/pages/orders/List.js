@@ -118,7 +118,7 @@ class OrderList extends Component {
 	render() {
 		return (
 			<div>
-				<PageHeading iconUrl="/icons/orders-multi.svg">My orders</PageHeading>
+				<PageHeading iconUrl="/icons/chart-multi.svg">My orders</PageHeading>
 
 				{this.renderOrders()}
 			</div>

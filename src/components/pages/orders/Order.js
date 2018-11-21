@@ -2,24 +2,87 @@ import React, { Component } from "react";
 import {
 	Typography,
 	withStyles,
-	Card,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableRow,
 	CardContent,
-	TableFooter
+	TableFooter,
+	Grid
 } from "@material-ui/core";
+import moment from "moment";
 
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
+import Card from "../../elements/Card";
+import FormSubHeading from "../../elements/FormSubHeading";
+import { fontFamilyDemiBold, fontFamily } from "../../styles/theme";
+import AppPromoCard from "../../elements/AppPromoCard";
+import Divider from "../../common/Divider";
 
 const styles = theme => ({
-	paper: {}
+	root: {},
+	content: {
+		padding: theme.spacing.unit * 8
+	},
+	cardHeader: {
+		display: "flex",
+		justifyContent: "space-between"
+	},
+	logo: {
+		width: 80,
+		height: 80
+	},
+	orderNumber: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 1.7
+	},
+	purchasedOn: {
+		fontFamily: fontFamilyDemiBold,
+		textTransform: "uppercase",
+		fontSize: theme.typography.fontSize * 0.9,
+		marginBottom: theme.spacing.unit * 6
+	},
+	date: {
+		textTransform: "none",
+		fontFamily: fontFamily
+	},
+	eventName: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 2,
+		marginBottom: theme.spacing.unit * 6
+	},
+	itemHeading: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9
+	},
+	item: {
+		fontSize: theme.typography.fontSize * 0.9
+	}
 });
+
+const LineEntry = ({ col1, col2, col3, col4 }) => (
+	<Grid alignItems="center" container>
+		<Grid item xs={2} sm={2} md={2} lg={2} style={{ textAlign: "center" }}>
+			{col1}
+		</Grid>
+
+		<Grid item xs={6} sm={6} md={6} lg={6}>
+			{col2}
+		</Grid>
+
+		<Grid item xs={2} sm={2} md={2} lg={2} style={{ textAlign: "right" }}>
+			{col3}
+		</Grid>
+
+		<Grid item xs={2} sm={2} md={2} lg={2} style={{ textAlign: "right" }}>
+			{col4}
+		</Grid>
+	</Grid>
+);
 
 class Order extends Component {
 	constructor(props) {
@@ -79,7 +142,6 @@ class Order extends Component {
 		//We can only get the event name from fields in the items array. Append a list if there's more than one.
 		let eventName = "";
 		let fee_total_in_cents = 0;
-		console.log(items);
 		items.forEach(
 			({ description, item_type, unit_price_in_cents, quantity }) => {
 				if (item_type === "Tickets") {
@@ -103,68 +165,123 @@ class Order extends Component {
 					Order details
 				</PageHeading>
 
-				<Card className={classes.paper}>
-					<CardContent>
-						<Typography variant="display2">Order #{orderNumber}</Typography>
+				<Card variant="form" topBorderHighlight>
+					<div className={classes.content}>
+						<div className={classes.cardHeader}>
+							<div>
+								<Typography className={classes.orderNumber}>
+									Order #{orderNumber}
+								</Typography>
+								<Typography className={classes.purchasedOn}>
+									Purchased on:{" "}
+									<span className={classes.date}>
+										{moment
+											.utc(date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+											.format("ddd MM/DD/YY, h:mm A z")}
+									</span>
+								</Typography>
+							</div>
+							<img src="/images/bn-logo.png" className={classes.logo} />
+						</div>
 
-						<Typography variant="headline">{eventName}</Typography>
-						<Typography variant="caption">Ordered {date}</Typography>
+						<Typography className={classes.eventName}>{eventName}</Typography>
 
-						<Table className={classes.table}>
-							<TableHead>
-								<TableRow>
-									<TableCell padding="checkbox">Quantity</TableCell>
-									<TableCell numeric>Ticket type</TableCell>
-									<TableCell numeric>Price</TableCell>
-									<TableCell numeric>Subtotal</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{items.map(item => {
-									const {
-										id,
-										ticket_type_id,
-										ticket_pricing_id,
-										quantity,
-										unit_price_in_cents,
-										item_type,
-										description
-									} = item;
+						<LineEntry
+							col1={
+								<Typography className={classes.itemHeading}>
+									Quantity
+								</Typography>
+							}
+							col2={
+								<Typography className={classes.itemHeading}>
+									Ticket type
+								</Typography>
+							}
+							col3={
+								<Typography className={classes.itemHeading}>Price</Typography>
+							}
+							col4={
+								<Typography className={classes.itemHeading}>
+									Subtotal
+								</Typography>
+							}
+						/>
+						<Divider style={{ marginBottom: 15 }} />
 
-									return (
-										<TableRow key={id}>
-											<TableCell padding="checkbox">{quantity}</TableCell>
-											<TableCell numeric>{description}</TableCell>
-											<TableCell numeric>
+						{items.map(item => {
+							const {
+								id,
+								ticket_type_id,
+								ticket_pricing_id,
+								quantity,
+								unit_price_in_cents,
+								item_type,
+								description
+							} = item;
+
+							return (
+								<div key={id}>
+									<LineEntry
+										col1={
+											<Typography className={classes.item}>
+												{quantity}
+											</Typography>
+										}
+										col2={
+											<Typography className={classes.item}>
+												{description}
+											</Typography>
+										}
+										col3={
+											<Typography className={classes.item}>
 												{(unit_price_in_cents / 100).toFixed(2)}
-											</TableCell>
-											<TableCell numeric>
+											</Typography>
+										}
+										col4={
+											<Typography className={classes.item}>
 												{((unit_price_in_cents / 100) * quantity).toFixed(2)}
-											</TableCell>
-										</TableRow>
-									);
-								})}
-							</TableBody>
-							<TableFooter>
-								<TableRow>
-									<TableCell>&nbsp;</TableCell>
-									<TableCell>&nbsp;</TableCell>
-									<TableCell numeric>Service fees</TableCell>
-									<TableCell numeric>
-										$ {(fee_total_in_cents / 100).toFixed(2)}
-									</TableCell>
-								</TableRow>
-								<TableRow>
-									<TableCell>&nbsp;</TableCell>
-									<TableCell>&nbsp;</TableCell>
-									<TableCell numeric>Order total</TableCell>
-									<TableCell numeric>
-										$ {(total_in_cents / 100).toFixed(2)}
-									</TableCell>
-								</TableRow>
-							</TableFooter>
-						</Table>
-					</CardContent>
+											</Typography>
+										}
+									/>
+									<Divider style={{ marginBottom: 15 }} />
+								</div>
+							);
+						})}
+
+						<LineEntry
+							col1={null}
+							col2={null}
+							col3={
+								<Typography className={classes.itemHeading}>
+									Service fees
+								</Typography>
+							}
+							col4={
+								<Typography className={classes.itemHeading}>
+									$ {(fee_total_in_cents / 100).toFixed(2)}
+								</Typography>
+							}
+						/>
+
+						<div style={{ marginTop: 20 }} />
+
+						<LineEntry
+							col1={null}
+							col2={null}
+							col3={
+								<Typography className={classes.itemHeading}>
+									Order total
+								</Typography>
+							}
+							col4={
+								<Typography className={classes.itemHeading}>
+									$ {(total_in_cents / 100).toFixed(2)}
+								</Typography>
+							}
+						/>
+
+						<AppPromoCard style={{ marginTop: 80 }} />
+					</div>
 				</Card>
 			</div>
 		);
