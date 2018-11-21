@@ -134,7 +134,7 @@ class EventUpdate {
 			increment: 1,
 			limitPerPerson: 10,
 			startDate: moment(), //TODO use the event date for defaults
-			endDate: moment(),
+			endDate: moment().add(1, "days"),
 
 			pricing: [
 				{
@@ -142,7 +142,7 @@ class EventUpdate {
 					ticketId: "", //TODO remove this if not needed
 					name: "Default price point",
 					startDate: moment(), //TODO make this the end of the last date
-					endDate: moment(),
+					endDate: moment().add(1, "days"),
 					value: ""
 				}
 			]

@@ -211,7 +211,7 @@ const TicketDetails = observer(props => {
 							value={endDate}
 							name="endDate"
 							label="Sale end time"
-							onChange={endDate => updateTicketType(index, { endDate })}
+							onChange={endDate => {updateTicketType(index, { endDate })}}
 							onBlur={validateFields}
 							minDate={false}
 						/>

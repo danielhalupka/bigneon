@@ -278,6 +278,7 @@ class EventTickets extends Component {
 	componentDidMount() {}
 
 	updateTicketType(index, details) {
+		console.log("Updating Details", details);
 		eventUpdateStore.updateTicketType(index, details);
 	}
 
