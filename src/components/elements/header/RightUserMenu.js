@@ -31,7 +31,9 @@ const styles = theme => ({
 		flexDirection: "row",
 		alignItems: "center"
 	},
-	avatar: {},
+	avatar: {
+		backgroundColor: "#EEEEEE"
+	},
 	nameDiv: {
 		paddingTop: 4,
 		paddingLeft: theme.spacing.unit * 2,
@@ -171,6 +173,7 @@ class RightHeaderMenu extends React.Component {
 					alt={firstName}
 					src={profilePicUrl || "/images/profile-pic-placeholder.png"}
 					className={classes.avatar}
+					style={{ padding: profilePicUrl ? 0 : 10 }}
 				/>
 
 				<Hidden smDown implementation="css">

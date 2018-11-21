@@ -1,29 +1,45 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { withStyles, CardMedia } from "@material-ui/core";
+import { withStyles, Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import InputGroup from "../../common/form/InputGroup";
 import Button from "../../elements/Button";
 import { validEmail, validPhone } from "../../../validators";
 import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
-import cloudinaryWidget from "../../../helpers/cloudinaryWidget";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
+import Card from "../../elements/Card";
+import FormSubHeading from "../../elements/FormSubHeading";
+import Divider from "../../common/Divider";
+import ProfilePicture from "./ProfilePicture";
+import InputGroup from "../../common/form/InputGroup";
 
 const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
+	root: {},
+	content: {
+		padding: theme.spacing.unit * 8
+	},
+	imageContainer: {
+		display: "flex",
+		justifyContent: "flex-end"
 	},
 	image: {
-		width: "100%",
-		height: 300,
-		borderRadius: theme.shape.borderRadius
+		width: 180,
+		height: 180,
+		borderRadius: 100
+	},
+	imageSizeDetails: {
+		color: "#9da3b4"
+	},
+	imageDisclaimer: {
+		marginTop: theme.spacing.unit * 4,
+		fontSize: theme.typography.fontSize * 0.8,
+		color: "#9da3b4",
+		lineHeight: 1
+	},
+	actionButtons: {
+		display: "flex"
 	}
 });
 
@@ -46,6 +62,11 @@ class Account extends Component {
 	componentDidMount() {
 		layout.toggleSideMenu(true);
 
+		//Then load from API for the freshest data
+		this.setDefault();
+	}
+
+	setDefault() {
 		//Initially load from current store
 		const { firstName, lastName, email, phone, profilePicUrl } = user;
 		this.setState({
@@ -56,7 +77,6 @@ class Account extends Component {
 			profilePicUrl
 		});
 
-		//Then load from API for the freshest data
 		user.refreshUser(({ firstName, lastName, email, phone, profilePicUrl }) =>
 			this.setState({
 				firstName,
@@ -156,26 +176,6 @@ class Account extends Component {
 			});
 	}
 
-	uploadWidget() {
-		cloudinaryWidget(
-			result => {
-				const imgResult = result[0];
-				const { secure_url } = imgResult;
-				console.log(secure_url);
-				this.setState({ profilePicUrl: secure_url });
-			},
-			error => {
-				console.error(error);
-
-				notifications.show({
-					message: "Profile picture failed to upload.",
-					variant: "error"
-				});
-			},
-			["profile-pictures"]
-		);
-	}
-
 	render() {
 		const { classes } = this.props;
 
@@ -192,92 +192,121 @@ class Account extends Component {
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/account-multi.svg">Account</PageHeading>
+				<Card variant="form">
+					<div className={classes.content}>
+						<form
+							noValidate
+							autoComplete="off"
+							onSubmit={this.onSubmit.bind(this)}
+						>
+							<Grid container spacing={24}>
+								<Grid item xs={12} sm={12} md={7} lg={8}>
+									<FormSubHeading>Profile image</FormSubHeading>
+									<Typography className={classes.imageSizeDetails}>
+										Recommended image size 800x800
+									</Typography>
 
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={10}>
-						<Card className={classes.paper}>
-							<form
-								noValidate
-								autoComplete="off"
-								onSubmit={this.onSubmit.bind(this)}
-							>
-								<CardContent>
-									<Grid container spacing={24}>
-										<Grid item xs={12} sm={6} lg={6}>
-											<InputGroup
-												error={errors.firstName}
-												value={firstName}
-												name="firstName"
-												label="First name*"
-												type="text"
-												onChange={e =>
-													this.setState({ firstName: e.target.value })
-												}
-												onBlur={this.validateFields.bind(this)}
-											/>
-											<InputGroup
-												error={errors.lastName}
-												value={lastName}
-												name="lastName"
-												label="Last name*"
-												type="text"
-												onChange={e =>
-													this.setState({ lastName: e.target.value })
-												}
-												onBlur={this.validateFields.bind(this)}
-											/>
-											<InputGroup
-												error={errors.email}
-												value={email}
-												name="email"
-												label="Email address*"
-												type="text"
-												onChange={e => this.setState({ email: e.target.value })}
-												onBlur={this.validateFields.bind(this)}
-											/>
-											<InputGroup
-												error={errors.phone}
-												value={phone}
-												name="phone"
-												label="Phone number"
-												type="text"
-												onChange={e => this.setState({ phone: e.target.value })}
-												onBlur={this.validateFields.bind(this)}
-											/>
-										</Grid>
+									<Typography className={classes.imageDisclaimer}>
+										It's strictly prohibited to upload insulting, violent,
+										pornographic pictures and pictures consist of political
+										issue, racialism and religious extremism.
+									</Typography>
+								</Grid>
 
-										<Grid item xs={12} sm={6} lg={6}>
-											<CardMedia
-												className={classes.image}
-												image={
-													profilePicUrl || "/images/profile-pic-placeholder.png"
-												}
-												title={name}
-											/>
-											<Button
-												style={{ width: "100%" }}
-												onClick={this.uploadWidget.bind(this)}
-											>
-												Upload new image
-											</Button>
-										</Grid>
-									</Grid>
-								</CardContent>
-								<CardActions>
-									<Button
-										disabled={isSubmitting}
-										type="submit"
-										style={{ minWidth: 150 }}
-										variant="callToAction"
-									>
-										{isSubmitting ? "Updating..." : <span>Update</span>}
-									</Button>
-								</CardActions>
-							</form>
-						</Card>
-					</Grid>
-					<Grid item xs={12} sm={6} lg={6} />
-				</Grid>
+								<Grid
+									item
+									xs={12}
+									sm={12}
+									md={5}
+									lg={4}
+									className={classes.imageContainer}
+								>
+									<ProfilePicture
+										profilePicUrl={profilePicUrl}
+										onNewUrl={newUrl =>
+											this.setState({ profilePicUrl: newUrl })
+										}
+									/>
+								</Grid>
+							</Grid>
+
+							<Divider style={{ marginTop: 40, marginBottom: 40 }} />
+
+							<Grid container spacing={24}>
+								<Grid item xs={12} sm={12} md={12} lg={12}>
+									<FormSubHeading>Personal information</FormSubHeading>
+								</Grid>
+
+								<Grid item xs={12} sm={12} md={6} lg={6}>
+									<InputGroup
+										error={errors.firstName}
+										value={firstName}
+										name="firstName"
+										label="Name*"
+										type="text"
+										onChange={e => this.setState({ firstName: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={12} md={6} lg={6}>
+									<InputGroup
+										error={errors.lastName}
+										value={lastName}
+										name="lastName"
+										label="Surname*"
+										type="text"
+										onChange={e => this.setState({ lastName: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={12} md={6} lg={6}>
+									<InputGroup
+										error={errors.email}
+										value={email}
+										name="email"
+										label="Email*"
+										type="text"
+										onChange={e => this.setState({ email: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={12} md={6} lg={6}>
+									<InputGroup
+										error={errors.phone}
+										value={phone}
+										name="phone"
+										label="Phone number"
+										type="text"
+										onChange={e => this.setState({ phone: e.target.value })}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+							</Grid>
+
+							<Divider style={{ marginTop: 40, marginBottom: 40 }} />
+
+							<div className={classes.actionButtons}>
+								<Button
+									size="large"
+									disabled={isSubmitting}
+									style={{ width: "100%", marginRight: 5 }}
+									onClick={this.setDefault.bind(this)}
+								>
+									Discard
+								</Button>
+								<Button
+									size="large"
+									disabled={isSubmitting}
+									type="submit"
+									style={{ width: "100%", marginLeft: 5 }}
+									variant="callToAction"
+								>
+									{isSubmitting ? "Saving..." : <span>Save</span>}
+								</Button>
+							</div>
+						</form>
+					</div>
+				</Card>
 			</div>
 		);
 	}

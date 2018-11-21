@@ -212,8 +212,8 @@ const EventSummaryCard = props => {
 				<Collapse in={isExpanded}>
 					<div className={classes.expandedViewContent}>
 						<Grid container spacing={32}>
-							{ticketTypes.map(ticketType => (
-								<Grid item xs={12} sm={6} lg={4}>
+							{ticketTypes.map((ticketType, index) => (
+								<Grid key={index} item xs={12} sm={6} lg={4}>
 									<TicketTypeSalesBarChart
 										name={ticketType.name}
 										totalRevenue={ticketType.sales_total_in_cents}

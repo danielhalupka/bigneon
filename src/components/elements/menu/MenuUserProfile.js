@@ -21,7 +21,8 @@ const styles = theme => {
 		avatar: {
 			width: 80,
 			height: 80,
-			marginBottom: theme.spacing.unit * 2
+			marginBottom: theme.spacing.unit * 2,
+			backgroundColor: "#EEEEEE"
 		},
 		divider: {
 			marginRight: theme.spacing.unit * 3,
@@ -46,6 +47,7 @@ const MenuUserProfile = observer(props => {
 					alt={fullName}
 					src={profilePicUrl || "/images/profile-pic-placeholder.png"}
 					className={classes.avatar}
+					style={{ padding: profilePicUrl ? 0 : 10 }}
 				/>
 
 				<Typography variant="title">{fullName}</Typography>
