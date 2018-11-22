@@ -1,8 +1,6 @@
-FROM node:9.11
+FROM mhart/alpine-node:10.13 as builder
 
-RUN mkdir /app
+#Create the app dir and install all of the dependencies
 WORKDIR /app
-ADD . /app/
-RUN npm install
-
-CMD ["bash", "./scripts/start_env.sh"]
+COPY . ./
+CMD ["./scripts/build_prod.sh"]
