@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
 	Typography,
 	withStyles,
-	CardMedia,
 	IconButton,
 	Menu,
 	MenuItem,
@@ -27,6 +26,7 @@ import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import EventSummaryCard from "./EventSummaryCard";
 import layout from "../../../../stores/layout";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -76,51 +76,29 @@ class EventsList extends Component {
 	};
 
 	updateEvents() {
+		//A bit of a hack, we might not have set the current org ID yet for this admin so keep checking
+		if (!user.currentOrganizationId) {
+			return setTimeout(this.updateEvents.bind(this), 100);
+		}
+
 		this.setState({ events: null }, () => {
-			//TODO remove this temp fix of iterating through orgs this user belongs to.
-			//When a user can choose which org they're dealing with currently
-			//https://github.com/big-neon/bn-web/issues/237
 			Bigneon()
-				.organizations.index()
-				.then(response => {
-					const { data, paging } = response.data; //@TODO Implement pagination
-					data.forEach(({ id }) => {
-						Bigneon()
-							.organizations.events.index({ organization_id: id })
-							.then(eventResponse => {
-								//Append all events together
-								this.setState(({ events }) => {
-									const previousEvents = events ? events : [];
-									return {
-										events: [...previousEvents, ...eventResponse.data.data] //@TODO Implement pagination
-									};
-								});
-							})
-							.catch(error => {
-								console.log("error with id: ", id);
-
-								console.error(error);
-
-								let message = "Loading events failed.";
-								if (
-									error.response &&
-									error.response.data &&
-									error.response.data.error
-								) {
-									message = error.response.data.error;
-								}
-
-								notifications.show({
-									message,
-									variant: "error"
-								});
-							});
+				.organizations.events.index({
+					organization_id: user.currentOrganizationId
+				})
+				.then(eventResponse => {
+					//Append all events together
+					this.setState(({ events }) => {
+						const previousEvents = events ? events : [];
+						return {
+							events: [...previousEvents, ...eventResponse.data.data] //@TODO Implement pagination
+						};
 					});
 				})
 				.catch(error => {
 					console.error(error);
 
-					let message = "Loading organizations failed.";
+					let message = "Loading events failed.";
 					if (
 						error.response &&
 						error.response.data &&
@@ -257,11 +235,11 @@ class EventsList extends Component {
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}
-							eventDate={event.event_start }//.format("DDD M/d/yy. h:mm PM Z")}
+							eventDate={event.event_start} //.format("DDD M/d/yy. h:mm PM Z")}
 							menuButton={MenuButton}
 							isPublished={true}
 							isOnSale={true}
-							totalSold={event.sold_held+event.sold_unreserved}
+							totalSold={event.sold_held + event.sold_unreserved}
 							totalOpen={event.tickets_open}
 							totalHeld={event.tickets_held}
 							totalCapacity={event.total_tickets}

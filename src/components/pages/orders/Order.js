@@ -1,16 +1,5 @@
 import React, { Component } from "react";
-import {
-	Typography,
-	withStyles,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	CardContent,
-	TableFooter,
-	Grid
-} from "@material-ui/core";
+import { Typography, withStyles, Grid } from "@material-ui/core";
 import moment from "moment";
 
 import notifications from "../../../stores/notifications";
@@ -18,7 +7,6 @@ import Bigneon from "../../../helpers/bigneon";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
 import Card from "../../elements/Card";
-import FormSubHeading from "../../elements/FormSubHeading";
 import { fontFamilyDemiBold, fontFamily } from "../../styles/theme";
 import AppPromoCard from "../../elements/AppPromoCard";
 import Divider from "../../common/Divider";

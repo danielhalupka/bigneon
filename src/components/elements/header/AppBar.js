@@ -13,6 +13,7 @@ import { toolBarHeight } from "../../styles/theme";
 import RightUserMenu from "./RightUserMenu";
 import SearchToolBarInput from "./SearchToolBarInput";
 import CartHeaderLink from "../../common/cart/CartHeaderLink";
+import CurrentOrganizationMenu from "../../common/cart/CurrentOrganizationMenu";
 
 const styles = theme => {
 	return {
@@ -70,7 +71,8 @@ const CustomAppBar = props => {
 				</Hidden>
 
 				<span className={classes.rightMenuOptions}>
-					<Hidden xsDown>
+					<Hidden smDown>
+						<CurrentOrganizationMenu />
 						<CartHeaderLink />
 					</Hidden>
 					<RightUserMenu history={history} />

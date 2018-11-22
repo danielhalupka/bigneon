@@ -30,6 +30,12 @@ const styles = theme => {
 			height: "100%",
 			width: "100%"
 		},
+		mediaPlaceholder: {
+			flex: 1,
+			height: "100%",
+			width: "100%",
+			backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)"
+		},
 		details: {
 			flex: 2,
 			padding: theme.spacing.unit * 3,
@@ -132,7 +138,15 @@ const EventSummaryCard = props => {
 		<Card variant="block">
 			<div className={classes.root}>
 				<div className={classes.simpleViewContent}>
-					<CardMedia className={classes.media} image={imageUrl} title={name} />
+					{imageUrl ? (
+						<CardMedia
+							className={classes.media}
+							image={imageUrl}
+							title={name}
+						/>
+					) : (
+						<div className={classes.mediaPlaceholder} />
+					)}
 					<div className={classes.details}>
 						<div className={classes.row1}>
 							<div>

@@ -256,7 +256,6 @@ class ArtistDetails extends Component {
 
 ArtistDetails.propTypes = {
 	eventId: PropTypes.string,
-	organizationId: PropTypes.string.isRequired,
 	artists: PropTypes.array.isRequired
 };
 

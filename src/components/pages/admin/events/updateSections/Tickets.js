@@ -330,7 +330,6 @@ class EventTickets extends Component {
 }
 
 EventTickets.propTypes = {
-	organizationId: PropTypes.string.isRequired,
 	validateFields: PropTypes.func.isRequired,
 	eventId: PropTypes.string,
 	eventStartDate: PropTypes.object.isRequired,

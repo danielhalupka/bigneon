@@ -27,7 +27,16 @@ class User {
 	profilePicUrl = "";
 
 	@observable
-	roles = [];
+	userRoles = [];
+
+	@observable
+	globalRoles = [];
+
+	@observable
+	organizationRoles = {};
+
+	@observable
+	currentOrganizationId = null;
 
 	@observable
 	showRequiresAuthDialog = false;
@@ -74,12 +83,15 @@ class User {
 						} = data;
 
 						//TODO eventually this won't be like this as scopes will be on an org level and not a global one but for now the frontend needs to work to continue the checkout
-						let globalRoles = roles;
-						Object.keys(organization_roles).forEach(organizationId => {
-							globalRoles = globalRoles.concat(
-								organization_roles[organizationId]
-							);
-						});
+						// let globalRoles = roles;
+						// console.log(organization_roles);
+						// Object.keys(organization_roles).forEach(organizationId => {
+						// 	globalRoles = globalRoles.concat(
+						// 		organization_roles[organizationId]
+						// 	);
+						// });
+
+						//console.log(globalRoles);
 
 						const jwtData = decodeJWT(token);
 
@@ -93,8 +105,11 @@ class User {
 						this.lastName = last_name;
 						this.email = email;
 						this.phone = phone;
-						this.roles = globalRoles;
+						this.userRoles = roles;
+						this.organizationRoles = organization_roles;
 						this.profilePicUrl = profile_pic_url;
+
+						this.loadCachedOrganizationRoles();
 
 						if (onSuccess) {
 							onSuccess({
@@ -180,6 +195,36 @@ class User {
 			});
 	}
 
+	loadCachedOrganizationRoles() {
+		const availableOrgIds = Object.keys(this.organizationRoles);
+
+		let organizationId = localStorage["currentOrganizationId"];
+		if (organizationId && availableOrgIds.includes(organizationId)) {
+			this.setCurrentOrganizationRoles(organizationId);
+		} else if (availableOrgIds.length > 0) {
+			//If it doesn't exist locally assume first org
+			this.setCurrentOrganizationRoles(availableOrgIds[0]);
+		} else {
+			//If the don't belong to any, set to false
+			this.setCurrentOrganizationRoles(false);
+		}
+	}
+
+	@action
+	setCurrentOrganizationRoles(id, reloadPage = false) {
+		this.currentOrganizationId = id;
+
+		localStorage["currentOrganizationId"] = id;
+
+		//If this is being called by the user selecting their role, we need to reload the page so the content is related to that org
+		if (reloadPage) {
+			document.location.reload(true);
+		} else {
+			//Set the active roles here as we'll know what roles this user has for this org
+			this.globalRoles = this.userRoles.concat(this.organizationRoles[id]);
+		}
+	}
+
 	//After logout
 	@action
 	onLogout() {
@@ -189,7 +234,10 @@ class User {
 		this.lastName = "";
 		this.email = "";
 		this.phone = "";
-		this.roles = [];
+		this.userRoles = [];
+		this.globalRoles = [];
+		this.organizationRoles = {};
+		this.currentOrganizationId = null;
 		this.profilePicUrl = "";
 
 		localStorage.removeItem("access_token");
@@ -242,22 +290,22 @@ class User {
 	@computed
 	get isAdmin() {
 		//console.log(this.roles);
-		return this.roles.indexOf("Admin") > -1;
+		return this.globalRoles.indexOf("Admin") > -1;
 	}
 
 	@computed
 	get isOrgOwner() {
-		return this.roles.indexOf("OrgOwner") > -1;
+		return this.globalRoles.indexOf("OrgOwner") > -1;
 	}
 
 	@computed
 	get isOrgMember() {
-		return this.roles.indexOf("OrgMember") > -1;
+		return this.globalRoles.indexOf("OrgMember") > -1;
 	}
 
 	@computed
 	get isUser() {
-		return this.roles.indexOf("User") > -1;
+		return this.globalRoles.indexOf("User") > -1;
 	}
 
 	@computed

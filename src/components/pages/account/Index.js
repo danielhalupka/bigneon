@@ -242,7 +242,7 @@ class Account extends Component {
 										error={errors.firstName}
 										value={firstName}
 										name="firstName"
-										label="Name*"
+										label="First name*"
 										type="text"
 										onChange={e => this.setState({ firstName: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
@@ -253,7 +253,7 @@ class Account extends Component {
 										error={errors.lastName}
 										value={lastName}
 										name="lastName"
-										label="Surname*"
+										label="Last name*"
 										type="text"
 										onChange={e => this.setState({ lastName: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
