@@ -38,12 +38,13 @@ const TicketSelection = props => {
 		limitPerPerson
 	} = props;
 
-	const incrementText =
-		increment > 1 ? `(Tickets must be bought in groups of ${increment})` : "";
+	// const incrementText =
+	// 	increment > 1 ? `(Tickets must be bought in groups of ${increment})` : "";
+	const lppText = limitPerPerson && amount == limitPerPerson ? `You may only purchase ${limitPerPerson} tickets` : "";
 
 	return (
 		<div>
-			<Divider style={{ margin: 0 }} />
+			<Divider style={{ margin: 0 }}/>
 			<Grid alignItems="center" className={classes.container} container>
 				<Grid item xs={2} sm={2} md={6} lg={3}>
 					<Typography className={classes.price}>
@@ -52,9 +53,9 @@ const TicketSelection = props => {
 				</Grid>
 				<Grid item xs={8} sm={8} md={6} lg={6}>
 					<Typography className={classes.name}>{name}</Typography>
-					{/* <Typography variant="caption">
-					{description} {incrementText}
-				</Typography> */}
+					<Typography variant="caption" style={{ color: "red" }}>
+						{lppText}
+					</Typography>
 				</Grid>
 
 				<Grid item xs={2} sm={2} md={6} lg={3}>
@@ -65,10 +66,8 @@ const TicketSelection = props => {
 
 							console.log("increment: ", increment);
 
-							if (limitPerPerson) {
-								if (limitPerPerson > newAmount) {
-									newAmount = limitPerPerson;
-								}
+							if (limitPerPerson && newAmount > limitPerPerson) {
+								newAmount = limitPerPerson;
 							}
 
 							onNumberChange(newAmount);
