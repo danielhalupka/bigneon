@@ -133,7 +133,7 @@ class User {
 					});
 			},
 			e => {
-				console.log(e);
+				console.error(e);
 			}
 		);
 	}
@@ -169,6 +169,7 @@ class User {
 					});
 					this.onLogout();
 				} else {
+					this.token = false;
 					notifications.show({
 						message: "Failed to refresh session.",
 						variant: "error"

@@ -12,7 +12,7 @@ class Notification {
 	showFromErrorResponse({
 		error,
 		defaultMessage = "An error occurred.",
-		variant = "info"
+		variant = "error"
 	}) {
 		const formattedError = translateApiErrors(error, defaultMessage);
 		this.message = formattedError.message;

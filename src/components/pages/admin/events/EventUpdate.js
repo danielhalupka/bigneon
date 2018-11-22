@@ -78,15 +78,14 @@ class Event extends Component {
 
 			const ticketTypeErrors = validateTicketTypeFields(ticketTypes);
 			if (eventDetailErrors || ticketTypeErrors) {
-				console.log("Update error state");
 				this.setState(
 					{
 						errors: {
 							event: eventDetailErrors,
 							ticketTypes: ticketTypeErrors
 						}
-					},
-					() => console.log(this.state.errors)
+					}
+					//() => console.warn(this.state.errors)
 				);
 
 				return false;
@@ -171,9 +170,9 @@ class Event extends Component {
 			});
 		}
 
-		const result = await eventUpdateStore.saveEventDetails();
-		if (!result) {
-			return false;
+		const saveResponse = await eventUpdateStore.saveEventDetails();
+		if (!saveResponse.result) {
+			return saveResponse;
 		}
 
 		const { id } = eventUpdateStore;
@@ -181,16 +180,27 @@ class Event extends Component {
 			this.props.history.push(`/admin/events/${id}/edit`);
 		}
 
-		return true;
+		return saveResponse;
 	}
 
 	async onSaveDraft() {
 		this.setState({ isSubmitting: true });
 
-		const result = await this.saveEventDetails();
+		const saveResponse = await this.saveEventDetails();
+		if (!saveResponse) {
+			return this.setState({ isSubmitting: false });
+		}
+
+		const { result, error } = saveResponse;
 
 		if (result) {
 			notifications.show({ variant: "success", message: "Draft saved." });
+		} else {
+			console.error(error);
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Failed to save draft."
+			});
 		}
 
 		this.setState({ isSubmitting: false });
@@ -215,11 +225,14 @@ class Event extends Component {
 	async onPublish() {
 		this.setState({ isSubmitting: true });
 
-		const result = await this.saveEventDetails();
+		const saveResponse = await this.saveEventDetails();
+		if (!saveResponse) {
+			return this.setState({ isSubmitting: false });
+		}
+
+		const { result, error } = saveResponse;
 
 		if (result) {
-			console.log("hit publish endpoint");
-
 			const { id } = eventUpdateStore;
 
 			Bigneon()
@@ -252,9 +265,10 @@ class Event extends Component {
 				});
 		} else {
 			this.setState({ isSubmitting: false });
-			notifications.show({
-				message: "Event failed to save.",
-				variant: "error"
+
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Event failed to save."
 			});
 		}
 	}

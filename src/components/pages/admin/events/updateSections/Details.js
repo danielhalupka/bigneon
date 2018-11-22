@@ -116,12 +116,15 @@ const formatDataForInputs = event => {
 		publish_date
 	} = event;
 
+	const tomorrow = new Date();
+	tomorrow.setDate(new Date().getDate() + 1);
+
 	const eventDetails = {
 		status: "", //TODO get from API
 		name: name || "",
 		eventDate: event_start
 			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: new Date(),
+			: tomorrow,
 		showTime: event_start
 			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,

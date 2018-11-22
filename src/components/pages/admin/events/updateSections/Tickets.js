@@ -53,7 +53,8 @@ const formatForSaving = ticketTypes => {
 			end_date: moment(endDate)
 				.utc()
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-			limit_per_person: limitPerPerson,
+			limit_per_person:
+				limitPerPerson === "" ? undefined : Number(limitPerPerson),
 			ticket_pricing
 		});
 	});
@@ -70,7 +71,7 @@ const formatForInput = ticket_types => {
 			description,
 			capacity,
 			increment,
-			limit_per_person, 
+			limit_per_person,
 			ticket_pricing,
 			start_date,
 			end_date
@@ -90,7 +91,6 @@ const formatForInput = ticket_types => {
 			if (pricePoint.end_date) {
 				endDate = moment.utc(pricePoint.end_date).local();
 			}
-
 
 			pricing.push({
 				id: pricePoint.id,
@@ -116,9 +116,7 @@ const formatForInput = ticket_types => {
 			description: description || "",
 			capacity: capacity ? capacity : 0,
 			increment: increment ? increment : 1,
-			limitPerPerson: limit_per_person
-				? limit_per_person
-				: "",
+			limitPerPerson: limit_per_person ? limit_per_person : "",
 			startDate: ticketStartDate,
 			endDate: ticketEndDate,
 			priceAtDoor, //TODO get the actual value when API works
@@ -203,11 +201,10 @@ const validateFields = ticketTypes => {
 		} else {
 			let pricingErrors = {};
 
-			console.log(pricing);
-			let sorted = pricing.sort(
-				(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
-			);
-			console.log(sorted);
+			// let sorted = pricing.sort(
+			// 	(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
+			// );
+			let sorted = pricing; //TODO place back
 			sorted.forEach((pricingItem, index) => {
 				const { name, startDate, endDate, value } = pricingItem;
 
@@ -225,6 +222,9 @@ const validateFields = ticketTypes => {
 				} else if (ticket.startDate) {
 					//On sale date for this pricing can't be sooner than event on sale time
 					if (startDate && startDate.diff(ticket.startDate) < 0) {
+						// console.log("startDate: ", startDate);
+						// console.log("ticket.startDate: ", ticket.startDate);
+						// console.log("Diff: ", startDate.diff(ticket.startDate));
 						pricingError.startDate = "Time must be after ticket on sale time.";
 					} else if (previousPricing && previousPricing.endDate) {
 						//Check on sale time is after off sale time of previous pricing
@@ -239,7 +239,7 @@ const validateFields = ticketTypes => {
 					pricingError.endDate = "Specify the pricing end time.";
 				} else if (startDate) {
 					//Off sale date for this pricing can't be sooner than pricing on sale time
-					if (endDate.diff(startDate) < 0) {
+					if (endDate.diff(startDate) <= 0) {
 						pricingError.endDate =
 							"Off sale time must be after pricing on sale time.";
 					}
@@ -278,7 +278,6 @@ class EventTickets extends Component {
 	componentDidMount() {}
 
 	updateTicketType(index, details) {
-		console.log("Updating Details", details);
 		eventUpdateStore.updateTicketType(index, details);
 	}
 

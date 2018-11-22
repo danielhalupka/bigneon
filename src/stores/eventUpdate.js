@@ -125,6 +125,8 @@ class EventUpdate {
 	addTicketType() {
 		//const endDate = this.event.eventDate ? this.event.eventDate : new Date(); //FIXME this will most certainly not work. If a user changes the event date this first ticket type date needs to change.
 		let ticketTypes = this.ticketTypes;
+		const startDate = moment(this.event.eventDate);
+		const endDate = moment(this.event.eventDate).add(1, "days");
 
 		const ticketType = {
 			name: "",
@@ -133,16 +135,15 @@ class EventUpdate {
 			priceAtDoor: "",
 			increment: 1,
 			limitPerPerson: 10,
-			startDate: moment(), //TODO use the event date for defaults
-			endDate: moment().add(1, "days"),
-
+			startDate,
+			endDate,
 			pricing: [
 				{
 					id: "",
 					ticketId: "", //TODO remove this if not needed
 					name: "Default price point",
-					startDate: moment(), //TODO make this the end of the last date
-					endDate: moment().add(1, "days"),
+					startDate,
+					endDate,
 					value: ""
 				}
 			]
@@ -247,36 +248,39 @@ class EventUpdate {
 		);
 
 		if (id) {
-			const result = await this.saveEvent(formattedEventDetails);
-			if (!result) {
-				return false;
+			const saveEventResponse = await this.saveEvent(formattedEventDetails);
+
+			if (!saveEventResponse.result) {
+				return saveEventResponse;
 			}
 		} else {
-			const id = await this.createNewEvent(formattedEventDetails);
-			if (!id) {
-				return false;
+			const newEventResponse = await this.createNewEvent(formattedEventDetails);
+			if (!newEventResponse.result) {
+				return newEventResponse;
 			}
 
-			this.id = id;
+			this.id = newEventResponse.result;
 		}
 
-		const formattedArtists = formatArtistsForSaving(artists);
+		if (artists && artists.length > 0) {
+			const formattedArtists = formatArtistsForSaving(artists);
 
-		const artistsResult = this.saveArtists(formattedArtists);
-		if (!artistsResult) {
-			return false;
+			const artistsResult = await this.saveArtists(formattedArtists);
+			if (!artistsResult.result) {
+				return artistsResult;
+			}
 		}
 
 		const formattedTicketTypes = formatTicketDataForSaving(ticketTypes);
 		for (let index = 0; index < formattedTicketTypes.length; index++) {
 			const ticketType = formattedTicketTypes[index];
-			const result = await this.saveTicketType(ticketType);
-			if (!result) {
-				return false;
+			const saveTicketResponse = await this.saveTicketType(ticketType);
+			if (!saveTicketResponse.result) {
+				return saveTicketResponse;
 			}
 		}
 
-		return true;
+		return { result: true, error: false };
 	}
 
 	async saveEvent(params) {
@@ -284,7 +288,7 @@ class EventUpdate {
 			Bigneon()
 				.events.update({ ...params, id: this.id })
 				.then(id => {
-					resolve(id);
+					resolve({ result: id, error: false });
 				})
 				.catch(error => {
 					console.error(error);
@@ -292,7 +296,7 @@ class EventUpdate {
 						message: "Update event failed.",
 						variant: "error"
 					});
-					resolve(false);
+					resolve({ result: false, error });
 				});
 		});
 	}
@@ -303,7 +307,7 @@ class EventUpdate {
 				.events.create(params)
 				.then(response => {
 					const { id } = response.data;
-					resolve(id);
+					resolve({ result: id, error: false });
 				})
 				.catch(error => {
 					console.error(error);
@@ -311,17 +315,20 @@ class EventUpdate {
 						message: "Create event failed.",
 						variant: "error"
 					});
-					resolve(false);
+					resolve({ result: false, error });
 				});
 		});
 	}
 
 	async saveArtists(artistsToSave) {
+		console.log("to save: ");
+		console.log(JSON.stringify({ event_id: this.id, artists: artistsToSave }));
+
 		return new Promise(resolve => {
 			Bigneon()
 				.events.artists.update({ event_id: this.id, artists: artistsToSave })
 				.then(() => {
-					resolve(true);
+					resolve({ result: true, error: false });
 				})
 				.catch(error => {
 					console.error(error);
@@ -329,56 +336,47 @@ class EventUpdate {
 						message: "Updating artists failed.",
 						variant: "error"
 					});
-					resolve(false);
+					resolve({ result: false, error });
 				});
 		});
 	}
 
 	async saveTicketType(ticketType) {
 		const { id } = ticketType;
+		const event_id = this.id;
+		if (!event_id) {
+			return { result: false, error: "Event ID is not set yet" };
+		}
 
 		if (id) {
 			return new Promise(resolve => {
 				Bigneon()
 					.events.ticketTypes.update({
 						id,
-						event_id: this.id,
+						event_id,
 						...ticketType
 					})
 					.then(() => {
-						resolve(true);
+						resolve({ result: id, error: false });
 					})
 					.catch(error => {
-						console.warn({
-							id,
-							event_id: this.id,
-							...ticketType
-						});
 						console.error(error);
-						notifications.show({
-							message: "Updating ticket type failed.",
-							variant: "error"
-						});
-						resolve(false);
+						resolve({ result: false, error });
 					});
 			});
 		} else {
 			return new Promise(resolve => {
 				Bigneon()
 					.events.ticketTypes.create({
-						event_id: this.id,
+						event_id,
 						...ticketType
 					})
-					.then(() => {
-						resolve(true);
+					.then(result => {
+						resolve({ result, error: false });
 					})
 					.catch(error => {
 						console.error(error);
-						notifications.show({
-							message: "Creating ticket type failed.",
-							variant: "error"
-						});
-						resolve(false);
+						resolve({ result: false, error });
 					});
 			});
 		}

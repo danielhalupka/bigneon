@@ -51,6 +51,7 @@ const styles = theme => ({
 		fontFamily: fontFamily
 	},
 	eventName: {
+		maxWidth: 600,
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 2,
 		marginBottom: theme.spacing.unit * 6

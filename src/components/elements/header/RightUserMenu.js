@@ -210,7 +210,7 @@ class RightHeaderMenu extends React.Component {
 
 				<Hidden smDown implementation="css" className={classes.menuLink}>
 					<Link to="/help">
-						<Typography variant="subheading">help</Typography>
+						<Typography variant="subheading">Help</Typography>
 					</Link>
 				</Hidden>
 
