@@ -237,7 +237,7 @@ const EventSummaryCard = props => {
 								<Grid key={index} item xs={12} sm={6} lg={4}>
 									<TicketTypeSalesBarChart
 										name={ticketType.name}
-										totalRevenue={ticketType.sales_total_in_cents}
+										totalRevenue={Math.floor(ticketType.sales_total_in_cents /100)}
 										values={[
 											{
 												label: "Sold",

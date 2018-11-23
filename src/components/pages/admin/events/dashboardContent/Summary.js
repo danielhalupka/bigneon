@@ -9,6 +9,7 @@ import { Typography } from "@material-ui/core";
 import classNames from "classnames";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
 import VerticalBarChart from "../../../../elements/charts/VerticalBarChart";
+import moment from "moment";
 
 const styles = theme => {
 	return {
@@ -92,7 +93,8 @@ class Summary extends Component {
 	}
 
 	componentDidMount() {
-		//TODO load stats here
+		let event = this.props.event;
+
 		//TODO make bn-api issue for date required
 
 		this.setState({ chartValues: this.getDailyBreakdownValues() });
@@ -106,15 +108,17 @@ class Summary extends Component {
 		// 	{ day: 1, ticketSales: 99, revenue_in_cents: 3000 },
 		// 	{ day: 2, ticketSales: 120, revenue_in_cents: 4000 }
 		// ];
+		let { last30Days } = this.props;
 
-		for (let index = 0; index < 30; index++) {
-			const ticketsSales =
-				Math.floor(Math.random() * Math.floor(100)) * index * 2;
+		console.log(last30Days);
+
+		for (let index = 0; index < last30Days.length; index++) {
+
 			result.push({
-				x: index + 1,
-				y: ticketsSales,
-				tooltipTitle: `$${ticketsSales}`,
-				tooltipText: `${Math.floor(ticketsSales / 20)} Tickets`
+				x: moment(last30Days[index].date).format("D"),
+				y: last30Days[index].sales / 100,
+				tooltipTitle: `$${Math.floor(last30Days[index].sales / 100)}`,
+				tooltipText: `${last30Days[index].tickets_sold} Tickets`
 			});
 		}
 
@@ -128,7 +132,7 @@ class Summary extends Component {
 
 	renderNumbers() {
 		const { activeNumbersCard } = this.state;
-		const { classes } = this.props;
+		const { classes, event } = this.props;
 
 		return (
 			<Grid container spacing={32}>
@@ -143,7 +147,7 @@ class Summary extends Component {
 					<NumberCard
 						active={activeNumbersCard === "revenue"}
 						label="Revenue"
-						value={`$26,438`}
+						value={"$" + Math.floor(event.sales_total_in_cents / 100)}
 						iconName="chart"
 						classes={classes}
 					/>
@@ -159,7 +163,7 @@ class Summary extends Component {
 					<NumberCard
 						active={activeNumbersCard === "sold"}
 						label="Tickets sold"
-						value={438}
+						value={event.sold_held + event.sold_unreserved}
 						iconName="ticket"
 						classes={classes}
 					/>{" "}
@@ -175,7 +179,7 @@ class Summary extends Component {
 					<NumberCard
 						active={activeNumbersCard === "open"}
 						label="Tickets open"
-						value={990}
+						value={event.tickets_open}
 						iconName="ticket"
 						classes={classes}
 					/>
@@ -191,7 +195,7 @@ class Summary extends Component {
 					<NumberCard
 						active={activeNumbersCard === "daysLeft"}
 						label="Days left"
-						value={9}
+						value={moment(event.event_start).diff(moment(), 'days')}
 						iconName="events"
 						classes={classes}
 					/>
@@ -201,41 +205,23 @@ class Summary extends Component {
 	}
 
 	renderTicketVolumes() {
+		let ticketTypes = this.props.event.ticket_types;
+
 		return (
 			<Grid container spacing={32}>
-				<Grid item xs={12} sm={6} lg={4}>
-					<TicketTypeSalesBarChart
-						name={"General admission"}
-						totalRevenue={2560}
-						values={[
-							{ label: "Sold", value: 123 },
-							{ label: "Open", value: 345 },
-							{ label: "Held", value: 67 }
-						]}
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6} lg={4}>
-					<TicketTypeSalesBarChart
-						name={"VIP package"}
-						totalRevenue={1345}
-						values={[
-							{ label: "Sold", value: 355 },
-							{ label: "Open", value: 455 },
-							{ label: "Held", value: 80 }
-						]}
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6} lg={4}>
-					<TicketTypeSalesBarChart
-						name={"Fan club"}
-						totalRevenue={1020}
-						values={[
-							{ label: "Sold", value: 234 },
-							{ label: "Open", value: 33 },
-							{ label: "Held", value: 51 }
-						]}
-					/>
-				</Grid>
+				{ticketTypes.map((tt, index) =>
+					(<Grid item xs={12} sm={6} lg={4}>
+						<TicketTypeSalesBarChart
+							name={tt.name}
+							totalRevenue={Math.floor(tt.sales_total_in_cents /100)}
+							values={[
+								{ label: "Sold", value: tt.sold_held + tt.sold_unreserved },
+								{ label: "Open", value: tt.open },
+								{ label: "Held", value: tt.held  }
+							]}
+						/>
+					</Grid>
+					))}
 			</Grid>
 		);
 	}
@@ -259,7 +245,8 @@ class Summary extends Component {
 }
 
 Summary.propTypes = {
-	event: PropTypes.object.isRequired
+	event: PropTypes.object.isRequired,
+	last30Days: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(Summary);

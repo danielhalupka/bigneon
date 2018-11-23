@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
 import Bigneon from "../../../../helpers/bigneon";
@@ -38,7 +39,8 @@ class EventDashboard extends Component {
 
 		this.state = {
 			event: null,
-			subheading: null
+			subheading: null,
+			last30Days: null
 		};
 	}
 
@@ -59,12 +61,13 @@ class EventDashboard extends Component {
 
 	loadEventDetails(eventId) {
 		Bigneon()
-			.events.read({ id: eventId })
+			.events.dashboard({ id: eventId })
 			.then(response => {
-				const { artists, organization, venue, ...event } = response.data;
-				const { organization_id } = event;
+				const { last_30_days, event } = response.data;
+
 				this.setState({
-					event
+					event,
+					last30Days: last_30_days
 				});
 			})
 			.catch(error => {
@@ -88,15 +91,15 @@ class EventDashboard extends Component {
 	}
 
 	render() {
-		const { event, subheading } = this.state;
+		const { event, subheading, last30Days } = this.state;
 		const { classes, history } = this.props;
 
 		if (!event) {
 			return <Typography>Loading...</Typography>; //TODO get a spinner or something
 		}
 
-		const isPublished = true; //TODO
-		const isOnSale = false; //TODO
+		const isPublished = moment(event.publish_date) < moment();
+		const isOnSale = moment(event.on_sale) < moment();
 
 		return (
 			<div>
@@ -167,7 +170,7 @@ class EventDashboard extends Component {
 						</div>
 						<Divider style={{ marginBottom: 40 }} />
 
-						{!subheading ? <Summary event={event} /> : null}
+						{!subheading ? <Summary event={event} last30Days={last30Days} /> : null}
 					</div>
 				</Card>
 			</div>

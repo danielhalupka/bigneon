@@ -18,6 +18,7 @@ import GuestListIcon from "@material-ui/icons/People";
 import CancelIcon from "@material-ui/icons/Cancel";
 import CreateWidgetIcon from "@material-ui/icons/Code";
 import TicketHoldsIcon from "@material-ui/icons/List";
+import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
@@ -235,15 +236,15 @@ class EventsList extends Component {
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}
-							eventDate={event.event_start} //.format("DDD M/d/yy. h:mm PM Z")}
+							eventDate={moment.utc(event.event_start).format("dddd, MMMM Do YYYY" )}
 							menuButton={MenuButton}
-							isPublished={true}
-							isOnSale={true}
-							totalSold={event.sold_held + event.sold_unreserved}
+							isPublished={moment.utc(event.publish_date) < moment.utc() }
+							isOnSale={moment.utc(event.on_sale) < moment.utc()}
+							totalSold={event.sold_held+event.sold_unreserved}
 							totalOpen={event.tickets_open}
 							totalHeld={event.tickets_held}
 							totalCapacity={event.total_tickets}
-							totalSales={event.sales_total_in_cents}
+							totalSales={Math.floor(event.sales_total_in_cents /100)}
 							isExpanded={expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
 							ticketTypes={event.ticket_types}
