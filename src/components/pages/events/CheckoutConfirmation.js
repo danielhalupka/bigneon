@@ -126,10 +126,7 @@ class CheckoutConfirmation extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			errors: {},
-			isSubmitting: false
-		};
+		this.state = {};
 	}
 
 	componentDidMount() {
@@ -281,7 +278,6 @@ class CheckoutConfirmation extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { isSubmitting } = this.state;
 
 		const { fees, total_in_cents, formattedExpiryTime } = cart;
 
@@ -295,17 +291,7 @@ class CheckoutConfirmation extends Component {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
-		const {
-			name,
-			displayEventStartDate,
-			additional_info,
-			top_line_info,
-			age_limit,
-			promo_image_url,
-			displayDoorTime,
-			displayShowTime,
-			eventStartDateMoment
-		} = event;
+		const { promo_image_url } = event;
 
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>

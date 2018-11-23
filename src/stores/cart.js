@@ -40,7 +40,7 @@ class Cart {
 	}
 
 	@action
-	refreshCart() {
+	refreshCart(onSuccess) {
 		//Right now carts only work for authed users
 		if (!user.isAuthenticated) {
 			this.emptyCart();
@@ -52,7 +52,7 @@ class Cart {
 			.then(response => {
 				const { data } = response;
 				if (data) {
-					this.replaceCartData(data);
+					this.replaceCartData(data, onSuccess);
 				}
 			})
 			.catch(error => {
@@ -74,7 +74,7 @@ class Cart {
 			});
 	}
 
-	replaceCartData(data) {
+	replaceCartData(data, callback) {
 		const { id, items, total_in_cents, seconds_until_expiry } = data;
 
 		this.id = id;
@@ -87,6 +87,7 @@ class Cart {
 		} else {
 			this.seconds_until_expiry = null;
 		}
+		callback ? callback() : null;
 	}
 
 	@action

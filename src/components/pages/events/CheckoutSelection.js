@@ -59,7 +59,24 @@ class CheckoutSelection extends Component {
 		layout.toggleSideMenu(false);
 		layout.toggleContainerPadding(false);
 
-		cart.refreshCart();
+		setTimeout(() => {
+			cart.refreshCart(() => {
+				const { items } = cart;
+				if (items && items.length > 0) {
+					let ticketSelection = {};
+
+					items.forEach(({ ticket_type_id, quantity }) => {
+						if (ticket_type_id) {
+							ticketSelection[ticket_type_id] = ticketSelection[ticket_type_id]
+								? ticketSelection[ticket_type_id] + quantity
+								: quantity;
+						}
+					});
+
+					this.setState({ ticketSelection });
+				}
+			});
+		}, 500); //TODO figure out why this needs to be delayed for it to work
 
 		if (
 			this.props.match &&

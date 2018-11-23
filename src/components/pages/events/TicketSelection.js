@@ -40,11 +40,16 @@ const TicketSelection = props => {
 
 	// const incrementText =
 	// 	increment > 1 ? `(Tickets must be bought in groups of ${increment})` : "";
-	const lppText = limitPerPerson && amount == limitPerPerson ? `You may only purchase ${limitPerPerson} tickets` : "";
+
+	const lppText =
+		limitPerPerson && amount == limitPerPerson
+			? `You may only purchase ${limitPerPerson} 
+			ticket${limitPerPerson > 1 ? "s" : ""}`
+			: "";
 
 	return (
 		<div>
-			<Divider style={{ margin: 0 }}/>
+			<Divider style={{ margin: 0 }} />
 			<Grid alignItems="center" className={classes.container} container>
 				<Grid item xs={2} sm={2} md={6} lg={3}>
 					<Typography className={classes.price}>
