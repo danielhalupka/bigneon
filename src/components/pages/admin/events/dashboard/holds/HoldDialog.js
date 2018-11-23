@@ -3,16 +3,15 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import moment from "moment";
-import BnServer from "bn-api-node/dist/bundle.client";
 
-import Dialog from "../../../../elements/Dialog";
-import InputGroup from "../../../../common/form/InputGroup";
-import Bigneon from "../../../../../helpers/bigneon";
-import notification from "../../../../../stores/notifications";
-import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
-import Button from "../../../../elements/Button";
-import RadioButton from "../../../../elements/form/RadioButton";
-import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
+import Dialog from "../../../../../elements/Dialog";
+import InputGroup from "../../../../../common/form/InputGroup";
+import Bigneon from "../../../../../../helpers/bigneon";
+import notification from "../../../../../../stores/notifications";
+import AutoCompleteGroup from "../../../../../common/form/AutoCompleteGroup";
+import Button from "../../../../../elements/Button";
+import RadioButton from "../../../../../elements/form/RadioButton";
+import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
 
 const formatHoldForSaving = values => {
 	const { quantity, discountInCents, endAt, maxPerOrder } = values;
@@ -115,7 +114,7 @@ class HoldDialog extends React.Component {
 		}
 
 		const formattedHold = formatHoldForSaving(hold);
-		console.log(formattedHold);
+
 		storeFunction(formattedHold)
 			.then(response => {
 				const { id } = response.data;
@@ -314,7 +313,6 @@ class HoldDialog extends React.Component {
 
 		const { hold, errors } = this.state;
 
-		console.log(hold.endAt);
 		return (
 			<Dialog
 				onClose={onClose}

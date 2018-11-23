@@ -14,7 +14,6 @@ import OnRouteChange from "./OnRouteChange";
 import withRoot from "./withRoot";
 import Container from "../elements/Container";
 import NotFound from "../common/NotFound";
-import Dashboard from "../pages/dashboard/Index";
 import Account from "../pages/account/Index";
 import Artists from "../pages/landing/Artists";
 import OrderList from "../pages/orders/List";
@@ -40,12 +39,14 @@ import AdminVenue from "../pages/admin/venues/Venue";
 import AdminArtistsList from "../pages/admin/artists/List";
 import AdminArtist from "../pages/admin/artists/Artist";
 import AdminEventsList from "../pages/admin/events/List";
-import AdminEventDashboard from "../pages/admin/events/Dashboard";
+import AdminEventDashboardSummary from "../pages/admin/events/dashboard/Summary";
+import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List";
+import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
 
 import AdminGuestList from "../pages/admin/events/guests/List";
-import AdminEventTicketHolds from "../pages/admin/events/holds/List";
-import AdminEventComps from "../pages/admin/events/comps/List";
+// import AdminEventTicketHolds from "../pages/admin/events/holds/List";
+// import AdminEventComps from "../pages/admin/events/comps/List";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
@@ -135,12 +136,6 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/dashboard"
-									component={Dashboard}
-									isAuthenticated={isAuthenticated}
-								/>
-								<PrivateRoute
-									exact
 									path="/account"
 									component={Account}
 									isAuthenticated={isAuthenticated}
@@ -187,12 +182,6 @@ class Routes extends Component {
 									component={MobileStripeAuth}
 								/>
 								{/* System admin routes TODO hide these if they don't blong */}
-								<PrivateRoute
-									exact
-									path="/admin/dashboard"
-									component={Dashboard}
-									isAuthenticated={isAuthenticated}
-								/>
 								<PrivateRoute
 									exact
 									path="/admin/organizations"
@@ -256,8 +245,20 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/admin/events/:id/dashboard/:subheading?"
-									component={AdminEventDashboard}
+									path="/admin/events/:id/dashboard"
+									component={AdminEventDashboardSummary}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/events/:id/dashboard/holds"
+									component={AdminEventDashboardHolds}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/events/:id/dashboard/comps/:holdId"
+									component={AdminEventDashboardComps}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute
@@ -276,18 +277,6 @@ class Routes extends Component {
 									exact
 									path="/admin/events/:id/guests"
 									component={AdminGuestList}
-									isAuthenticated={isAuthenticated}
-								/>
-								<PrivateRoute
-									exact
-									path="/admin/events/:id/holds"
-									component={AdminEventTicketHolds}
-									isAuthenticated={isAuthenticated}
-								/>
-								<PrivateRoute
-									exact
-									path="/admin/events/:id/comps/:holdId"
-									component={AdminEventComps}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute

@@ -5,19 +5,17 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import PropTypes from "prop-types";
 
-import notifications from "../../../../stores/notifications";
-import Bigneon from "../../../../helpers/bigneon";
-import PageHeading from "../../../elements/PageHeading";
-import Card from "../../../elements/Card";
-import Button from "../../../elements/Button";
-import CheckBox from "../../../elements/form/CheckBox";
-import StyledLink from "../../../elements/StyledLink";
-import Divider from "../../../common/Divider";
-import layout from "../../../../stores/layout";
-
-import Summary from "./dashboardContent/Summary";
-import HoldsList from "./dashboardContent/holds/List";
+import notifications from "../../../../../stores/notifications";
+import Bigneon from "../../../../../helpers/bigneon";
+import PageHeading from "../../../../elements/PageHeading";
+import Card from "../../../../elements/Card";
+import Button from "../../../../elements/Button";
+import CheckBox from "../../../../elements/form/CheckBox";
+import StyledLink from "../../../../elements/StyledLink";
+import Divider from "../../../../common/Divider";
+import layout from "../../../../../stores/layout";
 
 const styles = theme => ({
 	rightHeaderOptions: {
@@ -37,31 +35,19 @@ const styles = theme => ({
 	}
 });
 
-class EventDashboard extends Component {
+class EventDashboardContainer extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			event: null,
-			subheading: null,
-			last30Days: null,
 			anchorEl: null
 		};
 	}
 
 	componentDidMount() {
 		layout.toggleSideMenu(true);
-		this.loadEventDetails(this.props.match.params.id);
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (prevProps.event && prevProps.event.id !== this.props.match.params.id) {
-			this.loadEventDetails(this.props.match.params.id);
-		}
-
-		if (prevState.subheading !== this.props.match.params.subheading) {
-			this.setState({ subheading: this.props.match.params.subheading });
-		}
+		this.loadEventDetails(this.props.eventId);
 	}
 
 	handleToolsMenu(event) {
@@ -79,8 +65,7 @@ class EventDashboard extends Component {
 				const { last_30_days, event } = response.data;
 
 				this.setState({
-					event,
-					last30Days: last_30_days
+					event
 				});
 			})
 			.catch(error => {
@@ -132,23 +117,9 @@ class EventDashboard extends Component {
 		);
 	}
 
-	renderContent() {
-		const { event, subheading, last30Days } = this.state;
-		const ComingSoon = () => <Typography>Coming soon</Typography>;
-
-		switch (subheading) {
-			case undefined:
-				return <Summary event={event} last30Days={last30Days} />;
-			case "holds":
-				return <HoldsList event={event} />;
-			default:
-				return <ComingSoon />;
-		}
-	}
-
 	render() {
-		const { event, subheading, last30Days } = this.state;
-		const { classes, history } = this.props;
+		const { event } = this.state;
+		const { classes, children, subheading } = this.props;
 
 		if (!event) {
 			return <Typography>Loading...</Typography>; //TODO get a spinner or something
@@ -192,7 +163,7 @@ class EventDashboard extends Component {
 							<div className={classes.menuContainer}>
 								<Typography className={classes.menuText}>
 									<StyledLink
-										underlined={!subheading}
+										underlined={subheading === "summary"}
 										to={`/admin/events/${event.id}/dashboard`}
 									>
 										Dashboard
@@ -211,7 +182,10 @@ class EventDashboard extends Component {
 								<Typography className={classes.menuText}>
 									<StyledLink
 										underlined={subheading === "sales"}
-										to={`/admin/events/${event.id}/dashboard/sales`}
+										//to={`/admin/events/${event.id}/dashboard/sales`}
+										onClick={() =>
+											notifications.show({ message: "Coming soon." })
+										}
 									>
 										Sales
 									</StyledLink>
@@ -219,7 +193,10 @@ class EventDashboard extends Component {
 								<Typography className={classes.menuText}>
 									<StyledLink
 										underlined={subheading === "reports"}
-										to={`/admin/events/${event.id}/dashboard/reports`}
+										//to={`/admin/events/${event.id}/dashboard/reports`}
+										onClick={() =>
+											notifications.show({ message: "Coming soon." })
+										}
 									>
 										Reports
 									</StyledLink>
@@ -228,7 +205,7 @@ class EventDashboard extends Component {
 						</div>
 						<Divider style={{ marginBottom: 40 }} />
 
-						{this.renderContent()}
+						{children}
 					</div>
 				</Card>
 			</div>
@@ -236,4 +213,12 @@ class EventDashboard extends Component {
 	}
 }
 
-export default withStyles(styles)(EventDashboard);
+EventDashboardContainer.propTypes = {
+	classes: PropTypes.object.isRequired,
+	eventId: PropTypes.string.isRequired,
+	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
+		.isRequired,
+	subheading: PropTypes.string.isRequired
+};
+
+export default withStyles(styles)(EventDashboardContainer);

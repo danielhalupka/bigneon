@@ -159,7 +159,7 @@ class EventsList extends Component {
 						text: "Ticket holds",
 						onClick: () =>
 							this.props.history.push(
-								`/admin/events/${this.eventMenuSelected}/holds`
+								`/admin/events/${this.eventMenuSelected}/dashboard/holds`
 							),
 						MenuOptionIcon: TicketHoldsIcon
 					},
@@ -236,15 +236,17 @@ class EventsList extends Component {
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}
-							eventDate={moment.utc(event.event_start).format("dddd, MMMM Do YYYY" )}
+							eventDate={moment
+								.utc(event.event_start)
+								.format("dddd, MMMM Do YYYY")}
 							menuButton={MenuButton}
-							isPublished={moment.utc(event.publish_date) < moment.utc() }
+							isPublished={moment.utc(event.publish_date) < moment.utc()}
 							isOnSale={moment.utc(event.on_sale) < moment.utc()}
-							totalSold={event.sold_held+event.sold_unreserved}
+							totalSold={event.sold_held + event.sold_unreserved}
 							totalOpen={event.tickets_open}
 							totalHeld={event.tickets_held}
 							totalCapacity={event.total_tickets}
-							totalSales={Math.floor(event.sales_total_in_cents /100)}
+							totalSales={Math.floor(event.sales_total_in_cents / 100)}
 							isExpanded={expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
 							ticketTypes={event.ticket_types}

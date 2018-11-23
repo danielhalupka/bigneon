@@ -1,28 +1,28 @@
 import React, { Component } from "react";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 
-import notifications from "../../../../../stores/notifications";
-import Button from "../../../../elements/Button";
-import Bigneon from "../../../../../helpers/bigneon";
-import PageHeading from "../../../../elements/PageHeading";
-import Divider from "../../../../common/Divider";
+import notifications from "../../../../../../stores/notifications";
+import Button from "../../../../../elements/Button";
+import Bigneon from "../../../../../../helpers/bigneon";
+import Divider from "../../../../../common/Divider";
 import HoldRow from "./CompRow";
 import CompDialog from "./CompDialog";
+import Container from "../Container";
 
 const styles = theme => ({
-	paper: {}
+	root: {}
 });
 
 class CompList extends Component {
 	constructor(props) {
 		super(props);
 
+		this.eventId = this.props.match.params.id;
+		this.holdId = this.props.match.params.holdId;
+
 		this.state = {
-			activeHoldId: null,
+			activeHoldId: null, //TODO check this is not used and remove if not
 			showDialog: null,
-			eventName: "",
 			ticketTypes: [],
 			comps: [],
 			holdDetails: {}
@@ -30,17 +30,9 @@ class CompList extends Component {
 	}
 
 	componentDidMount() {
-		const { match } = this.props;
-
-		if (match && match.params && match.params.id) {
-			this.eventId = match.params.id;
-			this.holdId = match.params.holdId;
-			this.loadEventDetails();
-			this.loadHoldDetails();
-			this.refreshComps();
-		} else {
-			//TODO 404
-		}
+		this.loadEventDetails();
+		this.loadHoldDetails();
+		this.refreshComps();
 	}
 
 	async loadHoldDetails() {
@@ -54,7 +46,6 @@ class CompList extends Component {
 			.then(response => {
 				const { name, ticket_types } = response.data;
 				this.setState({
-					eventName: name,
 					ticketTypes: ticket_types
 				});
 			})
@@ -62,18 +53,9 @@ class CompList extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Loading event details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading event details failed."
 				});
 			});
 	}
@@ -85,6 +67,12 @@ class CompList extends Component {
 				.then(comps => {
 					//TODO Pagination
 					this.setState({ comps: comps.data.data });
+				})
+				.catch(error => {
+					notifications.showFromErrorResponse({
+						error,
+						defaultMessage: "Refreshing comps failed."
+					});
 				});
 		}
 	}
@@ -208,31 +196,23 @@ class CompList extends Component {
 	}
 
 	render() {
-		const { eventName, showDialog, holdDetails } = this.state;
+		const { showDialog, holdDetails } = this.state;
 		const { classes } = this.props;
 
 		return (
-			//TODO eventually this component will move to it's own component
-			<div>
-				<PageHeading iconUrl="/icons/events-multi.svg">{eventName}</PageHeading>
+			<Container eventId={this.eventId} subheading={"tools"}>
 				{showDialog && this.renderDialog()}
 
-				<Card className={classes.paper}>
-					<CardContent>
-						<div style={{ display: "flex" }}>
-							<Typography variant="title">{holdDetails.name}</Typography>
-							<span style={{ flex: 1 }} />
-							<Button onClick={e => this.onAddHold()}>
-								Assign Name To List
-							</Button>
-						</div>
+				<div style={{ display: "flex" }}>
+					<Typography variant="title">{holdDetails.name}</Typography>
+					<span style={{ flex: 1 }} />
+					<Button onClick={e => this.onAddHold()}>Assign Name To List</Button>
+				</div>
 
-						<Divider style={{ marginBottom: 40 }} />
+				<Divider style={{ marginBottom: 40 }} />
 
-						{this.renderList()}
-					</CardContent>
-				</Card>
-			</div>
+				{this.renderList()}
+			</Container>
 		);
 	}
 }

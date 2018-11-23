@@ -2,14 +2,18 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import { Typography } from "@material-ui/core";
+import classNames from "classnames";
+import moment from "moment";
+
 import TicketTypeSalesBarChart from "../../../../elements/charts/TicketTypeSalesBarChart";
 import Card from "../../../../elements/Card";
 import Divider from "../../../../common/Divider";
-import { Typography } from "@material-ui/core";
-import classNames from "classnames";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
 import VerticalBarChart from "../../../../elements/charts/VerticalBarChart";
-import moment from "moment";
+import Container from "./Container";
+import Bigneon from "../../../../../helpers/bigneon";
+import notifications from "../../../../../stores/notifications";
 
 const styles = theme => {
 	return {
@@ -89,31 +93,58 @@ class Summary extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { activeNumbersCard: null, chartValues: [] };
+		this.state = {
+			event: null,
+			activeNumbersCard: null,
+			chartValues: [],
+			last30Days: []
+		};
 	}
 
 	componentDidMount() {
-		let event = this.props.event;
-
 		//TODO make bn-api issue for date required
-
 		this.setState({ chartValues: this.getDailyBreakdownValues() });
+
+		this.loadEventDetails(this.props.match.params.id);
+	}
+
+	loadEventDetails(eventId) {
+		Bigneon()
+			.events.dashboard({ id: eventId })
+			.then(response => {
+				const { last_30_days, event } = response.data;
+
+				this.setState({
+					event,
+					last30Days: last_30_days
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+
+				let message = "Loading event details failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			});
 	}
 
 	getDailyBreakdownValues() {
 		let result = [];
 
-		// let test =
-		// [
-		// 	{ day: 1, ticketSales: 99, revenue_in_cents: 3000 },
-		// 	{ day: 2, ticketSales: 120, revenue_in_cents: 4000 }
-		// ];
-		let { last30Days } = this.props;
-
-		console.log(last30Days);
+		const { last30Days } = this.state;
 
 		for (let index = 0; index < last30Days.length; index++) {
-
 			result.push({
 				x: moment(last30Days[index].date).format("D"),
 				y: last30Days[index].sales / 100,
@@ -131,8 +162,8 @@ class Summary extends Component {
 	}
 
 	renderNumbers() {
-		const { activeNumbersCard } = this.state;
-		const { classes, event } = this.props;
+		const { activeNumbersCard, event } = this.state;
+		const { classes } = this.props;
 
 		return (
 			<Grid container spacing={32}>
@@ -195,7 +226,7 @@ class Summary extends Component {
 					<NumberCard
 						active={activeNumbersCard === "daysLeft"}
 						label="Days left"
-						value={moment(event.event_start).diff(moment(), 'days')}
+						value={moment(event.event_start).diff(moment(), "days")}
 						iconName="events"
 						classes={classes}
 					/>
@@ -205,30 +236,36 @@ class Summary extends Component {
 	}
 
 	renderTicketVolumes() {
-		let ticketTypes = this.props.event.ticket_types;
+		const ticketTypes = this.state.event.ticket_types;
 
 		return (
 			<Grid container spacing={32}>
-				{ticketTypes.map((tt, index) =>
-					(<Grid item xs={12} sm={6} lg={4}>
+				{ticketTypes.map((tt, index) => (
+					<Grid key={index} item xs={12} sm={6} lg={4}>
 						<TicketTypeSalesBarChart
 							name={tt.name}
-							totalRevenue={Math.floor(tt.sales_total_in_cents /100)}
+							totalRevenue={Math.floor(tt.sales_total_in_cents / 100)}
 							values={[
 								{ label: "Sold", value: tt.sold_held + tt.sold_unreserved },
 								{ label: "Open", value: tt.open },
-								{ label: "Held", value: tt.held  }
+								{ label: "Held", value: tt.held }
 							]}
 						/>
 					</Grid>
-					))}
+				))}
 			</Grid>
 		);
 	}
 
 	render() {
+		const { event } = this.state;
+
+		if (!event) {
+			return <Typography>Loading...</Typography>;
+		}
+
 		return (
-			<div>
+			<Container eventId={event.id} subheading={"summary"}>
 				{this.renderBarChart()}
 
 				<div style={{ marginTop: 60 }} />
@@ -239,14 +276,9 @@ class Summary extends Component {
 
 				<Typography variant="title">Ticket Volumes</Typography>
 				{this.renderTicketVolumes()}
-			</div>
+			</Container>
 		);
 	}
 }
-
-Summary.propTypes = {
-	event: PropTypes.object.isRequired,
-	last30Days: PropTypes.array.isRequired
-};
 
 export default withStyles(styles)(Summary);

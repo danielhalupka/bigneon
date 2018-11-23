@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles, Card, Typography } from "@material-ui/core";
+import { withStyles, Typography } from "@material-ui/core";
 import classNames from "classnames";
 
 const styles = theme => {

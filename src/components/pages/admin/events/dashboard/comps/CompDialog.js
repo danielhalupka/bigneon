@@ -3,14 +3,12 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import moment from "moment";
 import BnServer from "bn-api-node/dist/bundle.client";
-import { DialogActions } from "@material-ui/core";
 
-import notification from "../../../../../stores/notifications";
-import Button from "../../../../elements/Button";
-import Bigneon from "../../../../../helpers/bigneon";
-
-import Dialog from "../../../../elements/Dialog";
-import InputGroup from "../../../../common/form/InputGroup";
+import notifications from "../../../../../../stores/notifications";
+import Button from "../../../../../elements/Button";
+import Bigneon from "../../../../../../helpers/bigneon";
+import Dialog from "../../../../../elements/Dialog";
+import InputGroup from "../../../../../common/form/InputGroup";
 
 const createHold = BnServer.ResourceInterfaces.createHold;
 
@@ -85,7 +83,7 @@ class CompDialog extends React.Component {
 				const { id } = response.data;
 				this.setState({ isSubmitting: false });
 				let message = `Successfully ${comp.id ? "updated" : "created"} comp`;
-				notification.show({
+				notifications.show({
 					message,
 					variant: "success"
 				});
@@ -94,18 +92,10 @@ class CompDialog extends React.Component {
 			.catch(error => {
 				console.log(error);
 				this.setState({ isSubmitting: false });
-				let message = `${comp.id ? "Update" : "Create"} comp failed.`;
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
 
-				notification.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: `${comp.id ? "Update" : "Create"} comp failed.`
 				});
 			});
 	}

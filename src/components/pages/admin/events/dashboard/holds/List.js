@@ -1,54 +1,46 @@
 import React, { Component } from "react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import { Typography, withStyles } from "@material-ui/core";
 
-import notifications from "../../../../../stores/notifications";
-import Button from "../../../../elements/Button";
-import Bigneon from "../../../../../helpers/bigneon";
-import PageHeading from "../../../../elements/PageHeading";
-import Divider from "../../../../common/Divider";
+import notifications from "../../../../../../stores/notifications";
+import Button from "../../../../../elements/Button";
+import Bigneon from "../../../../../../helpers/bigneon";
+import Divider from "../../../../../common/Divider";
+import StyledLink from "../../../../../elements/StyledLink";
 import HoldRow from "./HoldRow";
 import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
-import StyledLink from "../../../../elements/StyledLink";
+import Container from "../Container";
 
 const styles = theme => ({
-	paper: {}
+	root: {}
 });
 
 class TicketHoldList extends Component {
 	constructor(props) {
 		super(props);
 
+		this.eventId = this.props.match.params.id;
+
 		this.state = {
 			holdType: HOLD_TYPES.NEW,
 			activeHoldId: null,
 			showHoldDialog: null,
-			eventName: "",
 			ticketTypes: [],
 			holds: []
 		};
 	}
 
 	componentDidMount() {
-		const { match } = this.props;
+		this.loadEventDetails(this.eventId);
 
-		if (match && match.params && match.params.id) {
-			this.eventId = match.params.id;
-			this.loadEventDetails();
-			this.refreshHolds();
-		} else {
-			//TODO 404
-		}
+		this.refreshHolds();
 	}
 
-	loadEventDetails() {
+	loadEventDetails(id) {
 		Bigneon()
-			.events.read({ id: this.eventId })
+			.events.read({ id })
 			.then(response => {
-				const { name, ticket_types } = response.data;
+				const { ticket_types } = response.data;
 				this.setState({
-					eventName: name,
 					ticketTypes: ticket_types
 				});
 			})
@@ -56,31 +48,20 @@ class TicketHoldList extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Loading event details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading event details failed."
 				});
 			});
 	}
 
 	refreshHolds() {
-		if (this.eventId) {
-			Bigneon()
-				.events.holds.index({ event_id: this.eventId })
-				.then(holds => {
-					//TODO Pagination
-					this.setState({ holds: holds.data.data });
-				});
-		}
+		Bigneon()
+			.events.holds.index({ event_id: this.eventId })
+			.then(holds => {
+				//TODO Pagination
+				this.setState({ holds: holds.data.data });
+			});
 	}
 
 	onAddHold() {
@@ -92,8 +73,6 @@ class TicketHoldList extends Component {
 	}
 
 	deleteHold(id) {
-		console.log("D: ", id);
-
 		Bigneon()
 			.holds.delete({ id })
 			.then(response => {
@@ -103,26 +82,15 @@ class TicketHoldList extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Deleting hold failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Failed to delete hold."
 				});
 			});
 	}
 
 	renderList() {
 		const { holds, activeHoldId, showHoldDialog } = this.state;
-		const { classes } = this.props;
-		const eventId = this.eventId;
 
 		if (holds === null) {
 			return <Typography variant="body1">Loading...</Typography>;
@@ -157,8 +125,6 @@ class TicketHoldList extends Component {
 				if (action === "Delete") {
 					return this.deleteHold(id);
 				}
-
-				console.log(action, id);
 			};
 
 			return (
@@ -178,7 +144,7 @@ class TicketHoldList extends Component {
 							<StyledLink
 								underlined
 								key={id}
-								to={`/admin/events/${eventId}/comps/${id}`}
+								to={`/admin/events/${this.eventId}/dashboard/comps/${id}`}
 							>
 								{name}
 							</StyledLink>,
@@ -237,12 +203,12 @@ class TicketHoldList extends Component {
 
 	renderDialog() {
 		const { ticketTypes, activeHoldId, holdType } = this.state;
-		let eventId = this.eventId;
+
 		return (
 			<HoldDialog
 				holdType={holdType}
 				open={true}
-				eventId={eventId}
+				eventId={this.eventId}
 				holdId={activeHoldId}
 				ticketTypes={ticketTypes}
 				onSuccess={id => {
@@ -255,29 +221,22 @@ class TicketHoldList extends Component {
 	}
 
 	render() {
-		const { eventName, showHoldDialog } = this.state;
+		const { showHoldDialog } = this.state;
 		const { classes } = this.props;
 
 		return (
-			//TODO eventually this component will move to it's own component
-			<div>
-				<PageHeading iconUrl="/icons/events-multi.svg">{eventName}</PageHeading>
+			<Container eventId={this.eventId} subheading={"tools"}>
 				{showHoldDialog && this.renderDialog()}
+				<div style={{ display: "flex" }}>
+					<Typography variant="title">Manage Ticket Holds</Typography>
+					<span style={{ flex: 1 }} />
+					<Button onClick={e => this.onAddHold()}>Create Hold</Button>
+				</div>
 
-				<Card className={classes.paper}>
-					<CardContent>
-						<div style={{ display: "flex" }}>
-							<Typography variant="title">Manage Ticket Holds</Typography>
-							<span style={{ flex: 1 }} />
-							<Button onClick={e => this.onAddHold()}>Create Hold</Button>
-						</div>
+				<Divider style={{ marginBottom: 40 }} />
 
-						<Divider style={{ marginBottom: 40 }} />
-
-						{this.renderList()}
-					</CardContent>
-				</Card>
-			</div>
+				{this.renderList()}
+			</Container>
 		);
 	}
 }
