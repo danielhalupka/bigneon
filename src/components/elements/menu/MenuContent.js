@@ -6,13 +6,14 @@ import List from "@material-ui/core/List";
 import Hidden from "@material-ui/core/Hidden";
 
 //Icons
-import MenuUserProfile from "../../elements/menu/MenuUserProfile";
+import MenuUserProfile from "./MenuUserProfile";
 import user from "../../../stores/user";
 
-import AdminMenuList from "./lists/Admin";
-import UserMenuList from "./lists/User";
-import OrgOwnerList from "./lists/OrgOwner";
-import GuestMenuList from "./lists/Guest";
+import AdminMenuList from "../../common/menu/lists/Admin";
+import UserMenuList from "../../common/menu/lists/User";
+import OrgOwnerList from "../../common/menu/lists/OrgOwner";
+import GuestMenuList from "../../common/menu/lists/Guest";
+import layout from "../../../stores/layout";
 
 const styles = theme => ({});
 
@@ -88,7 +89,9 @@ class MenuContent extends Component {
 					<div style={{ height: 60 }} />
 				</Hidden>
 
-				<MenuUserProfile onClick={toggleDrawer} />
+				{layout.adminStyleMenu ? null : (
+					<MenuUserProfile onClick={toggleDrawer} />
+				)}
 
 				{/* TODO Profile details go here */}
 				{this.renderMenuItems()}

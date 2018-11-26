@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
 import { Link } from "react-router-dom";
 // import DevTools from "mobx-react-devtools";
-
+import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
@@ -12,14 +12,13 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Hidden from "@material-ui/core/Hidden";
 
 import AppBar from "./header/AppBar";
-import MenuContent from "../common/menu/MenuContent";
+import MenuContent from "./menu/MenuContent";
 import Notification from "../common/Notification";
 import user from "../../stores/user";
 import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";
 import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
 import { toolBarHeight } from "../../components/styles/theme";
 import layout from "../../stores/layout";
-import classnames from "classnames";
 
 const drawerWidth = 240;
 
@@ -35,7 +34,7 @@ const styles = theme => ({
 	},
 	toolbar: toolBarHeight,
 	drawerPaper: {
-		width: drawerWidth,
+		//width: layout.adminStyleMenu ? 60 : drawerWidth,
 		minHeight: window.innerHeight * 1.1,
 		[theme.breakpoints.up("md")]: {
 			position: "relative"
@@ -98,6 +97,8 @@ class Container extends React.Component {
 			<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)} />
 		);
 
+		const drawStyle = { width: layout.adminStyleMenu ? 80 : drawerWidth };
+
 		return (
 			<div>
 				<AppBar
@@ -119,6 +120,9 @@ class Container extends React.Component {
 							ModalProps={{
 								keepMounted: true // Better open performance on mobile.
 							}}
+							PaperProps={{
+								style: drawStyle
+							}}
 						>
 							{drawer}
 						</SwipeableDrawer>
@@ -130,6 +134,9 @@ class Container extends React.Component {
 								open
 								classes={{
 									paper: classes.drawerPaper
+								}}
+								PaperProps={{
+									style: drawStyle
 								}}
 							>
 								{drawer}

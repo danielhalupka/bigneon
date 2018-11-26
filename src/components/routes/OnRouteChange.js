@@ -9,7 +9,7 @@ class OnRouteChange extends Component {
 			//Auto scroll to top
 			window.scrollTo(0, 0);
 
-			console.log(window.location.pathname + window.location.search);
+			// console.log(window.location.pathname + window.location.search);
 			//Google analytics track page view
 			//ReactGA.pageview(window.location.pathname + window.location.search);
 		}

@@ -1,4 +1,5 @@
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
+import user from "./user";
 
 class Layout {
 	@observable
@@ -15,6 +16,12 @@ class Layout {
 	@action
 	toggleContainerPadding(state) {
 		this.includeContainerPadding = state;
+	}
+
+	@computed
+	get adminStyleMenu() {
+		console.log("user.isAdmin:", user.isAdmin);
+		return user.isAdmin || user.isOrgOwner || user.isOrgMember;
 	}
 }
 

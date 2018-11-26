@@ -53,34 +53,36 @@ class CurrentOrganizationMenu extends React.Component {
 	}
 
 	componentDidMount() {
-		Bigneon()
-			.organizations.index()
-			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
-				const organizations = {};
-				data.forEach(organization => {
-					organizations[organization.id] = organization.name;
+		if (user.isAuthenticated) {
+			Bigneon()
+				.organizations.index()
+				.then(response => {
+					const { data, paging } = response.data; //@TODO Implement pagination
+					const organizations = {};
+					data.forEach(organization => {
+						organizations[organization.id] = organization.name;
+					});
+
+					this.setState({ organizations });
+				})
+				.catch(error => {
+					console.error(error);
+
+					let message = "Loading organizations failed.";
+					if (
+						error.response &&
+						error.response.data &&
+						error.response.data.error
+					) {
+						message = error.response.data.error;
+					}
+
+					notifications.show({
+						message,
+						variant: "error"
+					});
 				});
-
-				this.setState({ organizations });
-			})
-			.catch(error => {
-				console.error(error);
-
-				let message = "Loading organizations failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
+		}
 	}
 
 	handleChange(event, checked) {
