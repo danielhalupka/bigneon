@@ -20,7 +20,7 @@ import { fontFamilyDemiBold } from "../../styles/theme";
 import ArtistSummary from "../../elements/event/ArtistSummary";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import DateFlag from "../../elements/event/DateFlag";
-import IconLink from "../../elements/social/IconLink";
+import SocialIconLink from "../../elements/social/SocialIconLink";
 
 const styles = theme => ({
 	root: {},
@@ -241,9 +241,11 @@ class ViewEvent extends Component {
 							className={classes.eventSubCardIcon}
 							src="/icons/location-black.svg"
 						/>
-						<Typography className={classes.eventSubCardSubHeading}>
-							{venue.name}
-						</Typography>
+						<Link to={`/venues/${venue.id}`}>
+							<Typography className={classes.eventSubCardSubHeading}>
+								{venue.name}
+							</Typography>
+						</Link>
 					</div>
 
 					<Typography className={classes.eventSubCardSubText}>
@@ -289,13 +291,13 @@ class ViewEvent extends Component {
 					</Link>
 
 					<div className={classes.socialLinks}>
-						<IconLink
+						<SocialIconLink
 							color="black"
 							style={{ marginRight: 4 }}
 							icon={"facebook"}
 							size={40}
 						/>
-						<IconLink
+						<SocialIconLink
 							color="black"
 							style={{ marginLeft: 4 }}
 							icon={"twitter"}

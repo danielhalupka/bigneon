@@ -5,15 +5,6 @@ import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import classNames from "classnames";
 
-import {
-	textColorPrimary,
-	primaryHex,
-	secondaryHex,
-	warningHex,
-	callToActionBackground,
-	fontFamilyDemiBold
-} from "../styles/theme";
-
 let minWidth = 160;
 
 const styles = theme => {

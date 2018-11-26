@@ -25,7 +25,7 @@ const styles = theme => {
 	};
 };
 
-const SocialButton = props => {
+const SocialIconLink = props => {
 	const { classes, userName, onClick, href, icon, style, size, color } = props;
 
 	let src = "";
@@ -87,13 +87,13 @@ const SocialButton = props => {
 	);
 };
 
-SocialButton.defaultProps = {
+SocialIconLink.defaultProps = {
 	size: 25,
 	style: {},
 	color: "white"
 };
 
-SocialButton.propTypes = {
+SocialIconLink.propTypes = {
 	classes: PropTypes.object.isRequired,
 	onClick: PropTypes.func,
 	href: PropTypes.string,
@@ -111,4 +111,4 @@ SocialButton.propTypes = {
 	color: PropTypes.oneOf(["white", "black"])
 };
 
-export default withStyles(styles)(SocialButton);
+export default withStyles(styles)(SocialIconLink);

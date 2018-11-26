@@ -12,7 +12,7 @@ const styles = {
 		borderRadius: 4
 	},
 	default: {
-		borderRadius: 6,
+		borderRadius: 8,
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.07)",
 		border: "solid 0.5px #dee2e8"
 	},
@@ -66,8 +66,9 @@ const CustomCard = props => {
 		children,
 		variant,
 		iconUrl,
-		style,
+		style = {},
 		topBorderHighlight,
+		borderLess,
 		...rest
 	} = props;
 
@@ -81,6 +82,10 @@ const CustomCard = props => {
 	let topBorder;
 	if (topBorderHighlight) {
 		topBorder = <div className={classes.topBorderHighlight} />;
+	}
+
+	if (borderLess) {
+		style.border = "none";
 	}
 
 	return (
@@ -106,7 +111,8 @@ const CustomCard = props => {
 };
 
 CustomCard.defaultPropTypes = {
-	style: {}
+	style: {},
+	borderLess: false
 };
 
 CustomCard.propTypes = {
@@ -124,6 +130,7 @@ CustomCard.propTypes = {
 		"subCard",
 		"plain"
 	]),
+	borderLess: PropTypes.bool,
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };
 

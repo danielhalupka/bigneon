@@ -6,7 +6,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import Button from "../../../../elements/Button";
 import FormatInputLabel from "../../../../elements/form/FormatInputLabel";
-import IconLink from "../../../../elements/social/IconLink";
+import SocialIconLink from "../../../../elements/social/SocialIconLink";
 import IconButton from "../../../../elements/IconButton";
 
 const styles = theme => ({
@@ -84,7 +84,7 @@ const EventArtist = ({
 						{Object.keys(socialAccounts).map(
 							account =>
 								socialAccounts[account] ? (
-									<IconLink key={account} icon={account} size={30} />
+									<SocialIconLink key={account} icon={account} size={30} />
 								) : null
 						)}
 					</div>

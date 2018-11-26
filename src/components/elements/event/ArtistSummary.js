@@ -9,7 +9,7 @@ import SupportingArtistsLabel from "../../pages/events/SupportingArtistsLabel";
 import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
 import Card from "../Card";
 import CornerRibbon from "../CornerRibbon";
-import IconLink from "../social/IconLink";
+import SocialIconLink from "../social/SocialIconLink";
 
 const styles = theme => ({
 	root: {},
@@ -83,7 +83,7 @@ const ArtistSummary = props => {
 
 					<div className={classes.socialLinks}>
 						{facebook_username ? (
-							<IconLink
+							<SocialIconLink
 								style={{ marginLeft: 6 }}
 								icon={"facebook"}
 								userName={facebook_username}
@@ -92,7 +92,7 @@ const ArtistSummary = props => {
 						) : null}
 
 						{instagram_username ? (
-							<IconLink
+							<SocialIconLink
 								style={{ marginLeft: 6 }}
 								icon={"instagram"}
 								userName={instagram_username}
@@ -100,7 +100,7 @@ const ArtistSummary = props => {
 							/>
 						) : null}
 						{snapchat_username ? (
-							<IconLink
+							<SocialIconLink
 								style={{ marginLeft: 6 }}
 								icon={"snapchat"}
 								userName={snapchat_username}
@@ -109,7 +109,7 @@ const ArtistSummary = props => {
 						) : null}
 
 						{soundcloud_username ? (
-							<IconLink
+							<SocialIconLink
 								style={{ marginLeft: 6 }}
 								icon={"soundcloud"}
 								userName={soundcloud_username}
@@ -118,7 +118,7 @@ const ArtistSummary = props => {
 						) : null}
 
 						{bandcamp_username ? (
-							<IconLink
+							<SocialIconLink
 								style={{ marginLeft: 6 }}
 								icon={"bandcamp"}
 								userName={bandcamp_username}
@@ -127,7 +127,7 @@ const ArtistSummary = props => {
 						) : null}
 
 						{website_url ? (
-							<IconLink
+							<SocialIconLink
 								style={{ marginLeft: 6 }}
 								icon={"website"}
 								href={website_url}

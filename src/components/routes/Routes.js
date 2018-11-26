@@ -26,6 +26,7 @@ import PasswordReset from "../pages/authentication/PasswordReset";
 //Unauthenticated pages
 import Home from "../pages/landing/Index";
 import ViewEvent from "../pages/events/ViewEvent";
+import ViewVenue from "../pages/venues/ViewVenue";
 import CheckoutSelection from "../pages/events/CheckoutSelection";
 import CheckoutConfirmation from "../pages/events/CheckoutConfirmation";
 import CheckoutSuccess from "../pages/events/CheckoutSuccess";
@@ -158,6 +159,7 @@ class Routes extends Component {
 									component={Order}
 									isAuthenticated={isAuthenticated}
 								/>
+								<Route exact path="/venues/:id" component={ViewVenue} />
 								<Route exact path="/events/:id" component={ViewEvent} />
 								<Route
 									exact

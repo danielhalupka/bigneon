@@ -1,5 +1,6 @@
 import { observable, action } from "mobx";
 import moment from "moment";
+import createGoogleMapsLink from "../helpers/createGoogleMapsLink";
 import Bigneon from "../helpers/bigneon";
 
 class SelectedEvent {
@@ -64,20 +65,7 @@ class SelectedEvent {
 				const displayDoorTime = moment(door_time).format("hA");
 				const displayShowTime = moment(event_start).format("hA");
 
-				let googleMapsLink = "";
-				const { google_places_id, address } = venue;
-				if (google_places_id) {
-					//TODO check this works once it's added to the API
-					//This could even be moved to the back end
-					googleMapsLink = `https://www.google.com/maps/place/?q=place_id:${google_places_id}`;
-				} else if (address) {
-					//Try make a google maps search query for missing places ID
-					googleMapsLink = `https://www.google.co.za/maps/place/${address
-						.split(" ")
-						.join("+")}/`;
-				}
-
-				this.venue = { ...venue, googleMapsLink };
+				this.venue = { ...venue, googleMapsLink: createGoogleMapsLink(venue) };
 
 				this.id = id;
 
