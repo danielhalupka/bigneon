@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Getting commit info...
+      - aws --version
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=`echo $CODEBUILD_SOURCE_VERSION | sed 's/\//_/g'`
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the bn-web bundle...
+      - ./scripts/build_prod.sh
+      - BUNDLE_FILE=bundle-${IMAGE_TAG}.zip
+      - cd build; zip ${BUNDLE_FILE} -r .; mv ${BUNDLE_FILE} ../; cd ..
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the bundle to s3...
+      - aws s3 cp ${BUNDLE_FILE} s3://${S3_BUCKET}/bn-web/${BUNDLE_FILE}
+      - echo Bundle file uploaded
