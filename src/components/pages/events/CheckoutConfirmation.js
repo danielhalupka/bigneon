@@ -22,6 +22,8 @@ import {
 } from "../../styles/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import Divider from "../../common/Divider";
+import orders from "../../../stores/orders";
+import tickets from "../../../stores/tickets";
 
 const styles = theme => ({
 	root: {
@@ -174,6 +176,8 @@ class CheckoutConfirmation extends Component {
 			})
 			.then(() => {
 				cart.refreshCart();
+				orders.refreshOrders();
+				tickets.refreshTickets();
 
 				notifications.show({
 					message: "Payment successful",

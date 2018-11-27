@@ -102,9 +102,19 @@ class ViewVenue extends Component {
 		}
 
 		return events.map(event => {
+			//TODO remove this. It's a temp fix until bn-api changes this field name.
+			const max_ticket_price =
+				event.max_ticket_price || event.max_ticket_price_cache;
+			const min_ticket_price =
+				event.min_ticket_price || event.min_ticket_price_cache;
+
 			return (
 				<Grid key={event.id} item xs={12} sm={12} md={6} lg={4}>
-					<EventResultCard {...event} />
+					<EventResultCard
+						{...event}
+						max_ticket_price={max_ticket_price}
+						min_ticket_price={min_ticket_price}
+					/>
 				</Grid>
 			);
 		});

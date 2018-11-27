@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { Paper } from "@material-ui/core";
 
 import InputGroup from "../../../common/form/InputGroup";
 import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import eventResults from "../../../../stores/eventResults";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
+import Card from "../../../elements/Card";
 
 const styles = theme => ({
-	card: {
+	content: {
 		paddingLeft: theme.spacing.unit * 5,
 		paddingRight: theme.spacing.unit * 5,
 		paddingTop: theme.spacing.unit * 5,
@@ -84,37 +84,48 @@ class SearchCard extends Component {
 		const name = process.env.REACT_APP_NAME;
 
 		return (
-			<Paper className={classes.card}>
-				<Typography className={classes.heading} variant="display1">
-					{name} gets you access to your favorite artists' shows
-				</Typography>
+			<Card borderLess>
+				<div className={classes.content}>
+					<Typography className={classes.heading} variant="display1">
+						{name} gets you access to your favorite artists' shows
+					</Typography>
 
-				<form noValidate autoComplete="off" onSubmit={this.onSearch.bind(this)}>
-					<Grid direction="row" justify="center" alignItems="center" container>
-						<Grid item xs={12} sm={12} lg={12}>
-							<InputGroup
-								value={query}
-								name="query"
-								placeholder="Search for an event, artist or venue"
-								type="text"
-								isSearch={true}
-								onChange={e => this.setState({ query: e.target.value })}
-							/>
-						</Grid>
+					<form
+						noValidate
+						autoComplete="off"
+						onSubmit={this.onSearch.bind(this)}
+					>
+						<Grid
+							direction="row"
+							justify="center"
+							alignItems="center"
+							container
+						>
+							<Grid item xs={12} sm={12} lg={12}>
+								<InputGroup
+									value={query}
+									name="query"
+									placeholder="Search for an event, artist or venue"
+									type="text"
+									isSearch={true}
+									onChange={e => this.setState({ query: e.target.value })}
+								/>
+							</Grid>
 
-						<Grid item xs={12} sm={6} lg={4}>
-							<Button
-								type="submit"
-								variant="callToAction"
-								style={{ width: "100%" }}
-								disabled={isSearching}
-							>
-								{isSearching ? "Searching..." : "Search"}
-							</Button>
+							<Grid item xs={12} sm={6} lg={4}>
+								<Button
+									type="submit"
+									variant="callToAction"
+									style={{ width: "100%" }}
+									disabled={isSearching}
+								>
+									{isSearching ? "Searching..." : "Search"}
+								</Button>
+							</Grid>
 						</Grid>
-					</Grid>
-				</form>
-			</Paper>
+					</form>
+				</div>
+			</Card>
 		);
 	}
 }

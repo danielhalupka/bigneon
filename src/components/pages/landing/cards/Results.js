@@ -2,11 +2,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { Link } from "react-router-dom";
 
-import SearchResultEventCard from "./SearchResultEventCard";
 import ResultsRegionFilter from "./ResultsRegionFilter";
 import eventResults from "../../../../stores/eventResults";
+import EventResultCard from "../../../elements/event/EventResultCard";
 
 const styles = theme => ({
 	subHeading: {
@@ -26,15 +25,7 @@ const EventsList = ({ events }) => {
 
 		return (
 			<Grid item xs={12} sm={6} lg={4} key={id}>
-				<Link to={`/events/${id}`}>
-					<SearchResultEventCard
-						imgSrc={promo_image_url}
-						name={name}
-						formattedEventDate={formattedEventDate}
-						city={city}
-						state={state}
-					/>
-				</Link>
+				<EventResultCard {...event} />
 			</Grid>
 		);
 	});

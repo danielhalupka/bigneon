@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import { Paper } from "@material-ui/core";
 import { observer } from "mobx-react";
 import Hidden from "@material-ui/core/Hidden";
 

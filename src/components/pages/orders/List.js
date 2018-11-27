@@ -1,68 +1,35 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import moment from "moment";
+import { observer } from "mobx-react";
 
-import notifications from "../../../stores/notifications";
-import Bigneon from "../../../helpers/bigneon";
 import OrderRow from "./OrderRow";
 import StyledLink from "../../elements/StyledLink";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
+import orders from "../../../stores/orders";
 
-const styles = theme => ({
-	cardContent: {
-		padding: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit,
-		flex: "1 0 auto"
-	},
-	table: {}
-});
+const styles = theme => ({});
 
+@observer
 class OrderList extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			orders: null
-		};
 	}
 
 	componentDidMount() {
 		layout.toggleSideMenu(true);
-
-		Bigneon()
-			.orders.index()
-			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
-				this.setState({ orders: data || response.data }); //TODO remove 'response.data' when bn-api-node is updated
-			})
-			.catch(error => {
-				console.error(error);
-				let message = "Loading orders failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
+		orders.refreshOrders();
 	}
 
 	renderOrders() {
-		const { orders } = this.state;
-		const { classes } = this.props;
+		const { items, orderCount } = orders;
 
-		if (orders === null) {
+		if (items === null) {
 			return <Typography variant="body1">Loading...</Typography>;
 		}
 
-		if (orders && orders.length > 0) {
+		if (orderCount > 0) {
 			return (
 				<div>
 					<OrderRow>
@@ -72,14 +39,13 @@ class OrderList extends Component {
 						<Typography>Tickets</Typography>
 						<Typography>Total</Typography>
 					</OrderRow>
-					{orders.map(order => {
+					{items.map(order => {
 						const { id, date, total_in_cents, items } = order;
 
 						const formattedDate = moment
 							.utc(date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 							.format("MM/DD/YYYY");
 
-						//TODO move this to when we fetch the data so it's not executed on each render
 						let ticketCount = 0;
 						let eventName = ""; //TODO get this when available in the API
 						const orderNumber = id.slice(-8); //TODO eventually this will also come in the API
@@ -119,7 +85,6 @@ class OrderList extends Component {
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/chart-multi.svg">My orders</PageHeading>
-
 				{this.renderOrders()}
 			</div>
 		);

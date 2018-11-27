@@ -2,28 +2,24 @@ import React, { Component } from "react";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import moment from "moment";
+import { observer } from "mobx-react";
 
-import notifications from "../../../stores/notifications";
-import Bigneon from "../../../helpers/bigneon";
 import EventTicketsCard from "./EventTicketsCard";
 import TransferTicketsDialog from "./TransferTicketsDialog";
-import SelectGroup from "../../common/form/SelectGroup";
 import TicketDialog from "./TicketDialog";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
 import AppPromoCard from "../../elements/AppPromoCard";
+import tickets from "../../../stores/tickets";
 
 const styles = theme => ({});
 
+@observer
 class FanHub extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			showTicketsFor: "upcoming",
-			ticketGroups: null,
-			filteredTicketGroups: null,
 			expandedEventId: null,
 			selectedTransferTicketIds: null,
 			selectedTicket: null
@@ -32,43 +28,7 @@ class FanHub extends Component {
 
 	componentDidMount() {
 		layout.toggleSideMenu(true);
-
-		Bigneon()
-			.tickets.index()
-			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
-				let ticketGroups = [];
-
-				//TODO api data structure will eventually change
-				data.forEach(ticketGroup => {
-					const event = ticketGroup[0];
-					const tickets = ticketGroup[1];
-
-					event.formattedDate = moment
-						.utc(event.event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-						.format("ddd MM/DD/YY, h:mm A z");
-
-					ticketGroups.push({ event, tickets });
-				});
-
-				this.setState({ ticketGroups }, this.filterTicketGroups.bind(this));
-			})
-			.catch(error => {
-				console.error(error);
-				let message = "Loading tickets failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
+		tickets.refreshTickets();
 	}
 
 	componentDidUpdate(prevProps) {
@@ -89,55 +49,12 @@ class FanHub extends Component {
 		this.setState({ expandedEventId });
 	}
 
-	filterTicketGroups() {
-		const { ticketGroups, showTicketsFor } = this.state;
-
-		if (ticketGroups === null) {
-			return this.setState({ filteredTicketGroups: null });
-		}
-
-		let filteredTicketGroups = [];
-		ticketGroups.forEach(ticketGroup => {
-			const { event } = ticketGroup;
-			const { id, name, event_start } = event;
-
-			const eventStartDate = moment.utc(
-				event_start,
-				moment.HTML5_FMT.DATETIME_LOCAL_MS
-			);
-
-			const timeDifference = moment.utc().diff(eventStartDate);
-			let includeTicketGroup = false;
-
-			if (showTicketsFor === "all") {
-				includeTicketGroup = true;
-			}
-
-			if (showTicketsFor === "upcoming" && timeDifference < 0) {
-				includeTicketGroup = true;
-			}
-
-			if (showTicketsFor === "past" && timeDifference > 0) {
-				includeTicketGroup = true;
-			}
-
-			if (includeTicketGroup) {
-				filteredTicketGroups.push(ticketGroup);
-			}
-		});
-
-		return this.setState({ filteredTicketGroups });
-	}
-
 	renderTickets() {
-		const {
-			expandedEventId,
-			showTicketsFor,
-			filteredTicketGroups
-		} = this.state;
+		const { expandedEventId } = this.state;
+		const { groups, ticketGroupCount } = tickets;
 		const { history } = this.props;
 
-		if (filteredTicketGroups === null) {
+		if (groups === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">Loading...</Typography>
@@ -145,10 +62,10 @@ class FanHub extends Component {
 			);
 		}
 
-		if (filteredTicketGroups.length > 0) {
-			return filteredTicketGroups.map(ticketGroup => {
+		if (ticketGroupCount > 0) {
+			return groups.map(ticketGroup => {
 				const { event } = ticketGroup;
-				const { id, name, event_start } = event;
+				const { id, name } = event;
 
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
@@ -169,35 +86,10 @@ class FanHub extends Component {
 		} else {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
-					<Typography variant="body1">
-						No tickets for {showTicketsFor} events
-					</Typography>
+					<Typography variant="body1">No tickets for events.</Typography>
 				</Grid>
 			);
 		}
-	}
-
-	renderSelectFilter() {
-		const { showTicketsFor } = this.state;
-
-		const filterOptions = {
-			all: "All events",
-			upcoming: "Upcoming events",
-			past: "Past events"
-		};
-
-		return (
-			<SelectGroup
-				value={showTicketsFor}
-				items={filterOptions}
-				name={"venues"}
-				label={"Filter tickets by"}
-				onChange={e => {
-					const showTicketsFor = e.target.value;
-					this.setState({ showTicketsFor }, this.filterTicketGroups.bind(this));
-				}}
-			/>
-		);
 	}
 
 	render() {
@@ -212,7 +104,6 @@ class FanHub extends Component {
 				<PageHeading iconUrl="/icons/fan-hub-multi.svg">
 					Upcoming events
 				</PageHeading>
-				{/* {this.renderSelectFilter()} */}
 				<TicketDialog
 					open={!!selectedTicket}
 					eventName={selectedEventName}

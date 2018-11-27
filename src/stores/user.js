@@ -3,6 +3,7 @@ import decodeJWT from "../helpers/decodeJWT";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
 import cart from "./cart";
+import orders from "./orders";
 
 class User {
 	@observable
@@ -82,22 +83,9 @@ class User {
 							roles
 						} = data;
 
-						//TODO eventually this won't be like this as scopes will be on an org level and not a global one but for now the frontend needs to work to continue the checkout
-						// let globalRoles = roles;
-						// console.log(organization_roles);
-						// Object.keys(organization_roles).forEach(organizationId => {
-						// 	globalRoles = globalRoles.concat(
-						// 		organization_roles[organizationId]
-						// 	);
-						// });
-
-						//console.log(globalRoles);
-
 						const jwtData = decodeJWT(token);
 
-						const {
-							sub //UserId
-						} = jwtData;
+						const { sub } = jwtData;
 
 						this.token = token;
 						this.id = id;
@@ -123,6 +111,7 @@ class User {
 						}
 
 						cart.refreshCart();
+						orders.refreshOrders();
 					})
 					.catch(error => {
 						console.error(error);

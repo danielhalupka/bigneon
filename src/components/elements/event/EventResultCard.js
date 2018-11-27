@@ -68,6 +68,10 @@ const styles = theme => ({
 });
 
 const PriceTag = ({ classes, min, max }) => {
+	if (!min || !max) {
+		return null;
+	}
+
 	const minDollars = Math.round(min / 100);
 	const maxDollars = Math.round(max / 100);
 	let text = `$${minDollars} - $${maxDollars}`;
@@ -90,8 +94,8 @@ const EventResultCard = ({
 	promo_image_url,
 	event_start,
 	door_time,
-	min_ticket_price_cache,
-	max_ticket_price_cache
+	min_ticket_price,
+	max_ticket_price
 }) => {
 	const style = {};
 	if (promo_image_url) {
@@ -103,8 +107,8 @@ const EventResultCard = ({
 			<Card borderLess variant="default">
 				<div className={classes.media} style={style}>
 					<PriceTag
-						min={min_ticket_price_cache}
-						max={max_ticket_price_cache}
+						min={min_ticket_price}
+						max={max_ticket_price}
 						classes={classes}
 					/>
 					<Typography className={classes.name}>{name}</Typography>
@@ -140,8 +144,8 @@ EventResultCard.propTypes = {
 	promo_image_url: PropTypes.string,
 	event_start: PropTypes.string.isRequired,
 	door_time: PropTypes.string.isRequired,
-	min_ticket_price_cache: PropTypes.number.isRequired,
-	max_ticket_price_cache: PropTypes.number.isRequired
+	min_ticket_price: PropTypes.number.isRequired,
+	max_ticket_price: PropTypes.number.isRequired
 };
 
 export default withStyles(styles)(EventResultCard);

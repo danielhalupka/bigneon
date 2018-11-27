@@ -4,10 +4,13 @@ import { withStyles } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 
 import MenuItem from "../../../elements/menu/MenuItem";
 import StatsCard from "../../../elements/menu/StatsCard";
 import Button from "../../../elements/Button";
+import orders from "../../../../stores/orders";
+import tickets from "../../../../stores/tickets";
 
 const styles = theme => {
 	return {
@@ -24,7 +27,7 @@ const styles = theme => {
 	};
 };
 
-const UserList = props => {
+const UserList = observer(props => {
 	const { toggleDrawer, openMenuItem, changeOpenMenu, classes } = props;
 
 	return (
@@ -50,7 +53,7 @@ const UserList = props => {
 				<StatsCard
 					iconUrl="/icons/artists-active.svg"
 					label="Upcoming events"
-					value={3}
+					value={tickets.upcomingEventCount}
 				/>
 
 				<div className={classes.spacer} />
@@ -58,7 +61,7 @@ const UserList = props => {
 				<StatsCard
 					iconUrl="/icons/chart-active.svg"
 					label="My orders"
-					value={2}
+					value={orders.orderCount}
 				/>
 
 				<div className={classes.spacer} />
@@ -75,7 +78,7 @@ const UserList = props => {
 			</div>
 		</div>
 	);
-};
+});
 
 UserList.propTypes = {
 	classes: PropTypes.object.isRequired,
