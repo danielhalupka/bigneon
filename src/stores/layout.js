@@ -20,7 +20,6 @@ class Layout {
 
 	@computed
 	get adminStyleMenu() {
-		console.log("user.isAdmin:", user.isAdmin);
 		return user.isAdmin || user.isOrgOwner || user.isOrgMember;
 	}
 }

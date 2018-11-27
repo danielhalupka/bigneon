@@ -32,7 +32,7 @@ const EventTicketRow = props => {
 		{ flex: 2, textAlign: "left" },
 		{ flex: 6, textAlign: "left" },
 		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "right" }
+		{ flex: 3, textAlign: "center" }
 	];
 
 	const columns = children.map((child, index) => {

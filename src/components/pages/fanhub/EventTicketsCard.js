@@ -237,6 +237,10 @@ class EventTicketsCard extends Component {
 							</Typography>
 
 							<Typography className={classes.ticketDetailsText}>
+								<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
+									show qr
+								</StyledLink>
+								<span style={{ marginRight: 10 }} />
 								<StyledLink underlined onClick={() => onShowTransferQR([id])}>
 									transfer
 								</StyledLink>

@@ -1,18 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
 import Typography from "@material-ui/core/Typography";
 import QRCode from "qrcode.react";
 
 import { primaryHex } from "../../styles/theme";
-import DialogTransition from "../../common/DialogTransition";
 import Bigneon from "../../../helpers/bigneon";
 import notification from "../../../stores/notifications";
+import Dialog from "../../elements/Dialog";
 
 const styles = {
-	dialogContent: {}
+	content: {
+		minWidth: 400,
+		alignContent: "center",
+		textAlign: "center"
+	}
 };
 
 class TicketDialog extends React.Component {
@@ -75,19 +77,19 @@ class TicketDialog extends React.Component {
 
 		const ticketName = ticket ? ticket.ticket_type_name : "";
 
+		const iconUrl = "/icons/tickets-white.svg";
+
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
 				onClose={onClose}
-				aria-labelledby="dialog-title"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				iconUrl={iconUrl}
+				title={`${eventName} (${ticketName})`}
 				{...other}
 			>
-				<DialogContent>
-					<Typography variant="display1">
-						{eventName} <small>({ticketName})</small>
+				<div className={classes.content}>
+					<Typography variant="subheading">
+						Scanning this redeems the ticket.
 					</Typography>
-					<Typography variant="subheading">Show this to the doorman</Typography>
 					{qrText ? (
 						<div
 							style={{
@@ -101,7 +103,7 @@ class TicketDialog extends React.Component {
 					) : (
 						<Typography variant="display1">Loading</Typography>
 					)}
-				</DialogContent>
+				</div>
 			</Dialog>
 		);
 	}
