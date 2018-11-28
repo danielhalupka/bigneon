@@ -44,6 +44,7 @@ import AdminEventDashboardSummary from "../pages/admin/events/dashboard/Summary"
 import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List";
 import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
+import AdminFanList from "../pages/admin/fans/Index";
 
 import AdminGuestList from "../pages/admin/events/guests/List";
 // import AdminEventTicketHolds from "../pages/admin/events/holds/List";
@@ -183,7 +184,14 @@ class Routes extends Component {
 									path="/mobile_stripe_token_auth/:access_token/:refresh_token"
 									component={MobileStripeAuth}
 								/>
-								{/* System admin routes TODO hide these if they don't blong */}
+
+								{/* Admin routes */}
+								<PrivateRoute
+									exact
+									path="/admin/fans"
+									component={AdminFanList}
+									isAuthenticated={isAuthenticated}
+								/>
 								<PrivateRoute
 									exact
 									path="/admin/organizations"
