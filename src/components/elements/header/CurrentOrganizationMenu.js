@@ -53,36 +53,25 @@ class CurrentOrganizationMenu extends React.Component {
 	}
 
 	componentDidMount() {
-		if (user.isAuthenticated) {
-			Bigneon()
-				.organizations.index()
-				.then(response => {
-					const { data, paging } = response.data; //@TODO Implement pagination
-					const organizations = {};
-					data.forEach(organization => {
-						organizations[organization.id] = organization.name;
-					});
-
-					this.setState({ organizations });
-				})
-				.catch(error => {
-					console.error(error);
-
-					let message = "Loading organizations failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
-					});
+		Bigneon()
+			.organizations.index()
+			.then(response => {
+				const { data } = response.data;
+				const organizations = {};
+				data.forEach(organization => {
+					organizations[organization.id] = organization.name;
 				});
-		}
+
+				this.setState({ organizations });
+			})
+			.catch(error => {
+				if (error.response && error.response.status !== 401) {
+					notifications.showFromErrorResponse({
+						error,
+						defaultMessage: "Loading organizations failed."
+					});
+				}
+			});
 	}
 
 	handleChange(event, checked) {
@@ -100,7 +89,7 @@ class CurrentOrganizationMenu extends React.Component {
 	renderOrgMenu() {
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
-		const { organizationRoles } = user;
+		const { organizationRoles, currentOrganizationId } = user;
 		const { organizations } = this.state;
 
 		return (
@@ -127,6 +116,7 @@ class CurrentOrganizationMenu extends React.Component {
 								user.setCurrentOrganizationRoles(id, true);
 								this.handleClose();
 							}}
+							selected={id === currentOrganizationId}
 						>
 							{organizations[id] || "..."}
 						</MenuItem>
@@ -168,11 +158,11 @@ class CurrentOrganizationMenu extends React.Component {
 					</Hidden>
 
 					<img
-						alt="Search icon"
+						alt="Organization icon"
 						className={classes.dropdownIcon}
 						src="/icons/down-active.svg"
 					/>
-				</span>{" "}
+				</span>
 				{this.renderOrgMenu()}
 			</div>
 		);

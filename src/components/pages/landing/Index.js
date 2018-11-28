@@ -12,10 +12,6 @@ const styles = theme => ({
 });
 
 class Home extends Component {
-	componentDidMount() {
-		layout.toggleSideMenu(false);
-	}
-
 	render() {
 		const { classes } = this.props;
 

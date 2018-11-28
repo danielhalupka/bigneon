@@ -11,7 +11,6 @@ import TicketSelection from "./TicketSelection";
 import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
-import layout from "../../../stores/layout";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
@@ -56,9 +55,6 @@ class CheckoutSelection extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(false);
-		layout.toggleContainerPadding(false);
-
 		setTimeout(() => {
 			cart.refreshCart(() => {
 				const { items } = cart;
@@ -94,10 +90,6 @@ class CheckoutSelection extends Component {
 		} else {
 			//TODO return 404
 		}
-	}
-
-	componentWillUnmount() {
-		layout.toggleContainerPadding(true);
 	}
 
 	validateFields() {

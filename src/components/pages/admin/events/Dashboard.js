@@ -14,7 +14,6 @@ import Button from "../../../elements/Button";
 import CheckBox from "../../../elements/form/CheckBox";
 import StyledLink from "../../../elements/StyledLink";
 import Divider from "../../../common/Divider";
-import layout from "../../../../stores/layout";
 
 import Summary from "./dashboardContent/Summary";
 import HoldsList from "./dashboardContent/holds/List";
@@ -50,7 +49,6 @@ class EventDashboard extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
 		this.loadEventDetails(this.props.match.params.id);
 	}
 

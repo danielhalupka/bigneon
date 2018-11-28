@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 
 import notifications from "../../../stores/notifications";
-import layout from "../../../stores/layout";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Bigneon from "../../../helpers/bigneon";
 import VenueHeaderImage from "../../elements/venue/VenueHeaderImage";
@@ -43,9 +42,6 @@ class ViewVenue extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(false);
-		layout.toggleContainerPadding(false);
-
 		if (
 			this.props.match &&
 			this.props.match.params &&
@@ -88,10 +84,6 @@ class ViewVenue extends Component {
 		} else {
 			//TODO return 404
 		}
-	}
-
-	componentWillUnmount() {
-		layout.toggleContainerPadding(true);
 	}
 
 	renderEvents() {

@@ -19,6 +19,7 @@ import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";
 import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
 import { toolBarHeight } from "../../components/styles/theme";
 import layout from "../../stores/layout";
+import BoxOfficeAppBar from "./header/BoxOfficeAppBar";
 
 const drawerWidth = 240;
 
@@ -56,18 +57,14 @@ class Container extends React.Component {
 		super(props);
 
 		this.state = {
-			mobileOpen: false,
-			isWidget: false
+			mobileOpen: false
+			//isWidget: false
 		};
 	}
 
 	componentDidMount() {
 		//This component mounts every time the browser is refreshed, so we need to check we still have a valid token
 		user.refreshUser();
-
-		const isWidget = window.location.pathname.includes("/widget/"); //TODO remove this in the future when widgets are in their own react app
-
-		this.setState({ isWidget });
 	}
 
 	handleDrawerToggle() {
@@ -75,16 +72,17 @@ class Container extends React.Component {
 	}
 
 	render() {
-		const { showSideMenu, includeContainerPadding } = layout;
+		const {
+			showSideMenu,
+			includeContainerPadding,
+			useContainer,
+			isBoxOffice
+		} = layout;
 		const { classes, history, children } = this.props;
-		const { mobileOpen, isWidget } = this.state;
-
-		const isAuthRoute =
-			window.location.pathname.includes("/login") ||
-			window.location.pathname.includes("/sign-up"); //TODO might be a better way to do this but new designs require a different container
+		const { mobileOpen } = this.state;
 
 		//Don't render container things if we're in a widget
-		if (isWidget || isAuthRoute) {
+		if (!useContainer) {
 			return (
 				<div>
 					{children}
@@ -97,14 +95,28 @@ class Container extends React.Component {
 			<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)} />
 		);
 
-		const drawStyle = { width: layout.adminStyleMenu ? 80 : drawerWidth };
+		const drawStyle = {};
+		if (layout.adminStyleMenu === null) {
+			drawStyle.display = "none";
+		} else if (layout.adminStyleMenu) {
+			drawStyle.width = 80;
+		} else {
+			drawStyle.width = drawerWidth;
+		}
 
 		return (
 			<div>
-				<AppBar
-					handleDrawerToggle={this.handleDrawerToggle.bind(this)}
-					history={history}
-				/>
+				{isBoxOffice ? (
+					<BoxOfficeAppBar
+						handleDrawerToggle={this.handleDrawerToggle.bind(this)}
+						history={history}
+					/>
+				) : (
+					<AppBar
+						handleDrawerToggle={this.handleDrawerToggle.bind(this)}
+						history={history}
+					/>
+				)}
 
 				<div className={classes.root}>
 					<Hidden mdUp>

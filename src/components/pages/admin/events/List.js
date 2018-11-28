@@ -26,7 +26,6 @@ import CancelEventDialog from "./CancelEventDialog";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import EventSummaryCard from "./EventSummaryCard";
-import layout from "../../../../stores/layout";
 import user from "../../../../stores/user";
 
 const styles = theme => ({
@@ -64,7 +63,6 @@ class EventsList extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
 		this.updateEvents();
 	}
 

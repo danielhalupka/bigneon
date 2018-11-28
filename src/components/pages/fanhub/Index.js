@@ -8,7 +8,6 @@ import EventTicketsCard from "./EventTicketsCard";
 import TransferTicketsDialog from "./TransferTicketsDialog";
 import TicketDialog from "./TicketDialog";
 import PageHeading from "../../elements/PageHeading";
-import layout from "../../../stores/layout";
 import AppPromoCard from "../../elements/AppPromoCard";
 import tickets from "../../../stores/tickets";
 
@@ -27,7 +26,6 @@ class FanHub extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
 		tickets.refreshTickets();
 	}
 

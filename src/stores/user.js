@@ -42,14 +42,6 @@ class User {
 	@observable
 	showRequiresAuthDialog = false;
 
-	@observable
-	showSideMenu = false;
-
-	@action
-	toggleSideMenu(state) {
-		this.showSideMenu = state;
-	}
-
 	@action
 	refreshUser(onSuccess = null, onError = null) {
 		const token = localStorage.getItem("access_token");
@@ -301,6 +293,11 @@ class User {
 	get isGuest() {
 		//If they haven't signed in yet
 		return !this.token;
+	}
+
+	@computed
+	get hasBoxOfficeAccess() {
+		return this.isOrgMember || this.isOrgOwner || this.isAdmin; //TODO this permission might come from scopes later
 	}
 }
 

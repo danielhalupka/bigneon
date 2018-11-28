@@ -12,7 +12,6 @@ import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
-import layout from "../../../stores/layout";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import {
 	fontFamilyDemiBold,
@@ -132,9 +131,6 @@ class CheckoutConfirmation extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(false);
-		layout.toggleContainerPadding(false);
-
 		cart.refreshCart();
 
 		//TODO
@@ -156,10 +152,6 @@ class CheckoutConfirmation extends Component {
 		} else {
 			//TODO return 404
 		}
-	}
-
-	componentWillUnmount() {
-		layout.toggleContainerPadding(true);
 	}
 
 	onCheckout(stripeToken, onError) {

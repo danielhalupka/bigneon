@@ -14,7 +14,6 @@ import selectedEvent from "../../../stores/selectedEvent";
 import user from "../../../stores/user";
 import Card from "../../elements/Card";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
-import layout from "../../../stores/layout";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import ArtistSummary from "../../elements/event/ArtistSummary";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
@@ -113,9 +112,6 @@ const styles = theme => ({
 @observer
 class ViewEvent extends Component {
 	componentDidMount() {
-		layout.toggleSideMenu(false);
-		layout.toggleContainerPadding(false);
-
 		if (
 			this.props.match &&
 			this.props.match.params &&
@@ -132,10 +128,6 @@ class ViewEvent extends Component {
 		} else {
 			//TODO return 404
 		}
-	}
-
-	componentWillUnmount() {
-		layout.toggleContainerPadding(true);
 	}
 
 	toggleUserInterest() {

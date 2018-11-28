@@ -14,7 +14,6 @@ import Bigneon from "../../../../helpers/bigneon";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 import { validPhone } from "../../../../validators";
 import PageHeading from "../../../elements/PageHeading";
-import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -51,8 +50,6 @@ class Venue extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
-
 		const { venueId } = this.state;
 
 		if (venueId) {

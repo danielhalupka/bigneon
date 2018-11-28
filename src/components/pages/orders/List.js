@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 import OrderRow from "./OrderRow";
 import StyledLink from "../../elements/StyledLink";
 import PageHeading from "../../elements/PageHeading";
-import layout from "../../../stores/layout";
 import orders from "../../../stores/orders";
 
 const styles = theme => ({});
@@ -18,7 +17,6 @@ class OrderList extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
 		orders.refreshOrders();
 	}
 

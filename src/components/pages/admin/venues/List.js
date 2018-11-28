@@ -10,7 +10,6 @@ import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
-import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {},
@@ -30,8 +29,6 @@ class VenuesList extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
-
 		Bigneon()
 			.venues.index()
 			.then(response => {

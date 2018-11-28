@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Typography, withStyles, InputAdornment } from "@material-ui/core";
+import { withStyles, InputAdornment } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -15,7 +15,6 @@ import { validUrl } from "../../../../validators";
 import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
-import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	paper: {
@@ -57,7 +56,6 @@ class Artist extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
 		const { artistId } = this.state;
 
 		if (artistId) {

@@ -11,10 +11,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 
 import { toolBarHeight } from "../../styles/theme";
 import RightUserMenu from "./RightUserMenu";
-import SearchToolBarInput from "./SearchToolBarInput";
-import CartHeaderLink from "../../common/cart/CartHeaderLink";
-import CurrentOrganizationMenu from "./CurrentOrganizationMenu";
 import BoxOfficeLink from "./BoxOfficeLink";
+import BoxOfficeEventSelection from "./BoxOfficeEventSelection";
 
 const styles = theme => {
 	return {
@@ -29,17 +27,27 @@ const styles = theme => {
 			justifyContent: "space-between",
 			...toolBarHeight
 		},
+		logoContainer: {
+			display: "flex",
+			alignItems: "center"
+		},
 		headerImage: {
-			maxWidth: 140
+			maxWidth: 45,
+			width: "auto"
 		},
 		rightMenuOptions: {
 			alignItems: "center",
 			display: "flex"
+		},
+		verticalDivider: {
+			borderLeft: "1px solid #DEE2E8",
+			height: 50,
+			marginLeft: theme.spacing.unit * 2
 		}
 	};
 };
 
-const CustomAppBar = props => {
+const BoxOfficeAppBar = props => {
 	const { classes, handleDrawerToggle, history } = props;
 
 	return (
@@ -57,25 +65,23 @@ const CustomAppBar = props => {
 						</IconButton>
 					</Hidden>
 				) : null}
-				<div>
-					<Link to={"/"}>
+				<div className={classes.logoContainer}>
+					<Link to={"/box-office/sell"}>
 						<img
 							alt="Header logo"
 							className={classes.headerImage}
-							src="/images/bn-logo-text.svg"
+							src="/images/bn-logo.png"
 						/>
 					</Link>
+					<Hidden smDown>
+						<div className={classes.verticalDivider} />
+					</Hidden>
+
+					<BoxOfficeEventSelection />
 				</div>
-
-				<Hidden smDown implementation="css">
-					<SearchToolBarInput history={history} />
-				</Hidden>
-
 				<span className={classes.rightMenuOptions}>
 					<Hidden smDown>
 						<BoxOfficeLink />
-						<CurrentOrganizationMenu />
-						<CartHeaderLink />
 					</Hidden>
 					<RightUserMenu history={history} />
 				</span>
@@ -84,10 +90,10 @@ const CustomAppBar = props => {
 	);
 };
 
-CustomAppBar.propTypes = {
+BoxOfficeAppBar.propTypes = {
 	classes: PropTypes.object.isRequired,
 	handleDrawerToggle: PropTypes.func,
 	history: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(CustomAppBar);
+export default withStyles(styles)(BoxOfficeAppBar);

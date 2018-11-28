@@ -13,6 +13,7 @@ import AdminMenuList from "../../common/menu/lists/Admin";
 import UserMenuList from "../../common/menu/lists/User";
 import OrgOwnerList from "../../common/menu/lists/OrgOwner";
 import GuestMenuList from "../../common/menu/lists/Guest";
+import BoxOfficeList from "../../common/menu/lists/BoxOffice";
 import layout from "../../../stores/layout";
 
 const styles = theme => ({});
@@ -35,8 +36,19 @@ class MenuContent extends Component {
 	}
 
 	renderMenuItems() {
+		const { isBoxOffice } = layout;
 		const { toggleDrawer } = this.props;
 		const { openMenuItem } = this.state;
+
+		if (isBoxOffice) {
+			return (
+				<BoxOfficeList
+					toggleDrawer={toggleDrawer}
+					openMenuItem={openMenuItem}
+					changeOpenMenu={name => this.changeOpenMenu(name)}
+				/>
+			);
+		}
 
 		const { isAdmin, isOrgOwner, isGuest, isUser } = user;
 		if (isAdmin) {

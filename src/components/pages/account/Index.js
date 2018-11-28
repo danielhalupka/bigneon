@@ -8,7 +8,6 @@ import user from "../../../stores/user";
 import notifications from "../../../stores/notifications";
 import Bigneon from "../../../helpers/bigneon";
 import PageHeading from "../../elements/PageHeading";
-import layout from "../../../stores/layout";
 import Card from "../../elements/Card";
 import FormSubHeading from "../../elements/FormSubHeading";
 import Divider from "../../common/Divider";
@@ -60,8 +59,6 @@ class Account extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
-
 		//Then load from API for the freshest data
 		this.setDefault();
 	}

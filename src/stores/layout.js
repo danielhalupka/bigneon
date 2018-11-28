@@ -8,6 +8,12 @@ class Layout {
 	@observable
 	includeContainerPadding = true;
 
+	@observable
+	isBoxOffice = false;
+
+	@observable
+	useContainer = true;
+
 	@action
 	toggleSideMenu(state) {
 		this.showSideMenu = state;
@@ -18,9 +24,23 @@ class Layout {
 		this.includeContainerPadding = state;
 	}
 
+	@action
+	toggleBoxOffice(state) {
+		this.isBoxOffice = state;
+	}
+
+	@action
+	toggleContainer(state) {
+		this.useContainer = state;
+	}
+
 	@computed
 	get adminStyleMenu() {
-		return user.isAdmin || user.isOrgOwner || user.isOrgMember;
+		if (user.isAuthenticated) {
+			return user.isAdmin || user.isOrgOwner || user.isOrgMember;
+		} else {
+			return null;
+		}
 	}
 }
 

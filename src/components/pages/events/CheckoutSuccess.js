@@ -8,7 +8,6 @@ import QRCode from "qrcode.react";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
-import layout from "../../../stores/layout";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import { fontFamilyDemiBold } from "../../styles/theme";
@@ -52,8 +51,6 @@ class CheckoutSuccess extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(false);
-		layout.toggleContainerPadding(false);
 		cart.emptyCart(); //TODO move this to after they've submitted the final form
 
 		if (
@@ -74,10 +71,6 @@ class CheckoutSuccess extends Component {
 		} else {
 			//TODO return 404
 		}
-	}
-
-	componentWillUnmount() {
-		layout.toggleContainerPadding(true);
 	}
 
 	renderQRCode() {

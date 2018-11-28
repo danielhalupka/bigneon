@@ -15,7 +15,6 @@ import Button from "../../../../elements/Button";
 import CheckBox from "../../../../elements/form/CheckBox";
 import StyledLink from "../../../../elements/StyledLink";
 import Divider from "../../../../common/Divider";
-import layout from "../../../../../stores/layout";
 
 const styles = theme => ({
 	rightHeaderOptions: {
@@ -46,7 +45,6 @@ class EventDashboardContainer extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
 		this.loadEventDetails(this.props.eventId);
 	}
 

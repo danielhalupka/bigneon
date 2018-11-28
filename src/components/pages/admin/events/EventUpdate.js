@@ -19,7 +19,6 @@ import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 
 import eventUpdateStore from "../../../../stores/eventUpdate";
-import layout from "../../../../stores/layout";
 import user from "../../../../stores/user";
 
 const styles = theme => ({
@@ -53,8 +52,6 @@ class Event extends Component {
 	}
 
 	componentDidMount() {
-		layout.toggleSideMenu(true);
-
 		if (
 			this.props.match &&
 			this.props.match.params &&
@@ -193,9 +190,9 @@ class Event extends Component {
 		if (!saveResponse) {
 			return this.setState({ isSubmitting: false });
 		}
-    
+
 		const { result, error } = saveResponse;
-    
+
 		if (result) {
 			const { id } = eventUpdateStore;
 
