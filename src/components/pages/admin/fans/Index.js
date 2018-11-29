@@ -10,6 +10,7 @@ import layout from "../../../../stores/layout";
 import FanRow from "./FanRow";
 import Card from "../../../elements/Card";
 import { fontFamilyDemiBold, primaryHex } from "../../../styles/theme";
+import user from "../../../../stores/user";
 
 const imageSize = 40;
 
@@ -67,34 +68,31 @@ class FanList extends Component {
 
 	componentDidMount() {
 		layout.toggleSideMenu(true);
+		this.loadFans();
+	}
 
-		const users = [
-			{
-				id: "1",
-				firstName: "John",
-				lastName: "Smith",
-				email: "john@smith.com",
-				lastOrderDate: "20/02/2018",
-				orders: 26,
-				revenue: 1000,
-				dateAdded: "1/04/18"
-			},
-			{
-				id: "2",
-				firstName: "Ham",
-				lastName: "Sandwich",
-				email: "ham@sam.com",
-				lastOrderDate: "22/02/2018",
-				orders: 21,
-				revenue: 2000,
-				dateAdded: "2/04/18",
-				profilePicUrl: "/images/login-bg.jpg"
-			}
-		];
+	loadFans() {
+		const organization_id = user.currentOrganizationId;
 
-		setTimeout(() => {
-			this.setState({ users });
-		}, 50);
+		if (!organization_id) {
+			setTimeout(this.loadFans.bind(this), 500);
+			return;
+		}
+
+		Bigneon()
+			.organizations.fans.index({ organization_id })
+			.then(response => {
+				const { data } = response.data;
+
+				this.setState({ users: data });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Listing fans failed."
+				});
+			});
 	}
 
 	renderUsers() {
@@ -103,6 +101,10 @@ class FanList extends Component {
 
 		if (users === null) {
 			return <Typography>Loading fans...</Typography>;
+		}
+
+		if (users.length === 0) {
+			return <Typography>No fans currently.</Typography>;
 		}
 
 		return (
@@ -118,50 +120,56 @@ class FanList extends Component {
 					</FanRow>
 					{users.map((user, index) => {
 						const {
-							id,
-							firstName,
-							lastName,
+							user_id,
+							first_name,
+							last_name,
 							email,
-							lastOrderDate,
-							orders,
-							revenue,
-							dateAdded,
-							profilePicUrl
+							last_order_time,
+							order_count,
+							revenue_in_cents,
+							created_at,
+							thumb_profile_pic_url
 						} = user;
 						return (
-							<Link to={`/admin/fans/${id}`} key={id}>
+							<Link to={`/admin/fans/${user_id}`} key={user_id}>
 								<FanRow shaded={!(index % 2)}>
 									<div className={classes.nameProfileImage}>
-										{profilePicUrl ? (
+										{thumb_profile_pic_url ? (
 											<div
 												className={classes.profileImageBackground}
-												style={{ backgroundImage: `url(${profilePicUrl})` }}
+												style={{
+													backgroundImage: `url(${thumb_profile_pic_url})`
+												}}
 											/>
 										) : (
 											<div className={classes.missingProfileImageBackground}>
 												<img
 													className={classes.missingProfileImage}
 													src={"/images/profile-pic-placeholder-white.png"}
-													alt={`${firstName} ${lastName}`}
+													alt={`${first_name} ${last_name}`}
 												/>
 											</div>
 										)}
 										&nbsp;&nbsp;
 										<Typography className={classes.itemText}>
-											{firstName} {lastName}
+											{first_name} {last_name}
 										</Typography>
 									</div>
 
 									<Typography className={classes.itemText}>{email}</Typography>
 									<Typography className={classes.itemText}>
-										{lastOrderDate}
-									</Typography>
-									<Typography className={classes.itemText}>{orders}</Typography>
-									<Typography className={classes.itemText}>
-										{revenue}
+										{last_order_time
+											? moment(last_order_time).format("DD/MM/YYYY")
+											: "-"}
 									</Typography>
 									<Typography className={classes.itemText}>
-										{dateAdded}
+										{order_count}
+									</Typography>
+									<Typography className={classes.itemText}>
+										${Math.round(revenue_in_cents / 100)}
+									</Typography>
+									<Typography className={classes.itemText}>
+										{created_at ? moment(created_at).format("DD/MM/YYYY") : "-"}
 									</Typography>
 								</FanRow>
 							</Link>
