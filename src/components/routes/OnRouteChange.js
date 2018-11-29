@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import layout from "../../stores/layout";
 
 const showSideMenuRoutes = ["/admin", "/hub", "/orders", "/account"];
-const removePaddingRoutes = ["/events"];
+const removePaddingRoutes = ["/events", "/venues"];
 const removeContainerRoutes = ["/widget", "/login", "/sign-up"];
 
 class OnRouteChange extends Component {
