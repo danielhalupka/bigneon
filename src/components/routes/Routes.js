@@ -45,10 +45,10 @@ import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List
 import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
 import AdminFanList from "../pages/admin/fans/Index";
-
 import AdminGuestList from "../pages/admin/events/guests/List";
-// import AdminEventTicketHolds from "../pages/admin/events/holds/List";
-// import AdminEventComps from "../pages/admin/events/comps/List";
+
+//Box office
+import BoxOfficeTicketSales from "../pages/boxoffice/TicketSales";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
@@ -295,6 +295,15 @@ class Routes extends Component {
 									component={WidgetLinkBuilder}
 									isAuthenticated={isAuthenticated}
 								/>
+
+								{/* Box office */}
+								<PrivateRoute
+									exact
+									path="/box-office/sell"
+									component={BoxOfficeTicketSales}
+									isAuthenticated={isAuthenticated}
+								/>
+
 								{/* TODO these will be moved into their own Routes.js when web pack is changes to serve different compiled bundles */}
 								<Route exact path="/widget/qr/:id" component={EventQR} />
 								<Route

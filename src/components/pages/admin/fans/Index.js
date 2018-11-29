@@ -71,11 +71,17 @@ class FanList extends Component {
 		this.loadFans();
 	}
 
+	componentWillUnmount() {
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		}
+	}
+
 	loadFans() {
 		const organization_id = user.currentOrganizationId;
 
 		if (!organization_id) {
-			setTimeout(this.loadFans.bind(this), 500);
+			this.timeout = setTimeout(this.loadFans.bind(this), 500);
 			return;
 		}
 
