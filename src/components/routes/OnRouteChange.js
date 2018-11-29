@@ -29,7 +29,7 @@ class OnRouteChange extends Component {
 
 		if (window.location.pathname.startsWith("/box-office")) {
 			isBoxOffice = true;
-			showPadding = true;
+			showPadding = false;
 			showSideMenu = true;
 		} else {
 			showSideMenuRoutes.forEach(path => {

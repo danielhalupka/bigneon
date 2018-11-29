@@ -66,6 +66,12 @@ class EventsList extends Component {
 		this.updateEvents();
 	}
 
+	componentWillUnmount() {
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		}
+	}
+
 	handleMenuClick = event => {
 		this.setState({ optionsAnchorEl: event.currentTarget });
 	};
@@ -77,7 +83,8 @@ class EventsList extends Component {
 	updateEvents() {
 		//A bit of a hack, we might not have set the current org ID yet for this admin so keep checking
 		if (!user.currentOrganizationId) {
-			return setTimeout(this.updateEvents.bind(this), 100);
+			this.timeout = setTimeout(this.updateEvents.bind(this), 100);
+			return;
 		}
 
 		this.setState({ events: null }, () => {

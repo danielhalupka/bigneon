@@ -48,6 +48,10 @@ const styles = theme => ({
 	},
 	paddedContent: {
 		padding: theme.spacing.unit * 3
+	},
+	boxOfficePaddedContainer: {
+		padding: theme.spacing.unit * 3,
+		paddingTop: theme.spacing.unit * 4
 	}
 });
 
@@ -176,6 +180,9 @@ class Container extends React.Component {
 								sm={12}
 								md={12}
 								lg={includeContainerPadding ? 9 : 12}
+								className={classnames({
+									[classes.boxOfficePaddedContainer]: isBoxOffice
+								})}
 							>
 								{children}
 							</Grid>

@@ -66,9 +66,16 @@ class Event extends Component {
 		this.setOrganizationId();
 	}
 
+	componentWillUnmount() {
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		}
+	}
+
 	setOrganizationId() {
 		if (!user.currentOrganizationId) {
-			return setTimeout(this.setOrganizationId.bind(this), 100);
+			this.timeout = setTimeout(this.setOrganizationId.bind(this), 100);
+			return;
 		}
 		eventUpdateStore.updateOrganizationId(user.currentOrganizationId);
 	}
