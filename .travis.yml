@@ -1,0 +1,43 @@
+language: node_js
+node_js:
+- "10"
+cache: npm
+branches:
+  only:
+  - master
+matrix:
+  include:
+  - name: Tests
+    env:
+    - RUN_CMD="test"
+  - name: Linting
+    env:
+    - RUN_CMD="eslint-validate"
+  fast_finish: true
+script:
+- npm run $RUN_CMD
+before_install: []
+before_script: []
+after_script: []
+deploy:
+  - provider: script
+    script:
+    - 'cd $(git rev-parse --show-toplevel)'
+    - './scripts/init-github-ssh.sh'
+    - 'npm run release:patch'
+    on:
+      branch: master
+env:
+  global:
+  - REACT_APP_API_PROTOCOL=https
+  - REACT_APP_API_HOST=localhost
+  - REACT_APP_API_PORT=8080
+  - REACT_APP_API_BASEPATH=/api
+  - REACT_APP_FACEBOOK_APP_ID=
+  - REACT_APP_NAME=BigNeon
+  - REACT_APP_GOOGLE_PLACES_API_KEY=
+  - REACT_APP_CLOUDINARY_CLOUD_NAME=
+  - REACT_APP_CLOUDINARY_UPLOAD_PRESET=
+  - REACT_APP_CLOUDINARY_API_KEY=
+  - ENV=development
+  - REACT_APP_STRIPE_API_KEY=

@@ -60,7 +60,8 @@
     "test": "node scripts/test.js --env=jsdom",
     "prepare": "[ \"$NODE_ENV\" != \"production\" ] && git config core.hooksPath .githooks",
     "eslint-validate": "node_modules/eslint/bin/eslint.js -c .eslintrc --ignore-path=.eslintignore --ext .js ./ ",
-    "eslint-fix": "node_modules/eslint/bin/eslint.js --fix -c .eslintrc --ignore-path=.eslintignore --ext .js ./ "
+    "eslint-fix": "node_modules/eslint/bin/eslint.js --fix -c .eslintrc --ignore-path=.eslintignore --ext .js ./ ",
+    "release:patch": "npm version patch && git push origin && git push origin --tags"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
@@ -74,12 +75,8 @@
     "serve": "^10.0.2"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,mjs}"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
+    "collectCoverageFrom": ["src/**/*.{js,jsx,mjs}"],
+    "setupFiles": ["<rootDir>/config/polyfills.js"],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
       "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}"
@@ -91,9 +88,7 @@
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|mjs|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"
-    ],
+    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"],
     "moduleNameMapper": {
       "^react-native$": "react-native-web"
     },
@@ -108,12 +103,8 @@
     ]
   },
   "babel": {
-    "plugins": [
-      "transform-decorators-legacy"
-    ],
-    "presets": [
-      "react-app"
-    ]
+    "plugins": ["transform-decorators-legacy"],
+    "presets": ["react-app"]
   },
   "eslintConfig": {
     "extends": "react-app"
