@@ -54,6 +54,7 @@ class TicketSales extends Component {
 		}
 	}
 
+
 	loadTicketTypes() {
 		const { activeEventId } = boxOffice;
 		if (!activeEventId) {
@@ -72,6 +73,7 @@ class TicketSales extends Component {
 				});
 
 				this.setState({ ticketTypes }, this.loadDevData.bind(this)); //FIXME remove when done
+
 			})
 			.catch(error => {
 				console.error(error);
@@ -192,7 +194,6 @@ class TicketSales extends Component {
 				<PageHeading iconUrl="/icons/tickets-active.svg">
 					General public
 				</PageHeading>
-
 				{this.renderTicketTypes()}
 
 				{ticketTypes ? (
@@ -205,6 +206,7 @@ class TicketSales extends Component {
 				) : null}
 
 				{this.renderBottomBar()}
+
 			</div>
 		);
 	}

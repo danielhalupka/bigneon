@@ -72,6 +72,7 @@ const BottomCheckoutBar = ({
 					disabled={isAddingToCart || !(totalNumberSelected > 0)}
 				>
 					{isAddingToCart ? "Adding to cart..." : "Checkout"}
+
 				</Button>
 			</div>
 		</div>

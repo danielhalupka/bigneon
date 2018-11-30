@@ -45,7 +45,8 @@ const styles = theme => ({
 	},
 	lineEntryText: {
 		fontFamily: fontFamilyDemiBold,
-		fontSize: theme.typography.fontSize * 0.9
+		fontSize: theme.typography.fontSize * 0.9,
+		paddingRight: theme.spacing.unit
 	},
 	subTotal: {
 		fontFamily: fontFamily,
@@ -76,10 +77,10 @@ const styles = theme => ({
 
 const TicketLineEntry = ({ col1, col2, col3, classes }) => (
 	<Grid alignItems="center" container className={classes.ticketLineEntry}>
-		<Grid item xs={8} sm={8} md={8} lg={8}>
+		<Grid item xs={6} sm={6} md={6} lg={6}>
 			<Typography className={classes.lineEntryText}>{col1}</Typography>
 		</Grid>
-		<Grid item xs={2} sm={2} md={2} lg={2}>
+		<Grid item xs={3} sm={3} md={3} lg={3}>
 			<Typography
 				className={classes.lineEntryText}
 				style={{ textAlign: "right" }}
@@ -87,7 +88,7 @@ const TicketLineEntry = ({ col1, col2, col3, classes }) => (
 				{col2}
 			</Typography>
 		</Grid>
-		<Grid item xs={2} sm={2} md={2} lg={2}>
+		<Grid item xs={3} sm={3} md={3} lg={3}>
 			<Typography
 				className={classes.lineEntryText}
 				style={{ textAlign: "right" }}
@@ -232,8 +233,8 @@ class CheckoutConfirmation extends Component {
 				<div key={id}>
 					<TicketLineEntry
 						col1={`${quantity} x ${description}`}
-						col2={`$ ${Math.round(unit_price_in_cents / 100)}`}
-						col3={`$ ${Math.round((unit_price_in_cents / 100) * quantity)}`}
+						col2={`$ ${(unit_price_in_cents / 100).toFixed(2)}`}
+						col3={`$ ${((unit_price_in_cents / 100) * quantity).toFixed(2)}`}
 						classes={classes}
 					/>
 					<Divider style={{ marginTop: 15 }} />
@@ -263,7 +264,7 @@ class CheckoutConfirmation extends Component {
 				<TicketLineTotal
 					col1={null}
 					col2={<span className={classes.subTotal}>Order total:</span>}
-					col3={`$ $${total_in_cents ? Math.round(total_in_cents / 100) : 0}`}
+					col3={`$${total_in_cents ? (total_in_cents / 100).toFixed(2) : 0}`}
 					classes={classes}
 				/>
 
