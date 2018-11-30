@@ -8,6 +8,7 @@ import boxOffice from "../../../stores/boxOffice";
 import TicketRow from "./TicketRow";
 import BottomCheckoutBar from "./BottomCheckoutBar";
 import CheckoutDialog from "./CheckoutDialog";
+import cart from "../../../stores/cart";
 
 const styles = theme => ({
 	root: {}
@@ -20,7 +21,8 @@ class TicketSales extends Component {
 		this.state = {
 			ticketTypes: null,
 			selectedTickets: {},
-			showCheckoutModal: false
+			showCheckoutModal: false,
+			isAddingToCart: false
 		};
 	}
 
@@ -31,6 +33,24 @@ class TicketSales extends Component {
 	componentWillUnmount() {
 		if (this.timeout) {
 			clearTimeout(this.timeout);
+		}
+	}
+
+	loadDevData() {
+		//FIXME remove hard coded data
+		const testId = "aee836e5-6e26-4986-ab54-7ac69539c534";
+		if (
+			process.env.REACT_APP_API_HOST === "localhost" &&
+			this.state.ticketTypes[testId]
+		) {
+			this.setState(
+				{
+					selectedTickets: {
+						[testId]: 2
+					}
+				},
+				this.onAddToCart.bind(this)
+			);
 		}
 	}
 
@@ -51,7 +71,7 @@ class TicketSales extends Component {
 					ticketTypes[id] = ticket_type;
 				});
 
-				this.setState({ ticketTypes });
+				this.setState({ ticketTypes }, this.loadDevData.bind(this)); //FIXME remove when done
 			})
 			.catch(error => {
 				console.error(error);
@@ -60,6 +80,43 @@ class TicketSales extends Component {
 					defaultMessage: "Loading event ticket types failed."
 				});
 			});
+	}
+
+	onCheckoutSuccess(orderDetails) {
+		this.setState({ selectedTickets: {} });
+
+		//https://share.goabstract.com/05da9acb-1137-464a-90d1-3cbd474c6313
+		console.log("TODO: Follow up options dialog");
+		console.log(orderDetails);
+
+		//We have the api calls for this already
+		//-Transfer via SMS (same as in fan hub)
+		//-Checking guests. Iterate through tickets, redeeming them
+		//-View order (Will have those details in `orderDetails`)
+
+		notifications.show({
+			message: `Order complete. Follow up options coming soon.`,
+			variant: "info"
+		});
+	}
+
+	onAddToCart() {
+		const { selectedTickets } = this.state;
+
+		this.setState({ isAddingToCart: true });
+
+		cart.replace(
+			selectedTickets,
+			() => {
+				this.setState({ showCheckoutModal: true });
+			},
+			error => {
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Failed to add to cart."
+				});
+			}
+		);
 	}
 
 	renderTicketTypes() {
@@ -98,38 +155,56 @@ class TicketSales extends Component {
 		});
 	}
 
-	render() {
+	renderBottomBar() {
 		const { ticketTypes, selectedTickets, showCheckoutModal } = this.state;
+
+		if (!ticketTypes || Object.keys(ticketTypes).length < 1) {
+			return null;
+		}
 
 		let totalNumberSelected = 0;
 		let totalInCents = 0;
 
 		Object.keys(selectedTickets).forEach(id => {
 			if (selectedTickets[id] > 0) {
-				const { ticket_pricing } = ticketTypes[id];
+				const { ticket_pricing, name } = ticketTypes[id];
+				const { price_in_cents, fee_in_cents } = ticket_pricing;
+
 				totalNumberSelected = totalNumberSelected + selectedTickets[id];
-				totalInCents =
-					totalInCents + ticket_pricing.price_in_cents * selectedTickets[id];
+				totalInCents = totalInCents + price_in_cents * selectedTickets[id];
 			}
 		});
+
+		return (
+			<BottomCheckoutBar
+				totalNumberSelected={totalNumberSelected}
+				totalInCents={totalInCents}
+				onCheckout={this.onAddToCart.bind(this)}
+			/>
+		);
+	}
+
+	render() {
+		const { ticketTypes, showCheckoutModal } = this.state;
 
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/tickets-active.svg">
 					General public
 				</PageHeading>
+
 				{this.renderTicketTypes()}
 
-				<CheckoutDialog
-					open={showCheckoutModal}
-					onClose={() => this.setState({ showCheckoutModal: false })}
-				/>
+				{ticketTypes ? (
+					<CheckoutDialog
+						open={showCheckoutModal}
+						onClose={() => this.setState({ showCheckoutModal: false })}
+						ticketTypes={ticketTypes || {}}
+						onSuccess={this.onCheckoutSuccess.bind(this)}
+					/>
+				) : null}
 
-				<BottomCheckoutBar
-					totalNumberSelected={totalNumberSelected}
-					totalInCents={totalInCents}
-					onCheckout={() => this.setState({ showCheckoutModal: true })}
-				/>
+				{this.renderBottomBar()}
 			</div>
 		);
 	}

@@ -19,7 +19,7 @@ const styles = theme => {
 			display: "flex",
 			alignItems: "center",
 			flex: 1,
-			padding: theme.spacing.unit * 2,
+			padding: theme.spacing.unit,
 			paddingRight: 80 + theme.spacing.unit * 2, //Catering for width being 100% and end components going off page
 			backgroundColor: "#FFFFFF",
 
@@ -48,7 +48,8 @@ const BottomCheckoutBar = ({
 	classes,
 	totalNumberSelected = 0,
 	totalInCents = 0,
-	onCheckout
+	onCheckout,
+	isAddingToCart
 }) => {
 	return (
 		<div className={classes.bar}>
@@ -68,9 +69,9 @@ const BottomCheckoutBar = ({
 				<Button
 					variant="callToAction"
 					onClick={onCheckout}
-					disabled={!(totalNumberSelected > 0)}
+					disabled={isAddingToCart || !(totalNumberSelected > 0)}
 				>
-					Checkout
+					{isAddingToCart ? "Adding to cart..." : "Checkout"}
 				</Button>
 			</div>
 		</div>
@@ -78,6 +79,7 @@ const BottomCheckoutBar = ({
 };
 
 BottomCheckoutBar.propTypes = {
+	isAddingToCart: PropTypes.bool,
 	classes: PropTypes.object.isRequired,
 	totalNumberSelected: PropTypes.number,
 	totalInCents: PropTypes.number,
