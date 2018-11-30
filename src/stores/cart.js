@@ -1,8 +1,22 @@
 import { observable, computed, action } from "mobx";
-import axios from "axios";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
 import user from "./user";
+
+const itemListToSave = selectedTickets => {
+	const ticketIds = Object.keys(selectedTickets);
+
+	let items = [];
+	ticketIds.forEach(id => {
+		const quantity = parseInt(selectedTickets[id]);
+		items.push({
+			ticket_type_id: id,
+			quantity
+		});
+	});
+
+	return items;
+};
 
 class Cart {
 	@observable
@@ -92,20 +106,28 @@ class Cart {
 
 	@action
 	update(selectedTickets, onSuccess, onError) {
-		const ticketIds = Object.keys(selectedTickets);
-
-		//Promises array of posts to the add cart function and iterate through them
-		let items = [];
-		ticketIds.forEach(id => {
-			const quantity = parseInt(selectedTickets[id]);
-			items.push({
-				ticket_type_id: id,
-				quantity
-			});
-		});
-
+		const items = itemListToSave(selectedTickets);
 		Bigneon()
 			.cart.update({ items })
+			.then(response => {
+				const { data } = response;
+				if (data) {
+					this.replaceCartData(data);
+				}
+				onSuccess();
+			})
+			.catch(error => {
+				console.error(error);
+				onError(error);
+			});
+	}
+
+	@action
+	replace(selectedTickets, onSuccess, onError) {
+		const items = itemListToSave(selectedTickets);
+
+		Bigneon()
+			.cart.replace({ items })
 			.then(response => {
 				const { data } = response;
 				if (data) {
@@ -171,6 +193,56 @@ class Cart {
 		return `${minutes > 0 ? `${minutes}:` : ""}${
 			seconds >= 10 ? seconds : `0${seconds}`
 		}`;
+	}
+
+	@computed
+	get cartSummary() {
+		if (!this.items || this.items.length === 0) {
+			return null;
+		}
+
+		let orderTotalInCents = 0;
+		let serviceFeesInCents = 0;
+		let ticketItemList = [];
+		let feeItemList = [];
+
+		this.items.forEach(item => {
+			const {
+				id,
+				item_type,
+				quantity,
+				ticket_pricing_id,
+				ticket_type_id,
+				unit_price_in_cents
+			} = item;
+
+			orderTotalInCents = orderTotalInCents + quantity * unit_price_in_cents;
+
+			if (item_type === "PerUnitFees" || item_type === "EventFees") {
+				serviceFeesInCents =
+					serviceFeesInCents + unit_price_in_cents * quantity;
+
+				feeItemList.push({
+					id,
+					quantity,
+					pricePerTicketInCents: unit_price_in_cents
+				});
+			} else {
+				ticketItemList.push({
+					id,
+					quantity,
+					ticketTypeId: ticket_type_id, //The user will have to get the display name using this ID
+					pricePerTicketInCents: unit_price_in_cents
+				});
+			}
+		});
+
+		return {
+			orderTotalInCents,
+			serviceFeesInCents,
+			ticketItemList,
+			feeItemList
+		};
 	}
 }
 
