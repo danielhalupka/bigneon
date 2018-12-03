@@ -6,6 +6,8 @@ import { Typography } from "@material-ui/core";
 
 import { fontFamilyDemiBold } from "../../styles/theme";
 
+const height = 50;
+
 const styles = theme => {
 	return {
 		root: {
@@ -15,7 +17,8 @@ const styles = theme => {
 			borderColor: "#000000",
 			borderRadius: 4,
 			borderWidth: 0.5,
-			height: 50
+			height,
+			alignItems: "center"
 		},
 		inputContainer: {
 			flex: 3,
@@ -48,6 +51,11 @@ const styles = theme => {
 		},
 		buttonTextDisabled: {
 			color: "gray"
+		},
+		icon: {
+			height: height * 0.65,
+			width: "auto",
+			marginLeft: theme.spacing.unit
 		}
 	};
 };
@@ -69,11 +77,13 @@ class InputWithButton extends Component {
 			buttonText,
 			style,
 			disabled,
+			iconUrl,
 			onSubmit
 		} = this.props;
 
 		return (
 			<div className={classes.root} style={style}>
+				{iconUrl ? <img className={classes.icon} src={iconUrl} /> : null}
 				<div className={classes.inputContainer}>
 					<input
 						className={classes.input}
@@ -123,6 +133,7 @@ InputWithButton.propTypes = {
 	placeholder: PropTypes.string,
 	buttonText: PropTypes.string,
 	style: PropTypes.object,
+	iconUrl: PropTypes.string,
 	disabled: PropTypes.bool
 };
 

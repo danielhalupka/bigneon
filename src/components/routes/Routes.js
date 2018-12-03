@@ -48,7 +48,7 @@ import AdminFanList from "../pages/admin/fans/Index";
 import AdminGuestList from "../pages/admin/events/guests/List";
 
 //Box office
-import BoxOfficeTicketSales from "../pages/boxoffice/TicketSales";
+import BoxOfficeTicketSales from "../pages/boxoffice/sales/TicketSales";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";

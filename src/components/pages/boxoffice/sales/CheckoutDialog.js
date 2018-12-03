@@ -4,19 +4,17 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { observer } from "mobx-react";
 
-
-import Bigneon from "../../../helpers/bigneon";
-import notification from "../../../stores/notifications";
-import Dialog from "../../elements/Dialog";
-import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
-import Divider from "../../common/Divider";
-import PaymentOptionCard from "../../elements/PaymentOptionCard";
+import Bigneon from "../../../../helpers/bigneon";
+import Dialog from "../../../elements/Dialog";
+import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
+import Divider from "../../../common/Divider";
+import PaymentOptionCard from "../../../elements/PaymentOptionCard";
 import { Grid, InputAdornment } from "@material-ui/core";
-import InputGroup from "../../common/form/InputGroup";
-import { validEmail, validPhone } from "../../../validators";
-import Button from "../../elements/Button";
-import cart from "../../../stores/cart";
-import notifications from "../../../stores/notifications";
+import InputGroup from "../../../common/form/InputGroup";
+import { validEmail, validPhone } from "../../../../validators";
+import Button from "../../../elements/Button";
+import cart from "../../../../stores/cart";
+import notifications from "../../../../stores/notifications";
 
 const styles = theme => ({
 	content: {

@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 
-import { fontFamilyDemiBold } from "../../styles/theme";
-import Button from "../../elements/Button";
+import { fontFamilyDemiBold } from "../../../styles/theme";
+import Button from "../../../elements/Button";
 
 const styles = theme => {
 	return {
@@ -72,7 +72,6 @@ const BottomCheckoutBar = ({
 					disabled={isAddingToCart || !(totalNumberSelected > 0)}
 				>
 					{isAddingToCart ? "Adding to cart..." : "Checkout"}
-
 				</Button>
 			</div>
 		</div>

@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 
-import Bigneon from "../../../helpers/bigneon";
-import notifications from "../../../stores/notifications";
-import PageHeading from "../../elements/PageHeading";
-import boxOffice from "../../../stores/boxOffice";
+import Bigneon from "../../../../helpers/bigneon";
+import notifications from "../../../../stores/notifications";
+import PageHeading from "../../../elements/PageHeading";
+import boxOffice from "../../../../stores/boxOffice";
 import TicketRow from "./TicketRow";
 import BottomCheckoutBar from "./BottomCheckoutBar";
 import CheckoutDialog from "./CheckoutDialog";
-import cart from "../../../stores/cart";
+import cart from "../../../../stores/cart";
+import PurchaseSuccessOptionsDialog from "./PurchaseSuccessOptionsDialog";
+import CheckInSuccessDialog from "./CheckInSuccessDialog";
 
 const styles = theme => ({
 	root: {}
@@ -22,7 +24,9 @@ class TicketSales extends Component {
 			ticketTypes: null,
 			selectedTickets: {},
 			showCheckoutModal: false,
-			isAddingToCart: false
+			isAddingToCart: false,
+			currentOrderDetails: null,
+			showCheckInSuccessDialog: false
 		};
 	}
 
@@ -35,25 +39,6 @@ class TicketSales extends Component {
 			clearTimeout(this.timeout);
 		}
 	}
-
-	loadDevData() {
-		//FIXME remove hard coded data
-		const testId = "aee836e5-6e26-4986-ab54-7ac69539c534";
-		if (
-			process.env.REACT_APP_API_HOST === "localhost" &&
-			this.state.ticketTypes[testId]
-		) {
-			this.setState(
-				{
-					selectedTickets: {
-						[testId]: 2
-					}
-				},
-				this.onAddToCart.bind(this)
-			);
-		}
-	}
-
 
 	loadTicketTypes() {
 		const { activeEventId } = boxOffice;
@@ -72,8 +57,7 @@ class TicketSales extends Component {
 					ticketTypes[id] = ticket_type;
 				});
 
-				this.setState({ ticketTypes }, this.loadDevData.bind(this)); //FIXME remove when done
-
+				this.setState({ ticketTypes });
 			})
 			.catch(error => {
 				console.error(error);
@@ -84,22 +68,8 @@ class TicketSales extends Component {
 			});
 	}
 
-	onCheckoutSuccess(orderDetails) {
-		this.setState({ selectedTickets: {} });
-
-		//https://share.goabstract.com/05da9acb-1137-464a-90d1-3cbd474c6313
-		console.log("TODO: Follow up options dialog");
-		console.log(orderDetails);
-
-		//We have the api calls for this already
-		//-Transfer via SMS (same as in fan hub)
-		//-Checking guests. Iterate through tickets, redeeming them
-		//-View order (Will have those details in `orderDetails`)
-
-		notifications.show({
-			message: `Order complete. Follow up options coming soon.`,
-			variant: "info"
-		});
+	onCheckoutSuccess(currentOrderDetails) {
+		this.setState({ selectedTickets: {}, currentOrderDetails });
 	}
 
 	onAddToCart() {
@@ -187,7 +157,12 @@ class TicketSales extends Component {
 	}
 
 	render() {
-		const { ticketTypes, showCheckoutModal } = this.state;
+		const {
+			ticketTypes,
+			showCheckoutModal,
+			currentOrderDetails,
+			showCheckInSuccessDialog
+		} = this.state;
 
 		return (
 			<div>
@@ -197,16 +172,33 @@ class TicketSales extends Component {
 				{this.renderTicketTypes()}
 
 				{ticketTypes ? (
-					<CheckoutDialog
-						open={showCheckoutModal}
-						onClose={() => this.setState({ showCheckoutModal: false })}
-						ticketTypes={ticketTypes || {}}
-						onSuccess={this.onCheckoutSuccess.bind(this)}
-					/>
+					<div>
+						<CheckoutDialog
+							open={showCheckoutModal}
+							onClose={() => this.setState({ showCheckoutModal: false })}
+							ticketTypes={ticketTypes || {}}
+							onSuccess={this.onCheckoutSuccess.bind(this)}
+						/>
+
+						<PurchaseSuccessOptionsDialog
+							open={!!currentOrderDetails}
+							onClose={() => this.setState({ currentOrderDetails: null })}
+							onCheckInSuccess={() =>
+								this.setState({
+									currentOrderDetails: null,
+									showCheckInSuccessDialog: true
+								})
+							}
+						/>
+
+						<CheckInSuccessDialog
+							open={showCheckInSuccessDialog}
+							onClose={() => this.setState({ showCheckInSuccessDialog: false })}
+						/>
+					</div>
 				) : null}
 
 				{this.renderBottomBar()}
-
 			</div>
 		);
 	}
