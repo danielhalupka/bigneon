@@ -207,8 +207,15 @@ class EventTicketsCard extends Component {
 				</EventTicketRow>
 
 				{tickets.map((ticket, index) => {
-					const { id, ticket_type_name, status } = ticket;
+					const {
+						id,
+						ticket_type_name,
+						status,
+						price_in_cents,
+						order_id
+					} = ticket;
 
+					const orderNumber = order_id.slice(-8); //TODO eventually this will also come in the API
 					const disabled = status && status !== "Purchased";
 
 					return (
@@ -223,8 +230,8 @@ class EventTicketsCard extends Component {
 							)}`}</Typography>
 
 							<Typography className={classes.ticketDetailsText}>
-								<StyledLink underlined to={"/orders/"}>
-									TODO
+								<StyledLink underlined to={`/orders/${order_id}`}>
+									{orderNumber}
 								</StyledLink>
 							</Typography>
 
@@ -233,7 +240,7 @@ class EventTicketsCard extends Component {
 							</Typography>
 
 							<Typography className={classes.ticketDetailsText}>
-								$ TODO
+								$ {(price_in_cents / 100).toFixed(2)}
 							</Typography>
 
 							<Typography className={classes.ticketDetailsText}>
