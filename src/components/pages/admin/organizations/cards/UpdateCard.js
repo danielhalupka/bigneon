@@ -36,7 +36,7 @@ class OrganizationUpdateCard extends Component {
 			state: "",
 			country: "",
 			zip: "",
-			eventFee: "",
+			eventFee: (0).toFixed(2),
 			errors: {},
 			isSubmitting: false
 		};
@@ -75,7 +75,7 @@ class OrganizationUpdateCard extends Component {
 						zip: zip || "",
 						eventFee: event_fee_in_cents
 							? (event_fee_in_cents / 100).toFixed(2)
-							: ""
+							: (0).toFixed(2)
 					});
 				})
 				.catch(error => {
@@ -301,7 +301,7 @@ class OrganizationUpdateCard extends Component {
 			latitude = "",
 			longitude = "",
 			phone,
-			eventFee,
+			eventFee = 0,
 			errors,
 			isSubmitting
 		} = this.state;
