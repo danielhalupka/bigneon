@@ -20,3 +20,4 @@ phases:
       - echo Pushing the bundle to s3...
       - aws s3 cp ${BUNDLE_FILE} s3://${S3_BUCKET}/bn-web/${BUNDLE_FILE}
       - echo Bundle file uploaded
+      - ./scripts/deploy-staging.sh

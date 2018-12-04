@@ -22,7 +22,7 @@ after_script: []
 deploy:
   - provider: script
     script:
-    - 'cd $(git rev-parse --show-toplevel)'
+    - 'git checkout master'
     - './scripts/init-github-ssh.sh'
     - 'npm run release:patch'
     on:
