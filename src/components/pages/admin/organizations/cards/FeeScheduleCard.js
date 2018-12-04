@@ -235,7 +235,7 @@ class FeeScheduleCard extends Component {
 
 	deleteRange(index) {
 		this.setState(({ ranges }) => {
-			delete ranges[index];
+			ranges.splice(index,1);
 			return { ranges };
 		});
 	}
