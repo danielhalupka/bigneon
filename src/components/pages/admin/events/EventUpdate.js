@@ -136,6 +136,7 @@ class Event extends Component {
 				variant: "warning",
 				message: "There are invalid event details."
 			});
+
 		}
 
 		const saveResponse = await eventUpdateStore.saveEventDetails();
@@ -246,8 +247,9 @@ class Event extends Component {
 		const { publishNow, errors, isSubmitting } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { externalTicketsUrl, eventDate } = event;
+		const { isExternal, externalTicketsUrl, eventDate } = event;
 
+		const eventErrors = errors.event || {};
 		const { classes } = this.props;
 
 		return (
@@ -311,7 +313,7 @@ class Event extends Component {
 					{externalTicketsUrl !== null ? (
 						<div className={classes.paddedContent}>
 							<InputGroup
-								error={errors.videoUrl}
+								error={eventErrors.externalTicketsUrl}
 								value={externalTicketsUrl}
 								name="externalTicketsUrl"
 								label="Link to purchase tickets externally"

@@ -25,11 +25,17 @@ const validateFields = event => {
 		ageLimit,
 		additionalInfo,
 		topLineInfo,
-		videoUrl
+		videoUrl,
+		isExternal,
+		externalTicketsUrl
 	} = event;
 
 	if (!name) {
 		errors.name = "Event name required.";
+	}
+
+	if (isExternal && !externalTicketsUrl) {
+		errors.externalTicketsUrl = "Invalid external url."
 	}
 
 	if (topLineInfo) {
@@ -58,7 +64,8 @@ const formatDataForSaving = (event, organizationId) => {
 		ageLimit,
 		additionalInfo,
 		topLineInfo,
-		promoImageUrl
+		promoImageUrl,
+		externalTicketsUrl
 	} = event;
 
 	const eventDetails = {
@@ -66,7 +73,9 @@ const formatDataForSaving = (event, organizationId) => {
 		organization_id: organizationId,
 		age_limit: Number(ageLimit),
 		additional_info: additionalInfo,
-		top_line_info: topLineInfo
+		top_line_info: topLineInfo,
+		is_external: externalTicketsUrl !== null,
+		external_url: externalTicketsUrl
 	};
 
 	if (eventDate) {
@@ -112,6 +121,7 @@ const formatDataForInputs = event => {
 		top_line_info,
 		video_url,
 		promo_image_url,
+		is_external,
 		external_url,
 		publish_date
 	} = event;
@@ -141,7 +151,8 @@ const formatDataForInputs = event => {
 		videoUrl: video_url || "",
 		showTopLineInfo: !!top_line_info,
 		promoImageUrl: promo_image_url,
-		externalTicketsUrl: external_url ? external_url : null
+		isExternal: is_external,
+		externalTicketsUrl: is_external && external_url ? external_url : null
 	};
 
 	return eventDetails;
