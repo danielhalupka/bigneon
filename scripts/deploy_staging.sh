@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 echo "Deploying to staging"
 BUCKET_NAME=web.staging.bigneon.com
