@@ -68,7 +68,7 @@ class CancelEventDialog extends React.Component {
 		this.setState({ isSubmitting: true });
 
 		Bigneon()
-			.events.delete({ id })
+			.events.del({ id })
 			.then(response => {
 				this.setState({ isSubmitting: false }, () => onClose());
 			})
@@ -121,11 +121,7 @@ class CancelEventDialog extends React.Component {
 						>
 							Keep event
 						</Button>
-						<Button
-							disabled={isSubmitting}
-							type="submit"
-							variant="warning"
-						>
+						<Button disabled={isSubmitting} type="submit" variant="warning">
 							{isSubmitting ? "Cancelling..." : "Cancel event"}
 						</Button>
 					</DialogActions>
