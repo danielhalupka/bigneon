@@ -60,7 +60,15 @@ class FeeScheduleCard extends Component {
 
 				let formattedRanges = [];
 				ranges.forEach(range => {
-					formattedRanges.push({ ...range, fee: range.fee_in_cents / 100 });
+					let { company_fee_in_cents = 0, client_fee_in_cents = 0 } = range;
+
+					let formattedRange = {
+						...range,
+						fee: (company_fee_in_cents + client_fee_in_cents) / 100,
+						company_fee: company_fee_in_cents / 100,
+						client_fee: client_fee_in_cents / 100,
+					}
+					formattedRanges.push(formattedRange);
 				});
 
 				if (id) {
@@ -101,7 +109,12 @@ class FeeScheduleCard extends Component {
 
 	addNewRange() {
 		const { ranges } = this.state;
-		ranges.push({ min_price: "", fee: "" });
+		ranges.push({
+			min_price: "",
+			fee: "",
+			company_fee: "",
+			client_fee: ""
+		});
 		this.setState({ ranges });
 	}
 
@@ -120,20 +133,28 @@ class FeeScheduleCard extends Component {
 		}
 
 		let rangesErrors = {};
-		ranges.forEach(({ min_price, fee }, index) => {
+		ranges.forEach(({ min_price, company_fee, client_fee }, index) => {
 			const missingMinPrice = !min_price && min_price !== 0;
-			const missingFee = !fee && fee !== 0;
+			const missingCompanyFee = !company_fee && company_fee !== 0;
+			const missingClientFee = !client_fee && client_fee !== 0;
 
-			if (missingMinPrice || missingFee) {
+			if (missingMinPrice || missingCompanyFee || missingClientFee) {
 				rangesErrors[index] = {};
 
 				if (missingMinPrice) {
 					rangesErrors[index].min_price = "Missing minimum price.";
 				}
 
-				if (missingFee) {
-					rangesErrors[index].fee = "Missing fee.";
+				if (missingCompanyFee) {
+					rangesErrors[index].company_fee = "Missing fee.";
 				}
+
+				if (missingClientFee) {
+					rangesErrors[index].client_fee = "Missing fee.";
+				}
+			}
+			if (index > 0 && min_price <= ranges[index-1].min_price) {
+				rangesErrors[index].min_price = `Minimum price must be more than ${ranges[index-1].min_price.toFixed(2)}`
 			}
 		});
 
@@ -178,17 +199,22 @@ class FeeScheduleCard extends Component {
 		const { id, name, ranges } = this.state;
 
 		this.setState({ isSubmitting: true });
-		const formattedRanges = ranges.map(({ min_price, fee }) => ({
+		const formattedRanges = ranges.map(({ min_price, client_fee, company_fee }) => ({
 			min_price: Number(min_price),
-			fee_in_cents: Number(fee) * 100
+			client_fee_in_cents: Number(client_fee) * 100,
+			company_fee_in_cents: Number(company_fee) * 100,
 		}));
 
 		Bigneon()
-			.organizations.feeSchedules.create({
-				organization_id: organizationId,
-				name,
-				ranges: formattedRanges
-			})
+			.organizations
+			.feeSchedules
+			.create(
+				{
+					organization_id: organizationId,
+					name,
+					ranges: formattedRanges
+				}
+			)
 			.then(response => {
 				this.onDialogClose();
 				this.setState({ isSubmitting: false });
@@ -226,16 +252,17 @@ class FeeScheduleCard extends Component {
 		});
 	}
 
-	updateFee(index, fee) {
+	updateFee(index, isClient, fee) {
 		this.setState(({ ranges }) => {
-			ranges[index].fee = fee;
+			let key = isClient ? "client_fee" : "company_fee";
+			ranges[index][key] = fee;
 			return { ranges };
 		});
 	}
 
 	deleteRange(index) {
 		this.setState(({ ranges }) => {
-			ranges.splice(index,1);
+			ranges.splice(index, 1);
 			return { ranges };
 		});
 	}
@@ -275,7 +302,7 @@ class FeeScheduleCard extends Component {
 						onClick={this.saveNewFeeSchedule.bind(this)}
 						autoFocus
 					>
-						Create new fee schedule
+						I Am Sure, Update Fee Schedule
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -300,9 +327,9 @@ class FeeScheduleCard extends Component {
 							onBlur={this.validateFields.bind(this)}
 						/>
 
-						{ranges.map(({ min_price, fee }, index) => (
+						{ranges.map(({ min_price, client_fee, company_fee }, index) => (
 							<Grid key={index} spacing={24} container alignItems={"center"}>
-								<Grid item xs={12} sm={4} md={4} lg={3}>
+								<Grid item xs={12} sm={3} md={3} lg={3}>
 									<InputGroup
 										InputProps={{
 											startAdornment: (
@@ -322,7 +349,24 @@ class FeeScheduleCard extends Component {
 										onBlur={this.validateFields.bind(this)}
 									/>
 								</Grid>
-								<Grid item xs={12} sm={4} md={4} lg={3}>
+								<Grid item xs={12} sm={2} md={2} lg={2}>
+									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">$</InputAdornment>
+											)
+										}}
+										disabled={true}
+										value={ranges.length - 1 >= index + 1 ? ranges[index + 1].min_price - 0.01 : "and up"}
+										onChange={() => {
+										}}
+										name="max_price"
+										label="Maximum price"
+										type="text"
+
+									/>
+								</Grid>
+								<Grid item xs={12} sm={2} md={2} lg={2}>
 									<InputGroup
 										InputProps={{
 											startAdornment: (
@@ -332,14 +376,50 @@ class FeeScheduleCard extends Component {
 										error={
 											errors.ranges &&
 											errors.ranges[index] &&
-											errors.ranges[index].fee
+											errors.ranges[index].client_fee
 										}
-										value={fee}
-										name="fee"
-										label="Fee"
+										value={client_fee}
+										name="client_fee"
+										label="Client Fee"
 										type="number"
-										onChange={e => this.updateFee(index, e.target.value)}
+										onChange={e => this.updateFee(index, true, e.target.value)}
 										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={2} md={2} lg={2}>
+									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">$</InputAdornment>
+											)
+										}}
+										error={
+											errors.ranges &&
+											errors.ranges[index] &&
+											errors.ranges[index].company_fee
+										}
+										value={company_fee}
+										name="company_fee"
+										label="Company Fee"
+										type="number"
+										onChange={e => this.updateFee(index, false, e.target.value)}
+										onBlur={this.validateFields.bind(this)}
+									/>
+								</Grid>
+								<Grid item xs={12} sm={2} md={2} lg={2}>
+									<InputGroup
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">$</InputAdornment>
+											)
+										}}
+										disabled={true}
+										value={(+company_fee + +client_fee).toFixed(2)}
+										name="total_fee"
+										label="Total Fee"
+										type="number"
+										onChange={() => {
+										}}
 									/>
 								</Grid>
 
@@ -349,7 +429,7 @@ class FeeScheduleCard extends Component {
 											onClick={e => this.deleteRange(index)}
 											color="inherit"
 										>
-											<DeleteIcon />
+											<DeleteIcon/>
 										</IconButton>
 									) : null}
 								</Grid>
@@ -368,7 +448,7 @@ class FeeScheduleCard extends Component {
 							type="submit"
 							variant="callToAction"
 						>
-							{isSubmitting ? "Creating..." : "Create new schedule"}
+							{isSubmitting ? "Updating..." : "Update Fee Schedule"}
 						</Button>
 					</CardActions>
 				</form>
@@ -385,7 +465,7 @@ class FeeScheduleCard extends Component {
 					{ranges.map(({ min_price, fee }, index) => (
 						<ListItem key={index}>
 							<Avatar>
-								<MoneyIcon />
+								<MoneyIcon/>
 							</Avatar>
 							<ListItemText
 								primary={`Minimum price $ ${min_price}`}
