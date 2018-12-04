@@ -187,7 +187,7 @@ class RightHeaderMenu extends React.Component {
 				</Hidden>
 
 				<img
-					alt="Search icon"
+					alt="User icon"
 					className={classes.dropdownIcon}
 					src="/icons/down-active.svg"
 				/>

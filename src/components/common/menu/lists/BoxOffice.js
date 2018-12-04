@@ -16,7 +16,7 @@ const BoxOfficeList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="events"
+				iconName="sales"
 				to="/box-office/sell"
 			>
 				Sell

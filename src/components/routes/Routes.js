@@ -61,6 +61,7 @@ import user from "../../stores/user";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import ReceiveTransfer from "../pages/fanhub/ReceiveTransfer";
+import GuestList from "../pages/boxoffice/guests/GuestList";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -301,6 +302,12 @@ class Routes extends Component {
 									exact
 									path="/box-office/sell"
 									component={BoxOfficeTicketSales}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/box-office/guests"
+									component={GuestList}
 									isAuthenticated={isAuthenticated}
 								/>
 

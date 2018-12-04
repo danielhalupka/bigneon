@@ -107,10 +107,6 @@ class OrganizationsList extends Component {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Typography variant="body1">No organizations found</Typography>
-
-					<Link to={"/admin/organizations/create"}>
-						<Button variant="callToAction">Create organization</Button>
-					</Link>
 				</Grid>
 			);
 		}
@@ -120,7 +116,10 @@ class OrganizationsList extends Component {
 		return (
 			<div>
 				<PageHeading>Organizations</PageHeading>
-
+				<Link to={"/admin/organizations/create"}>
+					<Button variant="callToAction">Create organization</Button>
+				</Link>
+				<br />
 				<Grid container spacing={24}>
 					{this.renderOrganizations()}
 				</Grid>

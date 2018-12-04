@@ -6,7 +6,7 @@ import notifications from "../../../../stores/notifications";
 import PageHeading from "../../../elements/PageHeading";
 import boxOffice from "../../../../stores/boxOffice";
 import TicketRow from "./TicketRow";
-import BottomCheckoutBar from "./BottomCheckoutBar";
+import BottomCompleteOrderBar from "../common/BottomCompleteOrderBar";
 import CheckoutDialog from "./CheckoutDialog";
 import cart from "../../../../stores/cart";
 import PurchaseSuccessOptionsDialog from "./PurchaseSuccessOptionsDialog";
@@ -80,13 +80,14 @@ class TicketSales extends Component {
 		cart.replace(
 			selectedTickets,
 			() => {
-				this.setState({ showCheckoutModal: true });
+				this.setState({ showCheckoutModal: true, isAddingToCart: false });
 			},
 			error => {
 				notifications.showFromErrorResponse({
 					error,
 					defaultMessage: "Failed to add to cart."
 				});
+				this.setState({ isAddingToCart: false });
 			}
 		);
 	}
@@ -128,7 +129,12 @@ class TicketSales extends Component {
 	}
 
 	renderBottomBar() {
-		const { ticketTypes, selectedTickets, showCheckoutModal } = this.state;
+		const {
+			ticketTypes,
+			selectedTickets,
+			showCheckoutModal,
+			isAddingToCart
+		} = this.state;
 
 		if (!ticketTypes || Object.keys(ticketTypes).length < 1) {
 			return null;
@@ -148,10 +154,13 @@ class TicketSales extends Component {
 		});
 
 		return (
-			<BottomCheckoutBar
-				totalNumberSelected={totalNumberSelected}
-				totalInCents={totalInCents}
-				onCheckout={this.onAddToCart.bind(this)}
+			<BottomCompleteOrderBar
+				col1Text={`Total tickets selected: ${totalNumberSelected}`}
+				col3Text={`Order total: $${(totalInCents / 100).toFixed(2)}`}
+				disabled={isAddingToCart || !(totalNumberSelected > 0)}
+				onSubmit={this.onAddToCart.bind(this)}
+				buttonText="Checkout"
+				disabledButtonText={isAddingToCart ? "Adding to cart..." : "Checkout"}
 			/>
 		);
 	}

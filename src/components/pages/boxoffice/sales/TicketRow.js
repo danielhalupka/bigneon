@@ -58,7 +58,7 @@ const TicketRow = props => {
 	} = props;
 
 	const columnStyles = [
-		{ flex: 2, textAlign: "left" },
+		{ flex: 1, textAlign: "left" },
 		{ flex: 20, textAlign: "left" },
 		{ flex: 4, textAlign: "right" },
 		{ flex: 1, textAlign: "center" },
@@ -68,9 +68,14 @@ const TicketRow = props => {
 	return (
 		<div className={classes.root}>
 			<Card>
-				<div className={classes.inner} style={columnStyles[0]}>
+				<div className={classes.inner}>
 					{iconUrl ? (
-						<img alt={"Ticket"} src={iconUrl} className={classes.icon} />
+						<img
+							alt={"Ticket"}
+							src={iconUrl}
+							className={classes.icon}
+							style={columnStyles[0]}
+						/>
 					) : null}
 					<div style={columnStyles[1]}>
 						<Typography className={classes.name}>{name}</Typography>

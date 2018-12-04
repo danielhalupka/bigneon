@@ -30,60 +30,67 @@ const styles = theme => {
 			lineHeight: 1,
 			fontSize: theme.typography.fontSize * 1.2
 		},
-		selectedCol: {
-			flex: 4
+		col1: {
+			flex: 3
 		},
-		totalCol: {
+		col2: {
+			flex: 3
+		},
+		col3: {
 			flex: 2,
 			textAlign: "right"
 		},
-		buttonCol: {
+		col4: {
 			flex: 1,
 			textAlign: "right"
 		}
 	};
 };
 
-const BottomCheckoutBar = ({
+const BottomCompleteOrderBar = ({
 	classes,
-	totalNumberSelected = 0,
-	totalInCents = 0,
-	onCheckout,
-	isAddingToCart
+	onSubmit,
+	col1Text,
+	col2Text,
+	col3Text,
+	buttonText,
+	disabledButtonText,
+	disabled
 }) => {
 	return (
 		<div className={classes.bar}>
-			<div className={classes.selectedCol}>
-				<Typography className={classes.text}>
-					Total tickets selected: {totalNumberSelected}
-				</Typography>
+			<div className={classes.col1}>
+				<Typography className={classes.text}>{col1Text}</Typography>
 			</div>
 
-			<div className={classes.totalCol}>
-				<Typography className={classes.text}>
-					Order total: ${(totalInCents / 100).toFixed(2)}
-				</Typography>
+			{col2Text ? (
+				<div className={classes.col2}>
+					<Typography className={classes.text}>{col2Text}</Typography>
+				</div>
+			) : null}
+
+			<div className={classes.col3}>
+				<Typography className={classes.text}>{col3Text}</Typography>
 			</div>
 
-			<div className={classes.buttonCol}>
-				<Button
-					variant="callToAction"
-					onClick={onCheckout}
-					disabled={isAddingToCart || !(totalNumberSelected > 0)}
-				>
-					{isAddingToCart ? "Adding to cart..." : "Checkout"}
+			<div className={classes.col4}>
+				<Button variant="callToAction" onClick={onSubmit} disabled={disabled}>
+					{disabled ? disabledButtonText : buttonText}
 				</Button>
 			</div>
 		</div>
 	);
 };
 
-BottomCheckoutBar.propTypes = {
-	isAddingToCart: PropTypes.bool,
+BottomCompleteOrderBar.propTypes = {
 	classes: PropTypes.object.isRequired,
-	totalNumberSelected: PropTypes.number,
-	totalInCents: PropTypes.number,
-	onCheckout: PropTypes.func.isRequired
+	onSubmit: PropTypes.func.isRequired,
+	disabled: PropTypes.bool,
+	col1Text: PropTypes.string.isRequired,
+	col2Text: PropTypes.string,
+	col3Text: PropTypes.string.isRequired,
+	buttonText: PropTypes.string.isRequired,
+	disabledButtonText: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(BottomCheckoutBar);
+export default withStyles(styles)(BottomCompleteOrderBar);
