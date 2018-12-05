@@ -183,7 +183,7 @@ class GuestList extends Component {
 					resolve({ result: response });
 				})
 				.catch(error => {
-					reject({ error });
+					resolve({ error });
 				});
 		});
 	}

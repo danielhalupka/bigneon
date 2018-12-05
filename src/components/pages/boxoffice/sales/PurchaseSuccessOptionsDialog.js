@@ -7,7 +7,7 @@ import Bigneon from "../../../../helpers/bigneon";
 import notification from "../../../../stores/notifications";
 import Dialog from "../../../elements/Dialog";
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
-import { validPhone } from "../../../../validators";
+import { validPhone, validEmail } from "../../../../validators";
 import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import InputWithButton from "../../../common/form/InputWithButton";
@@ -43,15 +43,69 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 		this.state = { isSendingSMS: false, isCheckingIn: false };
 	}
 
-	onSendSMS(number) {
-		if (!validPhone(number)) {
+	async transferTickets(tickets, emailOrCellphoneNumber) {
+		let ticket_ids = [];
+		for (let index = 0; index < tickets.length; index++) {
+			ticket_ids.push(tickets[index].id);
+		}
+
+		return new Promise(function(resolve, reject) {
+			Bigneon()
+				.tickets.transfer.send({
+					ticket_ids,
+					validity_period_in_seconds: 60 * 60 * 24, //TODO make this config based
+					email: emailOrCellphoneNumber
+				})
+				.then(response => {
+					resolve({ result: response });
+				})
+				.catch(error => {
+					resolve({ error });
+				});
+		});
+	}
+
+	async onSendSMS(emailOrCellphoneNumber) {
+		if (
+			!validPhone(emailOrCellphoneNumber) &&
+			!validEmail(emailOrCellphoneNumber)
+		) {
 			return notifications.show({
-				message: "Invalid cellphone number.",
+				message: "Invalid cellphone number or email.",
 				variant: "warning"
 			});
 		}
 
 		this.setState({ isSendingSMS: true });
+
+		const { currentOrderDetails } = this.props;
+		const { id } = currentOrderDetails;
+
+		const { result, error } = await this.getTickets(id);
+
+		if (error) {
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Retrieving tickets failed."
+			});
+			return this.setState({ isSendingSMS: false });
+		}
+
+		const response = await this.transferTickets(result, emailOrCellphoneNumber);
+
+		if (response.error) {
+			notifications.showFromErrorResponse({
+				error: response.error,
+				defaultMessage: "Transferring tickets failed."
+			});
+
+			return this.setState({ isSendingSMS: false });
+		}
+
+		this.setState({ isSendingSMS: false });
+
+		const { onTransferSuccess } = this.props;
+		onTransferSuccess();
 	}
 
 	async redeemSingleTicket({ id, redeem_key, event_id }) {
@@ -66,7 +120,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 					resolve({ result: response });
 				})
 				.catch(error => {
-					reject({ error });
+					resolve({ error });
 				});
 		});
 	}
@@ -93,7 +147,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 					resolve({ result: response.data });
 				})
 				.catch(error => {
-					reject({ error });
+					resolve({ error });
 				});
 		});
 	}
@@ -111,6 +165,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 				error,
 				defaultMessage: "Retrieving tickets failed."
 			});
+			return this.setState({ isCheckingIn: false });
 		}
 
 		const response = await this.redeemTickets(result);
@@ -120,6 +175,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 				error: response.error,
 				defaultMessage: "Redeeming tickets failed."
 			});
+			return this.setState({ isCheckingIn: false });
 		}
 
 		this.setState({ isCheckingIn: false });
@@ -170,7 +226,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 						style={buttonStyle}
 						iconUrl={"/icons/cellphone-gray.svg"}
 						name={"cellNumber"}
-						placeholder="Enter cellphone number"
+						placeholder="Enter cellphone number or email"
 						buttonText={isSendingSMS ? "Sending..." : "Send"}
 						onSubmit={this.onSendSMS.bind(this)}
 						disabled={isSendingSMS}
@@ -203,7 +259,8 @@ PurchaseSuccessOptionsDialog.propTypes = {
 	currentOrderDetails: PropTypes.object,
 	classes: PropTypes.object.isRequired,
 	onClose: PropTypes.func.isRequired,
-	onCheckInSuccess: PropTypes.func.isRequired
+	onCheckInSuccess: PropTypes.func.isRequired,
+	onTransferSuccess: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(PurchaseSuccessOptionsDialog);

@@ -23,14 +23,14 @@ const styles = theme => ({
 	}
 });
 
-const CheckInSuccessDialog = ({ classes, open, onClose }) => {
+const SuccessDialog = ({ message, classes, onClose }) => {
 	return (
-		<Dialog open={open} onClose={onClose} title="Check-in Complete">
+		<Dialog open={!!message} onClose={onClose} title={message}>
 			<div className={classes.content}>
 				<img
 					className={classes.icon}
 					src="/icons/checkmark-circle-multi.svg"
-					alt="Check-In complete"
+					alt={message}
 				/>
 
 				<Button
@@ -45,10 +45,10 @@ const CheckInSuccessDialog = ({ classes, open, onClose }) => {
 	);
 };
 
-CheckInSuccessDialog.propTypes = {
+SuccessDialog.propTypes = {
 	classes: PropTypes.object.isRequired,
-	open: PropTypes.bool.isRequired,
+	message: PropTypes.string,
 	onClose: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(CheckInSuccessDialog);
+export default withStyles(styles)(SuccessDialog);

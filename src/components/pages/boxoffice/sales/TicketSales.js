@@ -10,7 +10,7 @@ import BottomCompleteOrderBar from "../common/BottomCompleteOrderBar";
 import CheckoutDialog from "./CheckoutDialog";
 import cart from "../../../../stores/cart";
 import PurchaseSuccessOptionsDialog from "./PurchaseSuccessOptionsDialog";
-import CheckInSuccessDialog from "./CheckInSuccessDialog";
+import SuccessDialog from "./SuccessDialog";
 
 const styles = theme => ({
 	root: {}
@@ -26,7 +26,7 @@ class TicketSales extends Component {
 			showCheckoutModal: false,
 			isAddingToCart: false,
 			currentOrderDetails: null,
-			showCheckInSuccessDialog: false
+			successMessage: ""
 		};
 	}
 
@@ -170,7 +170,7 @@ class TicketSales extends Component {
 			ticketTypes,
 			showCheckoutModal,
 			currentOrderDetails,
-			showCheckInSuccessDialog
+			successMessage
 		} = this.state;
 
 		return (
@@ -195,14 +195,20 @@ class TicketSales extends Component {
 							onCheckInSuccess={() =>
 								this.setState({
 									currentOrderDetails: null,
-									showCheckInSuccessDialog: true
+									successMessage: "Check-in complete"
+								})
+							}
+							onTransferSuccess={() =>
+								this.setState({
+									currentOrderDetails: null,
+									successMessage: "Transfer complete"
 								})
 							}
 						/>
 
-						<CheckInSuccessDialog
-							open={showCheckInSuccessDialog}
-							onClose={() => this.setState({ showCheckInSuccessDialog: false })}
+						<SuccessDialog
+							message={successMessage}
+							onClose={() => this.setState({ successMessage: "" })}
 						/>
 					</div>
 				) : null}
