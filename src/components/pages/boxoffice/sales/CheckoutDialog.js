@@ -132,7 +132,7 @@ class CheckoutDialog extends React.Component {
 				const { onClose, onSuccess } = this.props;
 				this.setState(this.defaultState, () => {
 					onClose();
-					setTimeout(() => onSuccess(response.data), 500);
+					setTimeout(() => onSuccess({ ...response.data, email }), 500);
 				});
 			})
 			.catch(error => {

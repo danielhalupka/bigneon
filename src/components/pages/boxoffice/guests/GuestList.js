@@ -181,12 +181,9 @@ class GuestList extends Component {
 				})
 				.then(response => {
 					resolve({ result: response });
-					// setTimeout(() => {
-					// 	resolve({ result: response });
-					// }, 1000);
 				})
 				.catch(error => {
-					reject({ error: reject });
+					reject({ error });
 				});
 		});
 	}

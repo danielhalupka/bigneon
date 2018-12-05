@@ -54,33 +54,102 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 		this.setState({ isSendingSMS: true });
 	}
 
-	onCheckIn() {
+	async redeemSingleTicket({ id, redeem_key, event_id }) {
+		return new Promise(function(resolve, reject) {
+			Bigneon()
+				.events.tickets.redeem({
+					event_id,
+					ticket_id: id,
+					redeem_key
+				})
+				.then(response => {
+					resolve({ result: response });
+				})
+				.catch(error => {
+					reject({ error });
+				});
+		});
+	}
+
+	async redeemTickets(tickets) {
+		for (let index = 0; index < tickets.length; index++) {
+			const ticket = tickets[index];
+
+			const { error } = await this.redeemSingleTicket(ticket);
+
+			if (error) {
+				return { error };
+			}
+		}
+
+		return { result: true };
+	}
+
+	async getTickets(order_id) {
+		return new Promise(function(resolve, reject) {
+			Bigneon()
+				.orders.tickets.index({ order_id })
+				.then(response => {
+					resolve({ result: response.data });
+				})
+				.catch(error => {
+					reject({ error });
+				});
+		});
+	}
+
+	async onCheckIn() {
+		const { currentOrderDetails } = this.props;
+		const { id } = currentOrderDetails;
+
 		this.setState({ isCheckingIn: true });
-		//TODO
 
-		setTimeout(() => {
-			this.setState({ isCheckingIn: false });
+		const { result, error } = await this.getTickets(id);
 
-			const { onCheckInSuccess } = this.props;
-			onCheckInSuccess();
-		}, 3000);
+		if (error) {
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Retrieving tickets failed."
+			});
+		}
+
+		const response = await this.redeemTickets(result);
+
+		if (response.error) {
+			notifications.showFromErrorResponse({
+				error: response.error,
+				defaultMessage: "Redeeming tickets failed."
+			});
+		}
+
+		this.setState({ isCheckingIn: false });
+
+		const { onCheckInSuccess } = this.props;
+		onCheckInSuccess();
 	}
 
 	render() {
-		const { onClose, open, classes } = this.props;
+		const { currentOrderDetails, onClose, classes } = this.props;
 		const { isSendingSMS, isCheckingIn } = this.state;
 
 		const iconUrl = "/icons/tickets-white.svg";
+		let orderNumber = "";
+		let email = "";
+		let orderId = "";
 
-		const id = "FIXME_orderID";
-		const orderNumber = "1234FIXME";
-		const email = "FIXME@TODO.com";
+		if (currentOrderDetails) {
+			const { id } = currentOrderDetails;
+
+			orderNumber = id.slice(-8);
+			orderId = id;
+			email = currentOrderDetails.email;
+		}
 
 		const buttonStyle = { width: "100%", marginBottom: 20 };
 
 		return (
 			<Dialog
-				open={open}
+				open={!!currentOrderDetails}
 				//onClose={onClose}
 				title="Order complete"
 				iconUrl={iconUrl}
@@ -115,7 +184,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 					>
 						{isCheckingIn ? "Checking in..." : "Check-in Guest"}
 					</Button>
-					<a href={`/orders/${id}`} target="_blank">
+					<a href={`/orders/${orderId}`} target="_blank">
 						<Button size="large" style={buttonStyle}>
 							View order
 						</Button>
@@ -131,8 +200,8 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 }
 
 PurchaseSuccessOptionsDialog.propTypes = {
+	currentOrderDetails: PropTypes.object,
 	classes: PropTypes.object.isRequired,
-	open: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onCheckInSuccess: PropTypes.func.isRequired
 };

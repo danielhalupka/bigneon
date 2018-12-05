@@ -190,7 +190,7 @@ class TicketSales extends Component {
 						/>
 
 						<PurchaseSuccessOptionsDialog
-							open={!!currentOrderDetails}
+							currentOrderDetails={currentOrderDetails}
 							onClose={() => this.setState({ currentOrderDetails: null })}
 							onCheckInSuccess={() =>
 								this.setState({
