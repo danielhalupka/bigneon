@@ -11,6 +11,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import EventArtist from "./EventArtist";
 import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
+import user from "../../../../../stores/user";
 
 const styles = theme => ({
 	paddedContent: {
@@ -103,7 +104,12 @@ class ArtistDetails extends Component {
 
 	createNewArtist(name) {
 		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying
-		const artistDetails = { name, bio: "", youtube_video_urls: [] }; //TODO remove youtube_video_urls when it's not needed
+		const artistDetails = {
+			name,
+			bio: "",
+			youtube_video_urls: [],
+			organization_id: user.currentOrganizationId
+		}; //TODO remove youtube_video_urls when it's not needed
 
 		Bigneon()
 			.artists.create(artistDetails)
