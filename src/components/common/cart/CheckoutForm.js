@@ -63,14 +63,17 @@ class CheckoutForm extends Component {
 		this.setState({ isSubmitting: true, statusMessage: "Authorizing..." });
 
 		const { error, token } = await this.props.stripe.createToken({ name });
+
 		if (error) {
 			const { message, type } = error;
 
 			console.error(error);
 
-			if (this.props.onMobileError) {
+			if (this.props.mobile) {
 				// If an error is returned on a mobile app auth attempt, bypass the notification and send it back
 				this.props.onMobileError(message, type);
+
+				this.setState({ isSubmitting: false, statusMessage: null });
 			} else {
 				notification.show({
 					message,
