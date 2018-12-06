@@ -6,6 +6,9 @@ class Layout {
 	showSideMenu = true;
 
 	@observable
+	showFooter = false;
+
+	@observable
 	includeContainerPadding = true;
 
 	@observable
@@ -17,6 +20,11 @@ class Layout {
 	@action
 	toggleSideMenu(state) {
 		this.showSideMenu = state;
+	}
+
+	@action
+	toggleShowFooter(state) {
+		this.showFooter = state;
 	}
 
 	@action

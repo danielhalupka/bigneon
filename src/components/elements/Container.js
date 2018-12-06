@@ -20,6 +20,7 @@ import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
 import { toolBarHeight } from "../../components/styles/theme";
 import layout from "../../stores/layout";
 import BoxOfficeAppBar from "./header/BoxOfficeAppBar";
+import Footer from "./Footer";
 
 const drawerWidth = 240;
 
@@ -43,7 +44,9 @@ const styles = theme => ({
 	},
 	content: {
 		flexGrow: 1,
-		backgroundColor: theme.palette.background.default,
+		backgroundColor: theme.palette.background.default
+	},
+	footerPlaceholder: {
 		paddingBottom: theme.spacing.unit * 10
 	},
 	paddedContent: {
@@ -194,6 +197,12 @@ class Container extends React.Component {
 							onClose={() => user.hideAuthRequiredDialog()}
 						/>
 						<Notification />
+
+						{layout.showFooter ? (
+							<Footer />
+						) : (
+							<div className={classes.footerPlaceholder} />
+						)}
 					</main>
 				</div>
 				<CartMobileBottomBar />

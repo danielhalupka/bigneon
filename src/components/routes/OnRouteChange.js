@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import layout from "../../stores/layout";
 
 const showSideMenuRoutes = ["/admin", "/hub", "/orders", "/account"];
+const showFooterRoutes = ["/events"];
 const removePaddingRoutes = ["/events", "/venues"];
 const removeContainerRoutes = [
 	"/widget",
@@ -28,6 +29,7 @@ class OnRouteChange extends Component {
 
 	setLayout() {
 		let showSideMenu = false;
+		let showFooter = false;
 		let showPadding = true;
 		let isBoxOffice = false;
 		let useContainer = true;
@@ -35,6 +37,7 @@ class OnRouteChange extends Component {
 		if (window.location.pathname.startsWith("/box-office")) {
 			isBoxOffice = true;
 			showPadding = false;
+			showFooter = false;
 			showSideMenu = true;
 		} else {
 			showSideMenuRoutes.forEach(path => {
@@ -51,6 +54,13 @@ class OnRouteChange extends Component {
 				}
 			});
 
+			showFooterRoutes.forEach(path => {
+				if (window.location.pathname.startsWith(path)) {
+					showFooter = true;
+					return;
+				}
+			});
+
 			removeContainerRoutes.forEach(path => {
 				if (window.location.pathname.startsWith(path)) {
 					useContainer = false;
@@ -62,6 +72,7 @@ class OnRouteChange extends Component {
 		//Set layout based on above checks
 		layout.toggleSideMenu(showSideMenu);
 		layout.toggleContainerPadding(showPadding);
+		layout.toggleShowFooter(showFooter);
 		layout.toggleBoxOffice(isBoxOffice);
 		layout.toggleContainer(useContainer);
 	}
