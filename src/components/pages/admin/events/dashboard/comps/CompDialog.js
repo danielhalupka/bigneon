@@ -28,7 +28,8 @@ class CompDialog extends React.Component {
 				name: "",
 				phone: "",
 				email: "",
-				quantity: 0
+				quantity: 0,
+				redemption_code: ""
 			},
 			hold: createHold(),
 			errors: {},
@@ -95,7 +96,7 @@ class CompDialog extends React.Component {
 
 				notifications.showFromErrorResponse({
 					error,
-					defaultMessage: `${comp.id ? "Update" : "Create"} comp failed.`
+					defaultMessage: `${comp.id ? "Update" : "Create"} comp list failed.`
 				});
 			});
 	}
@@ -154,6 +155,20 @@ class CompDialog extends React.Component {
 								comp.email = "";
 								comp.phone = value;
 							}
+							this.setState({ comp });
+						}}
+						// onBlur={this.validateFields.bind(this)}
+					/>
+
+					<InputGroup
+						error={errors.redemption_code}
+						value={comp.redemption_code}
+						name="redemption_code"
+						label="Redemption code"
+						placeholder="Please enter a code (min 6 chars)"
+						type="text"
+						onChange={e => {
+							comp.redemption_code = e.target.value.toUpperCase();
 							this.setState({ comp });
 						}}
 						// onBlur={this.validateFields.bind(this)}

@@ -12,13 +12,18 @@ export default (error, defaultMessage = "An an error occurred.") => {
 				if (Array.isArray(field)) {
 					field.forEach(fieldElement => {
 						const { message, code, params } = fieldElement;
+						if (message) {
+							let formattedMessage = message;
 
-						let formattedMessage = message;
-						if (formattedMessage.charAt(formattedMessage.length - 1) !== ".") {
-							formattedMessage = `${formattedMessage}.`;
+							if (
+								formattedMessage.charAt(formattedMessage.length - 1) !== "."
+							) {
+								formattedMessage = `${formattedMessage}.`;
+							}
+
+							result.message = `${result.message} ${formattedMessage}`;
 						}
 
-						result.message = `${result.message} ${formattedMessage}`;
 						result.list.push({ message, code, params });
 					});
 				}

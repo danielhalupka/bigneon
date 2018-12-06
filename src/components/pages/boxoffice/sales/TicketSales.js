@@ -232,6 +232,9 @@ class TicketSales extends Component {
 				redemption_code
 			} = holds[id];
 
+			console.log(name, ":  ", hold_type);
+			console.log(holds[id]);
+
 			if (holdCode && holdCode !== redemption_code) {
 				return null;
 			}
