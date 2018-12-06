@@ -12,7 +12,7 @@ git checkout master
 echo "+git remote add sshremote git@github.com:big-neon/bn-web.git"
 git remote add sshremote git@github.com:big-neon/bn-web.git
 echo "+npm run release:patch"
-npm version patch
+npm version patch -m "Version bump %s [skip ci]"
 git push sshremote master
 git push sshremote --tags
 
