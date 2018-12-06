@@ -54,6 +54,7 @@ const TicketRow = props => {
 		priceInCents,
 		value,
 		onChange,
+		type,
 		classes
 	} = props;
 
@@ -84,7 +85,9 @@ const TicketRow = props => {
 						</Typography>
 					</div>
 					<Typography className={classes.price} style={columnStyles[2]}>
-						${(priceInCents / 100).toFixed(2)}
+						{type === "comp" || priceInCents === 0
+							? "Free"
+							: `$${(priceInCents / 100).toFixed(2)}`}
 					</Typography>
 					<div style={columnStyles[3]}>
 						<div className={classes.verticalDivider} />
@@ -116,7 +119,8 @@ TicketRow.propTypes = {
 	available: PropTypes.number.isRequired,
 	priceInCents: PropTypes.number.isRequired,
 	value: PropTypes.number,
-	onChange: PropTypes.func.isRequired
+	onChange: PropTypes.func.isRequired,
+	type: PropTypes.oneOf(["ticket", "discount", "comp"]).isRequired
 };
 
 export default withStyles(styles)(TicketRow);

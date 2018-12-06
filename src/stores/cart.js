@@ -201,6 +201,7 @@ class Cart {
 			return null;
 		}
 
+		//TODO get order fees and total costs from API, not manually adding up
 		let orderTotalInCents = 0;
 		let serviceFeesInCents = 0;
 		let ticketItemList = [];
