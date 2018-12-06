@@ -18,6 +18,6 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the bundle to s3...
-      - aws s3 cp ${BUNDLE_FILE} s3://${S3_BUCKET}/bn-web/${BUNDLE_FILE}
+      - aws s3 cp ${BUNDLE_FILE} s3://${BUNDLE_BUCKET}/builds/bn-web/${TARGET_ENV}/${BUNDLE_FILE}
       - echo Bundle file uploaded
-      - ./scripts/deploy-staging.sh
+      - [[ "$TARGET_ENV" == "staging" ]] && ./scripts/deploy.sh ${STAGING_BUCKET}

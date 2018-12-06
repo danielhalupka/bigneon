@@ -21,10 +21,7 @@ before_script: []
 after_script: []
 deploy:
   - provider: script
-    script:
-    - 'git checkout master'
-    - './scripts/init-github-ssh.sh'
-    - 'npm run release:patch'
+    script: 'git checkout master && ./scripts/init-github-ssh.sh && npm run release:patch'
     on:
       branch: master
 env:
