@@ -414,9 +414,15 @@ class CheckoutDialog extends React.Component {
 	render() {
 		const { onClose, open, classes } = this.props;
 		const { paymentOption } = this.state;
-		const { formattedExpiryTime, ticketCount } = cart;
+		const { formattedExpiryTime, ticketCount, cartSummary } = cart;
 
 		const dividerStyle = { marginBottom: 15 };
+
+		let showPaymentOptions = true;
+
+		if (cartSummary && cartSummary.orderTotalInCents === 0) {
+			showPaymentOptions = false;
+		}
 
 		return (
 			<Dialog open={ticketCount > 0 && open} onClose={onClose}>
@@ -424,24 +430,29 @@ class CheckoutDialog extends React.Component {
 					{this.renderPurchaseSummary()}
 					<Divider style={dividerStyle} />
 
-					<div className={classes.paymentOptionsCard}>
-						<PaymentOptionCard
-							onClick={() => this.setState({ paymentOption: "cash" })}
-							active={paymentOption === "cash"}
-							type="cash"
-							style={{ marginRight: 5 }}
-						/>
-						<PaymentOptionCard
-							onClick={() => this.setState({ paymentOption: "credit" })}
-							active={paymentOption === "credit"}
-							type="credit"
-							style={{ marginLeft: 5 }}
-						/>
-					</div>
+					{showPaymentOptions ? (
+						<div>
+							<div className={classes.paymentOptionsCard}>
+								<PaymentOptionCard
+									onClick={() => this.setState({ paymentOption: "cash" })}
+									active={paymentOption === "cash"}
+									type="cash"
+									style={{ marginRight: 5 }}
+								/>
+								<PaymentOptionCard
+									onClick={() => this.setState({ paymentOption: "credit" })}
+									active={paymentOption === "credit"}
+									type="credit"
+									style={{ marginLeft: 5 }}
+								/>
+							</div>
 
-					{paymentOption === "cash" ? this.renderChangeCalculator() : null}
+							{paymentOption === "cash" ? this.renderChangeCalculator() : null}
 
-					<Divider style={dividerStyle} />
+							<Divider style={dividerStyle} />
+						</div>
+					) : null}
+
 					{this.renderForm()}
 					<Typography className={classes.expiryTime}>
 						Cart expired in: {formattedExpiryTime}

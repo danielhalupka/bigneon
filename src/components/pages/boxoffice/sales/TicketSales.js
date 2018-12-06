@@ -11,9 +11,14 @@ import CheckoutDialog from "./CheckoutDialog";
 import cart from "../../../../stores/cart";
 import PurchaseSuccessOptionsDialog from "./PurchaseSuccessOptionsDialog";
 import SuccessDialog from "./SuccessDialog";
+import InputWithButton from "../../../common/form/InputWithButton";
 
 const styles = theme => ({
-	root: {}
+	root: {},
+	topRow: {
+		display: "flex",
+		justifyContent: "space-between"
+	}
 });
 
 class TicketSales extends Component {
@@ -28,6 +33,7 @@ class TicketSales extends Component {
 			showCheckoutModal: false,
 			isAddingToCart: false,
 			currentOrderDetails: null,
+			holdCode: "",
 			successMessage: ""
 		};
 	}
@@ -46,7 +52,7 @@ class TicketSales extends Component {
 	refreshTicketTypes() {
 		const { activeEventId } = boxOffice;
 		if (!activeEventId) {
-			this.timeout = setTimeout(this.loadTicketTypes.bind(this), 500);
+			this.timeout = setTimeout(this.refreshTicketTypes.bind(this), 500);
 			return;
 		}
 
@@ -96,7 +102,11 @@ class TicketSales extends Component {
 	}
 
 	onCheckoutSuccess(currentOrderDetails) {
-		this.setState({ selectedTickets: {}, currentOrderDetails });
+		this.setState({
+			selectedTickets: {},
+			selectedHolds: {},
+			currentOrderDetails
+		});
 		this.refreshTicketTypes();
 		this.refreshHolds();
 	}
@@ -194,7 +204,7 @@ class TicketSales extends Component {
 	}
 
 	renderHolds() {
-		const { holds, selectedHolds, ticketTypes } = this.state;
+		const { holds, selectedHolds, ticketTypes, holdCode } = this.state;
 
 		if (!ticketTypes) {
 			return null;
@@ -218,8 +228,13 @@ class TicketSales extends Component {
 				discount_in_cents,
 				hold_type,
 				max_per_order,
-				ticket_type_id
+				ticket_type_id,
+				redemption_code
 			} = holds[id];
+
+			if (holdCode && holdCode !== redemption_code) {
+				return null;
+			}
 
 			const ticketType = ticketTypes[ticket_type_id];
 			const { ticket_pricing } = ticketType;
@@ -306,20 +321,40 @@ class TicketSales extends Component {
 			ticketTypes,
 			showCheckoutModal,
 			currentOrderDetails,
-			successMessage
+			successMessage,
+			holdCode
 		} = this.state;
+		const { classes } = this.props;
 
 		return (
 			<div>
-				<PageHeading iconUrl="/icons/fan-hub-active.svg">
-					General public
-				</PageHeading>
+				<div className={classes.topRow}>
+					<PageHeading iconUrl="/icons/fan-hub-active.svg">
+						General public
+					</PageHeading>
+
+					<InputWithButton
+						style={{ maxWidth: 300 }}
+						name={"promoCode"}
+						placeholder="Enter a code"
+						buttonText={"Apply"}
+						onSubmit={newCode =>
+							this.setState({ holdCode: holdCode ? "" : newCode })
+						}
+						onClear={() => this.setState({ holdCode: "" })}
+						showClearButton={!!holdCode}
+						toUpperCase
+					/>
+				</div>
+
 				{this.renderTicketTypes()}
 
 				<br />
 				<br />
 
-				<PageHeading iconUrl="/icons/tickets-active.svg">Holds</PageHeading>
+				<PageHeading iconUrl="/icons/tickets-active.svg">
+					Holds {holdCode ? `(for code '${holdCode}')` : ""}
+				</PageHeading>
 				{this.renderHolds()}
 
 				{ticketTypes ? (

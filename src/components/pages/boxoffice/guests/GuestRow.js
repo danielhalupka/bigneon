@@ -140,11 +140,7 @@ const GuestRow = props => {
 									<Typography>{id.slice(-8)}</Typography>
 									<Typography>{order_id ? order_id.slice(-8) : "-"}</Typography>
 									<Typography>{ticket_type}</Typography>
-									<Typography>
-										{price_in_cents
-											? `$ ${(price_in_cents / 100).toFixed(2)}`
-											: "-"}
-									</Typography>
+									<Typography>$ {(price_in_cents / 100).toFixed(2)}</Typography>
 									<Typography>{status}</Typography>
 								</GuestTicketRow>
 							);

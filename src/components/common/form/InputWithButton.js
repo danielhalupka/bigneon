@@ -6,7 +6,7 @@ import { Typography } from "@material-ui/core";
 
 import { fontFamilyDemiBold } from "../../styles/theme";
 
-const height = 50;
+const height = 40;
 
 const styles = theme => {
 	return {
@@ -15,10 +15,11 @@ const styles = theme => {
 			display: "flex",
 			borderStyle: "solid",
 			borderColor: "#000000",
-			borderRadius: 4,
+			borderRadius: 8,
 			borderWidth: 0.5,
 			height,
-			alignItems: "center"
+			alignItems: "center",
+			backgroundColor: "#FFFFFF"
 		},
 		inputContainer: {
 			flex: 3,
@@ -78,7 +79,10 @@ class InputWithButton extends Component {
 			style,
 			disabled,
 			iconUrl,
-			onSubmit
+			onSubmit,
+			toUpperCase,
+			onClear,
+			showClearButton
 		} = this.props;
 
 		return (
@@ -90,7 +94,11 @@ class InputWithButton extends Component {
 						value={value}
 						name={name}
 						onChange={e => {
-							this.setState({ value: e.target.value });
+							let value = e.target.value;
+							if (toUpperCase) {
+								value = value.toUpperCase();
+							}
+							this.setState({ value });
 						}}
 						placeholder={placeholder}
 					/>
@@ -103,7 +111,12 @@ class InputWithButton extends Component {
 					})}
 					onClick={() => {
 						if (!disabled) {
-							onSubmit(value);
+							if (showClearButton) {
+								this.setState({ value: "" });
+								onClear();
+							} else {
+								onSubmit(value);
+							}
 						}
 					}}
 				>
@@ -113,7 +126,7 @@ class InputWithButton extends Component {
 							[classes.buttonTextDisabled]: disabled
 						})}
 					>
-						{buttonText}
+						{showClearButton ? "Clear" : buttonText}
 					</Typography>
 				</div>
 			</div>
@@ -134,7 +147,10 @@ InputWithButton.propTypes = {
 	buttonText: PropTypes.string,
 	style: PropTypes.object,
 	iconUrl: PropTypes.string,
-	disabled: PropTypes.bool
+	toUpperCase: PropTypes.bool,
+	disabled: PropTypes.bool,
+	onClear: PropTypes.func,
+	showClearButton: PropTypes.bool
 };
 
 export default withStyles(styles)(InputWithButton);

@@ -251,7 +251,7 @@ class GuestList extends Component {
 				/>
 				<BottomCompleteOrderBar
 					col1Text={`Total tickets available: ${totalAvailable}`}
-					col3Text={`Total tickets selected ${totalNumberSelected}`}
+					col3Text={`Total tickets selected: ${totalNumberSelected}`}
 					disabled={isCheckingIn || !(totalNumberSelected > 0)}
 					onSubmit={this.onRedeemSelectedTickets.bind(this)}
 					buttonText={buttonText}
