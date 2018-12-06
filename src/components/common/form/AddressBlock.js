@@ -127,13 +127,16 @@ class AddressBlock extends Component {
 			country,
 			zip,
 			latitude,
-			longitude
+			longitude,
+
 		} = this.state;
+		const { errors = {} } = this.props;
 
 		return (
 			<div>
 				<InputGroup
 					value={address}
+					error={errors.address}
 					label="Address"
 					name={"address"}
 					onChange={e => {
@@ -143,6 +146,7 @@ class AddressBlock extends Component {
 				/>
 				<InputGroup
 					value={city}
+					error={errors.city}
 					label="City"
 					name={"city"}
 					onChange={e => {
@@ -152,6 +156,7 @@ class AddressBlock extends Component {
 				/>
 				<InputGroup
 					value={state}
+					error={errors.state}
 					label="State"
 					name={"state"}
 					onChange={e => {
@@ -161,6 +166,7 @@ class AddressBlock extends Component {
 				/>
 				<InputGroup
 					value={country}
+					error={errors.country}
 					label="Country"
 					name={"country"}
 					onChange={e => {
@@ -170,6 +176,7 @@ class AddressBlock extends Component {
 				/>
 				<InputGroup
 					value={zip}
+					error={errors.postal_code}
 					label="Zip"
 					name={"zip"}
 					onChange={e => {
@@ -179,6 +186,7 @@ class AddressBlock extends Component {
 				/>
 				<InputGroup
 					value={latitude}
+					error={errors.latitude}
 					label="Latitude"
 					name={"latitude"}
 					onChange={e => {
@@ -188,6 +196,7 @@ class AddressBlock extends Component {
 				/>
 				<InputGroup
 					value={longitude}
+					error={errors.longitude}
 					label="Longitude"
 					name={"longitude"}
 					onChange={e => {
@@ -200,4 +209,7 @@ class AddressBlock extends Component {
 	}
 }
 
+AddressBlock.propTypes = {
+	errors: PropTypes.object
+};
 export default withStyles(styles)(AddressBlock);

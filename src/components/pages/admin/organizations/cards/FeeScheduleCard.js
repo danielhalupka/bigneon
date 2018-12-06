@@ -60,10 +60,11 @@ class FeeScheduleCard extends Component {
 
 				let formattedRanges = [];
 				ranges.forEach(range => {
-					let { company_fee_in_cents = 0, client_fee_in_cents = 0 } = range;
+					let { company_fee_in_cents = 0, client_fee_in_cents = 0, min_price = 0 } = range;
 
 					let formattedRange = {
 						...range,
+						min_price: min_price / 100,
 						fee: (company_fee_in_cents + client_fee_in_cents) / 100,
 						company_fee: company_fee_in_cents / 100,
 						client_fee: client_fee_in_cents / 100,
@@ -200,7 +201,7 @@ class FeeScheduleCard extends Component {
 
 		this.setState({ isSubmitting: true });
 		const formattedRanges = ranges.map(({ min_price, client_fee, company_fee }) => ({
-			min_price: Number(min_price),
+			min_price: Number(min_price) * 100,
 			client_fee_in_cents: Number(client_fee) * 100,
 			company_fee_in_cents: Number(company_fee) * 100,
 		}));

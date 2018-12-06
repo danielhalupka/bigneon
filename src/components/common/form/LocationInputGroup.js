@@ -2,7 +2,7 @@
 //Enable: Geolocation API, Maps JavaScript API, Places API for Web, Geocoding API
 import React from "react";
 import PropTypes from "prop-types";
-import { Typography, withStyles } from "@material-ui/core";
+import { Typography, withStyles, Collapse } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
@@ -12,6 +12,7 @@ import PlacesAutocomplete, {
 } from "react-places-autocomplete";
 import AddressBlock from "../../common/form/AddressBlock";
 import { primaryHex } from "../../styles/theme";
+import Button from "../../elements/Button";
 
 const styles = theme => {
 	return {
@@ -23,6 +24,14 @@ const styles = theme => {
 };
 
 class LocationInputGroup extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			showGoogle: !!process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+			overrideManualEntry: false
+		}
+	}
+
 	onSelect(address, addressBlock) {
 		const {
 			onAddressChange,
@@ -31,7 +40,9 @@ class LocationInputGroup extends React.Component {
 			onError
 		} = this.props;
 
-		let usingGoogleMaps = !!process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
+		const { showGoogle } = this.state;
+
+		let usingGoogleMaps = showGoogle;
 		let geocodeByAddressPromise = usingGoogleMaps
 			? geocodeByAddress
 			: address =>
@@ -52,10 +63,11 @@ class LocationInputGroup extends React.Component {
 	}
 
 	renderMissingGoogle() {
-		const { addressBlock } = this.props;
+		const { addressBlock, errors = {} } = this.props;
 		return (
 			<div>
 				<AddressBlock
+					errors={errors}
 					address={addressBlock}
 					onChange={this.onSelect.bind(this)}
 					returnGoogleObject={true}
@@ -72,11 +84,12 @@ class LocationInputGroup extends React.Component {
 			error,
 			onError,
 			label,
-			classes
+			classes,
 		} = this.props;
+		const { showGoogle } = this.state;
 
-		if (window.google === undefined) {
-			return false;
+		if (window.google === undefined || !showGoogle) {
+			return (<div></div>);
 		}
 		return (
 			<div>
@@ -85,7 +98,10 @@ class LocationInputGroup extends React.Component {
 					value={address}
 					onChange={onAddressChange}
 					onSelect={this.onSelect.bind(this)}
-					onError={onError}
+					onError={(e) => {
+						onError(e);
+						this.setState({ showGoogle: false });
+					}}
 				>
 					{({
 						getInputProps,
@@ -156,17 +172,39 @@ class LocationInputGroup extends React.Component {
 	}
 
 	render() {
-		if (process.env.REACT_APP_GOOGLE_PLACES_API_KEY) {
-			return this.renderGoogle();
-		} else {
-			return this.renderMissingGoogle();
-		}
+		const { showGoogle, overrideManualEntry } = this.state;
+		const { showManualEntry } = this.props;
+		return (
+			<div>
+				{(this.renderGoogle())}
+				{showGoogle && !overrideManualEntry ? (
+					<div>
+						<Button
+							variant="additional"
+							onClick={() => this.setState({ overrideManualEntry: true })}
+						>
+							Enter Address Manually
+						</Button>
+					</div>
+				) : null}
+				<Collapse in={overrideManualEntry || showManualEntry}>
+					<div>
+						{(this.renderMissingGoogle())}
+					</div>
+				</Collapse>
+			</div>
+
+
+
+		);
+
 	}
 }
 
 LocationInputGroup.propTypes = {
 	label: PropTypes.string,
 	error: PropTypes.string,
+	errors: PropTypes.object,
 	address: PropTypes.string.isRequired,
 	addressBlock: PropTypes.object,
 	placeholder: PropTypes.string,
@@ -174,7 +212,9 @@ LocationInputGroup.propTypes = {
 	onError: PropTypes.func.isRequired,
 	onAddressChange: PropTypes.func.isRequired,
 	onLatLngResult: PropTypes.func.isRequired,
-	onFullResult: PropTypes.func.isRequired
+	onFullResult: PropTypes.func.isRequired,
+	showManualEntry: PropTypes.bool,
+
 };
 
 export default withStyles(styles)(LocationInputGroup);

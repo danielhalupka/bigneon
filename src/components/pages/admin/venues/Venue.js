@@ -34,6 +34,7 @@ class Venue extends Component {
 
 		this.state = {
 			venueId,
+			regionId: "",
 			name: "",
 			address: "",
 			city: "",
@@ -44,8 +45,10 @@ class Venue extends Component {
 			phone: "",
 			organizationId: "",
 			organizations: null,
+			regions: null,
 			errors: {},
-			isSubmitting: false
+			isSubmitting: false,
+			showManualEntry: false
 		};
 	}
 
@@ -63,7 +66,8 @@ class Venue extends Component {
 						country,
 						state,
 						postal_code,
-						phone
+						phone,
+						region_id,
 					} = response.data;
 
 					this.setState({
@@ -73,7 +77,8 @@ class Venue extends Component {
 						country: country || "",
 						state: state || "",
 						postal_code: postal_code || "",
-						phone: phone || ""
+						phone: phone || "",
+						regionId: region_id || ""
 					});
 				})
 				.catch(error => {
@@ -96,6 +101,25 @@ class Venue extends Component {
 				});
 		}
 
+		Bigneon().regions.index().then(response => {
+			const { data, paging } = response.data;//@TODO Implement pagination
+			this.setState({ regions: data });
+		}).catch(error => {
+			console.error(error);
+			let message = "Loading regions failed.";
+			if (
+				error.response &&
+				error.response.data &&
+				error.response.data.error
+			) {
+				message = error.response.data.error;
+			}
+
+			notifications.show({
+				message,
+				variant: "error"
+			});
+		});
 		Bigneon()
 			.organizations.index()
 			.then(response => {
@@ -126,17 +150,24 @@ class Venue extends Component {
 			return null;
 		}
 
-		const { name, address, organizationId, phone, venueId } = this.state;
+		const { name, address, city, state, country, postal_code,  organizationId, phone, venueId } = this.state;
 
 		const errors = {};
+		const required = ["name", "address", "city", "state", "country", "postal_code"];
+		required.forEach(field => {
+			if (!this.state[field]) {
+				errors[field] = `Missing ${field}.`;
+			}
+		});
 
-		if (!name) {
-			errors.name = "Missing venue name.";
-		}
+		// if (!name) {
+		// 	errors.name = "Missing venue name.";
+		// }
+		//
+		// if (!address) {
+		// 	errors.address = "Missing address.";
+		// }
 
-		if (!address) {
-			errors.address = "Missing address.";
-		}
 
 		if (!venueId) {
 			if (!organizationId) {
@@ -223,6 +254,7 @@ class Venue extends Component {
 
 		const {
 			venueId,
+			regionId,
 			name,
 			organizationId,
 			phone,
@@ -231,10 +263,13 @@ class Venue extends Component {
 			state,
 			country,
 			place_id,
-			postal_code
+			postal_code,
+			latitude,
+			longitude
 		} = this.state;
 
 		const venueDetails = {
+			region_id: regionId,
 			name,
 			phone,
 			address,
@@ -242,7 +277,9 @@ class Venue extends Component {
 			state,
 			country,
 			postal_code,
-			place_id
+			google_place_id: place_id,
+			latitude,
+			longitude
 		};
 
 		//If we're updating an existing venue
@@ -296,9 +333,34 @@ class Venue extends Component {
 		);
 	}
 
+	renderRegions() {
+		const { regionId, regions, errors } = this.state;
+		if (regions === null) {
+			return <Typography variant="body1">Loading regions...</Typography>;
+		}
+
+		const regionsObj = {};
+
+		regions.forEach(region => {
+			regionsObj[region.id] = region.name;
+		});
+
+		return (
+			<SelectGroup
+				value={regionId}
+				items={regionsObj}
+				error={errors.regionId}
+				name={"region"}
+				label={"Region"}
+				onChange={e => this.setState({ regionId: e.target.value })}
+			/>
+		);
+	}
+
 	render() {
 		const {
 			venueId,
+			regionId,
 			name,
 			phone,
 			organizations,
@@ -310,7 +372,8 @@ class Venue extends Component {
 			country = "",
 			postal_code = "",
 			latitude = "",
-			longitude = ""
+			longitude = "",
+			showManualEntry,
 		} = this.state;
 		const addressBlock = {
 			address,
@@ -349,7 +412,7 @@ class Venue extends Component {
 									/>
 
 									{!venueId ? this.renderOrganizations() : null}
-
+									{this.renderRegions()}
 									<InputGroup
 										error={errors.phone}
 										value={phone}
@@ -362,11 +425,13 @@ class Venue extends Component {
 
 									<LocationInputGroup
 										error={errors.address}
+										errors={errors}
 										label="Venue location"
 										address={address}
 										addressBlock={addressBlock}
+										showManualEntry={showManualEntry}
 										onError={error => {
-											console.error(error);
+											this.setState({ showManualEntry: true });
 											notifications.show({
 												message: `Google API error: ${error}`, //TODO add more details here
 												variant: "error"
@@ -374,14 +439,12 @@ class Venue extends Component {
 										}}
 										onAddressChange={address => this.setState({ address })}
 										onLatLngResult={latLng => {
-											console.log("latLng", latLng);
 											this.setState({
 												latitude: latLng.lat,
 												longitude: latLng.lng
 											});
 										}}
 										onFullResult={result => {
-											console.log(result);
 											const { place_id } = result;
 											const city = addressTypeFromGoogleResult(
 												result,
