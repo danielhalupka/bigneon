@@ -3,11 +3,11 @@ import { Typography, withStyles } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
-import UpdateCard from "./cards/UpdateCard";
+import IntegrationCard from "./cards/IntegrationCard";
 // import LinkVenuesCard from "./cards/LinkVenuesCard";
-import InviteUserCard from "./cards/InviteUserCard";
-import FeeScheduleCard from "./cards/FeeScheduleCard";
-import OtherFeesCard from "./cards/OtherFeesCard";
+import WidgetCard from "./cards/WidgetCard";
+import ApiCard from "./cards/ApiCard";
+import EmailCard from "./cards/EmailCard";
 import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({
@@ -17,7 +17,7 @@ const styles = theme => ({
 	}
 });
 
-class Organization extends Component {
+class Marketing extends Component {
 	constructor(props) {
 		super(props);
 
@@ -43,56 +43,42 @@ class Organization extends Component {
 		return (
 			<div>
 				<PageHeading>
-					{organizationId ? "Update" : "New"} Organization Settings
+					Marketing Integrations
 				</PageHeading>
 
-				{organizationId ? (
-					<Tabs
-						value={activeTab}
-						onChange={(event, activeTab) => this.setState({ activeTab })}
-					>
-						<Tab key={0} label="Details" />
-						{/* <Tab key={1} label="Linked venues" /> */}
-						<Tab key={1} label="Organization members" />
-						<Tab key={2} label="Fee schedule" />
-						<Tab key={3} label="Other fees" />
-					</Tabs>
-				) : null}
+				<Tabs
+					value={activeTab}
+					onChange={(event, activeTab) => this.setState({ activeTab })}
+				>
+					<Tab key={0} label="Email" />
+					<Tab key={1} label="Widget" />
+					<Tab key={2} label="Analytics" />
+					<Tab key={3} label="API" />
+				</Tabs>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						{activeTab === 0 ? (
-							<UpdateCard history={history} organizationId={organizationId} />
+							<EmailCard history={history} organizationId={organizationId} />
 						) : null}
 
-						{/* {activeTab === 1 ? (
-							<LinkVenuesCard
-								history={history}
-								organizationId={organizationId}
-							/>
-						) : null} */}
-
 						{activeTab === 1 ? (
-							<InviteUserCard
+							<WidgetCard
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
 
 						{activeTab === 2 ? (
-							<FeeScheduleCard
-								history={history}
-								organizationId={organizationId}
-							/>
+							<IntegrationCard history={history} organizationId={organizationId} />
 						) : null}
 
 						{activeTab === 3 ? (
-							<OtherFeesCard
+							<ApiCard
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
-						
 					</Grid>
 				</Grid>
 			</div>
@@ -100,4 +86,4 @@ class Organization extends Component {
 	}
 }
 
-export default withStyles(styles)(Organization);
+export default withStyles(styles)(Marketing);

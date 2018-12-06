@@ -1,21 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+
 import MenuItem from "../../../elements/menu/MenuItem";
-import Divider from "@material-ui/core/Divider";
 import user from "../../../../stores/user";
-import { Typography } from "@material-ui/core";
 
 const styles = theme => {
 	return {};
 };
 
-const AdminList = props => {
+const OrgAdminList = props => {
 	const { toggleDrawer, openMenuItem, changeOpenMenu } = props;
 
 	return (
 		<div>
-			{/* <Divider className={classes.divider} /> */}
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
@@ -37,22 +35,11 @@ const AdminList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="artists"
-				to="/admin/artists"
-			>
-				Artists
-			</MenuItem>
-
-			<MenuItem
-				onClick={toggleDrawer}
-				shortLayout
 				iconName="chart"
 				to="/admin/reports"
 			>
 				Reports
 			</MenuItem>
-
-			
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
@@ -64,44 +51,28 @@ const AdminList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="account"
+				iconName="artists"
+				to="/admin/artists"
+			>
+				Artists
+			</MenuItem>
+			<MenuItem
+				onClick={toggleDrawer}
+				shortLayout
+				iconName="controls"
 				to={`/admin/organizations/`+user.currentOrganizationId}
 			>
 				Settings
-			</MenuItem>
-			
-			<Divider />
-			<Divider />
-			<Typography style={{ justifyContent: "center",
-				alignItems: "center" }} variant="caption">
-				Super Admin
-			</Typography>
-			<Divider />
-			<MenuItem
-				onClick={toggleDrawer}
-				shortLayout
-				iconName="account"
-				to="/admin/organizations/"
-			>
-				Organizations
-			</MenuItem>
-			<MenuItem
-				onClick={toggleDrawer}
-				shortLayout
-				iconName="venues"
-				to="/admin/venues"
-			>
-				Venues
 			</MenuItem>
 		</div>
 	);
 };
 
-AdminList.propTypes = {
+OrgAdminList.propTypes = {
 	classes: PropTypes.object.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	openMenuItem: PropTypes.string,
 	changeOpenMenu: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(AdminList);
+export default withStyles(styles)(OrgAdminList);

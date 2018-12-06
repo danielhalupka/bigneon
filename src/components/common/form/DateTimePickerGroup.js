@@ -6,6 +6,7 @@ import { DateTimePicker, TimePicker, DatePicker } from "material-ui-pickers";
 import { withStyles } from "@material-ui/core/styles";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
+import TextField from "@material-ui/core/TextField";
 import moment from "moment";
 
 const styles = theme => {
@@ -51,10 +52,11 @@ const DateTimePickerGroup = props => {
 			additionalProps = { animateYearScrolling: false };
 			break;
 		case "time":
-			Picker = TimePicker;
+			Picker = TextField;
+			additionalProps = { type: "time", defaultValue : "19:30", onFocus: null, onBlur: null };
 			break;
 		case "date":
-			formatOverride = "YYYY/MM/DD";
+			formatOverride = "MM/DD/YYYY";
 			Picker = DatePicker;
 			break;
 	}
@@ -93,7 +95,7 @@ const DateTimePickerGroup = props => {
 DateTimePickerGroup.defaultProps = {
 	minDate: null,
 	type: "date-time",
-	format: "YYYY/MM/DD HH:mm",
+	format: "MM/DD/YYYY hh:mm",
 	margin: "normal"
 };
 

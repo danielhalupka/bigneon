@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
 import MenuItem from "../../../elements/menu/MenuItem";
+import user from "../../../../stores/user";
 
 const styles = theme => {
 	return {};
@@ -34,19 +35,34 @@ const OrgOwnerList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
+				iconName="chart"
+				to="/admin/reports"
+			>
+				Reports
+			</MenuItem>
+			<MenuItem
+				onClick={toggleDrawer}
+				shortLayout
+				iconName="megaphone"
+				to="/admin/marketing"
+			>
+				Marketing
+			</MenuItem>
+			<MenuItem
+				onClick={toggleDrawer}
+				shortLayout
 				iconName="artists"
 				to="/admin/artists"
 			>
 				Artists
 			</MenuItem>
-
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="chart"
-				to="/admin/reports"
+				iconName="controls"
+				to={`/admin/organizations/`+user.currentOrganizationId}
 			>
-				Reports
+				Settings
 			</MenuItem>
 		</div>
 	);

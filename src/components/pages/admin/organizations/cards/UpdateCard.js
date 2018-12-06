@@ -36,10 +36,6 @@ class OrganizationUpdateCard extends Component {
 			state: "",
 			country: "",
 			zip: "",
-			sendgrid_api_key: "",
-			google_ga_key: "",
-			facebook_pixel_key: "",
-			eventFee: (0).toFixed(2),
 			errors: {},
 			isSubmitting: false,
 			showApiKeys: false,
@@ -64,11 +60,7 @@ class OrganizationUpdateCard extends Component {
 						city,
 						state,
 						country,
-						zip,
-						event_fee_in_cents,
-						sendgrid_api_key,
-						google_ga_key,
-						facebook_pixel_key,
+						zip
 					} = response.data;
 
 					this.setState({
@@ -79,14 +71,7 @@ class OrganizationUpdateCard extends Component {
 						city: city || "",
 						state: state || "",
 						country: country || "",
-						zip: zip || "",
-						eventFee: event_fee_in_cents
-							? (event_fee_in_cents / 100).toFixed(2)
-							: (0).toFixed(2),
-						sendgrid_api_key: sendgrid_api_key || "",
-						google_ga_key: google_ga_key || "",
-						facebook_pixel_key: facebook_pixel_key || "",
-						showApiKeys: sendgrid_api_key || google_ga_key || facebook_pixel_key,
+						zip: zip || ""
 					});
 				})
 				.catch(error => {
@@ -141,10 +126,6 @@ class OrganizationUpdateCard extends Component {
 			errors.phone = "Missing phone number.";
 		} else if (!validPhone(phone)) {
 			errors.phone = "Invalid phone number.";
-		}
-
-		if (!eventFee) {
-			errors.eventFee = "Missing event fee.";
 		}
 
 		this.setState({ errors });
@@ -229,10 +210,6 @@ class OrganizationUpdateCard extends Component {
 			state,
 			country,
 			zip,
-			eventFee,
-			sendgrid_api_key,
-			google_ga_key,
-			facebook_pixel_key,
 		} = this.state;
 		const { organizationId } = this.props;
 
@@ -243,11 +220,7 @@ class OrganizationUpdateCard extends Component {
 			city,
 			state,
 			country,
-			zip,
-			sendgrid_api_key,
-			google_ga_key,
-			facebook_pixel_key,
-			event_fee_in_cents: Number(eventFee) * 100
+			zip
 		};
 
 		//If we're updating an existing org
@@ -318,13 +291,8 @@ class OrganizationUpdateCard extends Component {
 			latitude = "",
 			longitude = "",
 			phone,
-			eventFee = 0,
 			errors,
-			sendgrid_api_key,
-			google_ga_key,
-			facebook_pixel_key,
 			isSubmitting,
-			showApiKeys,
 		} = this.state;
 
 		const { organizationId } = this.props;
@@ -370,21 +338,6 @@ class OrganizationUpdateCard extends Component {
 						) : null}
 
 						<InputGroup
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position="start">$</InputAdornment>
-								)
-							}}
-							error={errors.eventFee}
-							value={eventFee}
-							name="eventFee"
-							label="Per event fee"
-							type="number"
-							onChange={e => this.setState({ eventFee: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
-
-						<InputGroup
 							error={errors.phone}
 							value={phone}
 							name="phone"
@@ -427,47 +380,6 @@ class OrganizationUpdateCard extends Component {
 								this.setState({ city, state, country, zip });
 							}}
 						/>
-						{!showApiKeys ? (
-							<div>
-								<Button
-									variant="additional"
-									onClick={() => this.setState({ showApiKeys: true })}
-								>
-									Add 3rd Party API Keys
-								</Button>
-							</div>
-						) : null}
-						<Collapse in={!!showApiKeys}>
-							<div>
-								<InputGroup
-									error={errors.sendgrid_api_key}
-									value={sendgrid_api_key}
-									name="sendgrid_key"
-									label="SendGrid API key"
-									type="text"
-									onChange={e => this.setState({ sendgrid_api_key: e.target.value })}
-									onBlur={this.validateFields.bind(this)}
-								/>
-								<InputGroup
-									error={errors.google_ga_key}
-									value={google_ga_key}
-									name="google_ga_key"
-									label="Google Analytics API key"
-									type="text"
-									onChange={e => this.setState({ google_ga_key: e.target.value })}
-									onBlur={this.validateFields.bind(this)}
-								/>
-								<InputGroup
-									error={errors.facebook_pixel_key}
-									value={facebook_pixel_key}
-									name="facebook_pixel_key"
-									label="Facebook Pixel API key"
-									type="text"
-									onChange={e => this.setState({ facebook_pixel_key: e.target.value })}
-									onBlur={this.validateFields.bind(this)}
-								/>
-							</div>
-						</Collapse>
 					</CardContent>
 					<CardActions>
 						<Button

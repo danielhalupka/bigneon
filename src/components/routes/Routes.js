@@ -46,6 +46,7 @@ import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
 import AdminFanList from "../pages/admin/fans/Index";
 import AdminGuestList from "../pages/admin/events/guests/List";
+import AdminMarketing from "../pages/admin/marketing/Index";
 
 //Box office
 import BoxOfficeTicketSales from "../pages/boxoffice/sales/TicketSales";
@@ -209,6 +210,12 @@ class Routes extends Component {
 									exact
 									path="/admin/organizations/:id"
 									component={AdminOrganization}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/marketing/:id"
+									component={AdminMarketing}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute
