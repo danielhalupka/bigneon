@@ -19,9 +19,11 @@ script:
 before_install: []
 before_script: []
 after_script: []
+before_deploy:
+- './scripts/init-github-ssh.sh'
 deploy:
   - provider: script
-    script: 'git checkout master && ./scripts/init-github-ssh.sh && npm run release:patch'
+    script: 'bash ./scripts/travis_tag.sh'
     on:
       branch: master
 env:
@@ -38,3 +40,5 @@ env:
   - REACT_APP_CLOUDINARY_API_KEY=
   - ENV=development
   - REACT_APP_STRIPE_API_KEY=
+  - GH_USER_EMAIL='sdbondi@users.noreply.github.com'
+  - GH_USER_NAME='Travis CI'
