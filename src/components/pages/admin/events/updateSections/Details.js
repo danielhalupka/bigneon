@@ -11,6 +11,7 @@ import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../common/form/SelectGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
+import Bn from "bn-api-node";
 
 const styles = theme => ({});
 
@@ -65,7 +66,8 @@ const formatDataForSaving = (event, organizationId) => {
 		additionalInfo,
 		topLineInfo,
 		promoImageUrl,
-		externalTicketsUrl
+		externalTicketsUrl,
+		override_status,
 	} = event;
 
 	const eventDetails = {
@@ -75,7 +77,8 @@ const formatDataForSaving = (event, organizationId) => {
 		additional_info: additionalInfo,
 		top_line_info: topLineInfo,
 		is_external: externalTicketsUrl !== null,
-		external_url: externalTicketsUrl
+		external_url: externalTicketsUrl,
+		override_status,
 	};
 
 	if (eventDate) {
@@ -123,14 +126,15 @@ const formatDataForInputs = event => {
 		promo_image_url,
 		is_external,
 		external_url,
-		publish_date
+		publish_date,
+		override_status = ""
 	} = event;
 
 	const tomorrow = new Date();
 	tomorrow.setDate(new Date().getDate() + 1);
 
 	const eventDetails = {
-		status: "", //TODO get from API
+		override_status, //TODO get from API
 		name: name || "",
 		eventDate: event_start
 			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
@@ -247,22 +251,29 @@ class Details extends Component {
 
 	renderStatus() {
 		const { errors } = this.props;
-		const { status } = eventUpdateStore.event;
+		const { override_status } = eventUpdateStore.event;
 
-		const statusesObj = { Buy: "Buy" };
+		const statusesObj = { "": "Auto" };
+		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
+		let eventOverrideStatusString = Bn.Enums ? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING : {};
+		for (let statusConst in eventOverrideStatusEnum) {
+			let serverEnum = eventOverrideStatusEnum[statusConst];
+			let displayString = eventOverrideStatusString[serverEnum];
+			statusesObj[serverEnum] = displayString;
+		}
 
 		let label = "Event status";
 
 		return (
 			<SelectGroup
-				value={status}
+				value={override_status}
 				items={statusesObj}
 				error={errors.status}
 				name={"status"}
 				label={label}
 				onChange={e => {
-					const status = e.target.value;
-					this.changeDetails({ status });
+					const override_status = e.target.value;
+					this.changeDetails({ override_status });
 				}}
 			/>
 		);
