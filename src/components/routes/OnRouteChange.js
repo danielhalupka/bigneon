@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { withRouter } from "react-router-dom";
 import layout from "../../stores/layout";
+import ReactGA from "react-ga";
 
 const showSideMenuRoutes = ["/admin", "/hub", "/orders", "/account"];
 const showFooterRoutes = ["/events"];
@@ -12,14 +13,22 @@ const removeContainerRoutes = [
 	"/mobile_stripe_token_auth"
 ];
 
+if (process.env.REACT_APP_GOOGLE_ANALYTICS_KEY) {
+	ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_KEY);
+}
+
 class OnRouteChange extends Component {
 	componentDidMount() {
 		this.setLayout();
 	}
 
 	componentDidUpdate(prevProps) {
+
 		//Every time a route is changed
 		if (this.props.location !== prevProps.location) {
+			if (process.env.REACT_APP_GOOGLE_ANALYTICS_KEY) {
+				ReactGA.pageview(window.location.pathname + window.location.search);
+			}
 			//Auto scroll to top
 			window.scrollTo(0, 0);
 
