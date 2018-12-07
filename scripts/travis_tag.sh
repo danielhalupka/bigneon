@@ -7,6 +7,8 @@ if [[ -z "$CI" ]]; then
     exit 1
 fi
 
+echo "+init-github-ssh.sh"
+./scripts/init-github-ssh.sh
 echo "+git checkout master"
 git checkout master
 echo "+git remote add sshremote git@github.com:big-neon/bn-web.git"

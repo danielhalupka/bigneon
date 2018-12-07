@@ -7,25 +7,27 @@ branches:
   - master
 matrix:
   include:
-  - name: Tests
+  - stage: tests
+    name: Tests
     env:
     - RUN_CMD="test"
-  - name: Linting
+  - stage: tests
+    name: Linting
     env:
     - RUN_CMD="eslint-validate"
+  - stage: deploy
+    script: skip
+    deploy:
+    - provider: script
+      script: 'bash ./scripts/travis_tag.sh'
+      on:
+        branch: master
   fast_finish: true
 script:
 - npm run $RUN_CMD
 before_install: []
 before_script: []
 after_script: []
-before_deploy:
-- './scripts/init-github-ssh.sh'
-deploy:
-  - provider: script
-    script: 'bash ./scripts/travis_tag.sh'
-    on:
-      branch: master
 env:
   global:
   - REACT_APP_API_PROTOCOL=https
