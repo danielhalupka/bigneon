@@ -6,10 +6,16 @@ import Grid from "@material-ui/core/Grid";
 import ResultsRegionFilter from "./ResultsRegionFilter";
 import eventResults from "../../../../stores/eventResults";
 import EventResultCard from "../../../elements/event/EventResultCard";
+import Button from "../../../elements/Button";
 
 const styles = theme => ({
 	subHeading: {
 		marginBottom: theme.spacing.unit
+	},
+	availableEventsButtonContainer: {
+		paddingTop: theme.spacing.unit * 2,
+		display: "flex",
+		justifyContent: "center"
 	}
 });
 
@@ -62,6 +68,15 @@ const Results = observer(props => {
 			<Grid container spacing={24}>
 				{events ? <EventsList events={events} /> : null}
 			</Grid>
+
+			<div className={classes.availableEventsButtonContainer}>
+				<Button
+					variant="callToAction"
+					onClick={() => eventResults.clearFilter()}
+				>
+					Available events
+				</Button>
+			</div>
 		</div>
 	);
 });

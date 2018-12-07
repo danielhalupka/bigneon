@@ -19,7 +19,6 @@ const styles = {
 	}
 };
 
-//TODO this might become a multi functional search bar, not just for events
 class SearchToolBarInput extends Component {
 	constructor(props) {
 		super(props);

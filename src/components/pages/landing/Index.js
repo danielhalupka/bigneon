@@ -1,28 +1,42 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import SearchCard from "./cards/Search";
 import Results from "./cards/Results";
-import layout from "../../../stores/layout";
+import Hero from "./Hero";
+import eventResults from "../../../stores/eventResults";
+import notifications from "../../../stores/notifications";
 
-const styles = theme => ({
-	searchGrid: {
-		marginBottom: theme.spacing.unit * 2
-	}
-});
+const styles = theme => ({});
 
 class Home extends Component {
+	constructor(props) {
+		super(props);
+	}
+
+	componentDidMount() {
+		const url = new URL(window.location.href);
+		const query = url.searchParams.get("search") || "";
+
+		eventResults.refreshResults(
+			{ query, status: "Published" },
+			() => {},
+			message => {
+				notifications.show({
+					message,
+					variant: "error"
+				});
+			}
+		);
+	}
+
 	render() {
 		const { classes } = this.props;
 
 		return (
 			<div>
-				<Grid container>
-					<Grid className={classes.searchGrid} item xs={12} sm={12} lg={12}>
-						<SearchCard />
-					</Grid>
-
-					<Grid item xs={12} sm={12} lg={12}>
+				<Hero />
+				<Grid container justify="center">
+					<Grid item xs={11} sm={11} lg={10}>
 						<Results />
 					</Grid>
 				</Grid>

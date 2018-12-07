@@ -20,7 +20,7 @@ import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
 import { toolBarHeight } from "../../components/styles/theme";
 import layout from "../../stores/layout";
 import BoxOfficeAppBar from "./header/BoxOfficeAppBar";
-import Footer from "./Footer";
+import Footer from "./footers/FooterOne";
 
 const drawerWidth = 240;
 

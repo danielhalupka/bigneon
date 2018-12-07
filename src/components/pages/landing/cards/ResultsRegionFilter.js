@@ -1,3 +1,5 @@
+//TODO redesign https://share.goabstract.com/a4cf928b-1976-4d92-8a07-5b78fe62d794
+
 import React, { Component } from "react";
 import { Typography, withStyles, Grid } from "@material-ui/core";
 import { observer } from "mobx-react";
@@ -40,7 +42,7 @@ class ResultsRegionFilter extends Component {
 		const selectedState = eventResults.filters["state"] || "all";
 
 		return (
-			<Grid container spacing={0} alignItems="center">
+			<Grid container spacing={0} alignItems="center" justify="center">
 				<Grid item>
 					<Typography
 						variant="subheading"

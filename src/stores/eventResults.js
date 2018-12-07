@@ -1,6 +1,8 @@
 import { observable, computed, action } from "mobx";
 import moment from "moment";
 import Bigneon from "../helpers/bigneon";
+import changeUrlParam from "../helpers/changeUrlParam";
+import notification from "./notifications";
 
 class EventResults {
 	@observable
@@ -71,6 +73,24 @@ class EventResults {
 		this.filters[key] = value;
 	}
 
+	@action
+	clearFilter() {
+		changeUrlParam("search", "");
+		changeUrlParam("state", "all");
+		this.filters = {};
+
+		this.refreshResults(
+			{},
+			() => {},
+			message => {
+				notification.show({
+					message,
+					variant: "error"
+				});
+			}
+		);
+	}
+
 	//Instantly filter events by state or other fields
 	@computed
 	get filteredEvents() {
@@ -88,7 +108,9 @@ class EventResults {
 			if (this.filters) {
 				if (
 					state &&
-					(state === this.filters.state || this.filters.state === "all")
+					(!this.filters.state ||
+						state === this.filters.state ||
+						this.filters.state === "all")
 				) {
 					showEvent = true;
 				} else {

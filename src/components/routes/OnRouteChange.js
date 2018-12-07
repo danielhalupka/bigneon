@@ -48,14 +48,20 @@ class OnRouteChange extends Component {
 			});
 
 			removePaddingRoutes.forEach(path => {
-				if (window.location.pathname.startsWith(path)) {
+				if (
+					window.location.pathname.startsWith(path) ||
+					window.location.pathname === "/"
+				) {
 					showPadding = false;
 					return;
 				}
 			});
 
 			showFooterRoutes.forEach(path => {
-				if (window.location.pathname.startsWith(path)) {
+				if (
+					window.location.pathname.startsWith(path) ||
+					window.location.pathname === "/"
+				) {
 					showFooter = true;
 					return;
 				}

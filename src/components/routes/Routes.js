@@ -15,7 +15,6 @@ import withRoot from "./withRoot";
 import Container from "../elements/Container";
 import NotFound from "../common/NotFound";
 import Account from "../pages/account/Index";
-import Artists from "../pages/landing/Artists";
 import OrderList from "../pages/orders/List";
 import Order from "../pages/orders/Order";
 import FanHub from "../pages/fanhub/Index";
@@ -123,7 +122,6 @@ class Routes extends Component {
 							<Switch>
 								<Route exact path="/" component={Home} />
 								<Route exact path="/events" component={Home} />
-								<Route exact path="/artists" component={Artists} />
 								<Route exact path="/sign-up" component={Signup} />
 								<Route exact path="/login" component={Login} />
 								<Route exact path="/password-reset" component={PasswordReset} />
