@@ -15,6 +15,7 @@ import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import InputWithButton from "../../common/form/InputWithButton";
+import moment from "moment";
 
 const styles = theme => ({
 	root: {},
@@ -226,8 +227,13 @@ class CheckoutSelection extends Component {
 			return null; //Still loading this
 		}
 
-		return ticket_types.map(
-			({ id, name, status, ticket_pricing, increment, limit_per_person }) => {
+		let ticketTypeRendered = ticket_types.map(
+			({ id, name, status, ticket_pricing, increment, limit_per_person, start_date, end_date }) => {
+				let nowIsValidTime = moment().isBetween(moment(start_date), moment(end_date));
+				//Not in a valid date for this ticket_type
+				if (!nowIsValidTime) {
+					return;
+				}
 				// console.log("limit_per_person: ", limit_per_person);
 				let description = "";
 				let price = 0;
@@ -259,7 +265,14 @@ class CheckoutSelection extends Component {
 					/>
 				);
 			}
-		);
+		).filter(item => !!item);
+
+		if (!ticketTypeRendered.length) {
+			return (
+				<Typography variant="subheading">Tickets currently unavailable</Typography>
+			);
+		}
+		return ticketTypeRendered;
 	}
 
 	render() {
