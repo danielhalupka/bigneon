@@ -44,7 +44,7 @@ const OrgAdminList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="megaphone"
-				to={`/admin/marketing/`+user.currentOrganizationId}
+				to={`/admin/marketing/` + user.currentOrganizationId} //TODO remove org ID and load it on the component from `user` store
 			>
 				Marketing
 			</MenuItem>
@@ -59,8 +59,8 @@ const OrgAdminList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="controls"
-				to={`/admin/organizations/`+user.currentOrganizationId}
+				iconName="account"
+				to={`/admin/organizations/` + user.currentOrganizationId} //TODO remove org ID and load it on the component from `user` store
 			>
 				Settings
 			</MenuItem>

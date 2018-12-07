@@ -59,7 +59,7 @@ const OrgOwnerList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="controls"
+				iconName="account"
 				to={`/admin/organizations/`+user.currentOrganizationId}
 			>
 				Settings
