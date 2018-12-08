@@ -238,6 +238,7 @@ class EventsList extends Component {
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<EventSummaryCard
+							cancelled={!!cancelled_at}
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}

@@ -6,7 +6,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Collapse from "@material-ui/core/Collapse";
 
-import { fontFamilyDemiBold } from "../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import CheckBox from "../../../elements/form/CheckBox";
 import Card from "../../../elements/Card";
 import HorizontalBreakdownBar from "../../../elements/charts/HorizontalBreakdownBar";
@@ -101,6 +101,11 @@ const styles = theme => {
 		},
 		totalValue: {
 			fontSize: theme.typography.fontSize
+		},
+		cancelled: {
+			fontSize: theme.typography.fontSize * 2,
+			fontFamily: fontFamilyDemiBold,
+			color: secondaryHex
 		}
 	};
 };
@@ -131,7 +136,8 @@ const EventSummaryCard = props => {
 		totalSales,
 		isExpanded,
 		onExpandClick,
-		ticketTypes
+		ticketTypes,
+		cancelled
 	} = props;
 
 	return (
@@ -162,19 +168,25 @@ const EventSummaryCard = props => {
 						</div>
 						<div className={classes.row2}>
 							<div className={classes.statuses}>
-								<Grid container spacing={0}>
-									<Grid item xs={12} sm={12} md={6} lg={6}>
-										<CheckBox style={{ cursor: "text" }} active={isPublished}>
-											Published
-										</CheckBox>
-									</Grid>
+								{cancelled ? (
+									<Typography className={classes.cancelled}>
+										Cancelled
+									</Typography>
+								) : (
+									<Grid container spacing={0}>
+										<Grid item xs={12} sm={12} md={6} lg={6}>
+											<CheckBox style={{ cursor: "text" }} active={isPublished}>
+												Published
+											</CheckBox>
+										</Grid>
 
-									<Grid item xs={12} sm={12} md={6} lg={6}>
-										<CheckBox style={{ cursor: "text" }} active={isOnSale}>
-											On&nbsp;sale
-										</CheckBox>
+										<Grid item xs={12} sm={12} md={6} lg={6}>
+											<CheckBox style={{ cursor: "text" }} active={isOnSale}>
+												On&nbsp;sale
+											</CheckBox>
+										</Grid>
 									</Grid>
-								</Grid>
+								)}
 							</div>
 							<div className={classes.totalsContainer}>
 								<Total classes={classes} value={totalSold} color={"#707ced"}>
@@ -237,7 +249,9 @@ const EventSummaryCard = props => {
 								<Grid key={index} item xs={12} sm={6} lg={4}>
 									<TicketTypeSalesBarChart
 										name={ticketType.name}
-										totalRevenue={Math.floor(ticketType.sales_total_in_cents /100)}
+										totalRevenue={Math.floor(
+											ticketType.sales_total_in_cents / 100
+										)}
 										values={[
 											{
 												label: "Sold",
@@ -279,7 +293,8 @@ EventSummaryCard.propTypes = {
 	totalSales: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,
 	onExpandClick: PropTypes.func.isRequired,
-	ticketTypes: PropTypes.array.isRequired
+	ticketTypes: PropTypes.array.isRequired,
+	cancelled: PropTypes.bool
 };
 
 export default withStyles(styles)(EventSummaryCard);
