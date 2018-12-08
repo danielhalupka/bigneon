@@ -2,6 +2,7 @@ import { observable, computed, action } from "mobx";
 
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
+import user from "./user";
 
 const getEventFromId = (events, id) => {
 	const eventDetails = events.find(e => e.id === id);
@@ -21,8 +22,15 @@ class BoxOffice {
 
 	@action
 	refreshEvents() {
+		let organization_id = user.currentOrganizationId;
+
+		if (!organization_id) {
+			this.timeout = setTimeout(() => this.refreshEvents(), 500);
+			return;
+		}
+
 		Bigneon()
-			.events.index()
+			.organizations.events.index({ organization_id })
 			.then(response => {
 				const { data, paging } = response.data;
 				this.availableEvents = data;
@@ -39,7 +47,7 @@ class BoxOffice {
 	}
 
 	loadCachedCurrentEvent() {
-		let cachedActiveEventId = localStorage["boxOfficeActiveEventId"];
+		let cachedActiveEventId = localStorage.getItem("boxOfficeActiveEventId");
 		const activeEvent = getEventFromId(
 			this.availableEvents,
 			cachedActiveEventId
@@ -59,7 +67,7 @@ class BoxOffice {
 	setActiveEventId(id, reloadPage = false) {
 		this.activeEventId = id;
 
-		localStorage["boxOfficeActiveEventId"] = id;
+		localStorage.setItem("boxOfficeActiveEventId", id);
 
 		//If this is being called by the user selecting their event
 		if (reloadPage) {
