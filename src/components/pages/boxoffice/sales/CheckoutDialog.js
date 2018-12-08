@@ -392,7 +392,7 @@ class CheckoutDialog extends React.Component {
 						}}
 						error={errors.cashTendered}
 						value={cashTendered}
-						name="min_price"
+						name="tendered"
 						type="number"
 						onChange={e => this.setState({ cashTendered: e.target.value })}
 						onBlur={this.validateFields.bind(this)}
