@@ -182,7 +182,13 @@ class TicketSales extends Component {
 		return ticketTypeIds.map(id => {
 			const { name, available, ticket_pricing, ...rest } = ticketTypes[id];
 
-			const { price_in_cents } = ticket_pricing;
+			let disabled = false;
+			let price_in_cents = 0;
+			if (ticket_pricing) {
+				price_in_cents = ticket_pricing.price_in_cents;
+			} else {
+				disabled = true; //No pricing yet so ticket probably not available for sale yet
+			}
 
 			return (
 				<TicketRow
@@ -193,6 +199,7 @@ class TicketSales extends Component {
 					available={available}
 					priceInCents={price_in_cents}
 					value={selectedTickets[id]}
+					disabled={disabled}
 					onChange={value => {
 						this.setState(({ selectedTickets }) => {
 							return { selectedTickets: { ...selectedTickets, [id]: value } };
