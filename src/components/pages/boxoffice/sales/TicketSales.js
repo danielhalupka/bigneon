@@ -79,9 +79,15 @@ class TicketSales extends Component {
 
 	refreshHolds() {
 		const { activeEventId } = boxOffice;
+		let event_id = activeEventId;
+
+		if (!event_id) {
+			this.timeout = setTimeout(this.refreshHolds.bind(this), 500);
+			return;
+		}
 
 		Bigneon()
-			.events.holds.index({ event_id: activeEventId })
+			.events.holds.index({ event_id })
 			.then(response => {
 				const { data } = response.data;
 

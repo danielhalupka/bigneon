@@ -179,7 +179,7 @@ class User {
 	loadCachedOrganizationRoles() {
 		const availableOrgIds = Object.keys(this.organizationRoles);
 
-		let organizationId = localStorage["currentOrganizationId"];
+		let organizationId = localStorage.getItem("currentOrganizationId");
 		if (organizationId && availableOrgIds.includes(organizationId)) {
 			this.setCurrentOrganizationRoles(organizationId);
 		} else if (availableOrgIds.length > 0) {
@@ -195,7 +195,7 @@ class User {
 	setCurrentOrganizationRoles(id, reloadPage = false) {
 		this.currentOrganizationId = id;
 
-		localStorage["currentOrganizationId"] = id;
+		localStorage.setItem("currentOrganizationId", id);
 
 		//If this is being called by the user selecting their role, we need to reload the page so the content is related to that org
 		if (reloadPage) {
