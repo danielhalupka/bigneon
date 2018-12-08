@@ -13,6 +13,7 @@ import { validEmail, validPhone } from "../../../../../validators";
 import LocationInputGroup from "../../../../common/form/LocationInputGroup";
 import addressTypeFromGoogleResult from "../../../../../helpers/addressTypeFromGoogleResult";
 import Bigneon from "../../../../../helpers/bigneon";
+import removePhoneFormatting from "../../../../../helpers/removePhoneFormatting";
 
 const styles = theme => ({
 	paper: {
@@ -38,7 +39,7 @@ class OrganizationUpdateCard extends Component {
 			zip: "",
 			errors: {},
 			isSubmitting: false,
-			showApiKeys: false,
+			showApiKeys: false
 		};
 	}
 
@@ -101,8 +102,9 @@ class OrganizationUpdateCard extends Component {
 			return true;
 		}
 
-		const { name, email, address, phone, eventFee } = this.state;
+		const { name, email, address, eventFee } = this.state;
 		const { organizationId } = this.props;
+		const phone = removePhoneFormatting(this.state.phone);
 
 		const errors = {};
 
@@ -209,7 +211,7 @@ class OrganizationUpdateCard extends Component {
 			city,
 			state,
 			country,
-			zip,
+			zip
 		} = this.state;
 		const { organizationId } = this.props;
 
@@ -292,7 +294,7 @@ class OrganizationUpdateCard extends Component {
 			longitude = "",
 			phone,
 			errors,
-			isSubmitting,
+			isSubmitting
 		} = this.state;
 
 		const { organizationId } = this.props;
@@ -342,7 +344,7 @@ class OrganizationUpdateCard extends Component {
 							value={phone}
 							name="phone"
 							label="Phone number"
-							type="text"
+							type="phone"
 							onChange={e => this.setState({ phone: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
 						/>

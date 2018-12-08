@@ -15,6 +15,7 @@ import { validEmail, validPhone } from "../../../../validators";
 import Button from "../../../elements/Button";
 import cart from "../../../../stores/cart";
 import notifications from "../../../../stores/notifications";
+import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
 
 const styles = theme => ({
 	content: {
@@ -150,7 +151,8 @@ class CheckoutDialog extends React.Component {
 			return true;
 		}
 
-		const { firstName, lastName, email, phone } = this.state;
+		const { firstName, lastName, email } = this.state;
+		const phone = removePhoneFormatting(this.state.phone);
 
 		const errors = {};
 
@@ -317,7 +319,7 @@ class CheckoutDialog extends React.Component {
 								value={phone}
 								name="phone"
 								label="Phone number"
-								type="text"
+								type="phone"
 								onChange={e => this.setState({ phone: e.target.value })}
 								onBlur={this.validateFields.bind(this)}
 							/>

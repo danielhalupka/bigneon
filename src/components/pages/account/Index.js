@@ -13,6 +13,7 @@ import FormSubHeading from "../../elements/FormSubHeading";
 import Divider from "../../common/Divider";
 import ProfilePicture from "./ProfilePicture";
 import InputGroup from "../../common/form/InputGroup";
+import removePhoneFormatting from "../../../helpers/removePhoneFormatting";
 
 const styles = theme => ({
 	root: {},
@@ -91,7 +92,8 @@ class Account extends Component {
 			return true;
 		}
 
-		const { firstName, lastName, email, phone } = this.state;
+		const { firstName, lastName, email } = this.state;
+		const phone = removePhoneFormatting(this.state.phone);
 
 		const errors = {};
 
@@ -273,7 +275,7 @@ class Account extends Component {
 										value={phone}
 										name="phone"
 										label="Phone number"
-										type="text"
+										type="phone"
 										onChange={e => this.setState({ phone: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>

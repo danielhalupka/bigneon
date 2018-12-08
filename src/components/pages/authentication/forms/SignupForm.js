@@ -12,6 +12,7 @@ import { validEmail, validPhone } from "../../../../validators";
 import FacebookButton from "../social/FacebookButton";
 import Divider from "../../../common/Divider";
 import Bigneon from "../../../../helpers/bigneon";
+import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
 
 const styles = () => ({});
 
@@ -41,10 +42,11 @@ class SignupForm extends Component {
 			first_name,
 			last_name,
 			email,
-			phone,
 			password,
 			confirmPassword
 		} = this.state;
+
+		const phone = removePhoneFormatting(this.state.phone);
 
 		const errors = {};
 
@@ -242,7 +244,7 @@ class SignupForm extends Component {
 								value={phone}
 								name="phone"
 								label="Phone number"
-								type="text"
+								type="phone"
 								onChange={e => this.setState({ phone: e.target.value })}
 								onBlur={this.validateFields.bind(this)}
 							/>

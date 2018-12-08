@@ -14,6 +14,7 @@ import Bigneon from "../../../../helpers/bigneon";
 import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoogleResult";
 import { validPhone } from "../../../../validators";
 import PageHeading from "../../../elements/PageHeading";
+import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
 
 const styles = theme => ({
 	paper: {
@@ -67,7 +68,7 @@ class Venue extends Component {
 						state,
 						postal_code,
 						phone,
-						region_id,
+						region_id
 					} = response.data;
 
 					this.setState({
@@ -101,25 +102,28 @@ class Venue extends Component {
 				});
 		}
 
-		Bigneon().regions.index().then(response => {
-			const { data, paging } = response.data;//@TODO Implement pagination
-			this.setState({ regions: data });
-		}).catch(error => {
-			console.error(error);
-			let message = "Loading regions failed.";
-			if (
-				error.response &&
-				error.response.data &&
-				error.response.data.error
-			) {
-				message = error.response.data.error;
-			}
+		Bigneon()
+			.regions.index()
+			.then(response => {
+				const { data, paging } = response.data; //@TODO Implement pagination
+				this.setState({ regions: data });
+			})
+			.catch(error => {
+				console.error(error);
+				let message = "Loading regions failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
 
-			notifications.show({
-				message,
-				variant: "error"
+				notifications.show({
+					message,
+					variant: "error"
+				});
 			});
-		});
 		Bigneon()
 			.organizations.index()
 			.then(response => {
@@ -150,10 +154,27 @@ class Venue extends Component {
 			return null;
 		}
 
-		const { name, address, city, state, country, postal_code,  organizationId, phone, venueId } = this.state;
+		const {
+			name,
+			address,
+			city,
+			state,
+			country,
+			postal_code,
+			organizationId,
+			venueId
+		} = this.state;
+		const phone = removePhoneFormatting(this.state.phone);
 
 		const errors = {};
-		const required = ["name", "address", "city", "state", "country", "postal_code"];
+		const required = [
+			"name",
+			"address",
+			"city",
+			"state",
+			"country",
+			"postal_code"
+		];
 		required.forEach(field => {
 			if (!this.state[field]) {
 				errors[field] = `Missing ${field}.`;
@@ -167,7 +188,6 @@ class Venue extends Component {
 		// if (!address) {
 		// 	errors.address = "Missing address.";
 		// }
-
 
 		if (!venueId) {
 			if (!organizationId) {
@@ -373,7 +393,7 @@ class Venue extends Component {
 			postal_code = "",
 			latitude = "",
 			longitude = "",
-			showManualEntry,
+			showManualEntry
 		} = this.state;
 		const addressBlock = {
 			address,
@@ -418,7 +438,7 @@ class Venue extends Component {
 										value={phone}
 										name="phone"
 										label="Phone number"
-										type="text"
+										type="phone"
 										onChange={e => this.setState({ phone: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
 									/>

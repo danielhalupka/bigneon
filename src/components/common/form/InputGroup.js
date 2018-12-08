@@ -4,7 +4,43 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
+import MaskedInput from "react-text-mask";
+
 import FormatInputLabel from "../../elements/form/FormatInputLabel";
+
+const PhoneNumberInputMask = props => {
+	const { inputRef, ...other } = props;
+
+	return (
+		<MaskedInput
+			{...other}
+			ref={inputRef}
+			mask={[
+				"(",
+				/[1-9]/,
+				/\d/,
+				/\d/,
+				")",
+				" ",
+				/\d/,
+				/\d/,
+				/\d/,
+				"-",
+				/\d/,
+				/\d/,
+				/\d/,
+				/\d/
+			]}
+			placeholderChar={"\u2000"}
+			showMask
+			guide={false}
+		/>
+	);
+};
+
+PhoneNumberInputMask.propTypes = {
+	inputRef: PropTypes.func.isRequired
+};
 
 const styles = theme => {
 	return {
@@ -27,7 +63,7 @@ const InputGroup = props => {
 		name,
 		label,
 		placeholder,
-		type = "text",
+		type,
 		isSearch,
 		onChange,
 		onBlur,
@@ -41,6 +77,10 @@ const InputGroup = props => {
 	let inputPropClasses = {};
 	if (isSearch) {
 		inputPropClasses = { ...inputPropClasses, input: classes.search };
+	}
+
+	if (type === "phone") {
+		InputProps.inputComponent = PhoneNumberInputMask;
 	}
 
 	return (
@@ -76,7 +116,8 @@ const InputGroup = props => {
 };
 
 InputGroup.defaultProps = {
-	value: ""
+	value: "",
+	type: "text"
 };
 
 InputGroup.propTypes = {
