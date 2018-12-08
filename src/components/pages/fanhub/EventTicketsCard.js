@@ -16,6 +16,7 @@ import { fontFamilyDemiBold } from "../../styles/theme";
 import EventTicketRow from "./EventTicketRow";
 import CheckBox from "../../elements/form/CheckBox";
 import DateFlag from "../../elements/event/DateFlag";
+import SupportingArtistsLabel from "../events/SupportingArtistsLabel";
 
 const styles = theme => ({
 	cardContent: {
@@ -52,7 +53,8 @@ const styles = theme => ({
 		justifyContent: "space-between"
 	},
 	row2: {
-		display: "flex"
+		display: "flex",
+		flexDirection: "column"
 	},
 	row3: {
 		display: "flex",
@@ -81,6 +83,9 @@ const styles = theme => ({
 		textTransform: "uppercase",
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.8
+	},
+	artists: {
+		color: "#656D78"
 	},
 	ticketsSubheading: {
 		fontSize: theme.typography.fontSize * 0.8,
@@ -351,6 +356,7 @@ class EventTicketsCard extends Component {
 		//TODO show artists when added to api
 		//https://github.com/big-neon/bn-api/issues/572
 
+		console.log(artists);
 		return (
 			<Card variant="raisedLight">
 				<div className={classes.cardContent}>
@@ -383,6 +389,9 @@ class EventTicketsCard extends Component {
 						<div className={classes.row2}>
 							<Typography className={classes.venueName}>
 								{venue.name}
+							</Typography>
+							<Typography className={classes.artists}>
+								<SupportingArtistsLabel artists={artists} />
 							</Typography>
 						</div>
 
