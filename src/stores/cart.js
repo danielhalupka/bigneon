@@ -31,6 +31,9 @@ class Cart {
 	@observable
 	seconds_until_expiry = null;
 
+	@observable
+	latestEventId = null;
+
 	cartExpiryTicker = null;
 
 	startExpiryTicker() {
@@ -67,6 +70,11 @@ class Cart {
 				const { data } = response;
 				if (data) {
 					this.replaceCartData(data, onSuccess);
+
+					const latestEventId = localStorage.getItem("latestEventIdCart");
+					if (latestEventId) {
+						this.setLatestEventId(latestEventId);
+					}
 				}
 			})
 			.catch(error => {
@@ -102,6 +110,13 @@ class Cart {
 			this.seconds_until_expiry = null;
 		}
 		callback ? callback() : null;
+	}
+
+	@action
+	setLatestEventId(latestEventId) {
+		//This is required for users to be able to click on the cart link and go to the page where last were
+		this.latestEventId = latestEventId;
+		localStorage.setItem("latestEventIdCart", latestEventId);
 	}
 
 	@action

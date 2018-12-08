@@ -108,9 +108,11 @@ class CheckoutSelection extends Component {
 			const selectedTicketCount = ticketSelection[ticketTypeId];
 			if (selectedTicketCount && selectedTicketCount > 0) {
 				//Validate the user is buying in the correct increments
-				const { increment } = ticket_types.find(({ id }) => {
+				const ticketType = ticket_types.find(({ id }) => {
 					return id === ticketTypeId;
 				});
+
+				const increment = ticketType ? ticketType.increment : 1;
 
 				if (selectedTicketCount % increment !== 0) {
 					errors[ticketTypeId] = `Please order in increments of ${increment}`;
@@ -169,6 +171,7 @@ class CheckoutSelection extends Component {
 
 	onSubmit() {
 		const { id } = selectedEvent;
+		cart.setLatestEventId(id);
 		const { ticketSelection } = this.state;
 
 		this.submitAttempted = true;
@@ -227,49 +230,65 @@ class CheckoutSelection extends Component {
 			return null; //Still loading this
 		}
 
-		let ticketTypeRendered = ticket_types.map(
-			({ id, name, status, ticket_pricing, increment, limit_per_person, start_date, end_date }) => {
-				let nowIsValidTime = moment().isBetween(moment(start_date), moment(end_date));
-				//Not in a valid date for this ticket_type
-				if (!nowIsValidTime) {
-					return;
-				}
-				// console.log("limit_per_person: ", limit_per_person);
-				let description = "";
-				let price = 0;
-				if (ticket_pricing) {
-					price = ticket_pricing.price_in_cents / 100;
-					description = ticket_pricing.name;
-				} else {
-					description = "(Tickets currently unavailable)";
-				}
+		let ticketTypeRendered = ticket_types
+			.map(
+				({
+					id,
+					name,
+					status,
+					ticket_pricing,
+					increment,
+					limit_per_person,
+					start_date,
+					end_date
+				}) => {
+					let nowIsValidTime = moment().isBetween(
+						moment(start_date),
+						moment(end_date)
+					);
+					//Not in a valid date for this ticket_type
+					if (!nowIsValidTime) {
+						return;
+					}
+					// console.log("limit_per_person: ", limit_per_person);
+					let description = "";
+					let price = 0;
+					if (ticket_pricing) {
+						price = ticket_pricing.price_in_cents / 100;
+						description = ticket_pricing.name;
+					} else {
+						description = "(Tickets currently unavailable)";
+					}
 
-				return (
-					<TicketSelection
-						key={id}
-						name={name}
-						description={description}
-						available={!!ticket_pricing}
-						price={price}
-						error={errors[id]}
-						amount={ticketSelection[id]}
-						increment={increment}
-						limitPerPerson={limit_per_person}
-						onNumberChange={amount =>
-							this.setState(({ ticketSelection }) => {
-								ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
-								return { ticketSelection };
-							})
-						}
-						validateFields={this.validateFields.bind(this)}
-					/>
-				);
-			}
-		).filter(item => !!item);
+					return (
+						<TicketSelection
+							key={id}
+							name={name}
+							description={description}
+							available={!!ticket_pricing}
+							price={price}
+							error={errors[id]}
+							amount={ticketSelection[id]}
+							increment={increment}
+							limitPerPerson={limit_per_person}
+							onNumberChange={amount =>
+								this.setState(({ ticketSelection }) => {
+									ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
+									return { ticketSelection };
+								})
+							}
+							validateFields={this.validateFields.bind(this)}
+						/>
+					);
+				}
+			)
+			.filter(item => !!item);
 
 		if (!ticketTypeRendered.length) {
 			return (
-				<Typography variant="subheading">Tickets currently unavailable</Typography>
+				<Typography variant="subheading">
+					Tickets currently unavailable
+				</Typography>
 			);
 		}
 		return ticketTypeRendered;

@@ -37,14 +37,21 @@ const styles = theme => {
 };
 
 const CartMobileBottomBar = observer(({ classes }) => {
-	const { ticketCount, formattedExpiryTime } = cart;
+	const { ticketCount, formattedExpiryTime, latestEventId } = cart;
 	if (ticketCount < 1) {
 		return null;
 	}
 
+	let LinkContainer = latestEventId
+		? props => <Link {...props} />
+		: props => <div {...props} />;
+
 	return (
 		<Hidden smUp implementation="css">
-			<Link to="/cart" className={classes.link}>
+			<LinkContainer
+				to={`/events/${latestEventId}/tickets/confirmation`}
+				className={classes.link}
+			>
 				<div className={classes.bar}>
 					<span className={classes.iconLabelSpan}>
 						<ShoppingCartIcon className={classes.icon} />
@@ -63,7 +70,7 @@ const CartMobileBottomBar = observer(({ classes }) => {
 						</Typography>
 					</span>
 				</div>
-			</Link>
+			</LinkContainer>
 		</Hidden>
 	);
 });
