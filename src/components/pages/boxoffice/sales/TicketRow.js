@@ -55,6 +55,7 @@ const TicketRow = props => {
 		value,
 		onChange,
 		type,
+		disabled,
 		classes
 	} = props;
 
@@ -65,6 +66,14 @@ const TicketRow = props => {
 		{ flex: 1, textAlign: "center" },
 		{ flex: 2, textAlign: "center" }
 	];
+
+	let displayPrice = "";
+	if (!disabled) {
+		displayPrice =
+			type === "comp" || priceInCents === 0
+				? "Free"
+				: `$${(priceInCents / 100).toFixed(2)}`;
+	}
 
 	return (
 		<div className={classes.root}>
@@ -85,26 +94,28 @@ const TicketRow = props => {
 						</Typography>
 					</div>
 					<Typography className={classes.price} style={columnStyles[2]}>
-						{type === "comp" || priceInCents === 0
-							? "Free"
-							: `$${(priceInCents / 100).toFixed(2)}`}
+						{displayPrice}
 					</Typography>
 					<div style={columnStyles[3]}>
 						<div className={classes.verticalDivider} />
 					</div>
 
 					<div style={columnStyles[4]}>
-						<NumberSelect
-							onIncrement={() => onChange(value ? value + 1 : 1)}
-							onDecrement={() => {
-								const newValue = value ? value - 1 : 0;
-								if (newValue >= 0) {
-									onChange(newValue);
-								}
-							}}
-						>
-							{value}
-						</NumberSelect>
+						{disabled ? (
+							<Typography>Unavailable</Typography>
+						) : (
+							<NumberSelect
+								onIncrement={() => onChange(value ? value + 1 : 1)}
+								onDecrement={() => {
+									const newValue = value ? value - 1 : 0;
+									if (newValue >= 0) {
+										onChange(newValue);
+									}
+								}}
+							>
+								{value}
+							</NumberSelect>
+						)}
 					</div>
 				</div>
 			</Card>
@@ -120,6 +131,7 @@ TicketRow.propTypes = {
 	priceInCents: PropTypes.number.isRequired,
 	value: PropTypes.number,
 	onChange: PropTypes.func.isRequired,
+	disabled: PropTypes.bool,
 	type: PropTypes.oneOf(["ticket", "discount", "comp"]).isRequired
 };
 
