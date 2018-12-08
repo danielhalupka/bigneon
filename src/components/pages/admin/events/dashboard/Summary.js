@@ -97,27 +97,29 @@ class Summary extends Component {
 			event: null,
 			activeNumbersCard: null,
 			chartValues: [],
-			last30Days: []
+			dayStats: []
 		};
 	}
 
 	componentDidMount() {
 		//TODO make bn-api issue for date required
-		this.setState({ chartValues: this.getDailyBreakdownValues() });
-
+		
 		this.loadEventDetails(this.props.match.params.id);
+
 	}
 
 	loadEventDetails(eventId) {
 		Bigneon()
 			.events.dashboard({ id: eventId })
 			.then(response => {
-				const { last_30_days, event } = response.data;
+				const { day_stats, event } = response.data;
 
 				this.setState({
 					event,
-					last30Days: last_30_days
+					dayStats: day_stats,
+					chartValues: this.getDailyBreakdownValues(day_stats)
 				});
+
 			})
 			.catch(error => {
 				console.error(error);
@@ -139,18 +141,14 @@ class Summary extends Component {
 			});
 	}
 
-	getDailyBreakdownValues() {
+	getDailyBreakdownValues(dayStats) {
 		let result = [];
-
-		const { last30Days } = this.state;
-
-		for (let index = 0; index < last30Days.length; index++) {
-			result.push({
-				x: moment(last30Days[index].date).format("D"),
-				y: last30Days[index].sales / 100,
-				tooltipTitle: `$${Math.floor(last30Days[index].sales / 100)}`,
-				tooltipText: `${last30Days[index].tickets_sold} Tickets`
-			});
+		for (let index = 0; index < dayStats.length; index++) {			result.push({
+			x: moment(dayStats[index].date).format("D"),
+			y: dayStats[index].revenue_in_cents / 100,
+			tooltipTitle: `$${Math.floor(dayStats[index].revenue_in_cents / 100)}`,
+			tooltipText: `${dayStats[index].tickets_sold} Tickets`
+		});
 		}
 
 		return result;
