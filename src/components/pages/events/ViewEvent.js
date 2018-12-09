@@ -163,6 +163,79 @@ class ViewEvent extends Component {
 		);
 	}
 
+	get getDetailPageButtonCta() {
+		const {
+			event
+		} = selectedEvent;
+		switch(event.override_status){
+			case "PurchaseTickets":
+				return { ctaText: "Purchase Tickets", enabled: true }
+			case "SoldOut":
+				return { ctaText: "Sold Out", enabled: (event.is_external ? false : true) }
+			case "OnSaleSoon":
+				return { ctaText: "On Sale Soon", enabled: (event.is_external ? false : true) }
+			case "TicketsAtTheDoor":
+				return { ctaText: "Tickets At The Door", enabled: (event.is_external ? false : true) }
+			case "UseAccessCode":
+				return { ctaText: "Use Access Code", enabled: true }
+			case "Free":
+				return { ctaText: "Free", enabled: true }
+			case "Rescheduled":
+				return { ctaText: "Rescheduled", enabled: false }
+			case "Cancelled":
+				return { ctaText: "Cancelled", enabled: false }
+			case "OffSale":
+				return { ctaText: "Off-Sale", enabled: false }
+			case "Ended":
+				return { ctaText: "Sale Ended", enabled: false }
+			default:
+				return { ctaText: "Purchase Tickets", enabled: true }
+		}
+	}
+
+	get getDetailPageButton(){
+		const { classes } = this.props;
+		const {
+			event,
+			id
+		} = selectedEvent;
+		const {
+			is_external,
+			external_url
+		} = event;
+		
+		const {
+			ctaText,
+			enabled
+		} = this.getDetailPageButtonCta;
+
+		if(!enabled){
+			return (
+				<Button className={classes.callToAction}>
+					{ctaText}
+				</Button>
+			)
+		}
+		if(is_external){
+			return (
+				<a href={external_url} target="_blank">
+					<Button className={classes.callToAction} variant={"callToAction"}>
+						{ctaText}
+					</Button>
+				</a>
+			)
+		} else {
+			return (
+				<Link to={`/events/${id}/tickets`}>
+					<Button className={classes.callToAction} variant={"callToAction"}>
+						{ctaText}
+					</Button>
+				</Link>
+			)
+		}
+
+	}
+
 	render() {
 		const { classes } = this.props;
 		const {
@@ -173,7 +246,7 @@ class ViewEvent extends Component {
 			id,
 			ticket_types
 		} = selectedEvent;
-
+		
 		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
@@ -191,9 +264,11 @@ class ViewEvent extends Component {
 			promo_image_url,
 			displayDoorTime,
 			displayShowTime,
-			eventStartDateMoment
+			eventStartDateMoment,
+			is_external,
+			external_url
 		} = event;
-
+		
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
@@ -275,12 +350,8 @@ class ViewEvent extends Component {
 							</Typography>
 						);
 					})}
-					<Link to={`/events/${id}/tickets`}>
-						<Button className={classes.callToAction} variant="callToAction">
-							Tickets
-						</Button>
-					</Link>
-
+					{this.getDetailPageButton}
+						
 					<div className={classes.socialLinks}>
 						<SocialIconLink
 							color="black"
