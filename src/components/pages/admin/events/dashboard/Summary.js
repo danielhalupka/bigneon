@@ -147,7 +147,7 @@ class Summary extends Component {
 			x: moment(dayStats[index].date).format("D"),
 			y: dayStats[index].revenue_in_cents / 100,
 			tooltipTitle: `$${Math.floor(dayStats[index].revenue_in_cents / 100)}`,
-			tooltipText: `${dayStats[index].tickets_sold} Tickets`
+			tooltipText: `${dayStats[index].ticket_sales} Tickets`
 		});
 		}
 
