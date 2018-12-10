@@ -38,7 +38,7 @@ class LocationInputGroup extends React.Component {
 			onLatLngResult,
 			onFullResult,
 			onError
-		} = this.props;
+		} = this.props;  
 
 		const { showGoogle } = this.state;
 
@@ -99,8 +99,10 @@ class LocationInputGroup extends React.Component {
 					onChange={onAddressChange}
 					onSelect={this.onSelect.bind(this)}
 					onError={(e) => {
-						onError(e);
-						this.setState({ showGoogle: false });
+						if (e !== "ZERO_RESULTS") {
+							onError(e);
+							this.setState({ showGoogle: false, overrideManualEntry: true });
+						}
 					}}
 				>
 					{({
@@ -172,7 +174,7 @@ class LocationInputGroup extends React.Component {
 	}
 
 	render() {
-		const { showGoogle, overrideManualEntry } = this.state;
+		const { overrideManualEntry } = this.state;
 		const { showManualEntry } = this.props;
 		return (
 			<div>
