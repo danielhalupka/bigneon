@@ -46,6 +46,14 @@ const CartMobileBottomBar = observer(({ classes }) => {
 		? props => <Link {...props} />
 		: props => <div {...props} />;
 
+	//Hide on pages that it's not needed
+	if (
+		window.location.pathname.endsWith("/tickets") ||
+		window.location.pathname.endsWith("/tickets/confirmation")
+	) {
+		return null;
+	}
+
 	return (
 		<Hidden smUp implementation="css">
 			<LinkContainer
