@@ -59,7 +59,7 @@ class InviteAccept extends Component {
 				});
 
 				localStorage.removeItem("security_token");
-				this.props.history.push(`/dashboard`);
+				this.props.history.push(`/admin/events`);
 			})
 			.catch(error => {
 				console.error(error);
