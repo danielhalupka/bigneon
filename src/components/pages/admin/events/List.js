@@ -242,6 +242,7 @@ class EventsList extends Component {
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}
+							venueName={venue.name || "Unknown Venue"}
 							eventDate={moment
 								.utc(event.event_start)
 								.format("dddd, MMMM Do YYYY")}

@@ -125,6 +125,7 @@ const EventSummaryCard = props => {
 		id,
 		imageUrl,
 		name,
+		venueName,
 		menuButton,
 		isPublished,
 		isOnSale,
@@ -160,7 +161,7 @@ const EventSummaryCard = props => {
 									{name}
 								</Typography>
 								<Typography className={classes.venueName} variant="subheading">
-									Venue name
+									{venueName}
 								</Typography>
 								<Typography variant="caption">{eventDate}</Typography>
 							</div>
@@ -282,6 +283,7 @@ EventSummaryCard.propTypes = {
 	id: PropTypes.string.isRequired,
 	imageUrl: PropTypes.string,
 	name: PropTypes.string.isRequired,
+	venueName: PropTypes.string.isRequired,
 	eventDate: PropTypes.string.isRequired,
 	menuButton: PropTypes.element.isRequired,
 	isPublished: PropTypes.bool.isRequired,
