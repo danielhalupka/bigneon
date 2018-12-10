@@ -11,10 +11,55 @@ import notifications from "../../../../../stores/notifications";
 import { validEmail } from "../../../../../validators";
 import Bigneon from "../../../../../helpers/bigneon";
 
+import { fontFamilyDemiBold, primaryHex } from "../../../../styles/theme";
+import OrgUserRow from "./OrgUserRow";
+
+const imageSize = 40;
+
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	content: {
+		padding: theme.spacing.unit * 6,
+		paddingLeft: theme.spacing.unit * 8,
+		paddingRight: theme.spacing.unit * 8
+	},
+	spacer: {
+		marginTop: theme.spacing.unit * 4
+	},
+	heading: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.95
+	},
+	itemText: {
+		lineHeight: 0.5
+	},
+	nameProfileImage: {
+		display: "flex",
+		alignItems: "center"
+	},
+	profileImageBackground: {
+		width: imageSize,
+		height: imageSize,
+		borderRadius: 100,
+		backgroundSize: "cover",
+		backgroundRepeat: "no-repeat",
+		backgroundPosition: "50% 50%"
+	},
+	missingProfileImageBackground: {
+		backgroundColor: primaryHex,
+		width: imageSize,
+		height: imageSize,
+		borderRadius: 100,
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center"
+	},
+	missingProfileImage: {
+		width: imageSize * 0.45,
+		height: "auto"
 	}
 });
 
@@ -35,7 +80,16 @@ class InviteUserCard extends Component {
 	}
 
 	loadOrgMembers() {
-		//TODO load orgMembers from api
+		Bigneon().organizations.users.index({ organization_id: this.props.organizationId }).then(response => {
+			const { data, paging } = response.data; //@TODO Implement pagination
+			this.setState({ orgMembers: data })
+		}).catch(error => {
+			console.error(error);
+			notifications.show({
+				message: "Could not load members",
+				variant: "error"
+			});
+		});
 	}
 
 	validateFields() {
@@ -107,37 +161,77 @@ class InviteUserCard extends Component {
 		const { classes } = this.props;
 
 		return (
-			<Card className={classes.paper}>
-				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<CardContent>
-						<InputGroup
-							error={errors.email}
-							value={email}
-							name="email"
-							label="Member invite email address"
-							type="email"
-							onChange={e => this.setState({ email: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
+			<div>
+				<Card className={classes.paper}>
+					<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
+						<CardContent>
+							<InputGroup
+								error={errors.email}
+								value={email}
+								name="email"
+								label="Member invite email address"
+								type="email"
+								onChange={e => this.setState({ email: e.target.value })}
+								onBlur={this.validateFields.bind(this)}
+							/>
 
-						{orgMembers.map(({ id, first_name, last_name }) => (
-							<Typography key={id} variant="body1">
-								{first_name} {last_name}
+
+					
+						</CardContent>
+						<CardActions>
+							<Button
+								disabled={isSubmitting}
+								type="submit"
+								style={{ marginRight: 10 }}
+								variant="callToAction"
+							>
+								{isSubmitting ? "Inviting..." : "Invite user"}
+							</Button>
+						</CardActions>
+					</form>
+				</Card>
+
+				<Card>
+					<OrgUserRow>
+						<Typography className={classes.heading}>Name</Typography>
+						<Typography className={classes.heading}>Email</Typography>
+						<Typography className={classes.heading}>Role</Typography>
+					</OrgUserRow>
+					{orgMembers.map(({ id, first_name, last_name, email, is_org_owner, thumb_profile_pic_url }) => (
+						<OrgUserRow key={id}> 
+							<div className={classes.nameProfileImage}>
+								{thumb_profile_pic_url ? (
+									<div
+										className={classes.profileImageBackground}
+										style={{
+											backgroundImage: `url(${thumb_profile_pic_url})`
+										}}
+									/>
+								) : (
+									<div className={classes.missingProfileImageBackground}>
+										<img
+											className={classes.missingProfileImage}
+											src={"/images/profile-pic-placeholder-white.png"}
+											alt={`${first_name} ${last_name}`}
+										/>
+									</div>
+								)}
+										&nbsp;&nbsp;
+								<Typography  className={classes.itemText}>
+									{first_name} {last_name}
+								</Typography>
+							</div>
+							<Typography className={classes.itemText}>
+								{email}
 							</Typography>
-						))}
-					</CardContent>
-					<CardActions>
-						<Button
-							disabled={isSubmitting}
-							type="submit"
-							style={{ marginRight: 10 }}
-							variant="callToAction"
-						>
-							{isSubmitting ? "Inviting..." : "Invite user"}
-						</Button>
-					</CardActions>
-				</form>
-			</Card>
+							<Typography className={classes.itemText}>
+								{ is_org_owner ? "Owner" : "Member" }
+							</Typography>
+						</OrgUserRow>
+							
+					))}
+				</Card>
+			</div>
 		);
 	}
 }
