@@ -41,6 +41,7 @@ import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List
 import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
 import AdminFanList from "../pages/admin/fans/Index";
+import AdminFan from "../pages/admin/fans/Fan";
 import AdminGuestList from "../pages/admin/events/guests/List";
 import AdminMarketing from "../pages/admin/marketing/Index";
 
@@ -184,6 +185,12 @@ class Routes extends Component {
 								component={AdminFanList}
 								isAuthenticated={isAuthenticated}
 							/>
+              <PrivateRoute
+								exact
+								path="/admin/fans/:id"
+								component={AdminFan}
+								isAuthenticated={isAuthenticated}
+              />
 							<PrivateRoute
 								exact
 								path="/admin/organizations"
@@ -293,7 +300,6 @@ class Routes extends Component {
 								component={WidgetLinkBuilder}
 								isAuthenticated={isAuthenticated}
 							/>
-
 							{/* Box office */}
 							<PrivateRoute
 								exact
