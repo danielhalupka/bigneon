@@ -98,7 +98,6 @@ class Cart {
 
 	replaceCartData(data, callback) {
 		const { id, items, total_in_cents, seconds_until_expiry } = data;
-
 		this.id = id;
 		this.items = items;
 		this.total_in_cents = total_in_cents;
@@ -229,7 +228,8 @@ class Cart {
 				quantity,
 				ticket_pricing_id,
 				ticket_type_id,
-				unit_price_in_cents
+				unit_price_in_cents,
+				description
 			} = item;
 
 			orderTotalInCents = orderTotalInCents + quantity * unit_price_in_cents;
@@ -241,14 +241,16 @@ class Cart {
 				feeItemList.push({
 					id,
 					quantity,
-					pricePerTicketInCents: unit_price_in_cents
+					pricePerTicketInCents: unit_price_in_cents,
+					description
 				});
 			} else {
 				ticketItemList.push({
 					id,
 					quantity,
 					ticketTypeId: ticket_type_id, //The user will have to get the display name using this ID
-					pricePerTicketInCents: unit_price_in_cents
+					pricePerTicketInCents: unit_price_in_cents,
+					description
 				});
 			}
 		});

@@ -206,22 +206,21 @@ class CheckoutConfirmation extends Component {
 	}
 
 	renderTickets() {
-		const { ticket_types } = selectedEvent;
 		const { classes } = this.props;
-		const { items } = cart;
+		const { cartSummary } = cart;
 
-		if (!items) {
+		if (!cartSummary) {
 			return null;
 		}
 
-		return items.map(item => {
+		const { ticketItemList } = cartSummary;
+
+		return ticketItemList.map(item => {
 			const {
 				id,
 				item_type,
-				unit_price_in_cents,
+				pricePerTicketInCents,
 				quantity,
-				ticket_type_id,
-				ticket_pricing_id,
 				description
 			} = item;
 
@@ -233,8 +232,8 @@ class CheckoutConfirmation extends Component {
 				<div key={id}>
 					<TicketLineEntry
 						col1={`${quantity} x ${description}`}
-						col2={`$ ${(unit_price_in_cents / 100).toFixed(2)}`}
-						col3={`$ ${((unit_price_in_cents / 100) * quantity).toFixed(2)}`}
+						col2={`$ ${(pricePerTicketInCents / 100).toFixed(2)}`}
+						col3={`$ ${((pricePerTicketInCents / 100) * quantity).toFixed(2)}`}
 						classes={classes}
 					/>
 					<Divider style={{ marginTop: 15 }} />
@@ -245,8 +244,14 @@ class CheckoutConfirmation extends Component {
 
 	renderTotals() {
 		const { classes } = this.props;
-		const { tickets, id } = selectedEvent;
-		const { fees, total_in_cents } = cart;
+		const { id } = selectedEvent;
+		const { cartSummary } = cart;
+
+		if (!cartSummary) {
+			return null;
+		}
+
+		const { orderTotalInCents, serviceFeesInCents } = cartSummary;
 
 		return (
 			<div>
@@ -257,14 +262,14 @@ class CheckoutConfirmation extends Component {
 						</Link>
 					}
 					col2={<span className={classes.subTotal}>Service fees:</span>}
-					col3={`$ ${fees}`}
+					col3={`$${(serviceFeesInCents / 100).toFixed(2)}`}
 					classes={classes}
 				/>
 
 				<TicketLineTotal
 					col1={null}
 					col2={<span className={classes.subTotal}>Order total:</span>}
-					col3={`$${total_in_cents ? (total_in_cents / 100).toFixed(2) : 0}`}
+					col3={`$${(orderTotalInCents / 100).toFixed(2)}`}
 					classes={classes}
 				/>
 
@@ -276,9 +281,9 @@ class CheckoutConfirmation extends Component {
 	render() {
 		const { classes } = this.props;
 
-		const { fees, total_in_cents, formattedExpiryTime } = cart;
+		const { total_in_cents, formattedExpiryTime } = cart;
 
-		const { event, venue, artists, organization, id } = selectedEvent;
+		const { event, artists, id } = selectedEvent;
 
 		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
