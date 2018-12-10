@@ -321,9 +321,6 @@ class EventUpdate {
 	}
 
 	async saveArtists(artistsToSave) {
-		console.log("to save: ");
-		console.log(JSON.stringify({ event_id: this.id, artists: artistsToSave }));
-
 		return new Promise(resolve => {
 			Bigneon()
 				.events.artists.update({ event_id: this.id, artists: artistsToSave })

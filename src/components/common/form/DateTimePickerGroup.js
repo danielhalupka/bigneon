@@ -1,101 +1,250 @@
-//TODO issue created to remove this picker and place a simple text based one/
-//https://github.com/big-neon/bn-web/issues/316
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { DateTimePicker, TimePicker, DatePicker } from "material-ui-pickers";
-import { withStyles } from "@material-ui/core/styles";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
 import moment from "moment";
+import MaskedInput from "react-text-mask";
+import InputGroup from "./InputGroup";
 
-const styles = theme => {
-	return {
-		formControl: {
-			width: "100%"
-		}
-	};
+const formats = {
+	time: "HH:mm",
+	date: "MM/DD/YYYY",
+	"date-time": "MM/DD/YYYY HH:mm"
 };
 
-const DateTimePickerGroup = props => {
-	const {
-		type,
-		error,
-		value,
-		name,
-		label,
-		placeholder,
-		onChange,
-		onBlur,
-		onFocus,
-		minDate,
-		format,
-		margin
-	} = props;
+//Strict number masks
+const strictMasks = {
+	time: [
+		//Hour
+		/[0-2]/,
+		/[0-9]/,
+		":",
+		//Minute
+		/[0-5]/,
+		/[0-9]/
+	],
+	date: [
+		//Month
+		/[0-1]/,
+		/[0-9]/,
+		"/",
+		//Day
+		/[0-3]/,
+		/[0-9]/,
+		"/",
+		//Year
+		/[0-2]/,
+		/[0-9]/,
+		/[0-9]/,
+		/[0-9]/
+	],
+	"date-time": [
+		//Month
+		/[0-1]/,
+		/[0-9]/,
+		"/",
+		//Day
+		/[0-3]/,
+		/[0-9]/,
+		"/",
+		//Year
+		/[0-2]/,
+		/[0-9]/,
+		/[0-9]/,
+		/[0-9]/,
 
-	const { classes } = props;
+		" ",
 
-	//Get tomorrows date at 12pm as default
-	const tomorrow = moment.utc().add(1, "days");
-	tomorrow.set({ hour: 12, minute: 0, second: 0 });
+		//Hour
+		/[0-2]/,
+		/[0-9]/,
+		":",
+		//Minute
+		/[0-5]/,
+		/[0-9]/
+	]
+};
 
-	//If there is no date chosen yet and they click it for the first time set it as the current time
-	const onFocusOverride = value ? onFocus : () => onChange(tomorrow);
+const looseMasks = {
+	time: [
+		//Hour
+		/\d/,
+		/\d/,
+		":",
+		//Minute
+		/\d/,
+		/\d/
+	],
+	date: [
+		//Month
+		/\d/,
+		/\d/,
+		"/",
+		//Day
+		/\d/,
+		/\d/,
+		"/",
+		//Year
+		/\d/,
+		/\d/,
+		/\d/,
+		/\d/
+	],
+	"date-time": [
+		//Month
+		/\d/,
+		/\d/,
+		"/",
+		//Day
+		/\d/,
+		/\d/,
+		"/",
+		//Year
+		/\d/,
+		/\d/,
+		/\d/,
+		/\d/,
+		" ",
+		//Hour
+		/\d/,
+		/\d/,
+		":",
+		//Minute
+		/\d/,
+		/\d/
+	]
+};
 
-	//Certain pickers won't accept some proptypes so we skip them
-	let additionalProps = {};
-	let Picker;
-	let formatOverride = format;
-	switch (type) {
-		case "date-time":
-			Picker = DateTimePicker;
-			additionalProps = { animateYearScrolling: false };
-			break;
-		case "time":
-			Picker = TimePicker;
-			break;
-		case "date":
-			formatOverride = "MM/DD/YYYY";
-			Picker = DatePicker;
-			break;
-	}
+const defaultMaskProps = {
+	//placeholderChar={"\u2000"}
+	showMask: true,
+	guide: false,
+	keepCharPositions: true
+};
 
-	if (minDate) {
-		additionalProps.minDate = minDate;
-	}
+const DateInputMask = props => {
+	const { inputRef, ...other } = props;
 
 	return (
-		<FormControl
-			className={classes.formControl}
-			error
-			aria-describedby={`%${name}-error-text`}
-		>
-			<Picker
-				id={name}
-				error={!!error}
-				label={label}
-				value={value ? value : null}
-				onChange={onChange}
-				margin={margin}
-				onBlur={onBlur}
-				onFocus={onFocusOverride}
-				placeholder={placeholder || formatOverride}
-				format={formatOverride}
-				keyboard
-				{...additionalProps}
-				keyboardIcon={null}
-			/>
-
-			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
-		</FormControl>
+		<MaskedInput
+			{...other}
+			ref={inputRef}
+			mask={strictMasks.date}
+			{...defaultMaskProps}
+		/>
 	);
 };
 
+const DateTimeInputMask = props => {
+	const { inputRef, ...other } = props;
+
+	return (
+		<MaskedInput
+			{...other}
+			ref={inputRef}
+			mask={strictMasks["date-time"]}
+			{...defaultMaskProps}
+		/>
+	);
+};
+
+const TimeInputMask = props => {
+	const { inputRef, ...other } = props;
+
+	return (
+		<MaskedInput
+			{...other}
+			ref={inputRef}
+			mask={strictMasks.time}
+			{...defaultMaskProps}
+		/>
+	);
+};
+
+class DateTimePickerGroup extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			value: "",
+			inFocus: false
+		};
+
+		this.onChange = this.onChange.bind(this);
+		this.onFocus = this.onFocus.bind(this);
+		this.onBlur = this.onBlur.bind(this);
+	}
+
+	componentDidUpdate(prevProps) {
+		const { value, type } = this.props;
+		if (value !== prevProps.value && !this.state.value) {
+			const stringValue = moment(value).format(formats[type]);
+			this.setState({ value: stringValue });
+		}
+	}
+
+	onChange(e) {
+		this.setState({ value: e.target.value });
+
+		const { onChange, type } = this.props;
+
+		const date = moment.utc(e.target.value, formats[type]);
+
+		if (date.isValid()) {
+			onChange(date);
+		} else {
+			//onChange(null);
+		}
+	}
+
+	onFocus() {
+		this.setState({ inFocus: true });
+		const { onFocus } = this.props;
+		onFocus ? onFocus() : null;
+	}
+
+	onBlur() {
+		this.setState({ inFocus: false });
+		const { onBlur } = this.props;
+		onBlur ? onBlur() : null;
+	}
+
+	render() {
+		const { type, error, name, label, placeholder } = this.props;
+
+		const { value } = this.state;
+
+		let maskComponent;
+
+		switch (type) {
+			case "date-time":
+				maskComponent = DateTimeInputMask;
+				break;
+			case "time":
+				maskComponent = TimeInputMask;
+				break;
+			case "date":
+				maskComponent = DateInputMask;
+				break;
+		}
+
+		return (
+			<InputGroup
+				id={name}
+				name={name}
+				error={error}
+				label={label}
+				value={value}
+				onChange={this.onChange}
+				onFocus={this.onFocus}
+				onBlur={this.onBlur}
+				placeholder={placeholder || formats[type]}
+				InputProps={{ inputComponent: maskComponent }}
+			/>
+		);
+	}
+}
+
 DateTimePickerGroup.defaultProps = {
-	minDate: null,
-	type: "date-time",
-	format: "MM/DD/YYYY hh:mm",
-	margin: "normal"
+	type: "date-time"
 };
 
 DateTimePickerGroup.propTypes = {
@@ -107,10 +256,7 @@ DateTimePickerGroup.propTypes = {
 	placeholder: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
-	onFocus: PropTypes.func,
-	minDate: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-	format: PropTypes.string,
-	margin: PropTypes.string
+	onFocus: PropTypes.func
 };
 
-export default withStyles(styles)(DateTimePickerGroup);
+export default DateTimePickerGroup;

@@ -82,7 +82,13 @@ const formatDataForSaving = (event, organizationId) => {
 	};
 
 	if (eventDate) {
-		//TODO eventDate = eventDate + show time and door time need evenData added to them
+		//eventDate = eventDate + show time and door time need evenData added to them
+		eventDate.set({
+			hour: showTime.get("hour"),
+			minute: showTime.get("minute"),
+			second: showTime.get("second")
+		});
+
 		eventDetails.event_start = moment
 			.utc(eventDate)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
@@ -367,6 +373,7 @@ class Details extends Component {
 						label="Event date"
 						onChange={eventDate => {
 							this.changeDetails({ eventDate });
+							console.log("eventDate: ", eventDate.format());
 							//TODO add this check back when possible to change the end date of a ticket if it's later than the event date
 							//const tickets = this.state.tickets;
 							// if (tickets.length > 0) {
