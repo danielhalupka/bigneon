@@ -33,8 +33,8 @@ class AddressBlock extends Component {
 			state: "",
 			country: "",
 			zip: "",
-			latitude: "",
-			longitude: ""
+			latitude: null,
+			longitude: null
 		};
 	}
 
@@ -185,22 +185,26 @@ class AddressBlock extends Component {
 					placeholder={"Zip"}
 				/>
 				<InputGroup
-					value={latitude}
+					value={latitude || ""}
 					error={errors.latitude}
 					label="Latitude"
 					name={"latitude"}
 					onChange={e => {
-						this.setValue("latitude", e.target.value);
+						let value = e.target.value.trim();
+						value = Number(value) || null;
+						this.setValue("latitude", value);
 					}}
 					placeholder={"Latitude"}
 				/>
 				<InputGroup
-					value={longitude}
+					value={longitude || ""}
 					error={errors.longitude}
 					label="Longitude"
 					name={"longitude"}
 					onChange={e => {
-						this.setValue("longitude", e.target.value);
+						let value = e.target.value.trim();
+						value = Number(value) || null;
+						this.setValue("longitude", value);
 					}}
 					placeholder={"Longitude"}
 				/>

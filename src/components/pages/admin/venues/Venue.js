@@ -3,6 +3,7 @@ import { Typography, withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 
 import InputGroup from "../../../common/form/InputGroup";
@@ -15,11 +16,19 @@ import addressTypeFromGoogleResult from "../../../../helpers/addressTypeFromGoog
 import { validPhone } from "../../../../validators";
 import PageHeading from "../../../elements/PageHeading";
 import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
+import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
 
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	venueImage: {
+		width: "100%",
+		height: 300,
+		backgroundRepeat: "no-repeat",
+		backgroundSize: "50% 50%",
+		borderRadius: theme.shape.borderRadius
 	}
 });
 
@@ -36,6 +45,7 @@ class Venue extends Component {
 		this.state = {
 			venueId,
 			regionId: "",
+			imageUrl: "",
 			name: "",
 			address: "",
 			city: "",
@@ -68,7 +78,8 @@ class Venue extends Component {
 						state,
 						postal_code,
 						phone,
-						region_id
+						region_id,
+						promo_image_url,
 					} = response.data;
 
 					this.setState({
@@ -79,7 +90,8 @@ class Venue extends Component {
 						state: state || "",
 						postal_code: postal_code || "",
 						phone: phone || "",
-						regionId: region_id || ""
+						regionId: region_id || "",
+						imageUrl: promo_image_url
 					});
 				})
 				.catch(error => {
@@ -148,6 +160,25 @@ class Venue extends Component {
 			});
 	}
 
+	uploadWidget() {
+		cloudinaryWidget(
+			result => {
+				const imgResult = result[0];
+				const { secure_url } = imgResult;
+				this.setState({ imageUrl: secure_url });
+			},
+			error => {
+				console.error(error);
+
+				notifications.show({
+					message: "Image failed to upload.",
+					variant: "error"
+				});
+			},
+			["venue-images"]
+		);
+	}
+
 	validateFields() {
 		//Don't validate every field if the user has not tried to submit at least once
 		if (!this.submitAttempted) {
@@ -203,6 +234,7 @@ class Venue extends Component {
 
 		this.setState({ errors });
 
+		console.log(errors);
 		if (Object.keys(errors).length > 0) {
 			return false;
 		}
@@ -284,8 +316,9 @@ class Venue extends Component {
 			country,
 			place_id,
 			postal_code,
-			latitude,
-			longitude
+			latitude = null,
+			longitude = null,
+			imageUrl
 		} = this.state;
 
 		const venueDetails = {
@@ -299,7 +332,8 @@ class Venue extends Component {
 			postal_code,
 			google_place_id: place_id,
 			latitude,
-			longitude
+			longitude,
+			promo_image_url: imageUrl
 		};
 
 		//If we're updating an existing venue
@@ -381,6 +415,7 @@ class Venue extends Component {
 		const {
 			venueId,
 			regionId,
+			imageUrl,
 			name,
 			phone,
 			organizations,
@@ -391,8 +426,8 @@ class Venue extends Component {
 			state = "",
 			country = "",
 			postal_code = "",
-			latitude = "",
-			longitude = "",
+			latitude = null,
+			longitude = null,
 			showManualEntry
 		} = this.state;
 		const addressBlock = {
@@ -405,7 +440,6 @@ class Venue extends Component {
 			longitude
 		};
 		const { classes } = this.props;
-
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/venues-active.svg">
@@ -413,6 +447,7 @@ class Venue extends Component {
 				</PageHeading>
 
 				<Grid container spacing={24}>
+
 					<Grid item xs={12} sm={10} lg={8}>
 						<Card className={classes.paper}>
 							<form
@@ -420,7 +455,21 @@ class Venue extends Component {
 								autoComplete="off"
 								onSubmit={this.onSubmit.bind(this)}
 							>
+
 								<CardContent>
+									<Grid item xs={12} sm={4} lg={4}>
+										<CardMedia
+											className={classes.venueImage}
+											image={imageUrl || "/icons/venues-gray.svg"}
+											title={name}
+										/>
+										<Button
+											style={{ width: "100%" }}
+											onClick={this.uploadWidget.bind(this)}
+										>
+											Upload image
+										</Button>
+									</Grid>
 									<InputGroup
 										error={errors.name}
 										value={name}

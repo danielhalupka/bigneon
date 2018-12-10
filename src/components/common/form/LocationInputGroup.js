@@ -89,7 +89,7 @@ class LocationInputGroup extends React.Component {
 		const { showGoogle } = this.state;
 
 		if (window.google === undefined || !showGoogle) {
-			return (<div></div>);
+			return;
 		}
 		return (
 			<div>
@@ -177,7 +177,7 @@ class LocationInputGroup extends React.Component {
 		return (
 			<div>
 				{(this.renderGoogle())}
-				{showGoogle && !overrideManualEntry ? (
+				{!showManualEntry || !overrideManualEntry ? (
 					<div>
 						<Button
 							variant="additional"
