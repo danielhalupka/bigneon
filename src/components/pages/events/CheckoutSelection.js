@@ -187,25 +187,31 @@ class CheckoutSelection extends Component {
 			return;
 		}
 
-		let emptyCart = true;
+		let emptySelection = true;
 		Object.keys(ticketSelection).forEach(ticketTypeId => {
 			if (ticketSelection[ticketTypeId] && ticketSelection[ticketTypeId] > 0) {
-				emptyCart = false;
+				emptySelection = false;
 			}
 		});
 
-		if (emptyCart) {
-			notifications.show({
+		//If the existing cart is empty and they haven't selected anything
+		if (cart.ticketCount === 0 && emptySelection) {
+			return notifications.show({
 				message: "Select tickets first."
 			});
-			return;
 		}
 
 		this.setState({ isSubmitting: true });
+
 		cart.update(
 			ticketSelection,
 			() => {
-				this.props.history.push(`/events/${id}/tickets/confirmation`);
+				if (!emptySelection) {
+					this.props.history.push(`/events/${id}/tickets/confirmation`);
+				} else {
+					//They had something in their cart, but they removed and updated
+					this.setState({ isSubmitting: false });
+				}
 			},
 			error => {
 				this.setState({ isSubmitting: false });
