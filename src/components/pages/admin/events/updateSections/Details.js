@@ -36,7 +36,7 @@ const validateFields = event => {
 	}
 
 	if (isExternal && !externalTicketsUrl) {
-		errors.externalTicketsUrl = "Invalid external url."
+		errors.externalTicketsUrl = "Invalid external url.";
 	}
 
 	if (topLineInfo) {
@@ -67,7 +67,7 @@ const formatDataForSaving = (event, organizationId) => {
 		topLineInfo,
 		promoImageUrl,
 		externalTicketsUrl,
-		override_status,
+		override_status
 	} = event;
 
 	const eventDetails = {
@@ -78,7 +78,7 @@ const formatDataForSaving = (event, organizationId) => {
 		top_line_info: topLineInfo,
 		is_external: externalTicketsUrl !== null,
 		external_url: externalTicketsUrl,
-		override_status,
+		override_status
 	};
 
 	if (eventDate) {
@@ -255,7 +255,9 @@ class Details extends Component {
 
 		const statusesObj = { "": "Auto" };
 		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
-		let eventOverrideStatusString = Bn.Enums ? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING : {};
+		let eventOverrideStatusString = Bn.Enums
+			? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING
+			: {};
 		for (let statusConst in eventOverrideStatusEnum) {
 			let serverEnum = eventOverrideStatusEnum[statusConst];
 			let displayString = eventOverrideStatusString[serverEnum];
@@ -266,7 +268,7 @@ class Details extends Component {
 
 		return (
 			<SelectGroup
-				value={override_status}
+				value={override_status || ""}
 				items={statusesObj}
 				error={errors.status}
 				name={"status"}

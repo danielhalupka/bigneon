@@ -52,8 +52,7 @@ const DateTimePickerGroup = props => {
 			additionalProps = { animateYearScrolling: false };
 			break;
 		case "time":
-			Picker = TextField;
-			additionalProps = { type: "time", defaultValue : "19:30", onFocus: null, onBlur: null };
+			Picker = TimePicker;
 			break;
 		case "date":
 			formatOverride = "MM/DD/YYYY";
