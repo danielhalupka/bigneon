@@ -268,9 +268,6 @@ class User {
 		return this.token ? !!this.token : this.token;
 	}
 
-	//bn-api roles:
-	//OrgScanner
-
 	@computed
 	get isGuest() {
 		//If they haven't signed in yet

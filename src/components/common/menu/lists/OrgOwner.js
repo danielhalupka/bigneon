@@ -60,7 +60,7 @@ const OrgOwnerList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="account"
-				to={`/admin/organizations/`+user.currentOrganizationId}
+				to={`/admin/organizations/${user.currentOrganizationId}`}
 			>
 				Settings
 			</MenuItem>

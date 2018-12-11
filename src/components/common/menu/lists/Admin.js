@@ -52,12 +52,11 @@ const AdminList = props => {
 				Reports
 			</MenuItem>
 
-			
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="megaphone"
-				to={`/admin/marketing/`+user.currentOrganizationId}
+				to={`/admin/marketing/${user.currentOrganizationId}`}
 			>
 				Marketing
 			</MenuItem>
@@ -65,18 +64,21 @@ const AdminList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="account"
-				to={`/admin/organizations/`+user.currentOrganizationId}
+				to={`/admin/organizations/${user.currentOrganizationId}`}
 			>
 				Settings
 			</MenuItem>
-			
-			<Divider />
-			<Divider />
-			<Typography style={{ justifyContent: "center",
-				alignItems: "center" }} variant="caption">
+
+			<Divider style={{ marginTop: 30, marginBottom: 30 }} />
+
+			<Typography
+				style={{
+					textAlign: "center"
+				}}
+				variant="caption"
+			>
 				Super Admin
 			</Typography>
-			<Divider />
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout

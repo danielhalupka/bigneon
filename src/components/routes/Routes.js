@@ -41,7 +41,7 @@ import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List
 import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
 import AdminFanList from "../pages/admin/fans/Index";
-import AdminFan from "../pages/admin/fans/Fan";
+import AdminFanDetails from "../pages/admin/fans/FanDetails";
 import AdminGuestList from "../pages/admin/events/guests/List";
 import AdminMarketing from "../pages/admin/marketing/Index";
 
@@ -188,7 +188,7 @@ class Routes extends Component {
 							<PrivateRoute
 								exact
 								path="/admin/fans/:id"
-								component={AdminFan}
+								component={AdminFanDetails}
 								isAuthenticated={isAuthenticated}
 							/>
 							<PrivateRoute

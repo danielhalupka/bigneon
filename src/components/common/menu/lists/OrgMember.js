@@ -44,7 +44,7 @@ const OrgMemberList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="megaphone"
-				to={`/admin/marketing/`+user.currentOrganizationId}
+				to={`/admin/marketing/${user.currentOrganizationId}`}
 			>
 				Marketing
 			</MenuItem>
