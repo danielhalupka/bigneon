@@ -51,19 +51,19 @@ const TicketSelection = props => {
 		<div>
 			<Divider style={{ margin: 0 }} />
 			<Grid alignItems="center" className={classes.container} container>
-				<Grid item xs={2} sm={2} md={6} lg={3}>
+				<Grid item xs={3} sm={3} md={4} lg={3}>
 					<Typography className={classes.price}>
 						{available ? `$${price}` : ""}
 					</Typography>
 				</Grid>
-				<Grid item xs={8} sm={8} md={6} lg={6}>
+				<Grid item xs={6} sm={6} md={5} lg={6}>
 					<Typography className={classes.name}>{name}</Typography>
 					<Typography variant="caption" style={{ color: "red" }}>
 						{lppText}
 					</Typography>
 				</Grid>
 
-				<Grid item xs={2} sm={2} md={6} lg={3}>
+				<Grid item xs={3} sm={3} md={3} lg={3}>
 					<NumberSelect
 						onIncrement={() => {
 							const currentAmount = amount ? amount : 0;

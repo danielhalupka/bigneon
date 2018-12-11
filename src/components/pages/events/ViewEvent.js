@@ -164,66 +164,60 @@ class ViewEvent extends Component {
 	}
 
 	get getDetailPageButtonCta() {
-		const {
-			event
-		} = selectedEvent;
-		switch(event.override_status){
+		const { event } = selectedEvent;
+		switch (event.override_status) {
 			case "PurchaseTickets":
-				return { ctaText: "Purchase Tickets", enabled: true }
+				return { ctaText: "Purchase Tickets", enabled: true };
 			case "SoldOut":
-				return { ctaText: "Sold Out", enabled: (event.is_external ? false : true) }
+				return {
+					ctaText: "Sold Out",
+					enabled: event.is_external ? false : true
+				};
 			case "OnSaleSoon":
-				return { ctaText: "On Sale Soon", enabled: (event.is_external ? false : true) }
+				return {
+					ctaText: "On Sale Soon",
+					enabled: event.is_external ? false : true
+				};
 			case "TicketsAtTheDoor":
-				return { ctaText: "Tickets At The Door", enabled: (event.is_external ? false : true) }
+				return {
+					ctaText: "Tickets At The Door",
+					enabled: event.is_external ? false : true
+				};
 			case "UseAccessCode":
-				return { ctaText: "Use Access Code", enabled: true }
+				return { ctaText: "Use Access Code", enabled: true };
 			case "Free":
-				return { ctaText: "Free", enabled: true }
+				return { ctaText: "Free", enabled: true };
 			case "Rescheduled":
-				return { ctaText: "Rescheduled", enabled: false }
+				return { ctaText: "Rescheduled", enabled: false };
 			case "Cancelled":
-				return { ctaText: "Cancelled", enabled: false }
+				return { ctaText: "Cancelled", enabled: false };
 			case "OffSale":
-				return { ctaText: "Off-Sale", enabled: false }
+				return { ctaText: "Off-Sale", enabled: false };
 			case "Ended":
-				return { ctaText: "Sale Ended", enabled: false }
+				return { ctaText: "Sale Ended", enabled: false };
 			default:
-				return { ctaText: "Purchase Tickets", enabled: true }
+				return { ctaText: "Purchase Tickets", enabled: true };
 		}
 	}
 
-	get getDetailPageButton(){
+	get getDetailPageButton() {
 		const { classes } = this.props;
-		const {
-			event,
-			id
-		} = selectedEvent;
-		const {
-			is_external,
-			external_url
-		} = event;
-		
-		const {
-			ctaText,
-			enabled
-		} = this.getDetailPageButtonCta;
+		const { event, id } = selectedEvent;
+		const { is_external, external_url } = event;
 
-		if(!enabled){
-			return (
-				<Button className={classes.callToAction}>
-					{ctaText}
-				</Button>
-			)
+		const { ctaText, enabled } = this.getDetailPageButtonCta;
+
+		if (!enabled) {
+			return <Button className={classes.callToAction}>{ctaText}</Button>;
 		}
-		if(is_external){
+		if (is_external) {
 			return (
 				<a href={external_url} target="_blank">
 					<Button className={classes.callToAction} variant={"callToAction"}>
 						{ctaText}
 					</Button>
 				</a>
-			)
+			);
 		} else {
 			return (
 				<Link to={`/events/${id}/tickets`}>
@@ -231,9 +225,8 @@ class ViewEvent extends Component {
 						{ctaText}
 					</Button>
 				</Link>
-			)
+			);
 		}
-
 	}
 
 	render() {
@@ -246,7 +239,7 @@ class ViewEvent extends Component {
 			id,
 			ticket_types
 		} = selectedEvent;
-		
+
 		if (event === null) {
 			return <Typography variant="subheading">Loading...</Typography>;
 		}
@@ -268,7 +261,7 @@ class ViewEvent extends Component {
 			is_external,
 			external_url
 		} = event;
-		
+
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
@@ -351,7 +344,7 @@ class ViewEvent extends Component {
 						);
 					})}
 					{this.getDetailPageButton}
-						
+
 					<div className={classes.socialLinks}>
 						<SocialIconLink
 							color="black"
@@ -370,6 +363,11 @@ class ViewEvent extends Component {
 			</div>
 		);
 
+		//On mobile we need to move the description and artist details down. But we don't know how much space the overlayed div will take.
+		const mobileMarginAdjustment =
+			600 + (ticket_types ? ticket_types.length * 50 : 50);
+
+		console.log(mobileMarginAdjustment);
 		return (
 			<div>
 				<EventHeaderImage {...event} artists={artists} />
@@ -377,6 +375,13 @@ class ViewEvent extends Component {
 				<Grid container spacing={0} direction="row" justify="center">
 					<Grid item xs={12} sm={12} md={11} lg={9}>
 						<Card variant="plain">
+							<Hidden mdUp>
+								<div
+									style={{
+										marginTop: mobileMarginAdjustment
+									}}
+								/>
+							</Hidden>
 							<Grid
 								container
 								spacing={0}
