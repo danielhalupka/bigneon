@@ -268,9 +268,22 @@ class User {
 		return this.token ? !!this.token : this.token;
 	}
 
+	//bn-api roles:
+	//OrgScanner
+
+	@computed
+	get isGuest() {
+		//If they haven't signed in yet
+		return !this.token;
+	}
+
+	@computed
+	get isUser() {
+		return this.globalRoles.indexOf("User") > -1;
+	}
+
 	@computed
 	get isAdmin() {
-		//console.log(this.roles);
 		return this.globalRoles.indexOf("Admin") > -1;
 	}
 
@@ -285,19 +298,24 @@ class User {
 	}
 
 	@computed
-	get isUser() {
-		return this.globalRoles.indexOf("User") > -1;
+	get isOrgBoxOffice() {
+		//Trickle down role permissions
+		if (this.isOrgOwner || this.isOrgMember) {
+			return true;
+		}
+
+		return this.globalRoles.indexOf("OrgBoxOffice") > -1;
 	}
 
 	@computed
-	get isGuest() {
-		//If they haven't signed in yet
-		return !this.token;
-	}
+	get isOrgScanner() {
+		//Currently unused
+		//Trickle down role permissions
+		if (this.isOrgOwner || this.isOrgMember) {
+			return true;
+		}
 
-	@computed
-	get hasBoxOfficeAccess() {
-		return this.isOrgMember || this.isOrgOwner || this.isAdmin; //TODO this permission might come from scopes later
+		return this.globalRoles.indexOf("OrgScanner") > -1;
 	}
 }
 

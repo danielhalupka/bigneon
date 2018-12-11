@@ -8,6 +8,8 @@ import GuestRow from "./GuestRow";
 import BoxInput from "../../../elements/form/BoxInput";
 import BottomCompleteOrderBar from "../common/BottomCompleteOrderBar";
 import CheckingInDialog from "./CheckingInDialog";
+import user from "../../../../stores/user";
+import NotFound from "../../../common/NotFound";
 
 const styles = theme => ({
 	root: {},
@@ -264,6 +266,10 @@ class GuestList extends Component {
 	}
 
 	render() {
+		if (!user.isOrgBoxOffice) {
+			return <NotFound />;
+		}
+
 		const {
 			filteredGuests,
 			searchQuery,

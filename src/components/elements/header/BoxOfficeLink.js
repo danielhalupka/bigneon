@@ -30,11 +30,12 @@ const styles = theme => ({
 });
 
 const BoxOfficeLink = observer(({ classes }) => {
-	if (!user.hasBoxOfficeAccess) {
+	const { isBoxOffice } = layout;
+
+	//Check they have access to box office
+	if (!user.isOrgBoxOffice) {
 		return null;
 	}
-
-	const { isBoxOffice } = layout;
 
 	return (
 		<Link to={isBoxOffice ? "/admin/events" : "/box-office/sell"}>

@@ -12,6 +12,8 @@ import cart from "../../../../stores/cart";
 import PurchaseSuccessOptionsDialog from "./PurchaseSuccessOptionsDialog";
 import SuccessDialog from "./SuccessDialog";
 import InputWithButton from "../../../common/form/InputWithButton";
+import user from "../../../../stores/user";
+import NotFound from "../../../common/NotFound";
 
 const styles = theme => ({
 	root: {},
@@ -333,6 +335,10 @@ class TicketSales extends Component {
 	}
 
 	render() {
+		if (!user.isOrgBoxOffice) {
+			return <NotFound />;
+		}
+
 		const {
 			ticketTypes,
 			showCheckoutModal,

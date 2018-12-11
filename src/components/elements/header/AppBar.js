@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -15,6 +16,7 @@ import SearchToolBarInput from "./SearchToolBarInput";
 import CartHeaderLink from "../../common/cart/CartHeaderLink";
 import CurrentOrganizationMenu from "./CurrentOrganizationMenu";
 import BoxOfficeLink from "./BoxOfficeLink";
+import layout from "../../../stores/layout";
 
 const styles = theme => {
 	return {
@@ -39,7 +41,7 @@ const styles = theme => {
 	};
 };
 
-const CustomAppBar = props => {
+const CustomAppBar = observer(props => {
 	const { classes, handleDrawerToggle, history } = props;
 
 	return (
@@ -47,14 +49,18 @@ const CustomAppBar = props => {
 			<Toolbar className={classes.toolBar}>
 				{handleDrawerToggle ? (
 					<Hidden mdUp implementation="css">
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							onClick={handleDrawerToggle}
-							className={classes.navIconHide}
-						>
-							<MenuIcon color="action" />
-						</IconButton>
+						{layout.showSideMenu ? (
+							<IconButton
+								color="inherit"
+								aria-label="open drawer"
+								onClick={handleDrawerToggle}
+								className={classes.navIconHide}
+							>
+								<MenuIcon color="action" />
+							</IconButton>
+						) : (
+							<span />
+						)}
 					</Hidden>
 				) : null}
 				<div>
@@ -82,7 +88,7 @@ const CustomAppBar = props => {
 			</Toolbar>
 		</AppBar>
 	);
-};
+});
 
 CustomAppBar.propTypes = {
 	classes: PropTypes.object.isRequired,

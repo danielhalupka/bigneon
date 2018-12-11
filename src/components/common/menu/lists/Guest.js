@@ -1,60 +1,59 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
+import Divider from "@material-ui/core/Divider";
+import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 
 import MenuItem from "../../../elements/menu/MenuItem";
 import Button from "../../../elements/Button";
 
 const styles = theme => {
-	return {};
+	return {
+		stats: {
+			margin: theme.spacing.unit * 3
+		},
+		divider: {
+			margin: theme.spacing.unit * 3
+		},
+		spacer: {
+			marginTop: theme.spacing.unit
+		},
+		button: { width: "100%", marginTop: theme.spacing.unit * 2 }
+	};
 };
 
-const GuestList = props => {
-	const { toggleDrawer, openMenuItem, changeOpenMenu } = props;
+const GuestMenuList = observer(props => {
+	const { toggleDrawer, openMenuItem, changeOpenMenu, classes } = props;
 
 	return (
 		<div>
-			<div
-				style={{
-					width: "100%",
-					textAlign: "center",
-					padding: 15
-				}}
-			>
-				<Link to={"/"}>
+			<MenuItem to="/help" iconName="fan-hub" onClick={toggleDrawer}>
+				Help
+			</MenuItem>
+
+			<Divider className={classes.divider} />
+
+			<div className={classes.stats}>
+				<Link to="/app">
 					<Button
+						iconUrl="/icons/phone-white.svg"
+						className={classes.button}
 						variant="callToAction"
-						onClick={toggleDrawer}
-						style={{ width: "100%" }}
 					>
-						Discover
+						Get the App
 					</Button>
 				</Link>
 			</div>
-
-			{/* <Divider className={classes.divider} /> */}
-
-			<MenuItem to="/events" iconName="events" onClick={toggleDrawer}>
-				Events
-			</MenuItem>
-
-			<MenuItem to="/artists" iconName="artists" onClick={toggleDrawer}>
-				Artists
-			</MenuItem>
-
-			<MenuItem to="/venues" iconName="venues" onClick={toggleDrawer}>
-				Venues
-			</MenuItem>
 		</div>
 	);
-};
+});
 
-GuestList.propTypes = {
+GuestMenuList.propTypes = {
 	classes: PropTypes.object.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	openMenuItem: PropTypes.string,
 	changeOpenMenu: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(GuestList);
+export default withStyles(styles)(GuestMenuList);
