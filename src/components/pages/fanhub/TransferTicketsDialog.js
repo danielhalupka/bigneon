@@ -245,7 +245,7 @@ class TransferTicketsDialog extends Component {
 				error={errors.emailOrCellphoneNumber}
 				value={emailOrCellphoneNumber}
 				name="emailOrCellNumber"
-				label="Send via cell number email address"
+				label="Send via cell number or email address"
 				type="text"
 				onChange={e =>
 					this.setState({ emailOrCellphoneNumber: e.target.value })

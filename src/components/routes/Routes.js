@@ -185,12 +185,12 @@ class Routes extends Component {
 								component={AdminFanList}
 								isAuthenticated={isAuthenticated}
 							/>
-              <PrivateRoute
+							<PrivateRoute
 								exact
 								path="/admin/fans/:id"
 								component={AdminFan}
 								isAuthenticated={isAuthenticated}
-              />
+							/>
 							<PrivateRoute
 								exact
 								path="/admin/organizations"
