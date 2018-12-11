@@ -47,6 +47,7 @@ const formatForInput = artistArray => {
 
 @observer
 class ArtistDetails extends Component {
+	debounceSearch = false;
 	constructor(props) {
 		super(props);
 
@@ -54,8 +55,11 @@ class ArtistDetails extends Component {
 			artists: props.artists,
 			showArtistSelect: false,
 			availableArtists: null,
+			spotifyArtists: null,
 			errors: {},
-			isSubmitting: false
+			isSubmitting: false,
+			isSearching: false,
+
 		};
 	}
 
@@ -86,6 +90,14 @@ class ArtistDetails extends Component {
 	}
 
 	addNewArtist(id) {
+		const { spotifyArtists } = this.state;
+
+		if (spotifyArtists.hasOwnProperty(id)) {
+			//Add spotifyArtist
+			this.createNewArtist({ spotify_id: id });
+			return;
+		}
+
 		eventUpdateStore.addArtist(id);
 
 		if (eventUpdateStore.artists.length === 1) {
@@ -102,13 +114,22 @@ class ArtistDetails extends Component {
 		}
 	}
 
-	createNewArtist(name) {
+
+	createNewArtist(nameOrObj) {
 		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying
-		const artistDetails = {
-			name,
+		const defaulNewArtist = {
 			bio: "",
 			youtube_video_urls: [],
 			organization_id: user.currentOrganizationId
+		};
+		if (typeof nameOrObj === "string") {
+			nameOrObj = {
+				name: nameOrObj
+			};
+		}
+		const artistDetails = {
+			...defaulNewArtist,
+			...nameOrObj
 		}; //TODO remove youtube_video_urls when it's not needed
 
 		Bigneon()
@@ -117,7 +138,7 @@ class ArtistDetails extends Component {
 				const { id } = response.data;
 				//Once inserted we need it in availableArtists right away
 				this.setState(({ availableArtists }) => {
-					availableArtists.push({ id, ...artistDetails });
+					availableArtists.push(response.data);
 					return { availableArtists };
 				});
 
@@ -146,16 +167,41 @@ class ArtistDetails extends Component {
 			});
 	}
 
+	search(searchName) {
+		this.setState({ isSearching: true });
+		clearTimeout(this.debounceSearch);
+		if (!searchName.trim()) {
+			return;
+		}
+		this.debounceSearch = setTimeout(async () => {
+			try {
+				let results = await Bigneon().artists.search({ q: searchName, spotify: 1 });
+				results = results.data.data;
+
+				let spotifyArtists = {};
+				results.filter(artist => !artist.id && artist.spotify_id).forEach(artist => {
+					spotifyArtists[artist.spotify_id] = true;
+				});
+				this.setState({ isSearching: false, availableArtists: results, spotifyArtists });
+			} catch (e) {
+				this.setState({ isSearching: false });
+				console.log(e);
+			}
+		}, 500);
+
+	}
+
 	renderAddNewArtist() {
 		//Pass through the currently selected artist if one has been selected
-		const { availableArtists } = this.state;
+		const { availableArtists, isSearching } = this.state;
 		if (availableArtists === null) {
 			return <Typography variant="body1">Loading artists...</Typography>;
 		}
 
 		const artistsObj = {};
 		availableArtists.forEach(artist => {
-			artistsObj[artist.id] = artist.name;
+			let id = artist.id || artist.spotify_id;
+			artistsObj[id] = artist.name;
 		});
 
 		const { artists } = eventUpdateStore;
@@ -168,14 +214,16 @@ class ArtistDetails extends Component {
 				items={artistsObj}
 				name={"artists"}
 				label={`Add your ${isHeadline ? "headline act*" : "supporting act"}`}
+				onInputChange={this.search.bind(this)}
 				placeholder={"eg. Childish Gambino"}
 				onChange={artistId => {
+
 					if (artistId) {
 						this.addNewArtist(artistId);
 						this.setState({ showArtistSelect: false });
 					}
 				}}
-				formatCreateLabel={label => `Create a new artist "${label}"`}
+				formatCreateLabel={label => isSearching ? `Searching artists for ${label} - Click here to skip search and create` : `Create a new artist "${label}"`}
 				onCreateOption={this.createNewArtist.bind(this)}
 			/>
 		);

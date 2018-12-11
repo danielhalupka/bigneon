@@ -519,7 +519,7 @@ class Artist extends Component {
 															currentState.youtube_video_urls[index] = url;
 															return {
 																youtube_video_urls:
-																	currentState.youtube_video_urls
+																currentState.youtube_video_urls
 															};
 														});
 													}}
@@ -536,7 +536,7 @@ class Artist extends Component {
 															currentState.youtube_video_urls.splice(index, 1);
 															return {
 																youtube_video_urls:
-																	currentState.youtube_video_urls
+																currentState.youtube_video_urls
 															};
 														}, this.validateFields.bind(this));
 													}}

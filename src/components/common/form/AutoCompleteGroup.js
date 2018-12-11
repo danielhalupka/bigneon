@@ -151,6 +151,7 @@ class AutoCompleteGroup extends React.Component {
 			error,
 			name,
 			onCreateOption,
+			onInputChange,
 			formatCreateLabel,
 			label,
 			placeholder,
@@ -201,6 +202,7 @@ class AutoCompleteGroup extends React.Component {
 						placeholder={placeholder}
 						onBlur={onBlur}
 						onFocus={onFocus}
+						onInputChange={onInputChange}
 					/>
 					<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
 				</FormControl>
@@ -221,7 +223,8 @@ AutoCompleteGroup.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
-	style: PropTypes.object
+	style: PropTypes.object,
+	onInputChange: PropTypes.func,
 };
 
 export default withStyles(styles, { withTheme: true })(AutoCompleteGroup);
