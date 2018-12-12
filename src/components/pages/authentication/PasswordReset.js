@@ -94,7 +94,7 @@ class PasswordReset extends Component {
 
 					//Pull user data with our new token
 					user.refreshUser(() => {
-						this.props.history.push("/dashboard");
+						this.props.history.push("/account");
 					});
 				} else {
 					this.setState({ isSubmitting: false });
@@ -157,7 +157,7 @@ class PasswordReset extends Component {
 							style={{ marginRight: 10 }}
 							variant="callToAction"
 						>
-							{isSubmitting ? "Resseting..." : "Rest"}
+							{isSubmitting ? "Resetting..." : "Reset"}
 						</Button>
 					</CardActions>
 				</form>
