@@ -42,20 +42,10 @@ class OtherFees extends Component {
 				})
 				.catch(error => {
 					console.error(error);
-
-					let message = "Loading organization details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
 					this.setState({ isSubmitting: false });
-					notifications.show({
-						message,
-						variant: "error"
+					notifications.showFromErrorResponse({
+						error,
+						defaultMessage: "Loading organization details failed."
 					});
 				});
 		}

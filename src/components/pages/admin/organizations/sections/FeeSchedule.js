@@ -10,22 +10,32 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
-	List,
-	ListItem,
-	Avatar,
-	ListItemText
+	Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import MoneyIcon from "@material-ui/icons/MonetizationOn";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
 import DialogTransition from "../../../../common/DialogTransition";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
-import user from "../../../../../stores/user";
+import FeeRow from "./FeeRow";
+import { fontFamilyDemiBold } from "../../../../styles/theme";
 
-const styles = theme => ({});
+const styles = theme => ({
+	dollarValue: {},
+	tableHeading: {
+		fontFamily: fontFamilyDemiBold
+	},
+	subHeading: {
+		marginTop: theme.spacing.unit * 6,
+		paddingLeft: theme.spacing.unit * 2
+	}
+});
+
+const DollarValue = ({ children }) => (
+	<Typography>${(children / 100).toFixed(2)}</Typography>
+);
 
 class FeeSchedule extends Component {
 	constructor(props) {
@@ -42,7 +52,12 @@ class FeeSchedule extends Component {
 	}
 
 	componentDidMount() {
+		this.refreshFees();
+	}
+
+	refreshFees() {
 		const { organizationId } = this.props;
+
 		Bigneon()
 			.organizations.feeSchedules.index({ organization_id: organizationId })
 			.then(response => {
@@ -52,7 +67,7 @@ class FeeSchedule extends Component {
 
 				let formattedRanges = [];
 				ranges.forEach(range => {
-					let {
+					const {
 						company_fee_in_cents = 0,
 						client_fee_in_cents = 0,
 						min_price_in_cents = 0
@@ -60,8 +75,8 @@ class FeeSchedule extends Component {
 
 					let formattedRange = {
 						...range,
-						min_price_in_cents: min_price_in_cents / 100,
-						fee: (company_fee_in_cents + client_fee_in_cents) / 100,
+						min_price: min_price_in_cents / 100,
+						total_fee: (company_fee_in_cents + client_fee_in_cents) / 100,
 						company_fee: company_fee_in_cents / 100,
 						client_fee: client_fee_in_cents / 100
 					};
@@ -77,6 +92,8 @@ class FeeSchedule extends Component {
 				if (message) {
 					notifications.show({ message });
 				}
+
+				this.refreshPerOrderFees();
 			})
 			.catch(error => {
 				console.error(error);
@@ -89,17 +106,33 @@ class FeeSchedule extends Component {
 
 					//If there is not schedule, add a blank one
 					this.addNewRange();
-				} else if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
 				}
 
-				notifications.show({
-					message,
-					variant: "info"
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: message
+				});
+			});
+	}
+
+	refreshPerOrderFees() {
+		const { organizationId } = this.props;
+
+		Bigneon()
+			.organizations.read({ id: organizationId })
+			.then(response => {
+				const { event_fee_in_cents } = response.data;
+
+				this.setState({
+					event_fee_in_cents
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading organization per order fees failed."
 				});
 			});
 	}
@@ -107,7 +140,7 @@ class FeeSchedule extends Component {
 	addNewRange() {
 		const { ranges } = this.state;
 		ranges.push({
-			min_price_in_cents: "",
+			min_price: "",
 			fee: "",
 			company_fee: "",
 			client_fee: ""
@@ -130,8 +163,8 @@ class FeeSchedule extends Component {
 		}
 
 		let rangesErrors = {};
-		ranges.forEach(({ min_price_in_cents, company_fee, client_fee }, index) => {
-			const missingMinPrice = !min_price_in_cents && min_price_in_cents !== 0;
+		ranges.forEach(({ min_price, company_fee, client_fee }, index) => {
+			const missingMinPrice = !min_price && min_price !== 0;
 			const missingCompanyFee = !company_fee && company_fee !== 0;
 			const missingClientFee = !client_fee && client_fee !== 0;
 
@@ -139,7 +172,7 @@ class FeeSchedule extends Component {
 				rangesErrors[index] = {};
 
 				if (missingMinPrice) {
-					rangesErrors[index].min_price_in_cents = "Missing minimum price.";
+					rangesErrors[index].min_price = "Missing minimum price.";
 				}
 
 				if (missingCompanyFee) {
@@ -150,15 +183,12 @@ class FeeSchedule extends Component {
 					rangesErrors[index].client_fee = "Missing fee.";
 				}
 			}
-			if (
-				index > 0 &&
-				min_price_in_cents <= ranges[index - 1].min_price_in_cents
-			) {
+			if (index > 0 && min_price <= ranges[index - 1].min_price) {
 				rangesErrors[
 					index
-				].min_price_in_cents = `Minimum price must be more than ${ranges[
+				].min_price = `Minimum price must be more than ${ranges[
 					index - 1
-				].min_price_in_cents.toFixed(2)}`;
+				].min_price.toFixed(2)}`;
 			}
 		});
 
@@ -204,8 +234,8 @@ class FeeSchedule extends Component {
 
 		this.setState({ isSubmitting: true });
 		const formattedRanges = ranges.map(
-			({ min_price_in_cents, client_fee, company_fee }) => ({
-				min_price_in_cents: Number(min_price_in_cents) * 100,
+			({ min_price, client_fee, company_fee }) => ({
+				min_price_in_cents: Number(min_price) * 100,
 				client_fee_in_cents: Number(client_fee) * 100,
 				company_fee_in_cents: Number(company_fee) * 100
 			})
@@ -225,6 +255,8 @@ class FeeSchedule extends Component {
 					message: "Fee schedule saved.",
 					variant: "success"
 				});
+
+				this.refreshFees();
 			})
 			.catch(error => {
 				this.onDialogClose();
@@ -247,9 +279,9 @@ class FeeSchedule extends Component {
 			});
 	}
 
-	updateMinPrice(index, min_price_in_cents) {
+	updateMinPrice(index, min_price) {
 		this.setState(({ ranges }) => {
-			ranges[index].min_price_in_cents = min_price_in_cents;
+			ranges[index].min_price = min_price;
 			return { ranges };
 		});
 	}
@@ -328,117 +360,115 @@ class FeeSchedule extends Component {
 						onBlur={this.validateFields.bind(this)}
 					/>
 
-					{ranges.map(
-						({ min_price_in_cents, client_fee, company_fee }, index) => (
-							<Grid key={index} spacing={24} container alignItems={"center"}>
-								<Grid item xs={12} sm={3} md={3} lg={3}>
-									<InputGroup
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">$</InputAdornment>
-											)
-										}}
-										error={
-											errors.ranges &&
-											errors.ranges[index] &&
-											errors.ranges[index].min_price_in_cents
-										}
-										value={min_price_in_cents}
-										name="min_price_in_cents"
-										label="Minimum price"
-										type="number"
-										onChange={e => this.updateMinPrice(index, e.target.value)}
-										onBlur={this.validateFields.bind(this)}
-									/>
-								</Grid>
-								<Grid item xs={12} sm={2} md={2} lg={2}>
-									<InputGroup
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">$</InputAdornment>
-											)
-										}}
-										disabled={true}
-										value={
-											ranges.length - 1 >= index + 1
-												? ranges[index + 1].min_price_in_cents - 0.01
-												: "and up"
-										}
-										onChange={() => {}}
-										name="max_price"
-										label="Maximum price"
-										type="text"
-									/>
-								</Grid>
-								<Grid item xs={12} sm={2} md={2} lg={2}>
-									<InputGroup
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">$</InputAdornment>
-											)
-										}}
-										error={
-											errors.ranges &&
-											errors.ranges[index] &&
-											errors.ranges[index].client_fee
-										}
-										value={client_fee}
-										name="client_fee"
-										label="Client Fee"
-										type="number"
-										onChange={e => this.updateFee(index, true, e.target.value)}
-										onBlur={this.validateFields.bind(this)}
-									/>
-								</Grid>
-								<Grid item xs={12} sm={2} md={2} lg={2}>
-									<InputGroup
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">$</InputAdornment>
-											)
-										}}
-										error={
-											errors.ranges &&
-											errors.ranges[index] &&
-											errors.ranges[index].company_fee
-										}
-										value={company_fee}
-										name="company_fee"
-										label="Company Fee"
-										type="number"
-										onChange={e => this.updateFee(index, false, e.target.value)}
-										onBlur={this.validateFields.bind(this)}
-									/>
-								</Grid>
-								<Grid item xs={12} sm={2} md={2} lg={2}>
-									<InputGroup
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">$</InputAdornment>
-											)
-										}}
-										disabled={true}
-										value={(+company_fee + +client_fee).toFixed(2)}
-										name="total_fee"
-										label="Total Fee"
-										type="number"
-										onChange={() => {}}
-									/>
-								</Grid>
-
-								<Grid item xs={1}>
-									{index > 0 ? (
-										<IconButton
-											onClick={e => this.deleteRange(index)}
-											color="inherit"
-										>
-											<DeleteIcon />
-										</IconButton>
-									) : null}
-								</Grid>
+					{ranges.map(({ min_price, client_fee, company_fee }, index) => (
+						<Grid key={index} spacing={24} container alignItems={"center"}>
+							<Grid item xs={12} sm={3} md={3} lg={3}>
+								<InputGroup
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">$</InputAdornment>
+										)
+									}}
+									error={
+										errors.ranges &&
+										errors.ranges[index] &&
+										errors.ranges[index].min_price
+									}
+									value={min_price}
+									name="min_price"
+									label="Minimum price"
+									type="number"
+									onChange={e => this.updateMinPrice(index, e.target.value)}
+									onBlur={this.validateFields.bind(this)}
+								/>
 							</Grid>
-						)
-					)}
+							<Grid item xs={12} sm={2} md={2} lg={2}>
+								<InputGroup
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">$</InputAdornment>
+										)
+									}}
+									disabled={true}
+									value={
+										ranges.length - 1 >= index + 1
+											? ranges[index + 1].min_price - 0.01
+											: "and up"
+									}
+									onChange={() => {}}
+									name="max_price"
+									label="Maximum price"
+									type="text"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={2} md={2} lg={2}>
+								<InputGroup
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">$</InputAdornment>
+										)
+									}}
+									error={
+										errors.ranges &&
+										errors.ranges[index] &&
+										errors.ranges[index].client_fee
+									}
+									value={client_fee}
+									name="client_fee"
+									label="Client Fee"
+									type="number"
+									onChange={e => this.updateFee(index, true, e.target.value)}
+									onBlur={this.validateFields.bind(this)}
+								/>
+							</Grid>
+							<Grid item xs={12} sm={2} md={2} lg={2}>
+								<InputGroup
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">$</InputAdornment>
+										)
+									}}
+									error={
+										errors.ranges &&
+										errors.ranges[index] &&
+										errors.ranges[index].company_fee
+									}
+									value={company_fee}
+									name="company_fee"
+									label="Company Fee"
+									type="number"
+									onChange={e => this.updateFee(index, false, e.target.value)}
+									onBlur={this.validateFields.bind(this)}
+								/>
+							</Grid>
+							<Grid item xs={12} sm={2} md={2} lg={2}>
+								<InputGroup
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">$</InputAdornment>
+										)
+									}}
+									disabled={true}
+									value={(+company_fee + +client_fee).toFixed(2)}
+									name="total_fee"
+									label="Total Fee"
+									type="number"
+									onChange={() => {}}
+								/>
+							</Grid>
+
+							<Grid item xs={1}>
+								{index > 0 ? (
+									<IconButton
+										onClick={e => this.deleteRange(index)}
+										color="inherit"
+									>
+										<DeleteIcon />
+									</IconButton>
+								) : null}
+							</Grid>
+						</Grid>
+					))}
 
 					<Button
 						style={{ marginRight: 10 }}
@@ -455,35 +485,90 @@ class FeeSchedule extends Component {
 	}
 
 	renderDisplay() {
-		const { ranges } = this.state;
+		const { classes } = this.props;
+		const { ranges, event_fee_in_cents } = this.state;
 
 		return (
-			<List>
-				{ranges.map(({ min_price_in_cents, fee }, index) => (
-					<ListItem key={index}>
-						<Avatar>
-							<MoneyIcon />
-						</Avatar>
-						<ListItemText
-							primary={`Minimum price $ ${min_price_in_cents}`}
-							secondary={`Fee $ ${fee}`}
-						/>
-					</ListItem>
-				))}
-			</List>
+			<div>
+				<Typography>
+					Fee schedules can only be modified by your account executive
+				</Typography>
+
+				<Typography className={classes.subHeading}>Per ticket fees</Typography>
+				<FeeRow>
+					<Typography className={classes.tableHeading}>Price (From)</Typography>
+					<Typography className={classes.tableHeading}>Price (To)</Typography>
+					<Typography className={classes.tableHeading}>Company</Typography>
+					<Typography className={classes.tableHeading}>Client</Typography>
+					<Typography className={classes.tableHeading}>Total</Typography>
+				</FeeRow>
+				{ranges.map((range, index) => {
+					const {
+						client_fee_in_cents,
+						company_fee_in_cents,
+						fee_in_cents,
+						min_price_in_cents,
+
+						...rest
+					} = range;
+
+					const totalCents = company_fee_in_cents + client_fee_in_cents;
+
+					let maxPrice = false;
+					const nextRange = ranges[index + 1];
+					if (nextRange) {
+						const { min_price_in_cents } = nextRange;
+						maxPrice = min_price_in_cents - 1;
+					}
+
+					return (
+						<FeeRow key={index} shaded={!(index % 2)}>
+							<DollarValue>{min_price_in_cents}</DollarValue>
+							{maxPrice ? (
+								<DollarValue>{maxPrice}</DollarValue>
+							) : (
+								<Typography>and up</Typography>
+							)}
+							<DollarValue>{company_fee_in_cents}</DollarValue>
+							<DollarValue>{client_fee_in_cents}</DollarValue>
+							<DollarValue>{totalCents}</DollarValue>
+						</FeeRow>
+					);
+				})}
+
+				<Typography className={classes.subHeading}>Per order fees</Typography>
+				<FeeRow>
+					<Typography className={classes.tableHeading}>Company</Typography>
+					<Typography className={classes.tableHeading}>Client</Typography>
+					<Typography className={classes.tableHeading}>&nbsp;</Typography>
+					<Typography className={classes.tableHeading}>&nbsp;</Typography>
+					<Typography className={classes.tableHeading}>Total</Typography>
+				</FeeRow>
+				<FeeRow shaded>
+					<DollarValue>{event_fee_in_cents}</DollarValue>
+					<DollarValue>{0}</DollarValue>
+					<Typography className={classes.tableHeading}>&nbsp;</Typography>
+					<Typography className={classes.tableHeading}>&nbsp;</Typography>
+					<DollarValue>{event_fee_in_cents}</DollarValue>
+				</FeeRow>
+			</div>
 		);
 	}
 
 	render() {
-		const { classes } = this.props;
-		const { isAdmin } = user;
+		const { type } = this.props;
 
-		return <div>{isAdmin ? this.renderForm() : this.renderDisplay()}</div>;
+		if (type === "read-write") {
+			return this.renderForm();
+		}
+
+		return this.renderDisplay();
 	}
 }
 
 FeeSchedule.propTypes = {
-	organizationId: PropTypes.string.isRequired
+	organizationId: PropTypes.string.isRequired,
+	type: PropTypes.oneOf(["read-write", "read"]).isRequired
 };
 
 export default withStyles(styles)(FeeSchedule);

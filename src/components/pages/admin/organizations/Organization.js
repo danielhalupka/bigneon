@@ -62,9 +62,46 @@ class Organization extends Component {
 		);
 	}
 
-	render() {
+	renderContent(organizationId) {
 		const { activeTab } = this.state;
-		const { history, classes } = this.props;
+
+		switch (activeTab) {
+			case "details":
+				return (
+					<UpdateSection history={history} organizationId={organizationId} />
+				);
+			case "team":
+				return (
+					<TeamSection history={history} organizationId={organizationId} />
+				);
+			case "fees":
+				return (
+					<FeeScheduleSection
+						type="read"
+						history={history}
+						organizationId={organizationId}
+					/>
+				);
+			case "admin-fees-schedule":
+				return (
+					<FeeScheduleSection
+						type="read-write"
+						history={history}
+						organizationId={organizationId}
+					/>
+				);
+			case "admin-fees-other":
+				return (
+					<OtherFeesSection history={history} organizationId={organizationId} />
+				);
+
+			default:
+				return null;
+		}
+	}
+
+	render() {
+		const { classes } = this.props;
 
 		let { organizationId } = this.state;
 		if (organizationId === "current") {
@@ -94,40 +131,20 @@ class Organization extends Component {
 								{user.isOrgOwner ? this.renderMenuOption("fees", "Fees") : null}
 								{user.isAdmin
 									? this.renderMenuOption(
-										"fees-schedule",
+										"admin-fees-schedule",
 										"Fees schedule (Admin)"
 									  )
 									: null}
 								{user.isAdmin
-									? this.renderMenuOption("fees-other", "Other fees (Admin)")
+									? this.renderMenuOption(
+										"admin-fees-other",
+										"Other fees (Admin)"
+									  )
 									: null}
 							</div>
 						) : null}
 
-						{activeTab === "details" ? (
-							<UpdateSection
-								history={history}
-								organizationId={organizationId}
-							/>
-						) : null}
-
-						{activeTab === "team" ? (
-							<TeamSection history={history} organizationId={organizationId} />
-						) : null}
-
-						{activeTab === "fees-schedule" ? (
-							<FeeScheduleSection
-								history={history}
-								organizationId={organizationId}
-							/>
-						) : null}
-
-						{activeTab === "fees-other" ? (
-							<OtherFeesSection
-								history={history}
-								organizationId={organizationId}
-							/>
-						) : null}
+						{this.renderContent(organizationId)}
 					</div>
 				</Card>
 			</div>

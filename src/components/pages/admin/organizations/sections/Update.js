@@ -5,7 +5,7 @@ import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
 import user from "../../../../../stores/user";
 import notifications from "../../../../../stores/notifications";
-import { validEmail, validPhone } from "../../../../../validators";
+import { validPhone } from "../../../../../validators";
 import LocationInputGroup from "../../../../common/form/LocationInputGroup";
 import addressTypeFromGoogleResult from "../../../../../helpers/addressTypeFromGoogleResult";
 import Bigneon from "../../../../../helpers/bigneon";
@@ -20,7 +20,6 @@ class OrganizationUpdate extends Component {
 		//Check if we're editing an existing organization
 		this.state = {
 			name: "",
-			email: "",
 			owner_user_id: "",
 			phone: "",
 			address: "",
@@ -90,7 +89,7 @@ class OrganizationUpdate extends Component {
 			return true;
 		}
 
-		const { name, email, address, eventFee } = this.state;
+		const { name, address, eventFee } = this.state;
 		const { organizationId } = this.props;
 		const phone = removePhoneFormatting(this.state.phone);
 
@@ -98,14 +97,6 @@ class OrganizationUpdate extends Component {
 
 		if (!name) {
 			errors.name = "Missing organization name.";
-		}
-
-		if (!organizationId) {
-			if (!email) {
-				errors.email = "Missing organization owner email address.";
-			} else if (!validEmail(email)) {
-				errors.email = "Invalid email address.";
-			}
 		}
 
 		if (!address) {
@@ -193,7 +184,6 @@ class OrganizationUpdate extends Component {
 		const {
 			owner_user_id,
 			name,
-			email,
 			phone,
 			address,
 			city,
@@ -229,50 +219,23 @@ class OrganizationUpdate extends Component {
 			return;
 		}
 
-		//If we're creating an org, we need to lookup the users ID with their email address
-		Bigneon()
-			.users.findByEmail({ email })
-			.then(response => {
-				const { id } = response.data;
-				if (!id) {
-					this.setState({ isSubmitting: false });
-					notifications.show({
-						message: "Failed to locate user with that email.",
-						variant: "error"
-					});
-					return;
-				}
-
-				//Got the user ID, now create the organization
-				this.createNewOrganization(
-					{ ...orgDetails, owner_user_id: id },
-					organizationId => {
-						notifications.show({
-							message: "Organization created",
-							variant: "success"
-						});
-
-						this.setState({ isSubmitting: false }, () => {
-							this.props.history.push(`/admin/organizations/${organizationId}`);
-						});
-					}
-				);
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({ isSubmitting: false });
-				notifications.show({
-					message: "Failed to locate user by email.",
-					variant: "error"
-				});
+		//Got the user ID, now create the organization
+		this.createNewOrganization(orgDetails, organizationId => {
+			notifications.show({
+				message: "Organization created",
+				variant: "success"
 			});
+
+			this.setState({ isSubmitting: false }, () => {
+				this.props.history.push(`/admin/organizations/${organizationId}`);
+			});
+		});
 	}
 
 	render() {
 		const {
 			owner_user_id,
 			name,
-			email,
 			address = "",
 			city = "",
 			state = "",
@@ -298,9 +261,6 @@ class OrganizationUpdate extends Component {
 		};
 		const { classes } = this.props;
 
-		//If a OrgOwner is editing his own organization don't allow him to change the owner email
-		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
-
 		return (
 			<div>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
@@ -313,18 +273,6 @@ class OrganizationUpdate extends Component {
 						onChange={e => this.setState({ name: e.target.value })}
 						onBlur={this.validateFields.bind(this)}
 					/>
-
-					{!isCurrentOwner ? (
-						<InputGroup
-							error={errors.email}
-							value={email}
-							name="email"
-							label="Organization owner email address"
-							type="email"
-							onChange={e => this.setState({ email: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
-					) : null}
 
 					<InputGroup
 						error={errors.phone}
