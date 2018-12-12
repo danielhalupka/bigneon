@@ -84,7 +84,7 @@ class LocationInputGroup extends React.Component {
 			error,
 			onError,
 			label,
-			classes,
+			classes
 		} = this.props;
 		const { showGoogle } = this.state;
 
@@ -196,8 +196,6 @@ class LocationInputGroup extends React.Component {
 				</Collapse>
 			</div>
 
-
-
 		);
 
 	}
@@ -215,7 +213,7 @@ LocationInputGroup.propTypes = {
 	onAddressChange: PropTypes.func.isRequired,
 	onLatLngResult: PropTypes.func.isRequired,
 	onFullResult: PropTypes.func.isRequired,
-	showManualEntry: PropTypes.bool,
+	showManualEntry: PropTypes.bool
 
 };
 

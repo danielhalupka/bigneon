@@ -199,19 +199,13 @@ class Routes extends Component {
 							/>
 							<PrivateRoute
 								exact
-								path="/admin/organizations/create"
-								component={AdminOrganization}
-								isAuthenticated={isAuthenticated}
-							/>
-							<PrivateRoute
-								exact
 								path="/admin/organizations/:id"
 								component={AdminOrganization}
 								isAuthenticated={isAuthenticated}
 							/>
 							<PrivateRoute
 								exact
-								path="/admin/marketing/:id"
+								path="/admin/marketing"
 								component={AdminMarketing}
 								isAuthenticated={isAuthenticated}
 							/>

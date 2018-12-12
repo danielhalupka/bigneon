@@ -27,7 +27,7 @@ class OrganizationUpdateCard extends Component {
 			facebook_pixel_key: "",
 			errors: {},
 			isSubmitting: false,
-			showApiKeys: true,
+			showApiKeys: true
 		};
 	}
 
@@ -44,7 +44,7 @@ class OrganizationUpdateCard extends Component {
 					const {
 						owner_user_id,
 						google_ga_key,
-						facebook_pixel_key,
+						facebook_pixel_key
 					} = response.data;
 
 					this.setState({
@@ -129,16 +129,12 @@ class OrganizationUpdateCard extends Component {
 			return false;
 		}
 
-		const {
-			owner_user_id,
-			google_ga_key,
-			facebook_pixel_key,
-		} = this.state;
+		const { owner_user_id, google_ga_key, facebook_pixel_key } = this.state;
 		const { organizationId } = this.props;
 
 		let orgDetails = {
 			google_ga_key,
-			facebook_pixel_key,
+			facebook_pixel_key
 		};
 
 		//If we're updating an existing org
@@ -193,7 +189,9 @@ class OrganizationUpdateCard extends Component {
 							name="facebook_pixel_key"
 							label="Facebook Pixel API key"
 							type="text"
-							onChange={e => this.setState({ facebook_pixel_key: e.target.value })}
+							onChange={e =>
+								this.setState({ facebook_pixel_key: e.target.value })
+							}
 							onBlur={this.validateFields.bind(this)}
 						/>
 					</CardContent>

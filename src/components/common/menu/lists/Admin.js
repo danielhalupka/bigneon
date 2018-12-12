@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import MenuItem from "../../../elements/menu/MenuItem";
 import Divider from "@material-ui/core/Divider";
-import user from "../../../../stores/user";
 import { Typography } from "@material-ui/core";
+
+import MenuItem from "../../../elements/menu/MenuItem";
 
 const styles = theme => {
 	return {};
@@ -56,7 +56,7 @@ const AdminList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="megaphone"
-				to={`/admin/marketing/${user.currentOrganizationId}`}
+				to={"/admin/marketing"}
 			>
 				Marketing
 			</MenuItem>
@@ -64,7 +64,7 @@ const AdminList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="account"
-				to={`/admin/organizations/${user.currentOrganizationId}`}
+				to={"/admin/organizations/current"}
 			>
 				Settings
 			</MenuItem>

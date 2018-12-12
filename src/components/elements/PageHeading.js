@@ -34,10 +34,10 @@ const styles = theme => {
 };
 
 const PageHeading = props => {
-	const { classes, iconUrl, children, subheading } = props;
+	const { classes, iconUrl, children, subheading, style = {} } = props;
 
 	return (
-		<div>
+		<div style={style}>
 			<div className={classes.mainContent}>
 				{iconUrl ? (
 					<img alt={children} src={iconUrl} className={classes.icon} />
@@ -56,7 +56,8 @@ PageHeading.propTypes = {
 	classes: PropTypes.object.isRequired,
 	iconUrl: PropTypes.string,
 	children: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
-	subheading: PropTypes.string
+	subheading: PropTypes.string,
+	style: PropTypes.object
 };
 
 export default withStyles(styles)(PageHeading);

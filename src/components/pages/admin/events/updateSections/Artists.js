@@ -48,6 +48,7 @@ const formatForInput = artistArray => {
 @observer
 class ArtistDetails extends Component {
 	debounceSearch = false;
+
 	constructor(props) {
 		super(props);
 
@@ -58,7 +59,7 @@ class ArtistDetails extends Component {
 			spotifyArtists: null,
 			errors: {},
 			isSubmitting: false,
-			isSearching: false,
+			isSearching: false
 
 		};
 	}
@@ -113,7 +114,6 @@ class ArtistDetails extends Component {
 			}
 		}
 	}
-
 
 	createNewArtist(nameOrObj) {
 		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying

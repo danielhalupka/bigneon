@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Typography, withStyles } from "@material-ui/core";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Card from "@material-ui/core/Card";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
@@ -17,10 +14,6 @@ import OrgUserRow from "./OrgUserRow";
 const imageSize = 40;
 
 const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
-	},
 	content: {
 		padding: theme.spacing.unit * 6,
 		paddingLeft: theme.spacing.unit * 8,
@@ -63,7 +56,7 @@ const styles = theme => ({
 	}
 });
 
-class InviteUserCard extends Component {
+class Team extends Component {
 	constructor(props) {
 		super(props);
 
@@ -80,16 +73,19 @@ class InviteUserCard extends Component {
 	}
 
 	loadOrgMembers() {
-		Bigneon().organizations.users.index({ organization_id: this.props.organizationId }).then(response => {
-			const { data, paging } = response.data; //@TODO Implement pagination
-			this.setState({ orgMembers: data })
-		}).catch(error => {
-			console.error(error);
-			notifications.show({
-				message: "Could not load members",
-				variant: "error"
+		Bigneon()
+			.organizations.users.index({ organization_id: this.props.organizationId })
+			.then(response => {
+				const { data, paging } = response.data; //@TODO Implement pagination
+				this.setState({ orgMembers: data });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Could not load members"
+				});
 			});
-		});
 	}
 
 	validateFields() {
@@ -162,82 +158,87 @@ class InviteUserCard extends Component {
 
 		return (
 			<div>
-				<Card className={classes.paper}>
-					<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-						<CardContent>
-							<InputGroup
-								error={errors.email}
-								value={email}
-								name="email"
-								label="Member invite email address"
-								type="email"
-								onChange={e => this.setState({ email: e.target.value })}
-								onBlur={this.validateFields.bind(this)}
-							/>
-
-
-					
-						</CardContent>
-						<CardActions>
-							<Button
-								disabled={isSubmitting}
-								type="submit"
-								style={{ marginRight: 10 }}
-								variant="callToAction"
-							>
-								{isSubmitting ? "Inviting..." : "Invite user"}
-							</Button>
-						</CardActions>
+				<div>
+					<form
+						noValidate
+						autoComplete="off"
+						onSubmit={this.onSubmit.bind(this)}
+					>
+						<InputGroup
+							error={errors.email}
+							value={email}
+							name="email"
+							label="Member invite email address"
+							type="email"
+							onChange={e => this.setState({ email: e.target.value })}
+							onBlur={this.validateFields.bind(this)}
+						/>
+						<Button
+							disabled={isSubmitting}
+							type="submit"
+							style={{ marginRight: 10 }}
+							variant="callToAction"
+						>
+							{isSubmitting ? "Inviting..." : "Invite user"}
+						</Button>
 					</form>
-				</Card>
+				</div>
 
-				<Card>
+				<div>
 					<OrgUserRow>
 						<Typography className={classes.heading}>Name</Typography>
 						<Typography className={classes.heading}>Email</Typography>
-						<Typography className={classes.heading}>Role</Typography>
+						<Typography className={classes.heading}>Roles</Typography>
 					</OrgUserRow>
-					{orgMembers.map(({ id, first_name, last_name, email, is_org_owner, thumb_profile_pic_url }) => (
-						<OrgUserRow key={id}> 
-							<div className={classes.nameProfileImage}>
-								{thumb_profile_pic_url ? (
-									<div
-										className={classes.profileImageBackground}
-										style={{
-											backgroundImage: `url(${thumb_profile_pic_url})`
-										}}
-									/>
-								) : (
-									<div className={classes.missingProfileImageBackground}>
-										<img
-											className={classes.missingProfileImage}
-											src={"/images/profile-pic-placeholder-white.png"}
-											alt={`${first_name} ${last_name}`}
+					{orgMembers.map(user => {
+						const {
+							id,
+							first_name,
+							last_name,
+							email,
+							is_org_owner,
+							thumb_profile_pic_url
+						} = user;
+
+						return (
+							<OrgUserRow key={id}>
+								<div className={classes.nameProfileImage}>
+									{thumb_profile_pic_url ? (
+										<div
+											className={classes.profileImageBackground}
+											style={{
+												backgroundImage: `url(${thumb_profile_pic_url})`
+											}}
 										/>
-									</div>
-								)}
-										&nbsp;&nbsp;
-								<Typography  className={classes.itemText}>
-									{first_name} {last_name}
+									) : (
+										<div className={classes.missingProfileImageBackground}>
+											<img
+												className={classes.missingProfileImage}
+												src={"/images/profile-pic-placeholder-white.png"}
+												alt={`${first_name} ${last_name}`}
+											/>
+										</div>
+									)}
+									&nbsp;&nbsp;
+									<Typography className={classes.itemText}>
+										{first_name} {last_name}
+									</Typography>
+								</div>
+								<Typography className={classes.itemText}>{email}</Typography>
+								<Typography className={classes.itemText}>
+									{is_org_owner ? "Owner" : "Member"}
 								</Typography>
-							</div>
-							<Typography className={classes.itemText}>
-								{email}
-							</Typography>
-							<Typography className={classes.itemText}>
-								{ is_org_owner ? "Owner" : "Member" }
-							</Typography>
-						</OrgUserRow>
-							
-					))}
-				</Card>
+							</OrgUserRow>
+						);
+					})}
+				</div>
 			</div>
 		);
 	}
 }
 
-InviteUserCard.propTypes = {
+Team.propTypes = {
 	organizationId: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(InviteUserCard);
+export default withStyles(styles)(Team);

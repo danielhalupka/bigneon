@@ -20,18 +20,13 @@ class ReceiveTransfer extends Component {
 	componentDidMount() {
 		const url = new URL(window.location.href);
 		const transferAuth = {
-			transfer_key:
-				url.searchParams.get("transfer_key"),
-			sender_user_id:
-				url.searchParams.get("sender_user_id"),
-			num_tickets:
-				parseInt(url.searchParams.get("num_tickets")),
-			signature:
-				url.searchParams.get("signature"),
+			transfer_key: url.searchParams.get("transfer_key"),
+			sender_user_id: url.searchParams.get("sender_user_id"),
+			num_tickets: parseInt(url.searchParams.get("num_tickets")),
+			signature: url.searchParams.get("signature")
 		};
 
 		this.setState({ transferAuth });
-
 
 		if (!user.isAuthenticated) {
 			//Show dialog for the user to signup/login, try again when they're authenticated
@@ -40,8 +35,6 @@ class ReceiveTransfer extends Component {
 		}
 
 		this.receiveTransfer();
-
-
 	}
 
 	receiveTransfer() {

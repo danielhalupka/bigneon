@@ -1,28 +1,38 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Grid from "@material-ui/core/Grid";
-import UpdateCard from "./cards/UpdateCard";
-// import LinkVenuesCard from "./cards/LinkVenuesCard";
-import InviteUserCard from "./cards/InviteUserCard";
-import FeeScheduleCard from "./cards/FeeScheduleCard";
-import OtherFeesCard from "./cards/OtherFeesCard";
+import { observer } from "mobx-react";
+
+import UpdateSection from "./sections/Update";
+import TeamSection from "./sections/Team";
+import FeeScheduleSection from "./sections/FeeSchedule";
+import OtherFeesSection from "./sections/OtherFees";
+
 import PageHeading from "../../../elements/PageHeading";
+import user from "../../../../stores/user";
+import Card from "../../../elements/Card";
+import StyledLink from "../../../elements/StyledLink";
 
 const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
+	root: {},
+	card: {
+		padding: theme.spacing.unit * 6
+	},
+	menu: {
+		display: "flex"
+	},
+	menuText: {
+		marginRight: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit * 4
 	}
 });
 
+@observer
 class Organization extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			activeTab: 0,
+			activeTab: "details",
 			organizationId: null
 		};
 	}
@@ -36,65 +46,90 @@ class Organization extends Component {
 		return { organizationId };
 	}
 
+	renderMenuOption(key, label) {
+		const { classes } = this.props;
+		const { activeTab } = this.state;
+
+		return (
+			<Typography className={classes.menuText}>
+				<StyledLink
+					underlined={activeTab === key}
+					onClick={() => this.setState({ activeTab: key })}
+				>
+					{label}
+				</StyledLink>
+			</Typography>
+		);
+	}
+
 	render() {
-		const { activeTab, organizationId } = this.state;
-		const { history } = this.props;
+		const { activeTab } = this.state;
+		const { history, classes } = this.props;
+
+		let { organizationId } = this.state;
+		if (organizationId === "current") {
+			organizationId = user.currentOrganizationId;
+
+			if (organizationId === null) {
+				return <Typography>Loading...</Typography>;
+			}
+		}
 
 		return (
 			<div>
-				<PageHeading>
-					{organizationId ? "Update" : "New"} Organization Settings
+				<PageHeading
+					iconUrl="/icons/account-multi.svg"
+					style={{ marginBottom: 40 }}
+				>
+					{!organizationId ? "New " : ""}
+					Organization Settings
 				</PageHeading>
 
-				{organizationId ? (
-					<Tabs
-						value={activeTab}
-						onChange={(event, activeTab) => this.setState({ activeTab })}
-					>
-						<Tab key={0} label="Details" />
-						{/* <Tab key={1} label="Linked venues" /> */}
-						<Tab key={1} label="Organization members" />
-						<Tab key={2} label="Fee schedule" />
-						<Tab key={3} label="Other fees" />
-					</Tabs>
-				) : null}
-
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={12}>
-						{activeTab === 0 ? (
-							<UpdateCard history={history} organizationId={organizationId} />
+				<Card>
+					<div className={classes.card}>
+						{organizationId ? (
+							<div className={classes.menu}>
+								{this.renderMenuOption("details", "Details")}
+								{this.renderMenuOption("team", "Team")}
+								{user.isOrgOwner ? this.renderMenuOption("fees", "Fees") : null}
+								{user.isAdmin
+									? this.renderMenuOption(
+										"fees-schedule",
+										"Fees schedule (Admin)"
+									  )
+									: null}
+								{user.isAdmin
+									? this.renderMenuOption("fees-other", "Other fees (Admin)")
+									: null}
+							</div>
 						) : null}
 
-						{/* {activeTab === 1 ? (
-							<LinkVenuesCard
-								history={history}
-								organizationId={organizationId}
-							/>
-						) : null} */}
-
-						{activeTab === 1 ? (
-							<InviteUserCard
+						{activeTab === "details" ? (
+							<UpdateSection
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
 
-						{activeTab === 2 ? (
-							<FeeScheduleCard
+						{activeTab === "team" ? (
+							<TeamSection history={history} organizationId={organizationId} />
+						) : null}
+
+						{activeTab === "fees-schedule" ? (
+							<FeeScheduleSection
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
 
-						{activeTab === 3 ? (
-							<OtherFeesCard
+						{activeTab === "fees-other" ? (
+							<OtherFeesSection
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
-						
-					</Grid>
-				</Grid>
+					</div>
+				</Card>
 			</div>
 		);
 	}

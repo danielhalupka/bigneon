@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import { withStyles, Collapse, Typography } from "@material-ui/core";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Card from "@material-ui/core/Card";
+import { withStyles } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 
 import InputGroup from "../../../../common/form/InputGroup";
@@ -11,14 +8,9 @@ import user from "../../../../../stores/user";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 
-const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
-	}
-});
+const styles = theme => ({});
 
-class OtherFeesCard extends Component {
+class OtherFees extends Component {
 	constructor(props) {
 		super(props);
 
@@ -28,24 +20,18 @@ class OtherFeesCard extends Component {
 			eventFee: (0).toFixed(2),
 			errors: {},
 			isSubmitting: false,
-			showApiKeys: false,
+			showApiKeys: false
 		};
 	}
 
 	componentDidMount() {
-		//If we're editing an existing org then load the current details
-		//"/organizations/{id}"
-
 		const { organizationId } = this.props;
 
 		if (organizationId) {
 			Bigneon()
 				.organizations.read({ id: organizationId })
 				.then(response => {
-					const {
-						owner_user_id,
-						event_fee_in_cents,
-					} = response.data;
+					const { owner_user_id, event_fee_in_cents } = response.data;
 
 					this.setState({
 						owner_user_id: owner_user_id || "",
@@ -135,10 +121,7 @@ class OtherFeesCard extends Component {
 			return false;
 		}
 
-		const {
-			owner_user_id,
-			eventFee,
-		} = this.state;
+		const { owner_user_id, eventFee } = this.state;
 		const { organizationId } = this.props;
 
 		let orgDetails = {
@@ -163,12 +146,7 @@ class OtherFeesCard extends Component {
 	}
 
 	render() {
-		const {
-			owner_user_id,
-			eventFee = 0,
-			errors,
-			isSubmitting,
-		} = this.state;
+		const { owner_user_id, eventFee = 0, errors, isSubmitting } = this.state;
 
 		const { organizationId } = this.props;
 
@@ -178,44 +156,41 @@ class OtherFeesCard extends Component {
 		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
 
 		return (
-			<Card className={classes.paper}>
+			<div>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<CardContent>
-						<InputGroup
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position="start">$</InputAdornment>
-								)
-							}}
-							error={errors.eventFee}
-							value={eventFee}
-							name="eventFee"
-							label="Per order fee"
-							type="number"
-							onChange={e => this.setState({ eventFee: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
-					</CardContent>
-					<CardActions>
-						<Button
-							disabled={isSubmitting}
-							type="submit"
-							style={{ marginRight: 10 }}
-							variant="callToAction"
-						>
-							{isSubmitting
-								? organizationId
-									? "Creating..."
-									: "Updating..."
-								: organizationId
-									? "Update"
-									: "Create"}
-						</Button>
-					</CardActions>
+					<InputGroup
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position="start">$</InputAdornment>
+							)
+						}}
+						error={errors.eventFee}
+						value={eventFee}
+						name="eventFee"
+						label="Per order fee"
+						type="number"
+						onChange={e => this.setState({ eventFee: e.target.value })}
+						onBlur={this.validateFields.bind(this)}
+					/>
+
+					<Button
+						disabled={isSubmitting}
+						type="submit"
+						style={{ marginRight: 10 }}
+						variant="callToAction"
+					>
+						{isSubmitting
+							? organizationId
+								? "Creating..."
+								: "Updating..."
+							: organizationId
+								? "Update"
+								: "Create"}
+					</Button>
 				</form>
-			</Card>
+			</div>
 		);
 	}
 }
 
-export default withStyles(styles)(OtherFeesCard);
+export default withStyles(styles)(OtherFees);

@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import Grid from "@material-ui/core/Grid";
 
 import InputGroup from "../../common/form/InputGroup";
 
@@ -127,8 +123,7 @@ class AddressBlock extends Component {
 			country,
 			zip,
 			latitude,
-			longitude,
-
+			longitude
 		} = this.state;
 		const { errors = {} } = this.props;
 

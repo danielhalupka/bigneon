@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
 import MenuItem from "../../../elements/menu/MenuItem";
-import user from "../../../../stores/user";
 
 const styles = theme => {
 	return {};
@@ -44,7 +43,7 @@ const OrgMemberList = props => {
 				onClick={toggleDrawer}
 				shortLayout
 				iconName="megaphone"
-				to={`/admin/marketing/${user.currentOrganizationId}`}
+				to={"/admin/marketing"}
 			>
 				Marketing
 			</MenuItem>

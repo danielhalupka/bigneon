@@ -224,7 +224,7 @@ AutoCompleteGroup.propTypes = {
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
 	style: PropTypes.object,
-	onInputChange: PropTypes.func,
+	onInputChange: PropTypes.func
 };
 
 export default withStyles(styles, { withTheme: true })(AutoCompleteGroup);

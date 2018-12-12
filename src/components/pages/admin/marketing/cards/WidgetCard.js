@@ -29,8 +29,7 @@ class InviteUserCard extends Component {
 		};
 	}
 
-	componentDidMount() {
-	}
+	componentDidMount() {}
 
 	validateFields() {
 		//Don't validate every field if the user has not tried to submit at least once

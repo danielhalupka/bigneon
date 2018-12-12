@@ -30,7 +30,7 @@ class OrganizationUpdateCard extends Component {
 			sendgrid_api_key: "",
 			errors: {},
 			isSubmitting: false,
-			showApiKeys: true,
+			showApiKeys: true
 		};
 	}
 
@@ -44,15 +44,12 @@ class OrganizationUpdateCard extends Component {
 			Bigneon()
 				.organizations.read({ id: organizationId })
 				.then(response => {
-					const {
-						owner_user_id,
-						sendgrid_api_key
-					} = response.data;
+					const { owner_user_id, sendgrid_api_key } = response.data;
 
 					this.setState({
 						owner_user_id: owner_user_id || "",
 						sendgrid_api_key: sendgrid_api_key || "",
-						showApiKeys: true,
+						showApiKeys: true
 					});
 				})
 				.catch(error => {
@@ -131,14 +128,11 @@ class OrganizationUpdateCard extends Component {
 			return false;
 		}
 
-		const {
-			owner_user_id,
-			sendgrid_api_key,
-		} = this.state;
+		const { owner_user_id, sendgrid_api_key } = this.state;
 		const { organizationId } = this.props;
 
 		let orgDetails = {
-			sendgrid_api_key,
+			sendgrid_api_key
 		};
 
 		//If we're updating an existing org
@@ -164,7 +158,7 @@ class OrganizationUpdateCard extends Component {
 			errors,
 			sendgrid_api_key,
 			isSubmitting,
-			showApiKeys,
+			showApiKeys
 		} = this.state;
 
 		const { organizationId } = this.props;
@@ -184,7 +178,9 @@ class OrganizationUpdateCard extends Component {
 							name="sendgrid_key"
 							label="SendGrid API key"
 							type="text"
-							onChange={e => this.setState({ sendgrid_api_key: e.target.value })}
+							onChange={e =>
+								this.setState({ sendgrid_api_key: e.target.value })
+							}
 							onBlur={this.validateFields.bind(this)}
 						/>
 					</CardContent>

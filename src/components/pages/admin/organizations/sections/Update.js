@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import { withStyles, Collapse, Typography } from "@material-ui/core";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Card from "@material-ui/core/Card";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { withStyles } from "@material-ui/core";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
@@ -15,14 +11,9 @@ import addressTypeFromGoogleResult from "../../../../../helpers/addressTypeFromG
 import Bigneon from "../../../../../helpers/bigneon";
 import removePhoneFormatting from "../../../../../helpers/removePhoneFormatting";
 
-const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
-		marginBottom: theme.spacing.unit
-	}
-});
+const styles = theme => ({});
 
-class OrganizationUpdateCard extends Component {
+class OrganizationUpdate extends Component {
 	constructor(props) {
 		super(props);
 
@@ -44,9 +35,6 @@ class OrganizationUpdateCard extends Component {
 	}
 
 	componentDidMount() {
-		//If we're editing an existing org then load the current details
-		//"/organizations/{id}"
-
 		const { organizationId } = this.props;
 
 		if (organizationId) {
@@ -314,95 +302,92 @@ class OrganizationUpdateCard extends Component {
 		const isCurrentOwner = !!(owner_user_id && owner_user_id === user.id);
 
 		return (
-			<Card className={classes.paper}>
+			<div>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<CardContent>
+					<InputGroup
+						error={errors.name}
+						value={name}
+						name="name"
+						label="Organization name"
+						type="text"
+						onChange={e => this.setState({ name: e.target.value })}
+						onBlur={this.validateFields.bind(this)}
+					/>
+
+					{!isCurrentOwner ? (
 						<InputGroup
-							error={errors.name}
-							value={name}
-							name="name"
-							label="Organization name"
-							type="text"
-							onChange={e => this.setState({ name: e.target.value })}
+							error={errors.email}
+							value={email}
+							name="email"
+							label="Organization owner email address"
+							type="email"
+							onChange={e => this.setState({ email: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
 						/>
+					) : null}
 
-						{!isCurrentOwner ? (
-							<InputGroup
-								error={errors.email}
-								value={email}
-								name="email"
-								label="Organization owner email address"
-								type="email"
-								onChange={e => this.setState({ email: e.target.value })}
-								onBlur={this.validateFields.bind(this)}
-							/>
-						) : null}
+					<InputGroup
+						error={errors.phone}
+						value={phone}
+						name="phone"
+						label="Phone number"
+						type="phone"
+						onChange={e => this.setState({ phone: e.target.value })}
+						onBlur={this.validateFields.bind(this)}
+					/>
 
-						<InputGroup
-							error={errors.phone}
-							value={phone}
-							name="phone"
-							label="Phone number"
-							type="phone"
-							onChange={e => this.setState({ phone: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
+					<LocationInputGroup
+						error={errors.address}
+						label="Organization address"
+						address={address}
+						addressBlock={addressBlock}
+						onError={error => {
+							console.error("error");
+							notifications.show({
+								message: `Google API error: ${error}`, //TODO add more details here
+								variant: "error"
+							});
+						}}
+						onAddressChange={address => this.setState({ address })}
+						onLatLngResult={latLng => {
+							console.log("latLng", latLng);
+							this.setState({
+								latitude: latLng.lat,
+								longitude: latLng.lng
+							});
+						}}
+						onFullResult={result => {
+							const city = addressTypeFromGoogleResult(result, "locality");
+							const state = addressTypeFromGoogleResult(
+								result,
+								"administrative_area_level_1"
+							);
+							const country = addressTypeFromGoogleResult(result, "country");
 
-						<LocationInputGroup
-							error={errors.address}
-							label="Organization address"
-							address={address}
-							addressBlock={addressBlock}
-							onError={error => {
-								console.error("error");
-								notifications.show({
-									message: `Google API error: ${error}`, //TODO add more details here
-									variant: "error"
-								});
-							}}
-							onAddressChange={address => this.setState({ address })}
-							onLatLngResult={latLng => {
-								console.log("latLng", latLng);
-								this.setState({
-									latitude: latLng.lat,
-									longitude: latLng.lng
-								});
-							}}
-							onFullResult={result => {
-								const city = addressTypeFromGoogleResult(result, "locality");
-								const state = addressTypeFromGoogleResult(
-									result,
-									"administrative_area_level_1"
-								);
-								const country = addressTypeFromGoogleResult(result, "country");
+							const zip = addressTypeFromGoogleResult(result, "postal_code");
 
-								const zip = addressTypeFromGoogleResult(result, "postal_code");
+							this.setState({ city, state, country, zip });
+						}}
+					/>
 
-								this.setState({ city, state, country, zip });
-							}}
-						/>
-					</CardContent>
-					<CardActions>
-						<Button
-							disabled={isSubmitting}
-							type="submit"
-							style={{ marginRight: 10 }}
-							variant="callToAction"
-						>
-							{isSubmitting
-								? organizationId
-									? "Creating..."
-									: "Updating..."
-								: organizationId
-									? "Update"
-									: "Create"}
-						</Button>
-					</CardActions>
+					<Button
+						disabled={isSubmitting}
+						type="submit"
+						style={{ marginRight: 10, marginTop: 20 }}
+						variant="callToAction"
+					>
+						{isSubmitting
+							? organizationId
+								? "Creating..."
+								: "Updating..."
+							: organizationId
+								? "Update"
+								: "Create"}
+					</Button>
 				</form>
-			</Card>
+			</div>
 		);
 	}
 }
 
-export default withStyles(styles)(OrganizationUpdateCard);
+export default withStyles(styles)(OrganizationUpdate);

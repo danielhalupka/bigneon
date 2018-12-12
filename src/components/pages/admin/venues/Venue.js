@@ -79,7 +79,7 @@ class Venue extends Component {
 						postal_code,
 						phone,
 						region_id,
-						promo_image_url,
+						promo_image_url
 					} = response.data;
 
 					this.setState({

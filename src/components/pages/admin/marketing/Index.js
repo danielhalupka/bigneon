@@ -3,12 +3,14 @@ import { Typography, withStyles } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Grid from "@material-ui/core/Grid";
+import { observer } from "mobx-react";
+
 import IntegrationCard from "./cards/IntegrationCard";
-// import LinkVenuesCard from "./cards/LinkVenuesCard";
 import WidgetCard from "./cards/WidgetCard";
 import ApiCard from "./cards/ApiCard";
 import EmailCard from "./cards/EmailCard";
 import PageHeading from "../../../elements/PageHeading";
+import user from "../../../../stores/user";
 
 const styles = theme => ({
 	paper: {
@@ -17,6 +19,7 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class Marketing extends Component {
 	constructor(props) {
 		super(props);
@@ -27,25 +30,14 @@ class Marketing extends Component {
 		};
 	}
 
-	static getDerivedStateFromProps(props, state) {
-		let organizationId = null;
-		if (props.match && props.match.params && props.match.params.id) {
-			organizationId = props.match.params.id;
-		}
-
-		return { organizationId };
-	}
-
-	render() {
-		const { activeTab, organizationId } = this.state;
+	renderContent() {
+		const { activeTab } = this.state;
 		const { history } = this.props;
+
+		const organizationId = user.currentOrganizationId;
 
 		return (
 			<div>
-				<PageHeading>
-					Marketing Integrations
-				</PageHeading>
-
 				<Tabs
 					value={activeTab}
 					onChange={(event, activeTab) => this.setState({ activeTab })}
@@ -63,24 +55,37 @@ class Marketing extends Component {
 						) : null}
 
 						{activeTab === 1 ? (
-							<WidgetCard
-								history={history}
-								organizationId={organizationId}
-							/>
+							<WidgetCard history={history} organizationId={organizationId} />
 						) : null}
 
 						{activeTab === 2 ? (
-							<IntegrationCard history={history} organizationId={organizationId} />
-						) : null}
-
-						{activeTab === 3 ? (
-							<ApiCard
+							<IntegrationCard
 								history={history}
 								organizationId={organizationId}
 							/>
 						) : null}
+
+						{activeTab === 3 ? (
+							<ApiCard history={history} organizationId={organizationId} />
+						) : null}
 					</Grid>
 				</Grid>
+			</div>
+		);
+	}
+
+	render() {
+		const organizationId = user.currentOrganizationId;
+
+		return (
+			<div>
+				<PageHeading>Marketing Integrations</PageHeading>
+
+				{organizationId ? (
+					this.renderContent()
+				) : (
+					<Typography>Loading...</Typography>
+				)}
 			</div>
 		);
 	}

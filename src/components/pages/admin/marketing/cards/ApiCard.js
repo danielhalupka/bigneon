@@ -39,7 +39,6 @@ class ApiCard extends Component {
 
 	componentDidMount() {
 		const { organizationId } = this.props;
-		
 	}
 
 	render() {
@@ -49,7 +48,9 @@ class ApiCard extends Component {
 			<Card className={classes.paper}>
 				<CardContent>
 					<div>
-					Please contact your account executive for your API key and developer documents to implement custom integrations between Big Neon and your owned media properties.
+						Please contact your account executive for your API key and developer
+						documents to implement custom integrations between Big Neon and your
+						owned media properties.
 					</div>
 				</CardContent>
 			</Card>

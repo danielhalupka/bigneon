@@ -20,6 +20,7 @@
         "allowTemplateLiterals": true
       }
     ],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
     "max-len": 0,
     "global-require": 0,
     "no-nested-ternary": 0,
@@ -31,8 +32,10 @@
     "react/jsx-uses-vars": "error",
     "no-console": "off",
     "react/jsx-no-undef": "error",
-    "lines-between-class-members": "warn",
-    "object-curly-spacing": ["warn", "always"]
+    "lines-between-class-members": "error",
+    "object-curly-spacing": ["warn", "always"],
+    "comma-dangle": ["error", "never"],
+    "no-mixed-spaces-and-tabs": "off"
   },
   "env": {
     "browser": true,
