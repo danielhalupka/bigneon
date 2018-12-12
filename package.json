@@ -1,6 +1,6 @@
 {
   "name": "bn-web",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "private": true,
   "dependencies": {
     "@material-ui/core": "3.1.1",
