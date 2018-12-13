@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import moment from "moment";
 
 import Dialog from "../../../../../elements/Dialog";
@@ -14,17 +15,45 @@ import RadioButton from "../../../../../elements/form/RadioButton";
 import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
 
 const formatHoldForSaving = values => {
-	const { quantity, discountInCents, endAt, maxPerOrder } = values;
-	return {
-		...values,
+	const {
+		quantity,
+		discount_in_cents,
+		discountInDollars,
+		endAt,
+		maxPerOrder,
+		event_id,
+		hold_type,
+		id,
+		redemption_code,
+		ticket_type_id,
+		name,
+		parent_hold_id,
+		...rest
+	} = values;
+
+	const result = {
+		id,
+		name,
 		quantity: Number(quantity),
-		discount_in_cents: discountInCents ? Number(discountInCents) : 0,
-		end_at: moment.utc(endAt).format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-		max_per_order: Number(maxPerOrder)
+		discount_in_cents: discountInDollars
+			? Number(discountInDollars) * 100
+			: discount_in_cents,
+		end_at: endAt
+			? moment.utc(endAt).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			: undefined,
+		max_per_order: Number(maxPerOrder),
+		event_id,
+		redemption_code,
+		ticket_type_id,
+		hold_type,
+		parent_hold_id
 	};
+
+	return result;
 };
 
 const createHoldForInput = (values = {}) => {
+	const { discount_in_cents, max_per_order } = values;
 	return {
 		id: "",
 		event_id: "",
@@ -33,9 +62,11 @@ const createHoldForInput = (values = {}) => {
 		quantity: 0,
 		redemption_code: "",
 		hold_type: "Discount",
-		discountInCents: 0,
+		discountInDollars: discount_in_cents
+			? (discount_in_cents / 100).toFixed(2)
+			: "",
 		endAt: null,
-		maxPerOrder: 0,
+		maxPerOrder: max_per_order,
 		...values
 	};
 };
@@ -80,9 +111,12 @@ class HoldDialog extends React.Component {
 					if (holdType === HOLD_TYPES.SPLIT) {
 						let { ...parentHold } = hold;
 						hold.quantity = 0;
-						this.setState({ parentHold, hold });
+						this.setState({
+							parentHold: createHoldForInput(parentHold),
+							hold: createHoldForInput(hold)
+						});
 					} else {
-						this.setState({ hold });
+						this.setState({ hold: createHoldForInput(hold) });
 					}
 				});
 		} else {
@@ -128,18 +162,10 @@ class HoldDialog extends React.Component {
 			})
 			.catch(error => {
 				this.setState({ isSubmitting: false });
-				let message = `${hold.id ? "Update" : "Create"} hold failed.`;
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notification.show({
-					message,
-					variant: "error"
+				console.error(error);
+				notification.showFromErrorResponse({
+					error,
+					defaultMessage: `${hold.id ? "Update" : "Create"} hold failed.`
 				});
 			});
 	}
@@ -360,7 +386,7 @@ class HoldDialog extends React.Component {
 											hold: {
 												...hold,
 												hold_type: "Discount",
-												discountInCents: hold.discountInCents
+												discountInDollars: hold.discountInDollars
 											}
 										});
 									}}
@@ -375,7 +401,7 @@ class HoldDialog extends React.Component {
 											hold: {
 												...hold,
 												hold_type: "Comp",
-												discountInCents: 0
+												discountInDollars: ""
 											}
 										});
 									}}
@@ -386,15 +412,20 @@ class HoldDialog extends React.Component {
 						</Grid>
 						<Grid item xs={6}>
 							<InputGroup
-								error={errors.discountInCents}
-								value={hold.discountInCents}
-								name="discountInCents"
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position="start">$</InputAdornment>
+									)
+								}}
+								error={errors.discountInDollars}
+								value={hold.discountInDollars}
+								name="discountInDollars"
 								label="Discount"
-								placeholder="0"
+								placeholder=""
 								type="number"
 								disabled={hold.hold_type === "Comp"}
 								onChange={e => {
-									hold.discountInCents = e.target.value;
+									hold.discountInDollars = e.target.value;
 									this.setState({ hold });
 								}}
 								// onBlur={this.validateFields.bind(this)}
