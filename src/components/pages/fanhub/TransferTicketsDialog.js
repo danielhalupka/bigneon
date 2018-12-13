@@ -180,7 +180,7 @@ class TransferTicketsDialog extends Component {
 			.tickets.transfer.send({
 				ticket_ids: ticketIds,
 				validity_period_in_seconds: 60 * 60 * 24, //TODO make this config based
-				email: emailOrCellphoneNumber
+				email_or_phone: emailOrCellphoneNumber
 			})
 			.then(response => {
 				this.setState({ isSubmitting: false }, () => {
@@ -195,16 +195,9 @@ class TransferTicketsDialog extends Component {
 			.catch(error => {
 				this.setState({ isSubmitting: false });
 				console.error(error);
-				let message = "Send tickets via email failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-				notification.show({
-					message,
+				notification.showFromErrorResponse({
+					error,
+					defaultMessage: "Send tickets via email or phone failed.",
 					variant: "error"
 				});
 			});
