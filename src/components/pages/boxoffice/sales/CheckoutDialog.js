@@ -123,6 +123,7 @@ class CheckoutDialog extends React.Component {
 					reference: "TODO",
 					first_name: firstName,
 					last_name: lastName,
+					phone,
 					email,
 					note
 				}
@@ -133,7 +134,7 @@ class CheckoutDialog extends React.Component {
 				const { onClose, onSuccess } = this.props;
 				this.setState(this.defaultState, () => {
 					onClose();
-					setTimeout(() => onSuccess({ ...response.data, email }), 500);
+					setTimeout(() => onSuccess({ ...response.data, email, phone }), 500);
 				});
 			})
 			.catch(error => {
@@ -156,23 +157,11 @@ class CheckoutDialog extends React.Component {
 
 		const errors = {};
 
-		if (!firstName) {
-			errors.firstName = "Missing first name.";
-		}
-
-		if (!lastName) {
-			errors.lastName = "Missing last name.";
-		}
-
-		if (!email) {
-			errors.email = "Missing email.";
-		} else if (!validEmail(email)) {
+		if (email && !validEmail(email)) {
 			errors.email = "Invalid email address.";
 		}
 
-		if (!phone) {
-			errors.phone = "Missing phone number.";
-		} else if (!validPhone(phone)) {
+		if (phone && !validPhone(phone)) {
 			errors.phone = "Invalid phone number.";
 		}
 
@@ -285,7 +274,7 @@ class CheckoutDialog extends React.Component {
 								error={errors.firstName}
 								value={firstName}
 								name="firstName"
-								label="First name*"
+								label="First name"
 								type="text"
 								onChange={e => this.setState({ firstName: e.target.value })}
 								onBlur={this.validateFields.bind(this)}
@@ -296,7 +285,7 @@ class CheckoutDialog extends React.Component {
 								error={errors.lastName}
 								value={lastName}
 								name="lastName"
-								label="Last name*"
+								label="Last name"
 								type="text"
 								onChange={e => this.setState({ lastName: e.target.value })}
 								onBlur={this.validateFields.bind(this)}
@@ -307,7 +296,7 @@ class CheckoutDialog extends React.Component {
 								error={errors.email}
 								value={email}
 								name="email"
-								label="Email*"
+								label="Email"
 								type="text"
 								onChange={e => this.setState({ email: e.target.value })}
 								onBlur={this.validateFields.bind(this)}

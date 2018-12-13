@@ -65,8 +65,14 @@ class InputWithButton extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: ""
+			value: false
 		};
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.state.value === false && this.props.value) {
+			this.setState({ value: this.props.value });
+		}
 	}
 
 	render() {
@@ -91,7 +97,7 @@ class InputWithButton extends Component {
 				<div className={classes.inputContainer}>
 					<input
 						className={classes.input}
-						value={value}
+						value={value === false ? "" : value}
 						name={name}
 						onChange={e => {
 							let value = e.target.value;
@@ -141,6 +147,7 @@ InputWithButton.defaultPropTypes = {
 
 InputWithButton.propTypes = {
 	classes: PropTypes.object.isRequired,
+	value: PropTypes.string,
 	onSubmit: PropTypes.func.isRequired,
 	name: PropTypes.string.isRequired,
 	placeholder: PropTypes.string,

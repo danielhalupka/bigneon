@@ -11,6 +11,7 @@ import { validPhone, validEmail } from "../../../../validators";
 import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";
 import InputWithButton from "../../../common/form/InputWithButton";
+import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
 
 const styles = theme => ({
 	content: {
@@ -40,7 +41,22 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { isSendingSMS: false, isCheckingIn: false };
+		this.state = { isSendingSMS: false, isCheckingIn: false, defaultPhone: "" };
+	}
+
+	componentDidUpdate(prevProps) {
+		const { currentOrderDetails } = this.props;
+
+		if (currentOrderDetails && !this.state.defaultPhone) {
+			const { phone } = currentOrderDetails;
+			if (phone) {
+				this.setState({ defaultPhone: removePhoneFormatting(phone) });
+			}
+		} else {
+			if (this.state.defaultPhone && !currentOrderDetails) {
+				this.setState({ defaultPhone: "" });
+			}
+		}
 	}
 
 	async transferTickets(tickets, emailOrCellphoneNumber) {
@@ -54,7 +70,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 				.tickets.transfer.send({
 					ticket_ids,
 					validity_period_in_seconds: 60 * 60 * 24, //TODO make this config based
-					email: emailOrCellphoneNumber
+					email_or_phone: emailOrCellphoneNumber
 				})
 				.then(response => {
 					resolve({ result: response });
@@ -186,7 +202,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 
 	render() {
 		const { currentOrderDetails, onClose, classes } = this.props;
-		const { isSendingSMS, isCheckingIn } = this.state;
+		const { isSendingSMS, isCheckingIn, defaultPhone } = this.state;
 
 		const iconUrl = "/icons/tickets-white.svg";
 		let orderNumber = "";
@@ -223,6 +239,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 						Send ticket via SMS
 					</Typography>
 					<InputWithButton
+						value={defaultPhone}
 						style={buttonStyle}
 						iconUrl={"/icons/cellphone-gray.svg"}
 						name={"cellNumber"}
