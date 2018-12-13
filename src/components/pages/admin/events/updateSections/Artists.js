@@ -56,11 +56,10 @@ class ArtistDetails extends Component {
 			artists: props.artists,
 			showArtistSelect: false,
 			availableArtists: null,
-			spotifyArtists: null,
+			spotifyArtists: {},
 			errors: {},
 			isSubmitting: false,
 			isSearching: false
-
 		};
 	}
 
@@ -175,20 +174,28 @@ class ArtistDetails extends Component {
 		}
 		this.debounceSearch = setTimeout(async () => {
 			try {
-				let results = await Bigneon().artists.search({ q: searchName, spotify: 1 });
+				let results = await Bigneon().artists.search({
+					q: searchName,
+					spotify: 1
+				});
 				results = results.data.data;
 
 				let spotifyArtists = {};
-				results.filter(artist => !artist.id && artist.spotify_id).forEach(artist => {
-					spotifyArtists[artist.spotify_id] = true;
+				results
+					.filter(artist => !artist.id && artist.spotify_id)
+					.forEach(artist => {
+						spotifyArtists[artist.spotify_id] = true;
+					});
+				this.setState({
+					isSearching: false,
+					availableArtists: results,
+					spotifyArtists
 				});
-				this.setState({ isSearching: false, availableArtists: results, spotifyArtists });
 			} catch (e) {
 				this.setState({ isSearching: false });
 				console.log(e);
 			}
 		}, 500);
-
 	}
 
 	renderAddNewArtist() {
@@ -217,13 +224,16 @@ class ArtistDetails extends Component {
 				onInputChange={this.search.bind(this)}
 				placeholder={"eg. Childish Gambino"}
 				onChange={artistId => {
-
 					if (artistId) {
 						this.addNewArtist(artistId);
 						this.setState({ showArtistSelect: false });
 					}
 				}}
-				formatCreateLabel={label => isSearching ? `Searching artists for ${label} - Click here to skip search and create` : `Create a new artist "${label}"`}
+				formatCreateLabel={label =>
+					isSearching
+						? `Searching artists for ${label} - Click here to skip search and create`
+						: `Create a new artist "${label}"`
+				}
 				onCreateOption={this.createNewArtist.bind(this)}
 			/>
 		);

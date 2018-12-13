@@ -10,6 +10,59 @@ const formats = {
 	"date-time": "MM/DD/YYYY HH:mm"
 };
 
+//Force times to be certain numbers but loose with dates
+const timeStrictMasks = {
+	time: [
+		//Hour
+		/[0-2]/,
+		/[0-9]/,
+		":",
+		//Minute
+		/[0-5]/,
+		/[0-9]/
+	],
+	date: [
+		//Month
+		/\d/,
+		/\d/,
+		"/",
+		//Day
+		/\d/,
+		/\d/,
+		"/",
+		//Year
+		/\d/,
+		/\d/,
+		/\d/,
+		/\d/
+	],
+	"date-time": [
+		//Month
+		/\d/,
+		/\d/,
+		"/",
+		//Day
+		/\d/,
+		/\d/,
+		"/",
+		//Year
+		/\d/,
+		/\d/,
+		/\d/,
+		/\d/,
+
+		" ",
+
+		//Hour
+		/[0-2]/,
+		/[0-9]/,
+		":",
+		//Minute
+		/[0-5]/,
+		/[0-9]/
+	]
+};
+
 //Strict number masks
 const strictMasks = {
 	time: [
@@ -127,7 +180,7 @@ const DateInputMask = props => {
 		<MaskedInput
 			{...other}
 			ref={inputRef}
-			mask={strictMasks.date}
+			mask={timeStrictMasks.date}
 			{...defaultMaskProps}
 		/>
 	);
@@ -140,7 +193,7 @@ const DateTimeInputMask = props => {
 		<MaskedInput
 			{...other}
 			ref={inputRef}
-			mask={strictMasks["date-time"]}
+			mask={timeStrictMasks["date-time"]}
 			{...defaultMaskProps}
 		/>
 	);
@@ -153,7 +206,7 @@ const TimeInputMask = props => {
 		<MaskedInput
 			{...other}
 			ref={inputRef}
-			mask={strictMasks.time}
+			mask={timeStrictMasks.time}
 			{...defaultMaskProps}
 		/>
 	);
