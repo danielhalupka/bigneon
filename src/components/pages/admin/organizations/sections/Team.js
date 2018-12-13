@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Typography, withStyles } from "@material-ui/core";
-
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
 import { validEmail } from "../../../../../validators";
 import Bigneon from "../../../../../helpers/bigneon";
-
+import Bn from "bn-api-node";
 import { fontFamilyDemiBold, primaryHex } from "../../../../styles/theme";
 import OrgUserRow from "./OrgUserRow";
+import SelectGroup from "../../../../common/form/SelectGroup";
+import Grid from "@material-ui/core/Grid/Grid";
 
 const imageSize = 40;
 
@@ -62,6 +63,7 @@ class Team extends Component {
 
 		this.state = {
 			email: "",
+			role: "OrgMember",
 			orgMembers: [],
 			errors: {},
 			isSubmitting: false
@@ -124,13 +126,15 @@ class Team extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		const { email } = this.state;
+		const { email, role } = this.state;
 		const { organizationId } = this.props;
 
 		Bigneon()
-			.organizations.invite.create({
+			.organizations.invite
+			.create({
 				organization_id: organizationId,
-				user_email: email
+				user_email: email,
+				role
 			})
 			.then(response => {
 				this.setState({ isSubmitting: false });
@@ -152,6 +156,26 @@ class Team extends Component {
 			});
 	}
 
+	get renderRoles() {
+		const roles = Bn.Enums && Bn.Enums.USER_ROLES_STRING ? Bn.Enums.USER_ROLES_STRING : {};
+		const { role, errors } = this.state;
+		const label = "New User's Role";
+		return (
+			<SelectGroup
+				value={role}
+				items={roles}
+				error={errors.role}
+				name={"role"}
+				missingItemsLabel={"No available roles"}
+				label={label}
+				onChange={e => {
+					const role = e.target.value;
+					this.setState({ role });
+				}}
+			/>
+		);
+	}
+
 	render() {
 		const { email, orgMembers, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
@@ -164,15 +188,26 @@ class Team extends Component {
 						autoComplete="off"
 						onSubmit={this.onSubmit.bind(this)}
 					>
-						<InputGroup
-							error={errors.email}
-							value={email}
-							name="email"
-							label="Member invite email address"
-							type="email"
-							onChange={e => this.setState({ email: e.target.value })}
-							onBlur={this.validateFields.bind(this)}
-						/>
+						<Grid
+							direction="row"
+							container
+						>
+							<Grid item xs={12} md={6}>
+								<InputGroup
+									error={errors.email}
+									value={email}
+									name="email"
+									label="Member invite email address"
+									type="email"
+									onChange={e => this.setState({ email: e.target.value })}
+									onBlur={this.validateFields.bind(this)}
+								/>
+							</Grid>
+							<Grid item xs={12} md={6}>
+
+								{this.renderRoles}
+							</Grid>
+						</Grid>
 						<Button
 							disabled={isSubmitting}
 							type="submit"
@@ -190,18 +225,22 @@ class Team extends Component {
 						<Typography className={classes.heading}>Email</Typography>
 						<Typography className={classes.heading}>Roles</Typography>
 					</OrgUserRow>
-					{orgMembers.map(user => {
+					{orgMembers.map((user, i) => {
 						const {
 							id,
 							first_name,
 							last_name,
 							email,
 							is_org_owner,
-							thumb_profile_pic_url
+							thumb_profile_pic_url,
+							roles
 						} = user;
+						const formattedRoles = roles.map(role => {
+							return Bn.Enums.USER_ROLES_STRING[role.replace(" (Invited)", "")];
+						})
 
 						return (
-							<OrgUserRow key={id}>
+							<OrgUserRow key={i}>
 								<div className={classes.nameProfileImage}>
 									{thumb_profile_pic_url ? (
 										<div
@@ -226,7 +265,7 @@ class Team extends Component {
 								</div>
 								<Typography className={classes.itemText}>{email}</Typography>
 								<Typography className={classes.itemText}>
-									{is_org_owner ? "Owner" : "Member"}
+									{formattedRoles.join(", ")}
 								</Typography>
 							</OrgUserRow>
 						);

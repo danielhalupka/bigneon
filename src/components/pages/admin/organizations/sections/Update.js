@@ -260,7 +260,6 @@ class OrganizationUpdate extends Component {
 			longitude
 		};
 		const { classes } = this.props;
-		console.log(this.props.history, this.props.history.push);
 
 		return (
 			<div>
