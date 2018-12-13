@@ -76,8 +76,8 @@ const PriceTag = ({ classes, min, max }) => {
 	const maxDollars = Math.round(max / 100);
 	let text = `$${minDollars} - $${maxDollars}`;
 
-	if (minDollars === maxDollars) {
-		`$${minDollars}`;
+	if (min === max) {
+		text = `$${minDollars}`;
 	}
 
 	return (

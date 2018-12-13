@@ -81,7 +81,12 @@ const formatDataForSaving = (event, organizationId) => {
 		override_status
 	};
 
-	if (eventDate) {
+	if (
+		eventDate &&
+		showTime &&
+		moment(eventDate).isValid() &&
+		moment(showTime).isValid()
+	) {
 		//eventDate = eventDate + show time and door time need evenData added to them
 		eventDate.set({
 			hour: showTime.get("hour"),
@@ -373,7 +378,6 @@ class Details extends Component {
 						label="Event date"
 						onChange={eventDate => {
 							this.changeDetails({ eventDate });
-							console.log("eventDate: ", eventDate.format());
 							//TODO add this check back when possible to change the end date of a ticket if it's later than the event date
 							//const tickets = this.state.tickets;
 							// if (tickets.length > 0) {

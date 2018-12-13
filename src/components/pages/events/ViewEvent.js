@@ -331,17 +331,20 @@ class ViewEvent extends Component {
 					{ticket_types.map(({ id, name, status, ticket_pricing }) => {
 						let price = "";
 						if (ticket_pricing) {
-							price = ticket_pricing.price_in_cents / 100;
+							price = `$${(ticket_pricing.price_in_cents / 100).toFixed(2)}`;
 							//description = ticket_pricing.name;
-							//TODO check if they're available, if none are available change the layout
 						}
-						return (
-							<Typography key={id} className={classes.ticketPricing}>
-								<span className={classes.ticketPricingValue}>${price}</span>
-								&nbsp;&nbsp;
-								{name}
-							</Typography>
-						);
+
+						//TODO check if they're available, if none are available change the layout
+						if (price) {
+							return (
+								<Typography key={id} className={classes.ticketPricing}>
+									<span className={classes.ticketPricingValue}>{price}</span>
+									&nbsp;&nbsp;
+									{name}
+								</Typography>
+							);
+						}
 					})}
 					{this.getDetailPageButton}
 
@@ -367,7 +370,6 @@ class ViewEvent extends Component {
 		const mobileMarginAdjustment =
 			600 + (ticket_types ? ticket_types.length * 50 : 50);
 
-		console.log(mobileMarginAdjustment);
 		return (
 			<div>
 				<EventHeaderImage {...event} artists={artists} />
