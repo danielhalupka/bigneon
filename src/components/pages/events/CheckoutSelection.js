@@ -334,8 +334,7 @@ class CheckoutSelection extends Component {
 					</Typography>
 
 					<Typography className={classes.eventSubCardDescription}>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam in
-						lacus non magna tincidunt lacinia.
+						{additional_info}
 					</Typography>
 				</div>
 

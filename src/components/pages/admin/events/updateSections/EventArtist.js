@@ -81,12 +81,18 @@ const EventArtist = ({
 					</div>
 
 					<div>
-						{Object.keys(socialAccounts).map(
+						{/* //TODO place back when we have icons and links */}
+						{/* {Object.keys(socialAccounts).map(
 							account =>
 								socialAccounts[account] ? (
-									<SocialIconLink key={account} icon={account} size={30} />
+									<SocialIconLink
+										color="black"
+										key={account}
+										icon={account}
+										size={30}
+									/>
 								) : null
-						)}
+						)} */}
 					</div>
 				</div>
 			</div>
