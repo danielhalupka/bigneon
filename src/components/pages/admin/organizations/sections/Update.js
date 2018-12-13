@@ -260,6 +260,7 @@ class OrganizationUpdate extends Component {
 			longitude
 		};
 		const { classes } = this.props;
+		console.log(this.props.history, this.props.history.push);
 
 		return (
 			<div>
@@ -298,7 +299,6 @@ class OrganizationUpdate extends Component {
 						}}
 						onAddressChange={address => this.setState({ address })}
 						onLatLngResult={latLng => {
-							console.log("latLng", latLng);
 							this.setState({
 								latitude: latLng.lat,
 								longitude: latLng.lng

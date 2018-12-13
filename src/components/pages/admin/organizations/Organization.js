@@ -64,6 +64,7 @@ class Organization extends Component {
 
 	renderContent(organizationId) {
 		const { activeTab } = this.state;
+		const { history } = this.props;
 
 		switch (activeTab) {
 			case "details":
