@@ -228,9 +228,13 @@ class DateTimePickerGroup extends Component {
 
 	componentDidUpdate(prevProps) {
 		const { value, type } = this.props;
-		if (value !== prevProps.value && !this.state.value) {
+
+		if (value && moment(value).isValid()) {
 			const stringValue = moment(value).format(formats[type]);
-			this.setState({ value: stringValue });
+
+			if (this.state.value !== stringValue) {
+				this.setState({ value: stringValue });
+			}
 		}
 	}
 
