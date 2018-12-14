@@ -295,9 +295,14 @@ class User {
 	}
 
 	@computed
+	get isOrgAdmin() {
+		return this.globalRoles.indexOf("OrgAdmin") > -1;
+	}
+
+	@computed
 	get isOrgBoxOffice() {
 		//Trickle down role permissions
-		if (this.isOrgOwner || this.isOrgMember) {
+		if (this.isOrgOwner || this.isOrgMember || this.isOrgAdmin) {
 			return true;
 		}
 
@@ -308,7 +313,7 @@ class User {
 	get isOrgScanner() {
 		//Currently unused
 		//Trickle down role permissions
-		if (this.isOrgOwner || this.isOrgMember) {
+		if (this.isOrgOwner || this.isOrgMember || this.isOrgAdmin) {
 			return true;
 		}
 

@@ -147,11 +147,13 @@ class Team extends Component {
 				this.loadOrgMembers();
 			})
 			.catch(error => {
+
 				console.error(error);
 				this.setState({ isSubmitting: false });
-				notifications.show({
-					message: "Linking failed.",
-					variant: "error"
+
+				notifications.showFromErrorResponse({
+					defaultMessage: "Invite failed",
+					error
 				});
 			});
 	}
@@ -233,10 +235,12 @@ class Team extends Component {
 							email,
 							is_org_owner,
 							thumb_profile_pic_url,
-							roles
+							roles,
+							invite_or_member
+
 						} = user;
 						const formattedRoles = roles.map(role => {
-							return Bn.Enums.USER_ROLES_STRING[role.replace(" (Invited)", "")];
+							return Bn.Enums.USER_ROLES_STRING[role.replace(" (Invited)", "")]  + (invite_or_member==="invite" ? " (Invite sent)":"");
 						})
 
 						return (

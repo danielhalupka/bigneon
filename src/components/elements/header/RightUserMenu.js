@@ -124,7 +124,7 @@ class RightHeaderMenu extends React.Component {
 				open={open}
 				onClose={this.handleClose.bind(this)}
 			>
-				{user.isOrgOwner || user.isOrgMember || user.isAdmin ? (
+				{user.isOrgOwner || user.isOrgMember || user.isAdmin || user.isOrgAdmin ? (
 					<Link to="/admin/events">
 						<MenuItem onClick={this.handleClose.bind(this)}>Admin</MenuItem>
 					</Link>

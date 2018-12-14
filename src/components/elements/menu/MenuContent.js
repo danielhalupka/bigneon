@@ -51,7 +51,7 @@ class MenuContent extends Component {
 			);
 		}
 
-		const { isAdmin, isOrgOwner, isOrgMember, isGuest, isUser } = user;
+		const { isAdmin, isOrgOwner, isOrgMember, isOrgAdmin, isGuest, isUser } = user;
 		if (isAdmin) {
 			return (
 				<AdminMenuList
@@ -62,7 +62,7 @@ class MenuContent extends Component {
 			);
 		}
 
-		if (isOrgOwner) {
+		if (isOrgOwner || isOrgAdmin) {
 			return (
 				<OrgOwnerList
 					toggleDrawer={toggleDrawer}

@@ -45,7 +45,7 @@ class Layout {
 	@computed
 	get adminStyleMenu() {
 		if (user.isAuthenticated) {
-			return user.isAdmin || user.isOrgOwner || user.isOrgMember;
+			return user.isAdmin || user.isOrgOwner || user.isOrgMember || user.isOrgAdmin;
 		} else {
 			return null;
 		}
