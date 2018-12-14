@@ -53,6 +53,7 @@ class CheckoutSelection extends Component {
 			isSubmitting: false,
 			isSubmittingPromo: false
 		};
+		this.onSubmit.bind(this);
 	}
 
 	componentDidMount() {
@@ -62,8 +63,8 @@ class CheckoutSelection extends Component {
 				if (items && items.length > 0) {
 					let ticketSelection = {};
 
-					items.forEach(({ ticket_type_id, quantity }) => {
-						if (ticket_type_id) {
+					items.forEach(({ ticket_type_id, quantity, redemption_code }) => {
+						if (ticket_type_id && !redemption_code) {
 							ticketSelection[ticket_type_id] = ticketSelection[ticket_type_id]
 								? ticketSelection[ticket_type_id] + quantity
 								: quantity;
@@ -138,38 +139,16 @@ class CheckoutSelection extends Component {
 		}
 
 		this.setState({ isSubmittingPromo: true }, () => {
-			setTimeout(() => {
-				notifications.show({
-					message: "Feature coming soon.",
-					variant: "info"
-				});
-
-				this.setState({ isSubmittingPromo: false });
-			}, 2000);
+			cart.applyPromo(code);
+			this.onSubmit(true);
 		});
-
-		//TODO this isn't in the API yet so needs tweaking when the API endpoint is available
-		// Bigneon().cart.applyPromo({code})
-		// 	.then(response => {
-		// 		const { value } = response.data;
-
-		// 		onSuccess(value);
-		// 	})
-		// 	.catch(error => {
-		// 		let message = "Promo code check failed.";
-
-		// 		if (
-		// 			error.response &&
-		// 			error.response.data &&
-		// 			error.response.data.error
-		// 		) {
-		// 			message = error.response.data.error;
-		// 		}
-		// 		this.setState({ isSubmitting: false, error: message });
-		// 	});
 	}
 
-	onSubmit() {
+	onSubmit(isPromoCodeOnly) {
+		if (!isPromoCodeOnly) {
+			cart.applyPromo(null);
+		}
+
 		const { id } = selectedEvent;
 		cart.setLatestEventId(id);
 		const { ticketSelection } = this.state;
@@ -195,7 +174,7 @@ class CheckoutSelection extends Component {
 		});
 
 		//If the existing cart is empty and they haven't selected anything
-		if (cart.ticketCount === 0 && emptySelection) {
+		if (cart.ticketCount === 0 && emptySelection && !isPromoCodeOnly) {
 			return notifications.show({
 				message: "Select tickets first."
 			});
@@ -203,10 +182,10 @@ class CheckoutSelection extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		cart.update(
-			ticketSelection,
+		cart.replace(
+			isPromoCodeOnly ? [] : ticketSelection,
 			() => {
-				if (!emptySelection) {
+				if (!emptySelection || isPromoCodeOnly) {
 					this.props.history.push(`/events/${id}/tickets/confirmation`);
 				} else {
 					//They had something in their cart, but they removed and updated
@@ -352,7 +331,7 @@ class CheckoutSelection extends Component {
 
 				<Button
 					disabled={isSubmitting}
-					onClick={this.onSubmit.bind(this)}
+					onClick={() => this.onSubmit(false)}
 					size="large"
 					style={{ width: "100%" }}
 					variant="callToAction"

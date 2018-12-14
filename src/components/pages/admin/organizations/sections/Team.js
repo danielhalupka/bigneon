@@ -365,6 +365,7 @@ class Team extends Component {
 							invite_or_member
 
 						} = user;
+
 						const isInvite = invite_or_member === "invite";
 
 						//Currently you only have 1 role in the array, as it stands this is the intended functionality

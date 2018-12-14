@@ -7,6 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
+import Button from "../../elements/Button";
 import Bigneon from "../../../helpers/bigneon";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
@@ -155,6 +156,51 @@ class CheckoutConfirmation extends Component {
 		}
 	}
 
+	onFreeCheckout() {
+		Bigneon()
+			.cart.checkout({
+				amount: 0,
+				method: {
+					type: "Free"
+				}
+			})
+			.then(() => {
+				cart.refreshCart();
+				orders.refreshOrders();
+				tickets.refreshTickets();
+
+				notifications.show({
+					message: "Checkout successful",
+					variant: "success"
+				});
+
+				const { history } = this.props;
+				const { id } = selectedEvent;
+				if (id) {
+					//If they're checking out for a specific event then we have a custom success page for them
+					history.push(`/events/${id}/tickets/success`);
+				} else {
+					history.push(`/`); //TODO go straight to tickets when route is available
+				}
+			})
+			.catch(error => {
+				let message = "Checkout failed.";
+				if (
+					error.response &&
+					error.response.data &&
+					error.response.data.error
+				) {
+					message = error.response.data.error;
+				}
+
+				notifications.show({
+					message,
+					variant: "error"
+				});
+				console.error(error);
+			});
+	}
+
 	onCheckout(stripeToken, onError) {
 		Bigneon()
 			.cart.checkout({
@@ -281,7 +327,7 @@ class CheckoutConfirmation extends Component {
 	render() {
 		const { classes } = this.props;
 
-		const { total_in_cents, formattedExpiryTime } = cart;
+		const { cartSummary, formattedExpiryTime } = cart;
 
 		const { event, artists, id } = selectedEvent;
 
@@ -310,10 +356,14 @@ class CheckoutConfirmation extends Component {
 					{this.renderTotals()}
 				</div>
 
-				{user.isAuthenticated && total_in_cents ? (
+				{user.isAuthenticated && cartSummary ? (
 					<div>
-						<CheckoutForm onToken={this.onCheckout.bind(this)} />
-
+						{cartSummary.orderTotalInCents > 0 ?
+							(<CheckoutForm onToken={this.onCheckout.bind(this)} />)
+							: (
+								<Button variant="callToAction" style={{width:"100%"}} onClick={this.onFreeCheckout.bind(this)}>Complete</Button>
+							)
+						}
 						{formattedExpiryTime ? (
 							<Typography className={classes.cartExpiry} variant="body1">
 								Cart expires in {formattedExpiryTime}

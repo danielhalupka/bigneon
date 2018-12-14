@@ -112,6 +112,11 @@ class Cart {
 	}
 
 	@action
+	applyPromo(promoCode) {
+		this.redemptionCode = promoCode;
+	}
+
+	@action
 	setLatestEventId(latestEventId) {
 		//This is required for users to be able to click on the cart link and go to the page where last were
 		this.latestEventId = latestEventId;
@@ -122,7 +127,7 @@ class Cart {
 	update(selectedTickets, onSuccess, onError) {
 		const items = itemListToSave(selectedTickets);
 		Bigneon()
-			.cart.update({ items })
+			.cart.update({ items, redemption_code: this.redemptionCode })
 			.then(response => {
 				const { data } = response;
 				if (data) {
@@ -141,7 +146,7 @@ class Cart {
 		const items = itemListToSave(selectedTickets);
 
 		Bigneon()
-			.cart.replace({ items })
+			.cart.replace({ items, redemption_code: this.redemptionCode })
 			.then(response => {
 				const { data } = response;
 				if (data) {
@@ -159,6 +164,7 @@ class Cart {
 	emptyCart() {
 		//TODO delete from cart using API first
 		this.items = [];
+		this.redemptionCode = null;
 		this.id = null;
 		this.total_in_cents = 0;
 	}
