@@ -1,119 +1,26 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-import MaskedInput from "react-text-mask";
+
+import { InlineTimePicker } from "material-ui-pickers";
+import { InlineDatePicker } from "material-ui-pickers";
+import { InlineDateTimePicker } from "material-ui-pickers";
+import {
+	FormControl,
+	withStyles,
+	FormHelperText,
+	InputAdornment,
+	IconButton,
+	Typography
+} from "@material-ui/core";
+import TimeIcon from "@material-ui/icons/Timer";
+
 import InputGroup from "./InputGroup";
 
 const formats = {
-	time: "HH:mm",
+	time: "hh:mm A",
 	date: "MM/DD/YYYY",
-	"date-time": "MM/DD/YYYY HH:mm"
-};
-
-//Force times to be certain numbers but loose with dates
-const timeStrictMasks = {
-	time: [
-		//Hour
-		/[0-2]/,
-		/[0-9]/,
-		":",
-		//Minute
-		/[0-5]/,
-		/[0-9]/
-	],
-	date: [
-		//Month
-		/\d/,
-		/\d/,
-		"/",
-		//Day
-		/\d/,
-		/\d/,
-		"/",
-		//Year
-		/\d/,
-		/\d/,
-		/\d/,
-		/\d/
-	],
-	"date-time": [
-		//Month
-		/\d/,
-		/\d/,
-		"/",
-		//Day
-		/\d/,
-		/\d/,
-		"/",
-		//Year
-		/\d/,
-		/\d/,
-		/\d/,
-		/\d/,
-
-		" ",
-
-		//Hour
-		/[0-2]/,
-		/[0-9]/,
-		":",
-		//Minute
-		/[0-5]/,
-		/[0-9]/
-	]
-};
-
-//Strict number masks
-const strictMasks = {
-	time: [
-		//Hour
-		/[0-2]/,
-		/[0-9]/,
-		":",
-		//Minute
-		/[0-5]/,
-		/[0-9]/
-	],
-	date: [
-		//Month
-		/[0-1]/,
-		/[0-9]/,
-		"/",
-		//Day
-		/[0-3]/,
-		/[0-9]/,
-		"/",
-		//Year
-		/[0-2]/,
-		/[0-9]/,
-		/[0-9]/,
-		/[0-9]/
-	],
-	"date-time": [
-		//Month
-		/[0-1]/,
-		/[0-9]/,
-		"/",
-		//Day
-		/[0-3]/,
-		/[0-9]/,
-		"/",
-		//Year
-		/[0-2]/,
-		/[0-9]/,
-		/[0-9]/,
-		/[0-9]/,
-
-		" ",
-
-		//Hour
-		/[0-2]/,
-		/[0-9]/,
-		":",
-		//Minute
-		/[0-5]/,
-		/[0-9]/
-	]
+	"date-time": "MM/DD/YYYY hh:mm A"
 };
 
 const looseMasks = {
@@ -124,7 +31,11 @@ const looseMasks = {
 		":",
 		//Minute
 		/\d/,
-		/\d/
+		/\d/,
+		" ",
+		//AM/PM
+		/[A|a|P|p]/,
+		"M"
 	],
 	date: [
 		//Month
@@ -162,140 +73,93 @@ const looseMasks = {
 		":",
 		//Minute
 		/\d/,
-		/\d/
+		/\d/,
+		" ",
+		//AM/PM
+		/[A|a|P|p]/,
+		"M"
 	]
 };
 
-const defaultMaskProps = {
-	//placeholderChar={"\u2000"}
-	showMask: true,
-	guide: false,
-	keepCharPositions: true
-};
-
-const DateInputMask = props => {
-	const { inputRef, ...other } = props;
-
-	return (
-		<MaskedInput
-			{...other}
-			ref={inputRef}
-			mask={timeStrictMasks.date}
-			{...defaultMaskProps}
-		/>
-	);
-};
-
-const DateTimeInputMask = props => {
-	const { inputRef, ...other } = props;
-
-	return (
-		<MaskedInput
-			{...other}
-			ref={inputRef}
-			mask={timeStrictMasks["date-time"]}
-			{...defaultMaskProps}
-		/>
-	);
-};
-
-const TimeInputMask = props => {
-	const { inputRef, ...other } = props;
-
-	return (
-		<MaskedInput
-			{...other}
-			ref={inputRef}
-			mask={timeStrictMasks.time}
-			{...defaultMaskProps}
-		/>
-	);
+const styles = theme => {
+	return {
+		formControl: {
+			width: "100%"
+		}
+	};
 };
 
 class DateTimePickerGroup extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			value: "",
-			inFocus: false
-		};
-
-		this.onChange = this.onChange.bind(this);
-		this.onFocus = this.onFocus.bind(this);
-		this.onBlur = this.onBlur.bind(this);
-	}
-
-	componentDidUpdate(prevProps) {
-		const { value, type } = this.props;
-
-		if (value && moment(value).isValid()) {
-			const stringValue = moment(value).format(formats[type]);
-
-			if (this.state.value !== stringValue) {
-				this.setState({ value: stringValue });
-			}
-		}
-	}
-
-	onChange(e) {
-		this.setState({ value: e.target.value });
-
-		const { onChange, type } = this.props;
-
-		const date = moment.utc(e.target.value, formats[type]);
-
-		if (date.isValid()) {
-			onChange(date);
-		} else {
-			//onChange(null);
-		}
-	}
-
-	onFocus() {
-		this.setState({ inFocus: true });
-		const { onFocus } = this.props;
-		onFocus ? onFocus() : null;
-	}
-
-	onBlur() {
-		this.setState({ inFocus: false });
-		const { onBlur } = this.props;
-		onBlur ? onBlur() : null;
 	}
 
 	render() {
-		const { type, error, name, label, placeholder } = this.props;
+		const {
+			type,
+			error,
+			name,
+			label,
+			placeholder,
+			onChange,
+			onFocus,
+			onBlur,
+			classes,
+			value
+		} = this.props;
 
-		const { value } = this.state;
-
-		let maskComponent;
+		let Picker;
+		let additionalProps = {};
+		let inputProps = {};
 
 		switch (type) {
 			case "date-time":
-				maskComponent = DateTimeInputMask;
+				Picker = InlineDateTimePicker;
+				additionalProps = { animateYearScrolling: false };
+
 				break;
 			case "time":
-				maskComponent = TimeInputMask;
+				Picker = InlineTimePicker;
+				inputProps = {
+					...inputProps,
+					endAdornment: null
+					// <InputAdornment position="end">
+					// 	<IconButton>
+					// 		<TimeIcon />
+					// 	</IconButton>
+					// </InputAdornment>
+				};
 				break;
 			case "date":
-				maskComponent = DateInputMask;
+				Picker = InlineDatePicker;
 				break;
 		}
 
 		return (
-			<InputGroup
-				id={name}
-				name={name}
-				error={error}
-				label={label}
-				value={value}
-				onChange={this.onChange}
-				onFocus={this.onFocus}
-				onBlur={this.onBlur}
-				placeholder={placeholder || formats[type]}
-				InputProps={{ inputComponent: maskComponent }}
-			/>
+			<FormControl
+				className={classes.formControl}
+				error
+				aria-describedby={`%${name}-error-text`}
+			>
+				<Picker
+					id={name}
+					error={!!error}
+					label={label}
+					value={value ? value : null}
+					onChange={onChange}
+					onBlur={onBlur}
+					onFocus={onFocus}
+					placeholder={placeholder}
+					format={formats[type]}
+					keyboard
+					InputProps={inputProps}
+					mask={looseMasks[type]}
+					clearable
+					{...additionalProps}
+				/>
+
+				<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
+			</FormControl>
 		);
 	}
 }
@@ -316,4 +180,4 @@ DateTimePickerGroup.propTypes = {
 	onFocus: PropTypes.func
 };
 
-export default DateTimePickerGroup;
+export default withStyles(styles)(DateTimePickerGroup);

@@ -117,6 +117,35 @@ const theme = createMuiTheme({
 				padding: 0,
 				margin: 0
 			}
+		},
+
+		//For date picker
+		MuiPickersToolbar: {
+			toolbar: {
+				backgroundColor: primaryHex
+			}
+		},
+		MuiPickersCalendarHeader: {
+			switchHeader: {
+				// backgroundColor: lightBlue.A200,
+				// color: 'white',
+			}
+		},
+		MuiPickersDay: {
+			day: {
+				color: primaryHex
+			},
+			selected: {
+				backgroundColor: secondaryHex
+			},
+			current: {
+				color: secondaryHex
+			}
+		},
+		MuiPickersModal: {
+			dialogAction: {
+				color: secondaryHex
+			}
 		}
 	}
 });
