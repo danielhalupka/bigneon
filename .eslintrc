@@ -63,6 +63,7 @@
     "fetch": false,
     "google": false,
     "Promise": false,
-    "cloudinary": false
+    "cloudinary": false,
+    "branch": false
   }
 }

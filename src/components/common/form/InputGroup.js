@@ -16,6 +16,10 @@ const PhoneNumberInputMask = props => {
 			{...other}
 			ref={inputRef}
 			mask={[
+				"+",
+				" ",
+				/\d/,
+				" ",
 				"(",
 				/\d/,
 				/\d/,

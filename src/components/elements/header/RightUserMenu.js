@@ -83,7 +83,8 @@ class RightHeaderMenu extends React.Component {
 				"REACT_APP_CLOUDINARY_API_KEY",
 				"REACT_APP_STRIPE_API_KEY",
 				"REACT_APP_STORE_IOS",
-				"REACT_APP_STORE_ANDROID"
+				"REACT_APP_STORE_ANDROID",
+				"REACT_APP_BRANCH_KEY"
 			];
 			let items = [];
 			checkEnvKeys.forEach(key => {
@@ -93,13 +94,7 @@ class RightHeaderMenu extends React.Component {
 			});
 			if (items.length) {
 				items.unshift("Missing Environment keys");
-				return (
-					<NotificationList
-						icon={<Warning />}
-						items={items}
-						classes={classes}
-					/>
-				);
+				return <NotificationList icon={<Warning />} items={items} />;
 			}
 		}
 		return null;

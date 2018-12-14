@@ -13,6 +13,10 @@ import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCar
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Card from "../../elements/Card";
 import AppButton from "../../elements/AppButton";
+import Button from "../../elements/Button";
+import InputGroup from "../../common/form/InputGroup";
+import user from "../../../stores/user";
+import SMSLinkForm from "../../elements/SMSLinkForm";
 
 const qrWidth = 300;
 
@@ -46,8 +50,6 @@ const styles = theme => ({
 class CheckoutSuccess extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {};
 	}
 
 	componentDidMount() {
@@ -146,7 +148,9 @@ class CheckoutSuccess extends Component {
 							imageSrc={promo_image_url}
 						>
 							<div className={classes.eventSubCardContent}>
-								<div className={classes.qrContainer}>{this.renderQRCode()}</div>
+								<div className={classes.qrContainer}>
+									<SMSLinkForm />
+								</div>
 							</div>
 						</EventDetailsOverlayCard>
 					</Hidden>
@@ -161,7 +165,7 @@ class CheckoutSuccess extends Component {
 								top: 500
 							}}
 						>
-							{this.renderQRCode()}
+							<SMSLinkForm />
 						</EventDetailsOverlayCard>
 
 						<div className={classes.appDetails}>
@@ -177,7 +181,7 @@ class CheckoutSuccess extends Component {
 
 							<AppButton
 								color="black"
-								href="https://itunes.apple.com/us/genre/ios/id36?mt=8"
+								href={process.env.REACT_APP_STORE_IOS}
 								variant="ios"
 							>
 								iOS
@@ -187,7 +191,7 @@ class CheckoutSuccess extends Component {
 
 							<AppButton
 								color="black"
-								href="https://play.google.com"
+								href={process.env.REACT_APP_STORE_ANDROID}
 								variant="android"
 							>
 								Android
