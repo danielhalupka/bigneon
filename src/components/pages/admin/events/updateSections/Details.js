@@ -292,6 +292,35 @@ class Details extends Component {
 		);
 	}
 
+	renderAgeLimits() {
+		const { errors = {}, validateFields } = this.props;
+		let {
+			ageLimit
+		} = eventUpdateStore.event;
+		ageLimit = (ageLimit || "0") + "";
+
+		const ageLimits = {
+			"0" : "All Ages Allowed",
+			"18" : "18+ Allowed",
+			"21": "21+ Allowed"
+		};
+
+		return (
+			<SelectGroup
+				value={ageLimit}
+				items={ageLimits}
+				error={errors.ageLimit}
+				name={"age-limit"}
+				label={"Age Limit"}
+				onChange={e => {
+					const ageLimit = e.target.value;
+					this.changeDetails({ ageLimit });
+				}}
+				onBlur={validateFields}
+			/>
+		);
+	}
+
 	render() {
 		const { errors = {}, validateFields } = this.props;
 
@@ -418,15 +447,7 @@ class Details extends Component {
 				</Grid>
 
 				<Grid item xs={12} sm={12} lg={6}>
-					<InputGroup
-						error={errors.ageLimit}
-						value={ageLimit}
-						name="ageLimit"
-						label="Age limit"
-						type="number"
-						onChange={e => this.changeDetails({ ageLimit: e.target.value })}
-						onBlur={validateFields}
-					/>
+					{this.renderAgeLimits()}
 				</Grid>
 
 				<Grid item xs={12} sm={12} lg={6}>
