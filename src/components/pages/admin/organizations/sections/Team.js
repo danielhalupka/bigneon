@@ -293,9 +293,10 @@ class Team extends Component {
 	get renderInviteForm() {
 		const { role, email, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
-		if (!(user.isAdmin || user.isOrgOwner || user.isOrgAdmin )) {
+		if (!(user.isAdmin || user.isOrgOwner || user.isOrgAdmin)) {
 			return (
-				<Typography className={classes.heading}>Only an administrator or owner can invite new members</Typography>
+				<Typography className={classes.heading}>Only an administrator or owner can invite new
+					members</Typography>
 			);
 		}
 		return (
@@ -352,20 +353,17 @@ class Team extends Component {
 						<Typography className={classes.heading}>Roles</Typography>
 						<Typography className={classes.heading}>&nbsp;</Typography>
 					</OrgUserRow>
-					{orgMembers.map((user, i) => {
+					{orgMembers.map((member, i) => {
 						const {
-							id,
 							user_id,
 							first_name,
 							last_name,
 							email,
-							is_org_owner,
 							thumb_profile_pic_url,
 							roles,
 							invite_or_member
 
-						} = user;
-
+						} = member;
 						const isInvite = invite_or_member === "invite";
 
 						//Currently you only have 1 role in the array, as it stands this is the intended functionality
@@ -379,23 +377,26 @@ class Team extends Component {
 						const displayRoles = enumRoles.map(role => {
 							return Bn.Enums.USER_ROLES_STRING[role] + (isInvite ? " (Invite sent)" : "");
 						});
-
-						const canRemove =
-							//TODO Allow removal of invitations
+						let canRemove =
 							(
-								!isInvite
-								//Admin can do anything (except remove an invite)
-								&& user.isAdmin
-							)
-							||
-							//You cannot remove yourself
-							user.id !== user_id
-							//Only org owners and admins can edit these
-							&& (user.isOrgOwner || user.isOrgAdmin)
-							//You cannot remove an org owner unless you are another org owner
-							&& (user.isOrgOwner || enumRoles.indexOf(Bn.Enums.UserRole.ORG_OWNER) === -1)
-							//An org admin can only adjust levels below them
-							&& (user.isOrgAdmin && enumRoles.filter(role => role === Bn.Enums.UserRole.ORG_OWNER || role === Bn.Enums.UserRole.ORG_ADMIN).length === 0)
+								(
+									//TODO Allow removal of invitations
+									!isInvite
+									//Admin can do anything (except remove an invite)
+									&& user.isAdmin
+								)
+								||
+								(
+									//You cannot remove yourself
+									user.id !== user_id
+									//Only org owners and admins can edit these
+									&& (user.isOrgOwner || user.isOrgAdmin)
+									//You cannot remove an org owner unless you are another org owner
+									&& (user.isOrgOwner || enumRoles.indexOf(Bn.Enums.UserRole.ORG_OWNER) === -1)
+									//An org admin can only adjust levels below them
+									&& (user.isOrgAdmin && enumRoles.filter(role => role === Bn.Enums.UserRole.ORG_OWNER || role === Bn.Enums.UserRole.ORG_ADMIN).length === 0)
+								)
+							);
 
 						return (
 							<OrgUserRow key={i}>
@@ -436,7 +437,7 @@ class Team extends Component {
 										}} iconUrl="/icons/delete-gray.svg">
 											Delete
 										</IconButton>
-									) : (<div style={{width: "36px"}}>&nbsp;</div>)}
+									) : (<span style={{ display: "block", width: "36px" }}>&nbsp;</span>)}
 
 								</Typography>
 							</OrgUserRow>

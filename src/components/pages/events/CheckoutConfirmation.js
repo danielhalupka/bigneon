@@ -361,7 +361,7 @@ class CheckoutConfirmation extends Component {
 						{cartSummary.orderTotalInCents > 0 ?
 							(<CheckoutForm onToken={this.onCheckout.bind(this)} />)
 							: (
-								<Button variant="callToAction" style={{width:"100%"}} onClick={this.onFreeCheckout.bind(this)}>Complete</Button>
+								<Button variant="callToAction" style={{ width:"100%" }} onClick={this.onFreeCheckout.bind(this)}>Complete</Button>
 							)
 						}
 						{formattedExpiryTime ? (
