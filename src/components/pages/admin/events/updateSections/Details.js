@@ -62,6 +62,7 @@ const formatDataForSaving = (event, organizationId) => {
 		venueId,
 		doorTime,
 		showTime,
+		redeemDate,
 		ageLimit,
 		additionalInfo,
 		topLineInfo,
@@ -99,10 +100,35 @@ const formatDataForSaving = (event, organizationId) => {
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
-	if (doorTime) {
-		//TODO doorTime = doorTime + eventDate
+	if (eventDate &&
+		doorTime &&
+		moment(eventDate).isValid() &&
+		moment(doorTime).isValid()) {
+
+		let tmpDoorTime = moment(eventDate);
+		tmpDoorTime.set({
+			hour: doorTime.get("hour"),
+			minute: doorTime.get("minute"),
+			second: doorTime.get("second")
+		});
 		eventDetails.door_time = moment
-			.utc(doorTime)
+			.utc(tmpDoorTime)
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+	}
+
+	if (eventDate &&
+		redeemDate &&
+		moment(eventDate).isValid() &&
+		moment(redeemDate).isValid()) {
+
+		let tmpRedeemDate = moment(eventDate);
+		tmpRedeemDate.set({
+			hour: redeemDate.get("hour"),
+			minute: redeemDate.get("minute"),
+			second: redeemDate.get("second")
+		});
+		eventDetails.redeem_date = moment
+			.utc(tmpRedeemDate)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
@@ -138,6 +164,7 @@ const formatDataForInputs = event => {
 		is_external,
 		external_url,
 		publish_date,
+		redeem_date,
 		override_status = ""
 	} = event;
 
@@ -155,6 +182,9 @@ const formatDataForInputs = event => {
 			: null,
 		doorTime: door_time
 			? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			: null,
+		redeemDate: redeem_date
+			? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,
 		publishDate: publish_date
 			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
@@ -333,7 +363,8 @@ class Details extends Component {
 			additionalInfo,
 			topLineInfo,
 			videoUrl,
-			showTopLineInfo
+			showTopLineInfo,
+			redeemDate
 		} = eventUpdateStore.event;
 
 		return (
@@ -445,6 +476,20 @@ class Details extends Component {
 						type="time"
 					/>
 				</Grid>
+				{
+					/*<Grid item xs={12} sm={12} lg={3}>
+						<DateTimePickerGroup
+							error={errors.redeemDate}
+							value={redeemDate}
+							name="redeemDate"
+							label="Redeem Time"
+							onChange={redeemDate => this.changeDetails({ redeemDate })}
+							onBlur={validateFields}
+							format="HH:mm"
+							type="time"
+						/>
+					</Grid>*/
+				}
 
 				<Grid item xs={12} sm={12} lg={6}>
 					{this.renderAgeLimits()}
