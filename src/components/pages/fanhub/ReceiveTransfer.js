@@ -52,14 +52,14 @@ class ReceiveTransfer extends Component {
 				});
 
 				localStorage.removeItem("transferAuth");
-				this.props.history.push(`/dashboard`);
+				this.props.history.push(`/hub`);
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
-				notifications.show({
-					message: "Receiving tickets failed.",
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Receiving tickets failed.",
+					error
 				});
 			});
 	}
