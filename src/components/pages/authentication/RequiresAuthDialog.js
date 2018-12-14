@@ -108,9 +108,9 @@ class RequiresAuthDialog extends Component {
 
 					<div style={{ marginTop: 20 }} />
 
-					<FacebookButton onSuccess={this.onSuccess} />
+					{/* <FacebookButton onSuccess={this.onSuccess} /> */}
 
-					<Divider style={{ marginTop: 20, marginBottom: 20 }}> or </Divider>
+					{/* <Divider style={{ marginTop: 20, marginBottom: 20 }}> or </Divider> */}
 
 					<Button
 						variant="text"

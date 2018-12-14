@@ -125,11 +125,11 @@ class LoginForm extends Component {
 				/>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
-						<FacebookButton onSuccess={this.props.onSuccess}>
+						{/* <FacebookButton onSuccess={this.props.onSuccess}>
 							Login with Facebook
 						</FacebookButton>
 
-						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
+						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider> */}
 
 						<InputGroup
 							error={errors.email}

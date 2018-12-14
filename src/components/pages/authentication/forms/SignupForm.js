@@ -200,10 +200,10 @@ class SignupForm extends Component {
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				<CardContent>
 					<Grid container spacing={8}>
-						<Grid item xs={12} sm={12} lg={12}>
+						{/* <Grid item xs={12} sm={12} lg={12}>
 							<FacebookButton onSuccess={this.props.onSuccess} />
 							<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
-						</Grid>
+						</Grid> */}
 
 						<Grid item xs={12} sm={12} lg={6}>
 							<InputGroup
