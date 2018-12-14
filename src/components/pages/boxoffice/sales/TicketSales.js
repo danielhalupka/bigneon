@@ -247,17 +247,23 @@ class TicketSales extends Component {
 				redemption_code
 			} = holds[id];
 
-			console.log(name, ":  ", hold_type);
-			console.log(holds[id]);
-
 			if (holdCode && holdCode !== redemption_code) {
 				return null;
 			}
 
 			const ticketType = ticketTypes[ticket_type_id];
 			const { ticket_pricing } = ticketType;
-			const { price_in_cents } = ticket_pricing;
-			const discountedPrice = price_in_cents - discount_in_cents;
+
+			let disabled = false;
+			let discountedPrice = 0;
+
+			if (!ticket_pricing) {
+				//No active price point
+				disabled = true;
+			} else {
+				const { price_in_cents } = ticket_pricing;
+				discountedPrice = price_in_cents - discount_in_cents;
+			}
 
 			return (
 				<TicketRow
@@ -273,6 +279,7 @@ class TicketSales extends Component {
 							return { selectedHolds: { ...selectedHolds, [id]: value } };
 						});
 					}}
+					disabled={disabled}
 				/>
 			);
 		});
