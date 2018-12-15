@@ -1,9 +1,13 @@
 import React, { Component } from "react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 import notifications from "../../../../stores/notifications";
 import user from "../../../../stores/user";
 import Bigneon from "../../../../helpers/bigneon";
+import Dialog from "../../../elements/Dialog";
+import Button from "../../../elements/Button";
+import PageHeading from "../../../elements/PageHeading";
 
 const styles = theme => ({});
 
@@ -13,7 +17,8 @@ class InviteAccept extends Component {
 
 		this.state = {
 			isSubmitting: false,
-			security_token: null
+			security_token: null,
+			showSuccessDialog: true
 		};
 	}
 
@@ -51,38 +56,41 @@ class InviteAccept extends Component {
 		Bigneon()
 			.invitations.accept({ security_token })
 			.then(response => {
-				this.setState({ isSubmitting: false });
+				this.setState({ isSubmitting: false, showSuccessDialog: true });
 
-				notifications.show({
-					message: "Invite accepted.",
-					variant: "success"
-				});
-
+				user.refreshUser();
 				localStorage.removeItem("security_token");
-				this.props.history.push(`/admin/events`);
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
-				notifications.show({
-					message: "Accepting invite failed.",
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Accepting invite failed.",
+					error
 				});
 			});
 	}
 
 	render() {
-		const { isSubmitting, security_token } = this.state;
-
-		if (!security_token) {
-			return null;
-		}
+		const { isSubmitting, showSuccessDialog } = this.state;
 
 		return (
 			<div>
-				<Typography variant="display2">
+				<PageHeading>
 					{isSubmitting ? "Accepting invite..." : "Invitation"}
-				</Typography>
+				</PageHeading>
+
+				<Dialog
+					iconUrl={"/icons/checkmark-white.svg"}
+					title={`Invite accepted`}
+					open={showSuccessDialog}
+				>
+					<div style={{ paddingTop: 40 }}>
+						<Link to="/admin/events">
+							<Button variant="callToAction">Visit admin dashboard</Button>
+						</Link>
+					</div>
+				</Dialog>
 			</div>
 		);
 	}

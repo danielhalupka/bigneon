@@ -47,7 +47,7 @@ const styles = {
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)",
 		paddingLeft: 50,
 		paddingRight: 50,
-		paddingBottom: 50
+		paddingBottom: 20
 	},
 	iconSpacer: {
 		marginTop: 30

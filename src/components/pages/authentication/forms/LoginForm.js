@@ -96,19 +96,11 @@ class LoginForm extends Component {
 				}
 			})
 			.catch(error => {
-				let message = "Login failed.";
-
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
+				console.error(error);
 				this.setState({ isSubmitting: false });
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Login failed.",
+					error
 				});
 			});
 	}

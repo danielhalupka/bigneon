@@ -168,18 +168,9 @@ class SignupForm extends Component {
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
-				let message = "Sign up failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Sign up failed.",
+					error
 				});
 			});
 	}
