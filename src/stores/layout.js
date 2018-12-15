@@ -45,7 +45,13 @@ class Layout {
 	@computed
 	get adminStyleMenu() {
 		if (user.isAuthenticated) {
-			return user.isAdmin || user.isOrgOwner || user.isOrgMember || user.isOrgAdmin;
+			return (
+				user.isAdmin ||
+				user.isOrgOwner ||
+				user.isOrgMember ||
+				user.isOrgAdmin ||
+				user.isOrgBoxOffice
+			);
 		} else {
 			return null;
 		}

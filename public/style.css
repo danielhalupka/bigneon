@@ -13,6 +13,10 @@
   src: url("/fonts/TypeType - TT Commons Bold.otf") format("opentype");
 }
 
+* {
+  font-family: TTCommons-Regular;
+}
+
 a {
   text-decoration: none;
   outline: none;

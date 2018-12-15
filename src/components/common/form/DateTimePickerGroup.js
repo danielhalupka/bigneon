@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
-
 import { InlineTimePicker } from "material-ui-pickers";
 import { InlineDatePicker } from "material-ui-pickers";
 import { InlineDateTimePicker } from "material-ui-pickers";
@@ -10,17 +8,20 @@ import {
 	withStyles,
 	FormHelperText,
 	InputAdornment,
-	IconButton,
-	Typography
+	IconButton
 } from "@material-ui/core";
 import TimeIcon from "@material-ui/icons/Timer";
-
-import InputGroup from "./InputGroup";
 
 const formats = {
 	time: "hh:mm A",
 	date: "MM/DD/YYYY",
 	"date-time": "MM/DD/YYYY hh:mm A"
+};
+
+const placeHolders = {
+	time: "hh:mm am/pm",
+	date: "mm/dd/yyyy",
+	"date-time": "mm/dd/yyyy hh:mm am/pm"
 };
 
 const looseMasks = {
@@ -35,7 +36,7 @@ const looseMasks = {
 		" ",
 		//AM/PM
 		/[A|a|P|p]/,
-		"M"
+		/[M|m]/
 	],
 	date: [
 		//Month
@@ -77,7 +78,7 @@ const looseMasks = {
 		" ",
 		//AM/PM
 		/[A|a|P|p]/,
-		"M"
+		/[M|m]/
 	]
 };
 
@@ -123,11 +124,13 @@ class DateTimePickerGroup extends Component {
 				inputProps = {
 					...inputProps,
 					endAdornment: null
-					// <InputAdornment position="end">
-					// 	<IconButton>
-					// 		<TimeIcon />
-					// 	</IconButton>
-					// </InputAdornment>
+					//  (
+					// 	<InputAdornment position="end">
+					// 		<IconButton>
+					// 			<TimeIcon />
+					// 		</IconButton>
+					// 	</InputAdornment>
+					// )
 				};
 				break;
 			case "date":
@@ -149,7 +152,7 @@ class DateTimePickerGroup extends Component {
 					onChange={onChange}
 					onBlur={onBlur}
 					onFocus={onFocus}
-					placeholder={placeholder}
+					placeholder={placeholder || placeHolders[type]}
 					format={formats[type]}
 					keyboard
 					InputProps={inputProps}

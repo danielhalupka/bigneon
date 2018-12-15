@@ -252,10 +252,10 @@ class EventTicketsCard extends Component {
 								<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
 									show qr
 								</StyledLink>
-								<span style={{ marginRight: 10 }} />
+								{/* <span style={{ marginRight: 10 }} />
 								<StyledLink underlined onClick={() => onShowTransferQR([id])}>
 									transfer
-								</StyledLink>
+								</StyledLink> */}
 							</Typography>
 						</EventTicketRow>
 					);
