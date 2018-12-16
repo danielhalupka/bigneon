@@ -100,11 +100,12 @@ const formatDataForSaving = (event, organizationId) => {
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
-	if (eventDate &&
+	if (
+		eventDate &&
 		doorTime &&
 		moment(eventDate).isValid() &&
-		moment(doorTime).isValid()) {
-
+		moment(doorTime).isValid()
+	) {
 		let tmpDoorTime = moment(eventDate);
 		tmpDoorTime.set({
 			hour: doorTime.get("hour"),
@@ -116,11 +117,12 @@ const formatDataForSaving = (event, organizationId) => {
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
-	if (eventDate &&
+	if (
+		eventDate &&
 		redeemDate &&
 		moment(eventDate).isValid() &&
-		moment(redeemDate).isValid()) {
-
+		moment(redeemDate).isValid()
+	) {
 		let tmpRedeemDate = moment(eventDate);
 		tmpRedeemDate.set({
 			hour: redeemDate.get("hour"),
@@ -324,14 +326,12 @@ class Details extends Component {
 
 	renderAgeLimits() {
 		const { errors = {}, validateFields } = this.props;
-		let {
-			ageLimit
-		} = eventUpdateStore.event;
+		let { ageLimit } = eventUpdateStore.event;
 		ageLimit = (ageLimit || "0") + "";
 
 		const ageLimits = {
-			"0" : "All Ages Allowed",
-			"18" : "18+ Allowed",
+			"0": "All Ages Allowed",
+			"18": "18+ Allowed",
 			"21": "21+ Allowed"
 		};
 
@@ -407,8 +407,9 @@ class Details extends Component {
 				>
 					<Collapse in={!showTopLineInfo}>
 						<Button
+							style={{ marginBottom: 20 }}
 							variant="additional"
-							// onClick= TODO onEventDetailsChange
+							onClick={() => this.changeDetails({ showTopLineInfo: true })}
 						>
 							Add additional top line info
 						</Button>
@@ -476,8 +477,7 @@ class Details extends Component {
 						type="time"
 					/>
 				</Grid>
-				{
-					/*<Grid item xs={12} sm={12} lg={3}>
+				{/*<Grid item xs={12} sm={12} lg={3}>
 						<DateTimePickerGroup
 							error={errors.redeemDate}
 							value={redeemDate}
@@ -488,8 +488,7 @@ class Details extends Component {
 							format="HH:mm"
 							type="time"
 						/>
-					</Grid>*/
-				}
+					</Grid>*/}
 
 				<Grid item xs={12} sm={12} lg={6}>
 					{this.renderAgeLimits()}

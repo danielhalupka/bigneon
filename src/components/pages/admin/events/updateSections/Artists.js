@@ -110,6 +110,11 @@ class ArtistDetails extends Component {
 						promoImageUrl: selectedArtist.image_url
 					});
 				}
+
+				//If here's no event name yet, assume the event name to be the headlining artist
+				if (!eventUpdateStore.event.name) {
+					eventUpdateStore.updateEvent({ name: selectedArtist.name });
+				}
 			}
 		}
 	}
