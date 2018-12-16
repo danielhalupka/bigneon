@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { Typography, withStyles } from "@material-ui/core";
 
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
+import Dialog from "../../../elements/Dialog";
 
 const styles = theme => ({});
 
@@ -14,7 +14,8 @@ class InviteDecline extends Component {
 
 		this.state = {
 			isSubmitting: false,
-			security_token: null
+			security_token: null,
+			showDeclineDialog: false
 		};
 	}
 
@@ -29,6 +30,8 @@ class InviteDecline extends Component {
 				message: "Missing invite token.",
 				variant: "error"
 			});
+		} else {
+			this.setState({ showDeclineDialog: true });
 		}
 	}
 
@@ -60,7 +63,7 @@ class InviteDecline extends Component {
 	}
 
 	render() {
-		const { isSubmitting, security_token } = this.state;
+		const { isSubmitting, security_token, showDeclineDialog } = this.state;
 
 		if (!security_token) {
 			return null;
@@ -68,20 +71,21 @@ class InviteDecline extends Component {
 
 		return (
 			<div>
-				<Typography variant="display2">
-					Are you sure you want to decline the invite?
-				</Typography>
-
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={12}>
+				<Dialog
+					iconUrl={"/icons/delete-white.svg"}
+					title={"Decline invite"}
+					open={showDeclineDialog}
+				>
+					<Typography>Are you sure you want to decline the invite?</Typography>
+					<div style={{ paddingTop: 40, textAlign: "center" }}>
 						<Button
 							disabled={isSubmitting}
 							onClick={this.declineInvite.bind(this)}
 						>
-							{isSubmitting ? "Declining..." : "Decline"}
+							Decline
 						</Button>
-					</Grid>
-				</Grid>
+					</div>
+				</Dialog>
 			</div>
 		);
 	}

@@ -82,7 +82,7 @@ class InviteAccept extends Component {
 
 				<Dialog
 					iconUrl={"/icons/checkmark-white.svg"}
-					title={`Invite accepted`}
+					title={"Invite accepted"}
 					open={showSuccessDialog}
 				>
 					<div style={{ paddingTop: 40 }}>
