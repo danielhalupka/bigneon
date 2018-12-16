@@ -8,6 +8,7 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const ManifestPlugin = require("webpack-manifest-plugin");
 const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
 const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin");
+const WriteFilePlugin = require("./plugins/WriteFilePlugin");
 const eslintFormatter = require("react-dev-utils/eslintFormatter");
 const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin");
 const paths = require("./paths");
@@ -326,6 +327,10 @@ module.exports = {
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new webpack.DefinePlugin({
 			REACT_APP_VERSION: JSON.stringify(require("../package.json").version)
+		}),
+		new WriteFilePlugin({
+			path: `${paths.appBuild}/version.json`,
+			content: JSON.stringify({ version: require("../package.json").version })
 		})
 	],
 	// Some libraries import Node modules but don't use them in the browser.
