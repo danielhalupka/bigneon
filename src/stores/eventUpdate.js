@@ -18,6 +18,7 @@ import {
 //TODO separate artists and ticketTypes into their own stores
 
 const freshEvent = formatEventDataForInputs({});
+
 class EventUpdate {
 	@observable
 	id = null;
@@ -164,6 +165,12 @@ class EventUpdate {
 	updateTicketType(index, details) {
 		let ticketTypes = this.ticketTypes;
 		ticketTypes[index] = { ...ticketTypes[index], ...details };
+
+		//On new events update the last pricing point to match the end date of the ticketType
+		if (!this.id && details.hasOwnProperty("endDate")) {
+			ticketTypes[index].pricing[ticketTypes[index].pricing.length - 1].endDate = details.endDate;
+		}
+
 		this.ticketTypes = ticketTypes;
 	}
 
@@ -179,13 +186,20 @@ class EventUpdate {
 		let { ticketTypes } = this;
 
 		let { pricing } = ticketTypes[index];
+		let startDate = moment(ticketTypes[index].startDate);
+		let endDate = moment(ticketTypes[index].endDate);
+
+		if (pricing.length) {
+			startDate = moment(pricing[pricing.length - 1].endDate);
+			endDate = moment(ticketTypes[index].endDate);
+		}
 
 		pricing.push({
 			id: "",
 			ticketId: "",
 			name: "",
-			startDate: new Date(), //TODO make this the end of the last date
-			endDate: new Date(), //TODO make this the event start time
+			startDate,
+			endDate,
 			value: 0
 		});
 
@@ -195,12 +209,21 @@ class EventUpdate {
 
 	@action
 	updateEvent(eventDetails) {
+
 		this.event = { ...this.event, ...eventDetails };
 
 		//If they're updating the ID, update the root var
 		const { id } = eventDetails;
 		if (id) {
 			this.id = id;
+		}
+		//Only automatically propagate the eventDate to ticketTypes on new events
+		if (!this.id && eventDetails.hasOwnProperty("eventDate")) {
+			const { eventDate } = eventDetails;
+			this.ticketTypes.forEach((ticketType, index) => {
+				this.updateTicketType(index, { endDate: eventDate });
+
+			});
 		}
 	}
 

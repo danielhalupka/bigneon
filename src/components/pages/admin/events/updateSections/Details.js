@@ -173,18 +173,27 @@ const formatDataForInputs = event => {
 	const tomorrow = new Date();
 	tomorrow.setDate(new Date().getDate() + 1);
 
+	let eventDate = event_start
+		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: moment.utc(tomorrow);
+	let noon = moment(eventDate).set({
+		"hour": "12",
+		"minute": "00",
+		"second": "00"
+	});
+	let showTime = event_start
+		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: noon;
+	let doorTime = door_time
+		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: noon;
+
 	const eventDetails = {
 		override_status, //TODO get from API
 		name: name || "",
-		eventDate: event_start
-			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: tomorrow,
-		showTime: event_start
-			? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: null,
-		doorTime: door_time
-			? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: null,
+		eventDate,
+		showTime,
+		doorTime,
 		redeemDate: redeem_date
 			? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,

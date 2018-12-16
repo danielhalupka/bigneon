@@ -47,7 +47,9 @@ class Event extends Component {
 		this.state = {
 			errors: {},
 			publishNow: true,
-			isSubmitting: false
+			isSubmitting: false,
+			//When ticket times are dirty, don't mess with the timing
+			ticketTimesDirty: false
 		};
 	}
 
@@ -59,6 +61,8 @@ class Event extends Component {
 		) {
 			const eventId = this.props.match.params.id;
 			eventUpdateStore.loadDetails(eventId);
+			//On loading an event, don't automatically change ticket times
+			this.setState({ ticketTimesDirty: true });
 		} else {
 			eventUpdateStore.clearDetails();
 		}
@@ -244,7 +248,7 @@ class Event extends Component {
 
 	@observer
 	render() {
-		const { publishNow, errors, isSubmitting } = this.state;
+		const { publishNow, errors, isSubmitting, ticketTimesDirty } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
 		const { isExternal, externalTicketsUrl, eventDate } = event;
@@ -330,8 +334,12 @@ class Event extends Component {
 						<div style={{ marginTop: 30 }}>
 							<Tickets
 								errors={errors.ticketTypes}
+								onChangeDate={() => {
+									this.setState({ ticketTimesDirty: true });
+								}}
 								validateFields={this.validateFields.bind(this)}
 								eventStartDate={eventDate}
+								ticketTimesDirty={ticketTimesDirty}
 							/>
 						</div>
 					)}

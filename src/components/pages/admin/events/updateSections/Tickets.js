@@ -201,10 +201,11 @@ const validateFields = ticketTypes => {
 		} else {
 			let pricingErrors = {};
 
-			// let sorted = pricing.sort(
-			// 	(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
-			// );
-			let sorted = pricing; //TODO place back
+			//The server seems to be messing with the array orders somehow.
+			let sorted = pricing.sort(
+				(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
+			);
+
 			sorted.forEach((pricingItem, index) => {
 				const { name, startDate, endDate, value } = pricingItem;
 
@@ -228,6 +229,7 @@ const validateFields = ticketTypes => {
 						pricingError.startDate = "Time must be after ticket on sale time.";
 					} else if (previousPricing && previousPricing.endDate) {
 						//Check on sale time is after off sale time of previous pricing
+						console.log(startDate, previousPricing.endDate, startDate.diff(previousPricing.endDate));
 						if (startDate.diff(previousPricing.endDate) < 0) {
 							pricingError.startDate =
 								"Time must be after previous pricing off sale time.";
@@ -275,7 +277,8 @@ class EventTickets extends Component {
 		this.updateTicketType = this.updateTicketType.bind(this);
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+	}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);
@@ -286,7 +289,7 @@ class EventTickets extends Component {
 	}
 
 	render() {
-		const { classes, validateFields, errors } = this.props;
+		const { classes, validateFields, errors, ticketTimesDirty, eventStartDate } = this.props;
 		const { ticketTypes, ticketTypeActiveIndex } = eventUpdateStore;
 
 		return (
@@ -309,6 +312,8 @@ class EventTickets extends Component {
 								index={index}
 								validateFields={validateFields}
 								errors={errors && errors[index] ? errors[index] : {}}
+								ticketTimesDirty={ticketTimesDirty}
+								eventStartDate={eventStartDate}
 								{...ticketType}
 							/>
 						</LeftAlignedSubCard>
@@ -319,7 +324,7 @@ class EventTickets extends Component {
 					className={classes.addTicketType}
 					onClick={() => eventUpdateStore.addTicketType()}
 				>
-					<img className={classes.addIcon} src="/icons/add-ticket.svg" />
+					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
 					<Typography className={classes.addText} variant="body2">
 						Add another ticket type
 					</Typography>
@@ -333,7 +338,9 @@ EventTickets.propTypes = {
 	validateFields: PropTypes.func.isRequired,
 	eventId: PropTypes.string,
 	eventStartDate: PropTypes.object.isRequired,
-	errors: PropTypes.object
+	errors: PropTypes.object,
+	ticketTimesDirty: PropTypes.bool,
+	onChangeDate: PropTypes.func
 };
 
 export const Tickets = withStyles(styles)(EventTickets);
