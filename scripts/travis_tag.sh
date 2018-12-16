@@ -17,4 +17,3 @@ echo "+npm run release:patch"
 TAG=`npm version patch -m "Version bump %s [skip ci]"`
 git push sshremote ${TAG}
 git push sshremote master
-
