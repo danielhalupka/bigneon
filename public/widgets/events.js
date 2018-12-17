@@ -103,10 +103,12 @@ var BigNeonWidget = {};
 			eventModuleDate.innerText = eventDateFormatted;
 			eventModuleImageContainer.appendChild(eventModuleDate);
 
-			var eventModuleImage = document.createElement("img");
-			eventModuleImage.setAttribute("src", event.promo_image_url);
-			eventModuleImage.setAttribute("alt", "event");
-			eventModuleImageContainer.appendChild(eventModuleImage);
+			if (event.promo_image_url) {
+				var eventModuleImage = document.createElement("img");
+				eventModuleImage.setAttribute("src", event.promo_image_url);
+				eventModuleImage.setAttribute("alt", "event");
+				eventModuleImageContainer.appendChild(eventModuleImage);
+			}
 
 			var eventModuleTextContainer = document.createElement("div");
 			eventModuleTextContainer.className = "event-text";
