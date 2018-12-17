@@ -30,6 +30,9 @@ import CheckoutConfirmation from "../pages/events/CheckoutConfirmation";
 import CheckoutSuccess from "../pages/events/CheckoutSuccess";
 import MobileStripeAuth from "../pages/authentication/MobileStripeAuth";
 
+// Development
+import ElementShowcase from "../pages/development/ElementShowCase";
+
 //Admin
 import AdminOrganizationsList from "../pages/admin/organizations/List";
 import AdminOrganization from "../pages/admin/organizations/Organization";
@@ -121,6 +124,11 @@ class Routes extends Component {
 					<Container>
 						<OnRouteChange>
 							<Switch>
+								<Route
+									exact
+									path="/element-showcase"
+									component={ElementShowcase}
+								/>
 								<Route exact path="/" component={Home} />
 								<Route exact path="/events" component={Home} />
 								<Route exact path="/sign-up" component={Signup} />
@@ -263,7 +271,7 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/admin/events"
+									path="/admin/events/:upcomingOrPast?"
 									component={AdminEventsList}
 									isAuthenticated={isAuthenticated}
 								/>

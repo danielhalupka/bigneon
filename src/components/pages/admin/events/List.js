@@ -22,11 +22,13 @@ import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
+import StyledLink from "../../../elements/StyledLink";
 import CancelEventDialog from "./CancelEventDialog";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import EventSummaryCard from "./EventSummaryCard";
 import user from "../../../../stores/user";
+import Card from "../../../elements/Card";
 
 const styles = theme => ({
 	paper: {
@@ -46,6 +48,23 @@ const styles = theme => ({
 		display: "flex",
 		alignItems: "flex-end",
 		padding: theme.spacing.unit
+	},
+
+	rightHeaderOptions: {
+		display: "flex",
+		justifyContent: "flex-end",
+		alignContent: "center"
+	},
+	innerCard: {
+		padding: theme.spacing.unit * 2.5
+	},
+	headerContainer: {},
+	menuContainer: {
+		display: "flex",
+		padding: theme.spacing.unit
+	},
+	menuText: {
+		marginRight: theme.spacing.unit * 4
 	}
 });
 
@@ -53,13 +72,31 @@ class EventsList extends Component {
 	constructor(props) {
 		super(props);
 
+		console.log(this.props);
 		this.state = {
 			events: null,
 			cancelEventId: null,
-			optionsAnchorEl: null
+			optionsAnchorEl: null,
+			upcomingOrPast: this.props.match.params.upcomingOrPast || "upcoming"
 		};
 
 		this.expandCardDetails = this.expandCardDetails.bind(this);
+	}
+
+	componentDidUpdate() {
+		let { upcomingOrPast } = this.state;
+		console.log(this.props);
+		console.log(upcomingOrPast);
+		if (
+			upcomingOrPast !== (this.props.match.params.upcomingOrPast || "upcoming")
+		) {
+			this.setState(
+				{
+					upcomingOrPast: this.props.match.params.upcomingOrPast || "upcoming"
+				},
+				() => this.updateEvents()
+			);
+		}
 	}
 
 	componentDidMount() {
@@ -88,9 +125,11 @@ class EventsList extends Component {
 		}
 
 		this.setState({ events: null }, () => {
+			let { upcomingOrPast } = this.state;
 			Bigneon()
 				.organizations.events.index({
-					organization_id: user.currentOrganizationId
+					organization_id: user.currentOrganizationId,
+					past_or_upcoming: upcomingOrPast
 				})
 				.then(eventResponse => {
 					//Append all events together
@@ -271,7 +310,8 @@ class EventsList extends Component {
 	}
 
 	render() {
-		const { cancelEventId } = this.state;
+		const { cancelEventId, upcomingOrPast } = this.state;
+		const { classes, history } = this.props;
 
 		return (
 			<div>
@@ -299,6 +339,34 @@ class EventsList extends Component {
 						<Link to={"/admin/events/create"}>
 							<Button variant="callToAction">Create event</Button>
 						</Link>
+					</Grid>
+
+					<Grid item xs={12} sm={12} lg={12}>
+						<Card>
+							<div className={classes.innerCard}>
+								<div className={classes.headerContainer}>
+									<div className={classes.menuContainer}>
+										<Typography className={classes.menuText}>
+											<StyledLink
+												underlined={upcomingOrPast === "upcoming"}
+												to={`/admin/events/upcoming`}
+											>
+												Upcoming
+											</StyledLink>
+										</Typography>
+
+										<Typography className={classes.menuText}>
+											<StyledLink
+												underlined={upcomingOrPast === "past"}
+												to={`/admin/events/past`}
+											>
+												Past
+											</StyledLink>
+										</Typography>
+									</div>
+								</div>
+							</div>
+						</Card>
 					</Grid>
 
 					{this.renderEvents()}
