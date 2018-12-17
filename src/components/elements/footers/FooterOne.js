@@ -9,15 +9,15 @@ import AppButton from "../AppButton";
 //TODO change external links
 const rootUrl = "https://www.bigneon.com";
 const links = [
-	{ label: "About Us", href: `${rootUrl}/about` },
-	{ label: "Venues & Promoters", href: `${rootUrl}/venues-and-promoters` },
-	{ label: "News", href: `${rootUrl}/blog` },
-	{ label: "FAQ", href: `${rootUrl}/faq` },
-	{ label: "Get in Touch", href: `${rootUrl}/#contact` }
+	//{ label: "About Us", href: `${rootUrl}/about` },
+	//{ label: "Venues & Promoters", href: `${rootUrl}/venues-and-promoters` },
+	//{ label: "News", href: `${rootUrl}/blog` },
+	//{ label: "FAQ", href: `${rootUrl}/faq` },
+	{ label: "Get in Touch", href: `${rootUrl}/#contact-chat` }
 ];
 
-const privacyPolicyLink = `${rootUrl}/privacy`;
-const termsLink = `${rootUrl}/terms`;
+const privacyPolicyLink = `${rootUrl}/privacy.html`;
+const termsLink = `${rootUrl}/terms.html`;
 
 const styles = theme => ({
 	root: {
