@@ -91,7 +91,7 @@ class CompDialog extends React.Component {
 				onSuccess(id);
 			})
 			.catch(error => {
-				console.log(error);
+				console.error(error);
 				this.setState({ isSubmitting: false });
 
 				notifications.showFromErrorResponse({

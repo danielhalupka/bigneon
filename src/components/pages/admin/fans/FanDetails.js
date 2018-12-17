@@ -148,7 +148,6 @@ class Fan extends Component {
 		Bigneon()
 			.organizations.fans.history({ user_id, organization_id })
 			.then(result => {
-				console.log(result.data.data);
 				this.setState({ history: result.data.data });
 			})
 			.catch(error =>

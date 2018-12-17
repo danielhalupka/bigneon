@@ -53,7 +53,6 @@ class InviteAccept extends Component {
 		Bigneon()
 			.invitations.read({ security_token: this.security_token })
 			.then(response => {
-				console.log(response.data);
 				const { inviter_name, organization_name } = response.data;
 
 				this.setState({

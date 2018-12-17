@@ -69,8 +69,6 @@ const TicketSelection = props => {
 							const currentAmount = amount ? amount : 0;
 							let newAmount = Number(currentAmount) + increment;
 
-							console.log("increment: ", increment);
-
 							if (limitPerPerson && newAmount > limitPerPerson) {
 								newAmount = limitPerPerson;
 							}

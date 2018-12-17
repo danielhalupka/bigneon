@@ -153,7 +153,6 @@ class OrganizationUpdate extends Component {
 				onSuccess(id);
 			})
 			.catch(error => {
-				console.log(error);
 				this.setState({ isSubmitting: false });
 
 				let message = "Update organization failed.";

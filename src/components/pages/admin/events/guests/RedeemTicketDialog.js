@@ -36,7 +36,6 @@ class RedeemTicketDialog extends React.Component {
 
 		this.setState({ isSubmitting: true });
 
-		console.log(ticket);
 		const { id, redeem_key } = ticket;
 
 		Bigneon()

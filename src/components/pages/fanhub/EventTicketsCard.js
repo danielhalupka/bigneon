@@ -356,7 +356,6 @@ class EventTicketsCard extends Component {
 		//TODO show artists when added to api
 		//https://github.com/big-neon/bn-api/issues/572
 
-		console.log(artists);
 		return (
 			<Card variant="raisedLight">
 				<div className={classes.cardContent}>

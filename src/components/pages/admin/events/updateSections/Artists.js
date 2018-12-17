@@ -198,7 +198,7 @@ class ArtistDetails extends Component {
 				});
 			} catch (e) {
 				this.setState({ isSearching: false });
-				console.log(e);
+				console.error(e);
 			}
 		}, 500);
 	}

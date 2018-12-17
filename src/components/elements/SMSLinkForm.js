@@ -102,8 +102,6 @@ class SMSLinkForm extends Component {
 		e.preventDefault();
 		const phone = removePhoneFormatting(this.state.phone);
 
-		console.log("phone: ", phone);
-
 		if (!validPhone(phone)) {
 			return notifications.show({
 				message: "Invalid phone number.",
@@ -121,7 +119,7 @@ class SMSLinkForm extends Component {
 			},
 			err => {
 				this.setState({ isSubmitting: false });
-				console.log(err);
+				console.error(err);
 				notifications.show({
 					message: "Sorry, something went wrong.",
 					variant: "error"

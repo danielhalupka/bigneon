@@ -234,7 +234,6 @@ class Venue extends Component {
 
 		this.setState({ errors });
 
-		console.log(errors);
 		if (Object.keys(errors).length > 0) {
 			return false;
 		}

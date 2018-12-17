@@ -62,7 +62,6 @@ class Artist extends Component {
 			Bigneon()
 				.artists.read({ id: artistId })
 				.then(response => {
-					console.log(response);
 					const {
 						name,
 						bio,
@@ -184,7 +183,6 @@ class Artist extends Component {
 					error.response.data &&
 					error.response.data.error
 				) {
-					console.log(error.response.data);
 					message = error.response.data.error;
 				}
 
@@ -226,7 +224,6 @@ class Artist extends Component {
 			result => {
 				const imgResult = result[0];
 				const { secure_url } = imgResult;
-				console.log(secure_url);
 				this.setState({ imageUrl: secure_url });
 			},
 			error => {
@@ -519,7 +516,7 @@ class Artist extends Component {
 															currentState.youtube_video_urls[index] = url;
 															return {
 																youtube_video_urls:
-																currentState.youtube_video_urls
+																	currentState.youtube_video_urls
 															};
 														});
 													}}
@@ -536,7 +533,7 @@ class Artist extends Component {
 															currentState.youtube_video_urls.splice(index, 1);
 															return {
 																youtube_video_urls:
-																currentState.youtube_video_urls
+																	currentState.youtube_video_urls
 															};
 														}, this.validateFields.bind(this));
 													}}

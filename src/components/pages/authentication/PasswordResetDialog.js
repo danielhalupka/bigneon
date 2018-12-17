@@ -43,8 +43,6 @@ class PasswordResetDialog extends React.Component {
 
 		this.setState({ isSubmitting: true });
 
-		console.log("Go");
-
 		Bigneon()
 			.passwordReset.create({
 				email

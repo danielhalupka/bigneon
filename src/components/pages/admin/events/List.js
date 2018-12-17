@@ -70,7 +70,6 @@ class EventsList extends Component {
 	constructor(props) {
 		super(props);
 
-		console.log(this.props);
 		this.state = {
 			events: null,
 			cancelEventId: null,
@@ -83,8 +82,6 @@ class EventsList extends Component {
 
 	componentDidUpdate() {
 		let { upcomingOrPast } = this.state;
-		console.log(this.props);
-		console.log(upcomingOrPast);
 		if (
 			upcomingOrPast !== (this.props.match.params.upcomingOrPast || "upcoming")
 		) {
