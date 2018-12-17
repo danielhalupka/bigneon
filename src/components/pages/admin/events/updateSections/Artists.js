@@ -56,6 +56,7 @@ class ArtistDetails extends Component {
 			artists: props.artists,
 			showArtistSelect: false,
 			availableArtists: null,
+			spotifyAvailableArtists: null,
 			spotifyArtists: {},
 			errors: {},
 			isSubmitting: false,
@@ -121,7 +122,7 @@ class ArtistDetails extends Component {
 
 	createNewArtist(nameOrObj) {
 		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying
-		const defaulNewArtist = {
+		const defaultNewArtist = {
 			bio: "",
 			youtube_video_urls: [],
 			organization_id: user.currentOrganizationId
@@ -132,7 +133,7 @@ class ArtistDetails extends Component {
 			};
 		}
 		const artistDetails = {
-			...defaulNewArtist,
+			...defaultNewArtist,
 			...nameOrObj
 		}; //TODO remove youtube_video_urls when it's not needed
 
@@ -177,6 +178,7 @@ class ArtistDetails extends Component {
 		if (!searchName.trim()) {
 			return;
 		}
+
 		this.debounceSearch = setTimeout(async () => {
 			try {
 				let results = await Bigneon().artists.search({
@@ -184,7 +186,6 @@ class ArtistDetails extends Component {
 					spotify: 1
 				});
 				results = results.data.data;
-
 				let spotifyArtists = {};
 				results
 					.filter(artist => !artist.id && artist.spotify_id)
@@ -193,7 +194,7 @@ class ArtistDetails extends Component {
 					});
 				this.setState({
 					isSearching: false,
-					availableArtists: results,
+					spotifyAvailableArtists: results,
 					spotifyArtists
 				});
 			} catch (e) {
@@ -205,7 +206,11 @@ class ArtistDetails extends Component {
 
 	renderAddNewArtist() {
 		//Pass through the currently selected artist if one has been selected
-		const { availableArtists, isSearching } = this.state;
+		const {
+			availableArtists,
+			spotifyAvailableArtists,
+			isSearching
+		} = this.state;
 		if (availableArtists === null) {
 			return <Typography variant="body1">Loading artists...</Typography>;
 		}
@@ -215,6 +220,13 @@ class ArtistDetails extends Component {
 			let id = artist.id || artist.spotify_id;
 			artistsObj[id] = artist.name;
 		});
+
+		if (spotifyAvailableArtists) {
+			spotifyAvailableArtists.forEach(artist => {
+				let id = artist.id || artist.spotify_id;
+				artistsObj[id] = artist.name;
+			});
+		}
 
 		const { artists } = eventUpdateStore;
 
