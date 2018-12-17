@@ -45,8 +45,6 @@ const styles = theme => ({
 		height: 240
 	},
 	actionButtons: {
-		display: "flex",
-		alignItems: "flex-end",
 		padding: theme.spacing.unit
 	},
 
@@ -311,7 +309,7 @@ class EventsList extends Component {
 
 	render() {
 		const { cancelEventId, upcomingOrPast } = this.state;
-		const { classes, history } = this.props;
+		const { classes } = this.props;
 
 		return (
 			<div>
@@ -323,26 +321,28 @@ class EventsList extends Component {
 				/>
 
 				<Grid container spacing={16}>
-					<Grid item xs={12} sm={12} lg={6}>
+					<Grid item xs={6} sm={6} lg={6}>
 						<PageHeading iconUrl="/icons/events-multi.svg">Events</PageHeading>
 					</Grid>
 					<Grid
 						item
-						xs={12}
-						sm={12}
+						xs={6}
+						sm={6}
 						lg={6}
 						style={{
 							display: "flex",
 							justifyContent: "flex-end"
 						}}
 					>
-						<Link to={"/admin/events/create"}>
-							<Button variant="callToAction">Create event</Button>
-						</Link>
+						<div className={classes.actionButtons}>
+							<Link to={"/admin/events/create"}>
+								<Button variant="callToAction">New event</Button>
+							</Link>
+						</div>
 					</Grid>
 
 					<Grid item xs={12} sm={12} lg={12}>
-						<Card>
+						<Card style={{ borderRadius: "6px 6px 0 0" }}>
 							<div className={classes.innerCard}>
 								<div className={classes.headerContainer}>
 									<div className={classes.menuContainer}>
