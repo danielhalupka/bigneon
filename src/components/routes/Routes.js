@@ -271,12 +271,6 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/admin/events/:upcomingOrPast?"
-									component={AdminEventsList}
-									isAuthenticated={isAuthenticated}
-								/>
-								<PrivateRoute
-									exact
 									path="/admin/events/:id/dashboard"
 									component={AdminEventDashboardSummary}
 									isAuthenticated={isAuthenticated}
@@ -297,6 +291,12 @@ class Routes extends Component {
 									exact
 									path="/admin/events/create"
 									component={AdminEventUpdate}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/events/:upcomingOrPast?"
+									component={AdminEventsList}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute
