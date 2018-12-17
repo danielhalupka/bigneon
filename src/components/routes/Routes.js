@@ -46,6 +46,7 @@ import AdminFanList from "../pages/admin/fans/Index";
 import AdminFanDetails from "../pages/admin/fans/FanDetails";
 import AdminGuestList from "../pages/admin/events/guests/List";
 import AdminMarketing from "../pages/admin/marketing/Index";
+import AdminReports from "../pages/admin/reports/Index";
 
 //Box office
 import BoxOfficeTicketSales from "../pages/boxoffice/sales/TicketSales";
@@ -288,6 +289,12 @@ class Routes extends Component {
 									exact
 									path="/admin/events/create"
 									component={AdminEventUpdate}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/reports/"
+									component={AdminReports}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute
