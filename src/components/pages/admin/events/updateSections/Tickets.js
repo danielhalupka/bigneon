@@ -229,7 +229,6 @@ const validateFields = ticketTypes => {
 						pricingError.startDate = "Time must be after ticket on sale time.";
 					} else if (previousPricing && previousPricing.endDate) {
 						//Check on sale time is after off sale time of previous pricing
-						console.log(startDate, previousPricing.endDate, startDate.diff(previousPricing.endDate));
 						if (startDate.diff(previousPricing.endDate) < 0) {
 							pricingError.startDate =
 								"Time must be after previous pricing off sale time.";

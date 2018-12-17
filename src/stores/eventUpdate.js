@@ -164,11 +164,12 @@ class EventUpdate {
 	@action
 	updateTicketType(index, details) {
 		let ticketTypes = this.ticketTypes;
+
 		ticketTypes[index] = { ...ticketTypes[index], ...details };
 
 		//On new events update the last pricing point to match the end date of the ticketType
 		if (!this.id && details.hasOwnProperty("endDate")) {
-			ticketTypes[index].pricing[ticketTypes[index].pricing.length - 1].endDate = details.endDate;
+			ticketTypes[index].pricing[ticketTypes[index].pricing.length - 1].endDate = moment(details.endDate);
 		}
 
 		this.ticketTypes = ticketTypes;
@@ -210,6 +211,14 @@ class EventUpdate {
 	@action
 	updateEvent(eventDetails) {
 
+		if (!this.id && eventDetails.hasOwnProperty("eventDate")) {
+			eventDetails.showTime = moment(eventDetails.eventDate).set({
+				hour: this.event.showTime.get("hour"),
+				minute: this.event.showTime.get("minute"),
+				second: this.event.showTime.get("second")
+			});
+		}
+
 		this.event = { ...this.event, ...eventDetails };
 
 		//If they're updating the ID, update the root var
@@ -218,11 +227,10 @@ class EventUpdate {
 			this.id = id;
 		}
 		//Only automatically propagate the eventDate to ticketTypes on new events
-		if (!this.id && eventDetails.hasOwnProperty("eventDate")) {
-			const { eventDate } = eventDetails;
+		if (!this.id && eventDetails.hasOwnProperty("showTime")) {
+			const { showTime } = eventDetails;
 			this.ticketTypes.forEach((ticketType, index) => {
-				this.updateTicketType(index, { endDate: eventDate });
-
+				this.updateTicketType(index, { endDate: moment(showTime) });
 			});
 		}
 	}

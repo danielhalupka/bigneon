@@ -252,7 +252,7 @@ class Event extends Component {
 		const { publishNow, errors, isSubmitting, ticketTimesDirty } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { status, isExternal, externalTicketsUrl, eventDate } = event;
+		const { status, isExternal, externalTicketsUrl, showTime } = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
@@ -340,7 +340,7 @@ class Event extends Component {
 									this.setState({ ticketTimesDirty: true });
 								}}
 								validateFields={this.validateFields.bind(this)}
-								eventStartDate={eventDate}
+								eventStartDate={showTime}
 								ticketTimesDirty={ticketTimesDirty}
 							/>
 						</div>
