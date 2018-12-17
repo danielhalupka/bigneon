@@ -14,7 +14,9 @@ import UserMenuList from "../../common/menu/lists/User";
 import OrgOwnerList from "../../common/menu/lists/OrgOwner";
 import OrgMemberList from "../../common/menu/lists/OrgMember";
 import GuestMenuList from "../../common/menu/lists/Guest";
-import BoxOfficeList from "../../common/menu/lists/BoxOffice";
+import DoorPersonList from "../../common/menu/lists/DoorPerson";
+import BoxOfficeList from "../../common/menu/lists/BoxOfficeView";
+
 import layout from "../../../stores/layout";
 
 const styles = theme => ({});
@@ -51,7 +53,16 @@ class MenuContent extends Component {
 			);
 		}
 
-		const { isAdmin, isOrgOwner, isOrgMember, isOrgAdmin, isGuest, isUser } = user;
+		const {
+			isAdmin,
+			isOrgOwner,
+			isOrgMember,
+			isOrgAdmin,
+			isGuest,
+			isUser,
+			isOrgBoxOffice,
+			isOrgDoorPerson
+		} = user;
 		if (isAdmin) {
 			return (
 				<AdminMenuList
@@ -75,6 +86,26 @@ class MenuContent extends Component {
 		if (isOrgMember) {
 			return (
 				<OrgMemberList
+					toggleDrawer={toggleDrawer}
+					openMenuItem={openMenuItem}
+					changeOpenMenu={name => this.changeOpenMenu(name)}
+				/>
+			);
+		}
+
+		if (isOrgBoxOffice) {
+			return (
+				<BoxOfficeList
+					toggleDrawer={toggleDrawer}
+					openMenuItem={openMenuItem}
+					changeOpenMenu={name => this.changeOpenMenu(name)}
+				/>
+			);
+		}
+
+		if (isOrgDoorPerson) {
+			return (
+				<DoorPersonList
 					toggleDrawer={toggleDrawer}
 					openMenuItem={openMenuItem}
 					changeOpenMenu={name => this.changeOpenMenu(name)}

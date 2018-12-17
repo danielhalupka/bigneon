@@ -14,6 +14,7 @@ import SuccessDialog from "./SuccessDialog";
 import InputWithButton from "../../../common/form/InputWithButton";
 import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
+import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	root: {},
@@ -342,7 +343,7 @@ class TicketSales extends Component {
 	}
 
 	render() {
-		if (!user.isOrgBoxOffice) {
+		if (!layout.allowedBoxOffice) {
 			return <NotFound />;
 		}
 

@@ -302,11 +302,38 @@ class User {
 	@computed
 	get isOrgBoxOffice() {
 		//Trickle down role permissions
-		if (this.isOrgOwner || this.isOrgMember || this.isOrgAdmin) {
+		if (
+			this.isAdmin ||
+			this.isOrgOwner ||
+			this.isOrgMember ||
+			this.isOrgAdmin
+		) {
 			return true;
 		}
 
 		return this.globalRoles.indexOf("OrgBoxOffice") > -1;
+	}
+
+	@computed
+	get isOrgDoorPerson() {
+		//Trickle down role permissions
+		if (
+			this.isAdmin ||
+			this.isOrgOwner ||
+			this.isOrgMember ||
+			this.isOrgAdmin ||
+			this.isOrgBoxOffice
+		) {
+			return true;
+		}
+
+		return this.globalRoles.indexOf("DoorPerson") > -1;
+	}
+
+	@computed
+	get isOnlyDoorPerson() {
+		//Show limited box office options for this, pretty much guest list only
+		return this.globalRoles.indexOf("DoorPerson") > -1;
 	}
 
 	@computed

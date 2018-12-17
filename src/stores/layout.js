@@ -50,8 +50,18 @@ class Layout {
 				user.isOrgOwner ||
 				user.isOrgMember ||
 				user.isOrgAdmin ||
-				user.isOrgBoxOffice
+				user.isOrgBoxOffice ||
+				user.isOrgDoorPerson
 			);
+		} else {
+			return null;
+		}
+	}
+
+	@computed
+	get allowedBoxOffice() {
+		if (user.isAuthenticated) {
+			return user.isOrgBoxOffice || user.isOrgDoorPerson;
 		} else {
 			return null;
 		}

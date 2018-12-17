@@ -8,20 +8,11 @@ const styles = theme => {
 	return {};
 };
 
-const BoxOfficeList = props => {
+const DoorPersonList = props => {
 	const { toggleDrawer, openMenuItem, changeOpenMenu } = props;
 
 	return (
 		<div>
-			<MenuItem
-				onClick={toggleDrawer}
-				shortLayout
-				iconName="sales"
-				to="/box-office/sell"
-			>
-				Sell
-			</MenuItem>
-
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
@@ -34,11 +25,11 @@ const BoxOfficeList = props => {
 	);
 };
 
-BoxOfficeList.propTypes = {
+DoorPersonList.propTypes = {
 	classes: PropTypes.object.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	openMenuItem: PropTypes.string,
 	changeOpenMenu: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(BoxOfficeList);
+export default withStyles(styles)(DoorPersonList);

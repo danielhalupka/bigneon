@@ -6,9 +6,9 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Hidden from "@material-ui/core/Hidden";
 
-import user from "../../../stores/user";
 import { toolBarHeight } from "../../styles/theme";
 import layout from "../../../stores/layout";
+import user from "../../../stores/user";
 
 const styles = theme => ({
 	root: {
@@ -33,12 +33,19 @@ const BoxOfficeLink = observer(({ classes }) => {
 	const { isBoxOffice } = layout;
 
 	//Check they have access to box office
-	if (!user.isOrgBoxOffice) {
+	if (!layout.allowedBoxOffice) {
 		return null;
 	}
 
+	let studioLink = "/admin/events";
+	let boxOfficeSubRoute = "sell";
+	if (user.isOnlyDoorPerson) {
+		boxOfficeSubRoute = "guests";
+		studioLink = "/";
+	}
+
 	return (
-		<Link to={isBoxOffice ? "/admin/events" : "/box-office/sell"}>
+		<Link to={isBoxOffice ? studioLink : `/box-office/${boxOfficeSubRoute}`}>
 			<div className={classes.root}>
 				<img
 					alt="Box office icon"

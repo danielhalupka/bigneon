@@ -10,6 +10,7 @@ import BottomCompleteOrderBar from "../common/BottomCompleteOrderBar";
 import CheckingInDialog from "./CheckingInDialog";
 import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
+import layout from "../../../../stores/layout";
 
 const styles = theme => ({
 	root: {},
@@ -266,7 +267,7 @@ class GuestList extends Component {
 	}
 
 	render() {
-		if (!user.isOrgBoxOffice) {
+		if (!layout.allowedBoxOffice) {
 			return <NotFound />;
 		}
 
