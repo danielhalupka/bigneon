@@ -6,7 +6,6 @@ import user from "../../../../stores/user";
 import Bigneon from "../../../../helpers/bigneon";
 import Dialog from "../../../elements/Dialog";
 import Button from "../../../elements/Button";
-import PageHeading from "../../../elements/PageHeading";
 import { fontFamilyDemiBold } from "../../../styles/theme";
 
 const styles = theme => ({
@@ -138,10 +137,6 @@ class InviteAccept extends Component {
 
 		return (
 			<div>
-				<PageHeading>
-					{isSubmitting ? "Accepting invite..." : "Invitation"}
-				</PageHeading>
-
 				{/* Final button to accept the invite */}
 				<Dialog
 					iconUrl={"/icons/link-white.svg"}
