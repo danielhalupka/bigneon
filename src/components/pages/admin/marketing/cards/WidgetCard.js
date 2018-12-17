@@ -60,7 +60,7 @@ class InviteUserCard extends Component {
 		const baseUrl = window.location.origin;
 		let apiUrl = Bigneon().client.params.baseURL;
 		if (apiUrl[0] === "/") {
-			apiUrl = `${baseUrl}/${apiUrl}`;
+			apiUrl = `${baseUrl}${apiUrl}`;
 		}
 		const outputStyleString = styleString.replace(/[\t|\n]*/g, "").replace(/\s{2,}/g, " ");
 		const output = `<div id="bn-event-list"></div><style>${outputStyleString}</style>\n<script src="${widgetSrcUrl}" data-target="#bn-event-list" data-organization-id="${organizationId}" data-base-url="${baseUrl}/" data-api-url="${apiUrl}/"></script>`;
