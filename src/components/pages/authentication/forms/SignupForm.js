@@ -8,7 +8,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import Button from "../../../elements/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
-import { validEmail, validPhone } from "../../../../validators";
+import { validEmail, validPhone, validPassword } from "../../../../validators";
 import FacebookButton from "../social/FacebookButton";
 import Divider from "../../../common/Divider";
 import Bigneon from "../../../../helpers/bigneon";
@@ -72,6 +72,8 @@ class SignupForm extends Component {
 
 		if (!password) {
 			errors.password = "Missing password.";
+		} else if (!validPassword(password)) {
+			errors.password = "Password needs to be at least 6 characters.";
 		}
 
 		if (!confirmPassword) {
