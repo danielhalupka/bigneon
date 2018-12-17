@@ -236,7 +236,7 @@ const EventHeaderImage = props => {
 								<Typography className={classes.smallDetailsText}>
 									Order #1223444
 									<br />
-									We've send your receipt to{" "}
+									We've sent your receipt to{" "}
 									<span className={classes.email}>{user.email}</span>
 								</Typography>
 
@@ -247,7 +247,7 @@ const EventHeaderImage = props => {
 								/>
 
 								<Typography className={classes.topLineInfo}>
-									Get the bigNEON app
+									Get the big NEON app
 									<br />
 									to access your tickets
 								</Typography>
@@ -406,7 +406,7 @@ const EventHeaderImage = props => {
 							<Typography className={classes.smallDetailsText}>
 								Order #1223444
 								<br />
-								We've send your receipt to{" "}
+								We've sent your receipt to{" "}
 								<span className={classes.email}>{user.email}</span>
 							</Typography>
 						</div>

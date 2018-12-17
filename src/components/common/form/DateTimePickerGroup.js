@@ -10,7 +10,7 @@ import {
 	InputAdornment,
 	IconButton
 } from "@material-ui/core";
-import TimeIcon from "@material-ui/icons/Timer";
+import TimeIcon from "@material-ui/icons/AccessTime";
 
 const formats = {
 	time: "hh:mm A",
@@ -95,6 +95,11 @@ class DateTimePickerGroup extends Component {
 		super(props);
 	}
 
+	openPicker = e => {
+		// do not pass Event for default pickers
+		this.picker.open(e);
+	};
+
 	render() {
 		const {
 			type,
@@ -123,14 +128,13 @@ class DateTimePickerGroup extends Component {
 				Picker = InlineTimePicker;
 				inputProps = {
 					...inputProps,
-					endAdornment: null
-					//  (
-					// 	<InputAdornment position="end">
-					// 		<IconButton>
-					// 			<TimeIcon />
-					// 		</IconButton>
-					// 	</InputAdornment>
-					// )
+					endAdornment: (
+						<InputAdornment position="end">
+							<IconButton onClick={this.openPicker}>
+								<TimeIcon />
+							</IconButton>
+						</InputAdornment>
+					)
 				};
 				break;
 			case "date":
@@ -159,6 +163,9 @@ class DateTimePickerGroup extends Component {
 					mask={looseMasks[type]}
 					clearable
 					{...additionalProps}
+					ref={node => {
+						this.picker = node;
+					}}
 				/>
 
 				<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
