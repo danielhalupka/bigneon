@@ -39,6 +39,10 @@ const validateFields = event => {
 		errors.externalTicketsUrl = "Invalid external url.";
 	}
 
+	if (!venueId) {
+		errors.venueId = "Venue required."
+	}
+
 	if (topLineInfo) {
 		if (topLineInfo.length > 100) {
 			errors.topLineInfo = "Top line info is limited to 100 characters.";
@@ -167,7 +171,8 @@ const formatDataForInputs = event => {
 		external_url,
 		publish_date,
 		redeem_date,
-		override_status = ""
+		override_status = "",
+		status = "Draft"
 	} = event;
 
 	const tomorrow = new Date();
@@ -208,7 +213,8 @@ const formatDataForInputs = event => {
 		showTopLineInfo: !!top_line_info,
 		promoImageUrl: promo_image_url,
 		isExternal: is_external,
-		externalTicketsUrl: is_external && external_url ? external_url : null
+		externalTicketsUrl: is_external && external_url ? external_url : null,
+		status
 	};
 
 	return eventDetails;

@@ -36,7 +36,8 @@ const styles = theme => ({
 	ticketOptions: { display: "flex" },
 	actions: {
 		display: "flex",
-		justifyContent: "space-between"
+		justifyContent: "space-around",
+		alignItems: "center"
 	}
 });
 
@@ -251,11 +252,12 @@ class Event extends Component {
 		const { publishNow, errors, isSubmitting, ticketTimesDirty } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { isExternal, externalTicketsUrl, eventDate } = event;
+		const { status, isExternal, externalTicketsUrl, eventDate } = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
 
+		const isDraft = status === "Draft";
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/events-multi.svg">
@@ -381,7 +383,7 @@ class Event extends Component {
 						<Divider style={{ marginTop: 20, marginBottom: 40 }} />
 
 						<div className={classes.actions}>
-							<div style={{ width: "45%" }}>
+							{(isDraft) ? (<div style={{ width: "45%" }}>
 								<Button
 									disabled={isSubmitting}
 									onClick={this.onSaveDraft.bind(this)}
@@ -390,7 +392,8 @@ class Event extends Component {
 								>
 									Save draft
 								</Button>
-							</div>
+							</div>) : ("")}
+
 							<div style={{ width: "45%" }}>
 								<Button
 									disabled={isSubmitting}
@@ -399,7 +402,7 @@ class Event extends Component {
 									fullWidth
 									variant="callToAction"
 								>
-									Publish
+									{isDraft ? "Publish" : "Update"}
 								</Button>
 							</div>
 						</div>
