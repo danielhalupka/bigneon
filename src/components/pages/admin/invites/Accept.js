@@ -1,15 +1,18 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core";
+import { withStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import notifications from "../../../../stores/notifications";
 import user from "../../../../stores/user";
 import Bigneon from "../../../../helpers/bigneon";
 import Dialog from "../../../elements/Dialog";
 import Button from "../../../elements/Button";
 import PageHeading from "../../../elements/PageHeading";
+import { fontFamilyDemiBold } from "../../../styles/theme";
 
-const styles = theme => ({});
+const styles = theme => ({
+	text: { textAlign: "center" },
+	bold: { fontFamily: fontFamilyDemiBold }
+});
 
 class InviteAccept extends Component {
 	constructor(props) {
@@ -17,62 +20,121 @@ class InviteAccept extends Component {
 
 		this.state = {
 			isSubmitting: false,
-			security_token: null,
-			showSuccessDialog: true
+			showSuccessDialog: false,
+			errorMessage: "",
+			showRedirectDialog: false,
+			showAcceptDialog: false,
+			orgName: "",
+			orgInviterName: ""
 		};
+
+		const url = new URL(window.location.href);
+		this.security_token = url.searchParams.get("token") || "";
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
-		const security_token = url.searchParams.get("token") || "";
-
-		this.setState({ security_token });
-
-		if (security_token) {
-			//Check if we're logged in, if we are accept the invite. If not send them to register first.
-			user.refreshUser(
-				() => {
-					this.acceptInvite();
-				},
-				() => {
-					localStorage.setItem("security_token", security_token);
-
-					//Save the token
-					this.props.history.push(`/sign-up`);
-				}
-			);
-		} else {
-			notifications.show({
-				message: "Missing invite token.",
-				variant: "error"
+		if (this.security_token) {
+			this.readInviteDetails(() => {
+				//Check if we're logged in, if we are accept the invite. If not send them to register first.
+				user.refreshUser(
+					user => {
+						this.setState({ showAcceptDialog: true });
+					},
+					() => {
+						this.setState({ showRedirectDialog: true });
+					}
+				);
 			});
+		} else {
+			this.setState({ errorMessage: "Missing invite token." });
 		}
 	}
 
-	acceptInvite() {
-		this.setState({ isSubmitting: true });
-		const { security_token } = this.state;
-
+	readInviteDetails(onSuccess) {
 		Bigneon()
-			.invitations.accept({ security_token })
+			.invitations.read({ security_token: this.security_token })
 			.then(response => {
-				this.setState({ isSubmitting: false, showSuccessDialog: true });
+				console.log(response.data);
+				const { inviter_name, organization_name } = response.data;
 
-				user.refreshUser();
-				localStorage.removeItem("security_token");
+				this.setState({
+					orgName: organization_name,
+					orgInviterName: inviter_name
+				});
+
+				onSuccess();
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
-				notifications.showFromErrorResponse({
-					defaultMessage: "Accepting invite failed.",
-					error
-				});
+
+				let errorMessage = "Accepting invite failed.";
+
+				if (error && error.response && error.response.status === 404) {
+					errorMessage = "Invite does not exist or has already been accepted.";
+				}
+				this.setState({ errorMessage });
 			});
 	}
 
+	goToSignupFirst() {
+		//Save the token, then take them to the signup page
+		localStorage.setItem("security_token", this.security_token);
+
+		this.props.history.push(`/sign-up`);
+	}
+
+	acceptInvite() {
+		this.setState({ isSubmitting: true });
+
+		Bigneon()
+			.invitations.accept({ security_token: this.security_token })
+			.then(response => {
+				user.refreshUser();
+				localStorage.removeItem("security_token");
+				this.setState({
+					isSubmitting: false,
+					showSuccessDialog: true,
+					showAcceptDialog: false
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+
+				let errorMessage = "Accepting invite failed.";
+
+				if (error && error.response && error.response.status === 404) {
+					errorMessage = "Invite does not exist or has already been accepted";
+				}
+				this.setState({ errorMessage });
+			});
+	}
+
+	renderOrgDetails() {
+		const { orgName, orgInviterName } = this.state;
+		const { classes } = this.props;
+
+		return orgName && orgInviterName ? (
+			<Typography className={classes.text}>
+				You've been invited by{" "}
+				<span className={classes.bold}>{orgInviterName}</span> to join{" "}
+				<span className={classes.bold}>{orgName}</span>.
+			</Typography>
+		) : null;
+	}
+
 	render() {
-		const { isSubmitting, showSuccessDialog } = this.state;
+		const {
+			isSubmitting,
+			showSuccessDialog,
+			errorMessage,
+			showRedirectDialog,
+			showAcceptDialog,
+			orgName,
+			orgInviterName
+		} = this.state;
+		const { classes } = this.props;
 
 		return (
 			<div>
@@ -80,6 +142,65 @@ class InviteAccept extends Component {
 					{isSubmitting ? "Accepting invite..." : "Invitation"}
 				</PageHeading>
 
+				{/* Final button to accept the invite */}
+				<Dialog
+					iconUrl={"/icons/link-white.svg"}
+					title={"Organization invite"}
+					open={showAcceptDialog}
+				>
+					{this.renderOrgDetails()}
+
+					<div style={{ paddingTop: 40 }}>
+						<Button
+							variant="callToAction"
+							onClick={this.acceptInvite.bind(this)}
+							style={{ width: "100%" }}
+						>
+							Accept invite
+						</Button>
+					</div>
+				</Dialog>
+
+				{/* If they clicked the link and need to be redirected */}
+				<Dialog
+					iconUrl={"/icons/link-white.svg"}
+					title={"Organization invite"}
+					open={showRedirectDialog}
+				>
+					{this.renderOrgDetails()}
+
+					<Typography className={classes.text}>
+						Please signup to accept the invite.
+					</Typography>
+
+					<div style={{ paddingTop: 40 }}>
+						<Button
+							variant="callToAction"
+							onClick={this.goToSignupFirst.bind(this)}
+							style={{ width: "100%" }}
+						>
+							Sign up
+						</Button>
+					</div>
+				</Dialog>
+
+				{/* If the accepting failed */}
+				<Dialog
+					iconUrl={"/icons/delete-white.svg"}
+					title={"Invalid invite"}
+					open={!!errorMessage}
+				>
+					<Typography className={classes.text}>{errorMessage}</Typography>
+					<div style={{ paddingTop: 40 }}>
+						<Link to="/">
+							<Button style={{ width: "100%" }} variant="callToAction">
+								Home
+							</Button>
+						</Link>
+					</div>
+				</Dialog>
+
+				{/* If they successfully accepted */}
 				<Dialog
 					iconUrl={"/icons/checkmark-white.svg"}
 					title={"Invite accepted"}
@@ -87,7 +208,9 @@ class InviteAccept extends Component {
 				>
 					<div style={{ paddingTop: 40 }}>
 						<Link to="/admin/events">
-							<Button variant="callToAction">Visit admin dashboard</Button>
+							<Button style={{ width: "100%" }} variant="callToAction">
+								Visit admin dashboard
+							</Button>
 						</Link>
 					</div>
 				</Dialog>
