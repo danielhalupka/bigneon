@@ -46,7 +46,7 @@ class SignupForm extends Component {
 			confirmPassword
 		} = this.state;
 
-		const phone = removePhoneFormatting(this.state.phone);
+		//const phone = removePhoneFormatting(this.state.phone);
 
 		const errors = {};
 
@@ -64,11 +64,11 @@ class SignupForm extends Component {
 			errors.email = "Invalid email address.";
 		}
 
-		if (!phone) {
-			errors.phone = "Missing phone number.";
-		} else if (!validPhone(phone)) {
-			errors.phone = "Invalid phone number.";
-		}
+		// if (!phone) {
+		// 	errors.phone = "Missing phone number.";
+		// } else if (!validPhone(phone)) {
+		// 	errors.phone = "Invalid phone number.";
+		// }
 
 		if (!password) {
 			errors.password = "Missing password.";
@@ -159,7 +159,7 @@ class SignupForm extends Component {
 				first_name,
 				last_name,
 				email,
-				phone,
+				//phone,
 				password
 			})
 			.then(response => {
@@ -180,7 +180,7 @@ class SignupForm extends Component {
 			first_name,
 			last_name,
 			email,
-			phone,
+			//phone,
 			password,
 			confirmPassword,
 			isSubmitting,
@@ -229,7 +229,7 @@ class SignupForm extends Component {
 								onBlur={this.validateFields.bind(this)}
 							/>
 						</Grid>
-						<Grid item xs={12} sm={12} lg={12}>
+						{/* <Grid item xs={12} sm={12} lg={12}>
 							<InputGroup
 								error={errors.phone}
 								value={phone}
@@ -239,7 +239,7 @@ class SignupForm extends Component {
 								onChange={e => this.setState({ phone: e.target.value })}
 								onBlur={this.validateFields.bind(this)}
 							/>
-						</Grid>
+						</Grid> */}
 						<Grid item xs={12} sm={12} lg={12}>
 							<InputGroup
 								error={errors.password}
