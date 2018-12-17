@@ -208,14 +208,14 @@ class EventsList extends Component {
 							this.props.history.push(`/events/${this.eventMenuSelected}`),
 						MenuOptionIcon: ViewIcon
 					},
-					{
-						text: "Guest list",
-						onClick: () =>
-							this.props.history.push(
-								`/admin/events/${this.eventMenuSelected}/guests`
-							),
-						MenuOptionIcon: GuestListIcon
-					},
+					// {
+					// 	text: "Guest list",
+					// 	onClick: () =>
+					// 		this.props.history.push(
+					// 			`/admin/events/${this.eventMenuSelected}/guests`
+					// 		),
+					// 	MenuOptionIcon: GuestListIcon
+					// },
 					{
 						text: "Cancel event",
 						onClick: () =>

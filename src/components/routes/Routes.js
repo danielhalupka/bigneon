@@ -311,12 +311,12 @@ class Routes extends Component {
 									component={AdminEventUpdate}
 									isAuthenticated={isAuthenticated}
 								/>
-								<PrivateRoute
+								{/* <PrivateRoute
 									exact
 									path="/admin/events/:id/guests"
 									component={AdminGuestList}
 									isAuthenticated={isAuthenticated}
-								/>
+								/> */}
 								<PrivateRoute
 									exact
 									path="/admin/widget-builder/:id"
