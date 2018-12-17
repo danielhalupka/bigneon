@@ -18,7 +18,6 @@ class InviteAccept extends Component {
 		super(props);
 
 		this.state = {
-			isSubmitting: false,
 			showSuccessDialog: false,
 			errorMessage: "",
 			showRedirectDialog: false,
@@ -64,8 +63,6 @@ class InviteAccept extends Component {
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({ isSubmitting: false });
-
 				let errorMessage = "Accepting invite failed.";
 
 				if (error && error.response && error.response.status === 404) {
@@ -83,22 +80,18 @@ class InviteAccept extends Component {
 	}
 
 	acceptInvite() {
-		this.setState({ isSubmitting: true });
-
 		Bigneon()
 			.invitations.accept({ security_token: this.security_token })
 			.then(response => {
 				user.refreshUser();
 				localStorage.removeItem("security_token");
 				this.setState({
-					isSubmitting: false,
 					showSuccessDialog: true,
 					showAcceptDialog: false
 				});
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({ isSubmitting: false });
 
 				let errorMessage = "Accepting invite failed.";
 
@@ -124,13 +117,10 @@ class InviteAccept extends Component {
 
 	render() {
 		const {
-			isSubmitting,
 			showSuccessDialog,
 			errorMessage,
 			showRedirectDialog,
-			showAcceptDialog,
-			orgName,
-			orgInviterName
+			showAcceptDialog
 		} = this.state;
 		const { classes } = this.props;
 

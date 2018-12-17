@@ -47,31 +47,8 @@ class CurrentOrganizationMenu extends React.Component {
 
 		this.state = {
 			auth: true,
-			anchorEl: null,
-			organizations: {}
+			anchorEl: null
 		};
-	}
-
-	componentDidMount() {
-		Bigneon()
-			.organizations.index()
-			.then(response => {
-				const { data } = response.data;
-				const organizations = {};
-				data.forEach(organization => {
-					organizations[organization.id] = organization.name;
-				});
-
-				this.setState({ organizations });
-			})
-			.catch(error => {
-				if (error.response && error.response.status !== 401) {
-					notifications.showFromErrorResponse({
-						error,
-						defaultMessage: "Loading organizations failed."
-					});
-				}
-			});
 	}
 
 	handleChange(event, checked) {
@@ -89,8 +66,7 @@ class CurrentOrganizationMenu extends React.Component {
 	renderOrgMenu() {
 		const { anchorEl } = this.state;
 		const open = Boolean(anchorEl);
-		const { organizationRoles, currentOrganizationId } = user;
-		const { organizations } = this.state;
+		const { organizationRoles, currentOrganizationId, organizations } = user;
 
 		return (
 			<Menu
@@ -127,13 +103,12 @@ class CurrentOrganizationMenu extends React.Component {
 
 	render() {
 		const { classes } = this.props;
-		const { isAuthenticated, currentOrganizationId } = user;
+		const { isAuthenticated, currentOrganizationId, organizations } = user;
 		if (!isAuthenticated) {
 			return null;
 		}
 
-		const { organizations } = this.state;
-		if (!currentOrganizationId || Object.keys(organizations).length < 1) {
+		if (!currentOrganizationId) {
 			return null;
 		}
 

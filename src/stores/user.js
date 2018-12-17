@@ -40,6 +40,9 @@ class User {
 	currentOrganizationId = null;
 
 	@observable
+	organizations = {};
+
+	@observable
 	showRequiresAuthDialog = false;
 
 	@action
@@ -89,6 +92,7 @@ class User {
 						this.organizationRoles = organization_roles;
 						this.profilePicUrl = profile_pic_url;
 
+						this.loadAllPossibleOrgs();
 						this.loadCachedOrganizationRoles();
 
 						if (onSuccess) {
@@ -206,6 +210,28 @@ class User {
 		}
 	}
 
+	loadAllPossibleOrgs() {
+		Bigneon()
+			.organizations.index()
+			.then(response => {
+				const { data } = response.data;
+				const organizations = {};
+				data.forEach(organization => {
+					organizations[organization.id] = organization.name;
+				});
+
+				this.organizations = organizations;
+			})
+			.catch(error => {
+				if (error.response && error.response.status !== 401) {
+					notifications.showFromErrorResponse({
+						error,
+						defaultMessage: "Loading organizations failed."
+					});
+				}
+			});
+	}
+
 	//After logout
 	@action
 	onLogout() {
@@ -220,6 +246,7 @@ class User {
 		this.organizationRoles = {};
 		this.currentOrganizationId = null;
 		this.profilePicUrl = "";
+		this.organizations = {};
 
 		localStorage.removeItem("access_token");
 		localStorage.removeItem("refresh_token");
