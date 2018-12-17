@@ -60,13 +60,13 @@ const FormHeading = ({ classes, children }) => (
 );
 
 const TicketHeading = ({
-						   classes,
-						   index,
-						   name,
-						   onEditClick,
-						   deleteTicketType,
-						   active
-					   }) => (
+	classes,
+	index,
+	name,
+	onEditClick,
+	deleteTicketType,
+	active
+}) => (
 	<div className={classes.ticketHeader}>
 		<FormHeading classes={classes}>
 			{name ? `${index + 1}. ${name}` : "Add your new ticket"}
@@ -218,7 +218,7 @@ const TicketDetails = observer(props => {
 							name="endDate"
 							label="Sale end time"
 							onChange={endDate => {
-								updateTicketType(index, { endDate })
+								updateTicketType(index, { endDate });
 							}}
 							onBlur={validateFields}
 							minDate={false}
@@ -312,10 +312,16 @@ const TicketDetails = observer(props => {
 				<Collapse in={!!showPricing}>
 					{pricing
 						.slice()
-						.sort((a, b) => a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0)
+						.sort(
+							(a, b) =>
+								a.startDate < b.startDate
+									? -1
+									: a.startDate > b.startDate
+										? 1
+										: 0
+						)
 						.map((pricePoint, pricePointIndex) => {
 							return (
-
 								<div key={pricePointIndex}>
 									<FormHeading classes={classes}>
 										Auto price point {pricePointIndex + 1}
@@ -336,13 +342,13 @@ const TicketDetails = observer(props => {
 										{...pricePoint}
 									/>
 								</div>
-							)
+							);
 						})}
 					<Button
 						variant="additional"
 						onClick={() => eventUpdateStore.addTicketPricing(index)}
 					>
-						Add new auto price update
+						Add automatic price point
 					</Button>
 				</Collapse>
 			</Collapse>
