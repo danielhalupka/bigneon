@@ -9,12 +9,14 @@ const styles = theme => ({
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "cover",
 		backgroundPosition: "center",
-		backgroundImage: "url(/images/landing-bg.jpg)",
-		height: 600,
-
+		backgroundColor: "#19081e",
+		backgroundImage: "url(/images/intro-background-dark.png)",
 		display: "flex",
 		flexDirection: "column",
-		padding: theme.spacing.unit * 3
+		minHeight: 800,
+		[theme.breakpoints.down("sm")]: {
+			flexDirection: "column"
+		}
 	},
 	headingContainer: {
 		display: "flex",
@@ -51,16 +53,22 @@ const styles = theme => ({
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
-
+		marginTop: 25,
 		[theme.breakpoints.up("sm")]: {
-			paddingRight: "6%",
-			justifyContent: "flex-end"
+			justifyContent: "flex-center"
+		}
+	},
+	mobilePreviewImage: {
+		width: 380,
+		[theme.breakpoints.up("sm")]: {
+			width: 600
 		}
 	}
 });
 
 const Hero = ({ classes }) => (
 	<div className={classes.root}>
+		
 		<div className={classes.headingContainer}>
 			<Typography
 				className={classnames({
@@ -76,37 +84,40 @@ const Hero = ({ classes }) => (
 					[classes.subheading]: true
 				})}
 			>
-				Secure and control every aspect of your experience.
+				Download the Big Neon app now to see your favorite live music
 			</Typography>
+			<div className={classes.appLinkContainer}>
+				<AppButton
+					size="small"
+					variant="ios"
+					color="white"
+					href={process.env.REACT_APP_STORE_IOS}
+					style={{ 
+						minWidth: 180,
+						marginRight: 10
+					}}
+				>
+					iOS
+				</AppButton>
+				<AppButton
+					size="small"
+					variant="android"
+					color="white"
+					href={process.env.REACT_APP_STORE_ANDROID}
+					style={{ minWidth: 180 }}
+				>
+					Android
+				</AppButton>
+			</div>
 		</div>
-
 		<div className={classes.appLinkContainer}>
-			<Typography
-				className={classnames({
-					[classes.text]: true,
-					[classes.availableOn]: true
-				})}
-			>
-				Available on
-			</Typography>
-			<AppButton
-				size="small"
-				variant="ios"
-				color="blackBackground"
-				href={process.env.REACT_APP_STORE_IOS}
-				style={{ minWidth: 80 }}
-			>
-				iOS
-			</AppButton>
-			<AppButton
-				size="small"
-				variant="android"
-				color="blackBackground"
-				href={process.env.REACT_APP_STORE_ANDROID}
-				style={{ minWidth: 80 }}
-			>
-				Android
-			</AppButton>
+			<img
+				style={{
+					flex: 0
+				}}
+				className={classes.mobilePreviewImage}
+				src="/images/iospreview-chopped.png"
+			/>
 		</div>
 	</div>
 );
