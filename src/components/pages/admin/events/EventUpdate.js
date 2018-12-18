@@ -384,7 +384,7 @@ class Event extends Component {
 								error={errors.publishDate}
 								value={event.publishDate}
 								name="eventDate"
-								label="Event date"
+								label="Publish date and time"
 								onChange={publishDate => {
 									eventUpdateStore.updateEvent({
 										publishDate

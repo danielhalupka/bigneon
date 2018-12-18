@@ -119,11 +119,14 @@ class RightHeaderMenu extends React.Component {
 				open={open}
 				onClose={this.handleClose.bind(this)}
 			>
-				{user.isOrgOwner || user.isOrgMember || user.isAdmin || user.isOrgAdmin ? (
-					<Link to="/admin/events">
-						<MenuItem onClick={this.handleClose.bind(this)}>Admin</MenuItem>
-					</Link>
-				) : null}
+				{user.isOrgOwner ||
+				user.isOrgMember ||
+				user.isAdmin ||
+				user.isOrgAdmin ? (
+						<Link to="/admin/events">
+							<MenuItem onClick={this.handleClose.bind(this)}>Admin</MenuItem>
+						</Link>
+					) : null}
 				<Link to="/hub">
 					<MenuItem onClick={this.handleClose.bind(this)}>Fan hub</MenuItem>
 				</Link>
@@ -206,9 +209,13 @@ class RightHeaderMenu extends React.Component {
 				</Hidden>
 
 				<Hidden smDown implementation="css" className={classes.menuLink}>
-					<Link to="/app">
-						<Button variant="callToAction">Get the App</Button>
-					</Link>
+					<Button
+						variant="callToAction"
+						target="_blank"
+						href={process.env.REACT_APP_DOWNLOAD_APP}
+					>
+						Get the App
+					</Button>
 				</Hidden>
 			</span>
 		);

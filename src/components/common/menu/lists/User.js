@@ -66,15 +66,15 @@ const UserList = observer(props => {
 
 				<div className={classes.spacer} />
 
-				<Link to="/app">
-					<Button
-						iconUrl="/icons/phone-white.svg"
-						className={classes.button}
-						variant="callToAction"
-					>
-						Get the App
-					</Button>
-				</Link>
+				<Button
+					href={process.env.REACT_APP_DOWNLOAD_APP}
+					target="_blank"
+					iconUrl="/icons/phone-white.svg"
+					className={classes.button}
+					variant="callToAction"
+				>
+					Get the App
+				</Button>
 			</div>
 		</div>
 	);
