@@ -75,32 +75,6 @@ class OtherFees extends Component {
 		return true;
 	}
 
-	updateOrganization(id, params, onSuccess) {
-		//Remove owner_user_id
-		Bigneon()
-			.organizations.update({ id, ...params })
-			.then(() => {
-				onSuccess(id);
-			})
-			.catch(error => {
-				this.setState({ isSubmitting: false });
-
-				let message = "Update organization failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
-				});
-			});
-	}
-
 	onSubmit(e) {
 		e.preventDefault();
 
@@ -117,21 +91,24 @@ class OtherFees extends Component {
 			event_fee_in_cents: Number(eventFee) * 100
 		};
 
-		//If we're updating an existing org
-		if (organizationId) {
-			this.updateOrganization(organizationId, orgDetails, () => {
+		Bigneon()
+			.organizations.update({ id: organizationId, ...orgDetails })
+			.then(() => {
 				this.setState({ isSubmitting: false });
 
 				notifications.show({
-					message: "Organization updated",
+					message: "Per order fee updated.",
 					variant: "success"
 				});
+			})
+			.catch(error => {
+				this.setState({ isSubmitting: false });
 
-				this.props.history.push(`/admin/organizations/${organizationId}`);
+				notifications.showFromErrorResponse({
+					defaultMessage: "Saving fee schedule failed.",
+					error
+				});
 			});
-
-			return;
-		}
 	}
 
 	render() {

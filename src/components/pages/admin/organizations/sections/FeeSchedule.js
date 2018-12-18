@@ -263,18 +263,9 @@ class FeeSchedule extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Saving fee schedule failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Saving fee schedule failed.",
+					error
 				});
 			});
 	}
