@@ -107,7 +107,7 @@ const PricePoint = props => {
 					error={errors.value}
 					value={value}
 					name="value"
-					label="Amount"
+					label="Price"
 					placeholder="50"
 					type="number"
 					onChange={e => {

@@ -426,7 +426,7 @@ class FeeSchedule extends Component {
 									}
 									value={company_fee}
 									name="company_fee"
-									label="Company Fee"
+									label="Big Neon Fee"
 									type="number"
 									onChange={e => this.updateFee(index, false, e.target.value)}
 									onBlur={this.validateFields.bind(this)}

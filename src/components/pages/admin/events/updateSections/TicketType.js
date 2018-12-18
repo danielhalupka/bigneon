@@ -251,7 +251,7 @@ const TicketDetails = observer(props => {
 							error={errors.limitPerPerson}
 							value={limitPerPerson}
 							name="maxTicketsPerCustomer"
-							label="Max tickets per customer"
+							label="Ticket limit"
 							placeholder="10"
 							type="number"
 							onChange={e => {
@@ -304,7 +304,7 @@ const TicketDetails = observer(props => {
 							variant="additional"
 							onClick={() => updateTicketType(index, { showPricing: true })}
 						>
-							Add auto price update
+							Add auto price change
 						</Button>
 					</div>
 				) : null}
@@ -354,7 +354,7 @@ const TicketDetails = observer(props => {
 						variant="additional"
 						onClick={() => eventUpdateStore.addTicketPricing(index)}
 					>
-						Add automatic price point
+						Add auto price change
 					</Button>
 				</Collapse>
 			</Collapse>
