@@ -75,7 +75,8 @@ const InputGroup = props => {
 		multiline,
 		autoFocus,
 		InputProps = {},
-		autoComplete
+		autoComplete,
+		allowNegative
 	} = props;
 
 	let inputPropClasses = {};
@@ -85,6 +86,17 @@ const InputGroup = props => {
 
 	if (type === "phone") {
 		InputProps.inputComponent = PhoneNumberInputMask;
+	}
+
+	let onChangeEvent = onChange;
+	//Stop them from entering negative numbers unless they explicitly allow them
+	if (type === "number" && !allowNegative) {
+		onChangeEvent = e => {
+			const numberString = e.target.value;
+			if (!isNaN(numberString) && Number(numberString) >= 0) {
+				onChange(e);
+			}
+		};
 	}
 
 	return (
@@ -99,7 +111,7 @@ const InputGroup = props => {
 				label={<FormatInputLabel>{label}</FormatInputLabel>}
 				type={type}
 				value={value}
-				onChange={onChange}
+				onChange={onChangeEvent}
 				margin="normal"
 				onBlur={onBlur}
 				onFocus={onFocus}
@@ -139,7 +151,8 @@ InputGroup.propTypes = {
 	autoFocus: PropTypes.bool,
 	InputProps: PropTypes.object,
 	disabled: PropTypes.bool,
-	autoComplete: PropTypes.string
+	autoComplete: PropTypes.string,
+	allowNegative: PropTypes.bool
 };
 
 export default withStyles(styles)(InputGroup);
