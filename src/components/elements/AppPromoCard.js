@@ -97,7 +97,7 @@ const AppPromoCard = props => {
 							[classes.text2]: true
 						})}
 					>
-						Big NEON APP
+						Big Neon App
 					</Typography>
 					<Typography
 						className={classNames({
