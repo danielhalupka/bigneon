@@ -29,7 +29,7 @@ class LocationInputGroup extends React.Component {
 		this.state = {
 			showGoogle: !!process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
 			overrideManualEntry: false
-		}
+		};
 	}
 
 	onSelect(address, addressBlock) {

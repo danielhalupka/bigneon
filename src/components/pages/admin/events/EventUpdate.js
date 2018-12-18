@@ -1,23 +1,21 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
 import { Divider, withStyles } from "@material-ui/core";
+import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import Card from "../../../elements/Card";
 import CardMedia from "../../../elements/CardMedia";
-
 import { Artists } from "./updateSections/Artists";
 import { EventDetails, validateEventFields } from "./updateSections/Details";
 import { Tickets, validateTicketTypeFields } from "./updateSections/Tickets";
-
 import FormSubHeading from "../../../elements/FormSubHeading";
 import Button from "../../../elements/Button";
 import RadioButton from "../../../elements/form/RadioButton";
 import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
-
 import eventUpdateStore from "../../../../stores/eventUpdate";
 import user from "../../../../stores/user";
 
@@ -47,7 +45,6 @@ class Event extends Component {
 
 		this.state = {
 			errors: {},
-			publishNow: true,
 			isSubmitting: false,
 			//When ticket times are dirty, don't mess with the timing
 			ticketTimesDirty: false
@@ -92,15 +89,12 @@ class Event extends Component {
 
 			const ticketTypeErrors = validateTicketTypeFields(ticketTypes);
 			if (eventDetailErrors || ticketTypeErrors) {
-				this.setState(
-					{
-						errors: {
-							event: eventDetailErrors,
-							ticketTypes: ticketTypeErrors
-						}
+				this.setState({
+					errors: {
+						event: eventDetailErrors,
+						ticketTypes: ticketTypeErrors
 					}
-					//() => console.warn(this.state.errors)
-				);
+				});
 
 				return false;
 			} else {
@@ -141,7 +135,6 @@ class Event extends Component {
 				variant: "warning",
 				message: "There are invalid event details."
 			});
-
 		}
 
 		const saveResponse = await eventUpdateStore.saveEventDetails();
@@ -249,13 +242,15 @@ class Event extends Component {
 
 	@observer
 	render() {
-		const { publishNow, errors, isSubmitting, ticketTimesDirty } = this.state;
+		const { errors, isSubmitting, ticketTimesDirty } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
 		const { status, isExternal, externalTicketsUrl, showTime } = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
+
+		const showFutureDate = !!event.publishDate;
 
 		const isDraft = status === "Draft";
 		return (
@@ -353,28 +348,38 @@ class Event extends Component {
 
 						<div className={classes.ticketOptions}>
 							<RadioButton
-								active={!!publishNow}
-								onClick={() => this.setState({ publishNow: true })}
+								active={!showFutureDate}
+								onClick={() =>
+									eventUpdateStore.updateEvent({
+										publishDate: null
+									})
+								}
 							>
 								Immediately
 							</RadioButton>
 							<RadioButton
-								active={!publishNow}
-								onClick={() => this.setState({ publishNow: false })}
+								active={showFutureDate}
+								onClick={() =>
+									eventUpdateStore.updateEvent({
+										publishDate: moment()
+									})
+								}
 							>
 								Future date
 							</RadioButton>
 						</div>
 
-						{!publishNow ? (
+						{showFutureDate ? (
 							<DateTimePickerGroup
 								type="date-time"
-								//error={errors.publishDate} //FIXME
+								error={errors.publishDate}
 								value={event.publishDate}
 								name="eventDate"
 								label="Event date"
 								onChange={publishDate => {
-									this.onEventDetailsChange({ publishDate });
+									eventUpdateStore.updateEvent({
+										publishDate
+									});
 								}}
 								onBlur={this.validateFields.bind(this)}
 							/>
@@ -383,16 +388,20 @@ class Event extends Component {
 						<Divider style={{ marginTop: 20, marginBottom: 40 }} />
 
 						<div className={classes.actions}>
-							{(isDraft) ? (<div style={{ width: "45%" }}>
-								<Button
-									disabled={isSubmitting}
-									onClick={this.onSaveDraft.bind(this)}
-									size="large"
-									fullWidth
-								>
-									Save draft
-								</Button>
-							</div>) : ("")}
+							{isDraft ? (
+								<div style={{ width: "45%" }}>
+									<Button
+										disabled={isSubmitting}
+										onClick={this.onSaveDraft.bind(this)}
+										size="large"
+										fullWidth
+									>
+										Save draft
+									</Button>
+								</div>
+							) : (
+								""
+							)}
 
 							<div style={{ width: "45%" }}>
 								<Button

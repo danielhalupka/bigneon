@@ -22,7 +22,7 @@ class Reports extends Component {
 		super(props);
 		this.state = {
 			activeTab: 0
-		}
+		};
 	}
 	
 	componentDidMount() {
@@ -43,7 +43,7 @@ class Reports extends Component {
 					</div>
 				</CardContent>
 			</Card>
-		)
+		);
 	}
 
 	render() {

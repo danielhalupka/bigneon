@@ -35,7 +35,8 @@
     "lines-between-class-members": "error",
     "object-curly-spacing": ["warn", "always"],
     "comma-dangle": ["error", "never"],
-    "no-mixed-spaces-and-tabs": "off"
+    "no-mixed-spaces-and-tabs": "off",
+    "semi": ["error", "always"]
   },
   "env": {
     "browser": true,

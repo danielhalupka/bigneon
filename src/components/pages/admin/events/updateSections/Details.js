@@ -40,7 +40,7 @@ const validateFields = event => {
 	}
 
 	if (!venueId) {
-		errors.venueId = "Venue required."
+		errors.venueId = "Venue required.";
 	}
 
 	if (topLineInfo) {
@@ -142,6 +142,8 @@ const formatDataForSaving = (event, organizationId) => {
 		eventDetails.publish_date = moment
 			.utc(publishDate)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+	} else if (publishDate === null) {
+		eventDetails.publish_date = null;
 	}
 
 	if (promoImageUrl) {
@@ -182,9 +184,9 @@ const formatDataForInputs = event => {
 		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 		: moment.utc(tomorrow);
 	let noon = moment(eventDate).set({
-		"hour": "12",
-		"minute": "00",
-		"second": "00"
+		hour: "12",
+		minute: "00",
+		second: "00"
 	});
 	let showTime = event_start
 		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)

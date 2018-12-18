@@ -243,7 +243,7 @@ class Team extends Component {
 					<Button
 						variant="warning"
 						onClick={() => {
-							this.removeUser(removeUserId)
+							this.removeUser(removeUserId);
 						}}
 						autoFocus
 					>
@@ -433,7 +433,7 @@ class Team extends Component {
 								<Typography>
 									{canRemove && !isDeleting ? (
 										<IconButton onClick={() => {
-											this.showRemoveDialog(user_id)
+											this.showRemoveDialog(user_id);
 										}} iconUrl="/icons/delete-gray.svg">
 											Delete
 										</IconButton>

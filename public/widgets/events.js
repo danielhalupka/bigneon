@@ -95,7 +95,7 @@ var BigNeonWidget = {};
 
 			var eventModuleImageContainer = document.createElement("div");
 			eventModuleImageContainer.className = "event-image";
-			eventModuleContainer.appendChild(eventModuleImageContainer)
+			eventModuleContainer.appendChild(eventModuleImageContainer);
 
 			var eventModuleDate = document.createElement("h3");
 			eventModuleDate.className = "event-date";

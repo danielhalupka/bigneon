@@ -1,3 +1,6 @@
 export default formatted => {
-	return formatted.replace(/[-.*+?^${}()|[\]\\]/g, "").replace(" ", "");
+	return formatted
+		.replace(/[-.*+?^${}()|[\]\\]/g, "")
+		.split(" ")
+		.join("");
 };

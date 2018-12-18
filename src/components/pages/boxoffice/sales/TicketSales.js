@@ -408,7 +408,7 @@ class TicketSales extends Component {
 							onTransferSuccess={() =>
 								this.setState({
 									currentOrderDetails: null,
-									successMessage: "Transfer complete"
+									successMessage: "Transfer link sent"
 								})
 							}
 						/>
