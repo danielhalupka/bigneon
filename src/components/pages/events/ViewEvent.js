@@ -348,7 +348,7 @@ class ViewEvent extends Component {
 					})}
 					{this.getDetailPageButton}
 
-					<div className={classes.socialLinks}>
+					{/* <div className={classes.socialLinks}>
 						<SocialIconLink
 							color="black"
 							style={{ marginRight: 4 }}
@@ -361,7 +361,7 @@ class ViewEvent extends Component {
 							icon={"twitter"}
 							size={40}
 						/>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		);
