@@ -2,15 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Collapse from "@material-ui/core/Collapse";
+import moment from "moment";
 
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import CheckBox from "../../../elements/form/CheckBox";
 import Card from "../../../elements/Card";
 import HorizontalBreakdownBar from "../../../elements/charts/HorizontalBreakdownBar";
 import TicketTypeSalesBarChart from "../../../elements/charts/TicketTypeSalesBarChart";
+import DateFlag from "../../../elements/event/DateFlag";
 
 const styles = theme => {
 	return {
@@ -28,13 +29,12 @@ const styles = theme => {
 		media: {
 			flex: 1,
 			height: "100%",
-			width: "100%"
-		},
-		mediaPlaceholder: {
-			flex: 1,
-			height: "100%",
 			width: "100%",
-			backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)"
+			backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)",
+			backgroundRepeat: "no-repeat",
+			backgroundSize: "cover",
+			backgroundPosition: "center",
+			paddingLeft: theme.spacing.unit * 2
 		},
 		details: {
 			flex: 2,
@@ -141,19 +141,16 @@ const EventSummaryCard = props => {
 		cancelled
 	} = props;
 
+	const mediaStyle = imageUrl ? { backgroundImage: `url(${imageUrl})` } : {};
+
 	return (
 		<Card variant="block">
 			<div className={classes.root}>
 				<div className={classes.simpleViewContent}>
-					{imageUrl ? (
-						<CardMedia
-							className={classes.media}
-							image={imageUrl}
-							title={name}
-						/>
-					) : (
-						<div className={classes.mediaPlaceholder} />
-					)}
+					<div className={classes.media} style={mediaStyle}>
+						{eventDate ? <DateFlag date={eventDate} size="medium" /> : null}
+					</div>
+
 					<div className={classes.details}>
 						<div className={classes.row1}>
 							<div>
@@ -163,7 +160,9 @@ const EventSummaryCard = props => {
 								<Typography className={classes.venueName} variant="subheading">
 									{venueName}
 								</Typography>
-								<Typography variant="caption">{eventDate}</Typography>
+								<Typography variant="caption">
+									{moment(eventDate).format("dddd, MMMM Do YYYY")}
+								</Typography>
 							</div>
 							<div>{menuButton}</div>
 						</div>
@@ -284,7 +283,7 @@ EventSummaryCard.propTypes = {
 	imageUrl: PropTypes.string,
 	name: PropTypes.string.isRequired,
 	venueName: PropTypes.string.isRequired,
-	eventDate: PropTypes.string.isRequired,
+	eventDate: PropTypes.object.isRequired,
 	menuButton: PropTypes.element.isRequired,
 	isPublished: PropTypes.bool.isRequired,
 	isOnSale: PropTypes.bool.isRequired,

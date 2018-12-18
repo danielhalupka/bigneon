@@ -277,9 +277,7 @@ class EventsList extends Component {
 							imageUrl={promo_image_url}
 							name={name}
 							venueName={venue.name || "Unknown Venue"}
-							eventDate={moment
-								.utc(event.event_start)
-								.format("dddd, MMMM Do YYYY")}
+							eventDate={moment.utc(event.event_start)}
 							menuButton={MenuButton}
 							isPublished={moment.utc(event.publish_date) < moment.utc()}
 							isOnSale={moment.utc(event.on_sale) < moment.utc()}
