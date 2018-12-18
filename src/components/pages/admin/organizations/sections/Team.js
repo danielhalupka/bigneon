@@ -3,12 +3,11 @@ import PropTypes from "prop-types";
 import {
 	Dialog,
 	DialogActions,
-	DialogContent,
-	DialogContentText,
 	DialogTitle,
 	Typography,
 	withStyles
 } from "@material-ui/core";
+
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
@@ -17,13 +16,32 @@ import Bigneon from "../../../../../helpers/bigneon";
 import Bn from "bn-api-node";
 import { fontFamilyDemiBold, primaryHex } from "../../../../styles/theme";
 import OrgUserRow from "./OrgUserRow";
-import SelectGroup from "../../../../common/form/SelectGroup";
 import Grid from "@material-ui/core/Grid/Grid";
 import user from "../../../../../stores/user";
 import IconButton from "../../../../elements/IconButton";
 import DialogTransition from "../../../../common/DialogTransition";
 
+//Multi Select
+import Select from "@material-ui/core/Select";
+import Input from "@material-ui/core/Input";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import ListItemText from "@material-ui/core/ListItemText";
+import Checkbox from "@material-ui/core/Checkbox";
+import InputLabel from "@material-ui/core/InputLabel";
+
 const imageSize = 40;
+
+const ITEM_HEIGHT = 45;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+	PaperProps: {
+		style: {
+			maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+			width: 250
+		}
+	}
+};
 
 const styles = theme => ({
 	content: {
@@ -65,6 +83,10 @@ const styles = theme => ({
 	missingProfileImage: {
 		width: imageSize * 0.45,
 		height: "auto"
+	},
+	formControl: {
+		width: "100%",
+		marginTop: theme.spacing.unit * 2
 	}
 });
 
@@ -75,12 +97,15 @@ class Team extends Component {
 		this.state = {
 			email: "",
 			role: "OrgMember",
+			inviteRoles: ["OrgMember"],
 			orgMembers: [],
+			updatedUserRoles: {},
 			errors: {},
 			isSubmitting: false,
 			isDeleting: false,
 			areYouSureDialogOpen: false,
-			removeUserId: null
+			isInviteRemove: false,
+			removeId: null
 		};
 	}
 
@@ -129,7 +154,7 @@ class Team extends Component {
 		return true;
 	}
 
-	onSubmit(e) {
+	inviteUser(e) {
 		e.preventDefault();
 
 		this.submitAttempted = true;
@@ -140,7 +165,7 @@ class Team extends Component {
 
 		this.setState({ isSubmitting: true });
 
-		const { email, role } = this.state;
+		const { email, inviteRoles } = this.state;
 		const { organizationId } = this.props;
 
 		Bigneon()
@@ -148,10 +173,10 @@ class Team extends Component {
 			.create({
 				organization_id: organizationId,
 				user_email: email,
-				role
+				roles: inviteRoles
 			})
 			.then(response => {
-				this.setState({ isSubmitting: false });
+				this.setState({ email: "", inviteRoles: ["OrgMember"],isSubmitting: false });
 
 				notifications.show({
 					message: "User invited to organization.",
@@ -172,59 +197,136 @@ class Team extends Component {
 			});
 	}
 
-	updateUserRole(userId, role) {
-		return false;
+	updateUserRole(userId, roles) {
+		const { updatedUserRoles } = this.state;
+		updatedUserRoles[userId] = roles;
+		this.setState({ updatedUserRoles });
 	}
 
-	removeUser() {
-		const { removeUserId } = this.state;
+	storeUserRole(userId) {
 		const { organizationId } = this.props;
+		const { updatedUserRoles } = this.state;
+		const roles = updatedUserRoles[userId];
+		if (!roles) {
+			return;
+		}
 
-		this.setState({ isDeleting: true });
 		Bigneon()
-			.organizations
-			.users
-			.del(
-				{
-					organization_id: organizationId,
-					user_id: removeUserId
-				})
-			.then(result => {
-				if (result.status === 200) {
-					notifications.show({
-						message: "Removed user.",
-						variant: "success"
-					});
-					this.loadOrgMembers();
-				} else {
-					notifications.show({
-						message: "Removing user failed.",
-						variant: "error"
-					});
-				}
-				this.setState({ isDeleting: false, removeUserId: null, areYouSureDialogOpen: false });
+			.organizations.users
+			.replace({
+				organization_id: organizationId,
+				user_id: userId,
+				roles
+			})
+			.then(response => {
+				this.setState({ isSubmitting: false });
+
+				notifications.show({
+					message: "User roles updated.",
+					variant: "success"
+				});
+				delete updatedUserRoles[userId];
+				this.setState({ updatedUserRoles });
+				this.loadOrgMembers();
 			})
 			.catch(error => {
+
+				console.error(error);
+				this.setState({ isSubmitting: false });
+
 				notifications.showFromErrorResponse({
-					defaultMessage: "Removing user failed.",
+					defaultMessage: "Updating user failed.",
 					error
 				});
-				this.setState({ isDeleting: false, removeUserId: null, areYouSureDialogOpen: false });
 			});
 	}
 
-	onDialogClose() {
-		this.setState({ removeUserId: null, areYouSureDialogOpen: false });
+	removeUser() {
+		const { isInviteRemove, removeId } = this.state;
+		const { organizationId } = this.props;
+
+		this.setState({ isDeleting: true });
+
+		if (isInviteRemove) {
+			Bigneon()
+				.organizations
+				.invite
+				.del(
+					{
+						organization_id: organizationId,
+						invite_id: removeId
+					})
+				.then(result => {
+					if (result.status === 200) {
+						notifications.show({
+							message: "Removed invitation.",
+							variant: "success"
+						});
+						this.loadOrgMembers();
+					} else {
+						notifications.show({
+							message: "Removing invitation failed.",
+							variant: "error"
+						});
+					}
+					this.setState({ isDeleting: false, removeId: null, areYouSureDialogOpen: false });
+				})
+				.catch(error => {
+					notifications.showFromErrorResponse({
+						defaultMessage: "Removing invitation failed.",
+						error
+					});
+					this.setState({ isDeleting: false, removeId: null, areYouSureDialogOpen: false });
+				});
+		} else {
+			Bigneon()
+				.organizations
+				.users
+				.del(
+					{
+						organization_id: organizationId,
+						user_id: removeId
+					})
+				.then(result => {
+					if (result.status === 200) {
+						notifications.show({
+							message: "Removed user.",
+							variant: "success"
+						});
+						this.loadOrgMembers();
+					} else {
+						notifications.show({
+							message: "Removing user failed.",
+							variant: "error"
+						});
+					}
+					this.setState({ isDeleting: false, removeId: null, areYouSureDialogOpen: false });
+				})
+				.catch(error => {
+					notifications.showFromErrorResponse({
+						defaultMessage: "Removing user failed.",
+						error
+					});
+					this.setState({ isDeleting: false, removeId: null, areYouSureDialogOpen: false });
+				});
+		}
+
 	}
 
-	showRemoveDialog(removeUserId) {
-		this.setState({ removeUserId, areYouSureDialogOpen: true });
+	onDialogClose() {
+		this.setState({ removeId: null, areYouSureDialogOpen: false });
+	}
+
+	showRemoveDialog(isInviteRemove, removeId) {
+		this.setState({ isInviteRemove, removeId, areYouSureDialogOpen: true });
 	}
 
 	get renderAreYouSureDialog() {
-		const { areYouSureDialogOpen, removeUserId } = this.state;
+		const { areYouSureDialogOpen, isInviteRemove, removeId } = this.state;
 
 		const onClose = this.onDialogClose.bind(this);
+		let dialogTitle = "Are you sure you want to remove this user";
+		dialogTitle += isInviteRemove ? "'s invitation?" : " from the organization?";
 
 		return (
 			<Dialog
@@ -236,14 +338,14 @@ class Team extends Component {
 				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 			>
 				<DialogTitle id="alert-dialog-title">
-					Are you sure you want to remove this user from the organization?
+					{dialogTitle}
 				</DialogTitle>
 				<DialogActions>
 					<Button onClick={onClose}>Cancel</Button>
 					<Button
 						variant="warning"
 						onClick={() => {
-							this.removeUser(removeUserId);
+							this.removeUser();
 						}}
 						autoFocus
 					>
@@ -254,44 +356,62 @@ class Team extends Component {
 		);
 	}
 
-	renderRoles(role = "", userId) {
+	renderRoles(selectRoles = [], userId = "") {
 		const { classes } = this.props;
 		const roles = Bn.Enums && Bn.Enums.USER_ROLES_STRING ? Bn.Enums.USER_ROLES_STRING : {};
 		if (!(user.isAdmin || user.isOrgOwner || user.isOrgAdmin)) {
 			return ("");
 		}
-		if (user.isOrgAdmin) {
-			delete roles[Bn.Enums.UserRole.ORG_ADMIN];
-			delete roles[Bn.Enums.UserRole.ORG_OWNER];
+
+		const { updatedUserRoles } = this.state;
+		if (userId && updatedUserRoles.hasOwnProperty(userId)) {
+			selectRoles = updatedUserRoles[userId];
 		}
-		if (userId) {
-			//TODO Remove this if to re-enable the member editing post-MVP
-			return (<Typography className={classes.itemText}>{Bn.Enums.USER_ROLES_STRING[role]}</Typography>);
+		let roleArray = [];
+		for (let role in roles) {
+			roleArray.push({ role: role, name: roles[role] });
 		}
-		const { errors } = this.state;
-		const label = !userId ? "New User's Role" : null;
+		let disabledRoles = [Bn.Enums.UserRole.ORG_ADMIN, Bn.Enums.UserRole.ORG_OWNER];
 		return (
-			<SelectGroup
-				value={role}
-				items={roles}
-				error={errors.role}
-				name={"role"}
-				missingItemsLabel={"No available roles"}
-				label={label}
-				onChange={e => {
-					const role = e.target.value;
-					if (!userId) {
-						this.setState({ role });
-					} else {
-						this.updateUserRole(role, userId);
-					}
-				}}
-			/>
+			<FormControl className={classes.formControl} >
+				<InputLabel
+					htmlFor={userId || "invite-input"}>{userId ? ("User Roles") : ("New User Roles")}</InputLabel>
+				<Select
+					multiple
+					value={selectRoles}
+					onChange={(e) => {
+						const roles = e.target.value;
+						if (userId) {
+							this.updateUserRole(userId, roles);
+							this.storeUserRole(userId);
+						} else {
+							this.setState({ inviteRoles: roles });
+						}
+					}}
+					input={<Input id={userId || "invite-input"}/>}
+					renderValue={selected => {
+						if (typeof selected === "string") {
+							return roles[selected];
+						}
+						return selected.map(role => roles[role]).join(", ");
+					}}
+					MenuProps={MenuProps}
+				>
+					{roleArray.map(role => (
+						<MenuItem key={role.role} value={role.role}
+								  disabled={user.isOrgAdmin && (disabledRoles.indexOf(role.role) > -1)}>
+							<Checkbox checked={selectRoles.indexOf(role.role) > -1}/>
+							<ListItemText primary={role.name}/>
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
+
 		);
 	}
 
 	get renderInviteForm() {
-		const { role, email, errors, isSubmitting } = this.state;
+		const { inviteRoles, email, errors, isSubmitting } = this.state;
 		const { classes } = this.props;
 		if (!(user.isAdmin || user.isOrgOwner || user.isOrgAdmin)) {
 			return (
@@ -304,7 +424,7 @@ class Team extends Component {
 				<form
 					noValidate
 					autoComplete="off"
-					onSubmit={this.onSubmit.bind(this)}
+					onSubmit={this.inviteUser.bind(this)}
 				>
 					<Grid
 						direction="row"
@@ -322,7 +442,7 @@ class Team extends Component {
 							/>
 						</Grid>
 						<Grid item xs={12} md={6}>
-							{this.renderRoles(role)}
+							{this.renderRoles(inviteRoles)}
 						</Grid>
 					</Grid>
 					<Button
@@ -355,6 +475,7 @@ class Team extends Component {
 					</OrgUserRow>
 					{orgMembers.map((member, i) => {
 						const {
+							invite_id = "",
 							user_id,
 							first_name,
 							last_name,
@@ -362,25 +483,16 @@ class Team extends Component {
 							thumb_profile_pic_url,
 							roles,
 							invite_or_member
-
 						} = member;
 						const isInvite = invite_or_member === "invite";
-
-						//Currently you only have 1 role in the array, as it stands this is the intended functionality
-						//The roles currently stack, so there is no reason to have more than 1 role, however if that changes
-						//We will need to come up with a new way of displaying the roles.
-						//Get the roles as they appear in the enums for editing reasons
-						const enumRoles = roles.map(role => {
-							const enumRole = role.replace(" (Invited)", "");
-							return enumRole;
-						});
+						let enumRoles = [].concat(roles);
 						const displayRoles = enumRoles.map(role => {
-							return Bn.Enums.USER_ROLES_STRING[role] + (isInvite ? " (Invite sent)" : "");
+							role = role.replace(" (Invited)", "");
+							return Bn.Enums.USER_ROLES_STRING[role];
 						});
 						let canRemove =
 							(
 								(
-									//TODO Allow removal of invitations
 									!isInvite
 									//Admin can do anything (except remove an invite)
 									&& user.isAdmin
@@ -429,11 +541,11 @@ class Team extends Component {
 											{displayRoles.join(", ")}
 										</Typography>
 									) :
-									(this.renderRoles(enumRoles[0], user_id))}
+									(this.renderRoles(enumRoles, user_id))}
 								<Typography>
-									{canRemove && !isDeleting ? (
+									{!isDeleting ? (
 										<IconButton onClick={() => {
-											this.showRemoveDialog(user_id);
+											this.showRemoveDialog(isInvite, isInvite ? invite_id : user_id);
 										}} iconUrl="/icons/delete-gray.svg">
 											Delete
 										</IconButton>
