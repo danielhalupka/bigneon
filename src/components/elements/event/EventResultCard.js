@@ -127,9 +127,9 @@ const EventResultCard = ({
 						</Typography>
 					</div>
 					<div className={classes.singleDetail} style={{ textAlign: "right" }}>
-						<Typography className={classes.label}>Door time</Typography>
+						<Typography className={classes.label}>Show time</Typography>
 						<Typography className={classes.value}>
-							{moment.utc(door_time).format("h:mm:a")}
+							{moment.utc(event_start).format("h:mm:a")}
 						</Typography>
 					</div>
 				</div>

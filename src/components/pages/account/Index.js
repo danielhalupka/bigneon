@@ -207,8 +207,7 @@ class Account extends Component {
 
 									<Typography className={classes.imageDisclaimer}>
 										It's strictly prohibited to upload insulting, violent,
-										pornographic pictures and pictures consisting of political
-										issue, racialism and religious extremism.
+										pornographic or racial images.
 									</Typography>
 								</Grid>
 

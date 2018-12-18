@@ -317,7 +317,9 @@ class EventsList extends Component {
 
 				<Grid container spacing={16}>
 					<Grid item xs={6} sm={6} lg={6}>
-						<PageHeading iconUrl="/icons/events-multi.svg">Events</PageHeading>
+						<PageHeading iconUrl="/icons/events-multi.svg">
+							Dashboard
+						</PageHeading>
 					</Grid>
 					<Grid
 						item

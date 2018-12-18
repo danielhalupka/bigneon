@@ -347,9 +347,9 @@ class Details extends Component {
 		ageLimit = (ageLimit || "0") + "";
 
 		const ageLimits = {
-			"0": "All Ages Allowed",
-			"18": "18+ Allowed",
-			"21": "21+ Allowed"
+			"0": "This event is all ages",
+			"21": "This event is 21 and over",
+			"18": "This event is 18 and over"
 		};
 
 		return (

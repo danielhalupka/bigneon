@@ -164,7 +164,12 @@ class ViewEvent extends Component {
 	}
 
 	get getDetailPageButtonCta() {
-		const { event } = selectedEvent;
+		const { event, hasAvailableTickets } = selectedEvent;
+
+		if (hasAvailableTickets === false) {
+			return { ctaText: "No available tickets", enabled: false };
+		}
+
 		switch (event.override_status) {
 			case "PurchaseTickets":
 				return { ctaText: "Purchase Tickets", enabled: true };
@@ -208,7 +213,11 @@ class ViewEvent extends Component {
 		const { ctaText, enabled } = this.getDetailPageButtonCta;
 
 		if (!enabled) {
-			return <Button className={classes.callToAction}>{ctaText}</Button>;
+			return (
+				<Button disabled className={classes.callToAction}>
+					{ctaText}
+				</Button>
+			);
 		}
 		if (is_external) {
 			return (
@@ -237,7 +246,8 @@ class ViewEvent extends Component {
 			artists,
 			organization,
 			id,
-			ticket_types
+			ticket_types,
+			hasAvailableTickets
 		} = selectedEvent;
 
 		if (event === null) {
@@ -323,9 +333,11 @@ class ViewEvent extends Component {
 				<Divider />
 
 				<div className={classes.eventSubCardRow4}>
-					<Typography className={classes.eventSubCardSubHeading}>
-						Tickets
-					</Typography>
+					{hasAvailableTickets ? (
+						<Typography className={classes.eventSubCardSubHeading}>
+							Tickets
+						</Typography>
+					) : null}
 					<br />
 
 					{ticket_types.map(({ id, name, status, ticket_pricing }) => {

@@ -307,7 +307,7 @@ class Event extends Component {
 									eventUpdateStore.updateEvent({ externalTicketsUrl: null })
 								}
 							>
-								BigNeon
+								Big Neon
 							</RadioButton>
 							<RadioButton
 								active={externalTicketsUrl !== null}

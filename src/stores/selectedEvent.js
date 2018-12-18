@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
 import moment from "moment";
 import createGoogleMapsLink from "../helpers/createGoogleMapsLink";
 import Bigneon from "../helpers/bigneon";
@@ -135,6 +135,23 @@ class SelectedEvent {
 					}
 				);
 		}
+	}
+
+	@computed
+	get hasAvailableTickets() {
+		if (!this.ticket_types) {
+			return null; //Unknown
+		}
+
+		let hasTickets = false;
+		this.ticket_types.map(({ ticket_pricing }) => {
+			let price = "";
+			if (ticket_pricing) {
+				hasTickets = true;
+			}
+		});
+
+		return hasTickets;
 	}
 }
 

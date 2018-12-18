@@ -171,7 +171,7 @@ const TicketDetails = observer(props => {
 						value={defaultPrice}
 						name="value"
 						label="Price"
-						placeholder="35"
+						placeholder=""
 						type="number"
 						onChange={e => {
 							let updatedPricePoint = {
@@ -238,7 +238,7 @@ const TicketDetails = observer(props => {
 							value={priceAtDoor}
 							name="value"
 							label="Price at door"
-							placeholder="35"
+							placeholder=""
 							type="number"
 							onChange={e => {
 								updateTicketType(index, { priceAtDoor: e.target.value });

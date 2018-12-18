@@ -48,8 +48,7 @@ const TicketSelection = props => {
 
 	const lppText =
 		limitPerPerson && amount == limitPerPerson
-			? `You may only purchase ${limitPerPerson} 
-			ticket${limitPerPerson > 1 ? "s" : ""}`
+			? `there is a ${limitPerPerson} ticket limit`
 			: "";
 
 	return (
