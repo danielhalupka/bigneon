@@ -16,6 +16,7 @@ import SearchToolBarInput from "./SearchToolBarInput";
 import CartHeaderLink from "../../common/cart/CartHeaderLink";
 import CurrentOrganizationMenu from "./CurrentOrganizationMenu";
 import BoxOfficeLink from "./BoxOfficeLink";
+import AppBarLogo from "./AppBarLogo";
 import layout from "../../../stores/layout";
 
 const styles = theme => {
@@ -65,11 +66,7 @@ const CustomAppBar = observer(props => {
 				) : null}
 				<div>
 					<Link to={"/"}>
-						<img
-							alt="Header logo"
-							className={classes.headerImage}
-							src="/images/bn-logo-text.svg"
-						/>
+						<AppBarLogo />
 					</Link>
 				</div>
 

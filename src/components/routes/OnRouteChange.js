@@ -4,6 +4,7 @@ import layout from "../../stores/layout";
 import ReactGA from "react-ga";
 
 const showSideMenuRoutes = ["/admin", "/hub", "/orders", "/account"];
+const showStudioLogoRoutes = ["/admin", "/box-office"];
 const showFooterRoutes = ["/events"];
 const removePaddingRoutes = ["/events", "/venues"];
 const removeContainerRoutes = [
@@ -42,7 +43,14 @@ class OnRouteChange extends Component {
 		let showPadding = true;
 		let isBoxOffice = false;
 		let useContainer = true;
+		let showStudioLogo = false;
 
+		showStudioLogoRoutes.forEach(path => {
+			if (window.location.pathname.startsWith(path)) {
+				showStudioLogo = true;
+				return;
+			}
+		});
 		if (window.location.pathname.startsWith("/box-office")) {
 			isBoxOffice = true;
 			showPadding = false;
@@ -90,6 +98,7 @@ class OnRouteChange extends Component {
 		layout.toggleShowFooter(showFooter);
 		layout.toggleBoxOffice(isBoxOffice);
 		layout.toggleContainer(useContainer);
+		layout.toggleShowStudioLogo(showStudioLogo);
 	}
 
 	render() {

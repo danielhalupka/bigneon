@@ -17,6 +17,9 @@ class Layout {
 	@observable
 	useContainer = true;
 
+	@observable
+	showStudioLogo = true;
+
 	@action
 	toggleSideMenu(state) {
 		this.showSideMenu = state;
@@ -40,6 +43,11 @@ class Layout {
 	@action
 	toggleContainer(state) {
 		this.useContainer = state;
+	}
+
+	@action
+	toggleShowStudioLogo(state) {
+		this.showStudioLogo = state;
 	}
 
 	@computed
