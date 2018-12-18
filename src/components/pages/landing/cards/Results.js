@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Typography, withStyles } from "@material-ui/core";
+import { withStyles, Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 
 import ResultsRegionFilter from "./ResultsRegionFilter";
@@ -10,44 +10,71 @@ import Button from "../../../elements/Button";
 
 const styles = theme => ({
 	subHeading: {
-		marginBottom: theme.spacing.unit
+		marginBottom: theme.spacing.unit,
+		textAlign: "center"
 	},
-	availableEventsButtonContainer: {
+	noResultsContainer: {
 		paddingTop: theme.spacing.unit * 2,
 		display: "flex",
-		justifyContent: "center"
+		flexDirection: "column",
+		alignItems: "center",
+		marginBottom: theme.spacing.unit * 10
+	},
+	noResultsImage: {
+		width: 200,
+		height: "auto",
+		marginBottom: theme.spacing.unit * 2
+	},
+	noResultText: {
+		marginBottom: theme.spacing.unit * 2
 	}
 });
 
+const NoResults = ({ classes, onClear }) => (
+	<div className={classes.noResultsContainer}>
+		<img
+			className={classes.noResultsImage}
+			alt="No results found"
+			src="/icons/events-gray.svg"
+		/>
+		<Typography className={classes.noResultText}>No results found.</Typography>
+		<Button variant="callToAction" onClick={onClear}>
+			Available events
+		</Button>
+	</div>
+);
+
 const EventsList = ({ events }) => {
-	return events.map(({ venue, ...event }) => {
-		if (!event) {
-			console.error("Not found: ");
-			return null;
-		}
+	return (
+		<Grid container spacing={24}>
+			{events.map(({ venue, ...event }) => {
+				if (!event) {
+					console.error("Not found: ");
+					return null;
+				}
 
-		const { id, name, promo_image_url, formattedEventDate } = event;
-		const { city, state } = venue;
-
-		return (
-			<Grid item xs={12} sm={6} lg={4} key={id}>
-				<EventResultCard {...event} />
-			</Grid>
-		);
-	});
+				return (
+					<Grid item xs={12} sm={6} lg={4} key={event.id}>
+						<EventResultCard {...event} />
+					</Grid>
+				);
+			})}
+		</Grid>
+	);
 };
 
 const Results = observer(props => {
 	const { classes } = props;
 	const events = eventResults.filteredEvents;
-	let label = null;
+
+	let hasResults = null;
 	if (events === null) {
-		label = "Searching for events...";
+		hasResults = null;
 	} else if (events instanceof Array) {
 		if (events.length > 0) {
-			label = null;
+			hasResults = true;
 		} else {
-			//label = "No results found";
+			hasResults = false;
 		}
 	}
 
@@ -55,28 +82,18 @@ const Results = observer(props => {
 		<div>
 			<ResultsRegionFilter />
 
-			{label ? (
-				<Typography
-					variant="subheading"
-					gutterBottom
-					className={classes.subHeading}
-				>
-					{label}
-				</Typography>
+			{hasResults === true ? <EventsList events={events} /> : null}
+
+			{hasResults === false ? (
+				<NoResults
+					classes={classes}
+					onClear={() => eventResults.clearFilter()}
+				/>
 			) : null}
 
-			<Grid container spacing={24}>
-				{events ? <EventsList events={events} /> : null}
-			</Grid>
-
-			<div className={classes.availableEventsButtonContainer}>
-				<Button
-					variant="callToAction"
-					onClick={() => eventResults.clearFilter()}
-				>
-					Available events
-				</Button>
-			</div>
+			{hasResults === null ? (
+				<Typography className={classes.subHeading}>Searching...</Typography>
+			) : null}
 		</div>
 	);
 });

@@ -18,7 +18,7 @@ class Home extends Component {
 		const query = url.searchParams.get("search") || "";
 
 		eventResults.refreshResults(
-			{ query, status: "Published" },
+			{ query },
 			() => {},
 			message => {
 				notifications.show({
@@ -39,6 +39,7 @@ class Home extends Component {
 					<Grid item xs={11} sm={11} lg={10}>
 						<Results />
 					</Grid>
+					<div style={{ marginBottom: 40 }} />
 				</Grid>
 			</div>
 		);

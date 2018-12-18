@@ -17,7 +17,7 @@ class EventResults {
 	@action
 	refreshResults(params, onSuccess, onError) {
 		Bigneon()
-			.events.index(params)
+			.events.index({ ...params, status: "Published" }) //Always force published
 			.then(response => {
 				let events = [];
 
@@ -27,12 +27,6 @@ class EventResults {
 
 					//TODO remove this when it's added as a filter in the API
 					if (cancelled_at) {
-						return;
-					}
-
-					//TODO remove this when we're filtering on published events not drafts
-					//Make sure they didn't just add artists without other details.
-					if (!event.name) {
 						return;
 					}
 
