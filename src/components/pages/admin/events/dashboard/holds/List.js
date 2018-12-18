@@ -76,6 +76,7 @@ class TicketHoldList extends Component {
 		Bigneon()
 			.holds.delete({ id })
 			.then(response => {
+				this.refreshHolds();
 				notifications.show({ message: "Hold deleted.", variant: "success" });
 			})
 			.catch(error => {

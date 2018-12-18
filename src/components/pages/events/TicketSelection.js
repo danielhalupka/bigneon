@@ -20,6 +20,11 @@ const styles = theme => ({
 	name: {
 		fontSize: theme.typography.fontSize,
 		fontFamily: fontFamilyDemiBold
+	},
+	unavailable: {
+		fontSize: theme.typography.fontSize * 0.8,
+		color: "gray",
+		textAlign: "center"
 	}
 });
 
@@ -64,31 +69,35 @@ const TicketSelection = props => {
 				</Grid>
 
 				<Grid item xs={3} sm={3} md={3} lg={3}>
-					<NumberSelect
-						onIncrement={() => {
-							const currentAmount = amount ? amount : 0;
-							let newAmount = Number(currentAmount) + increment;
+					{available ? (
+						<NumberSelect
+							onIncrement={() => {
+								const currentAmount = amount ? amount : 0;
+								let newAmount = Number(currentAmount) + increment;
 
-							if (limitPerPerson && newAmount > limitPerPerson) {
-								newAmount = limitPerPerson;
-							}
+								if (limitPerPerson && newAmount > limitPerPerson) {
+									newAmount = limitPerPerson;
+								}
 
-							onNumberChange(newAmount);
-							validateFields();
-						}}
-						onDecrement={() => {
-							const currentAmount = amount ? amount : 0;
-							let newAmount = Number(currentAmount) - increment;
-							if (newAmount < 0) {
-								newAmount = 0;
-							}
+								onNumberChange(newAmount);
+								validateFields();
+							}}
+							onDecrement={() => {
+								const currentAmount = amount ? amount : 0;
+								let newAmount = Number(currentAmount) - increment;
+								if (newAmount < 0) {
+									newAmount = 0;
+								}
 
-							onNumberChange(newAmount);
-							validateFields();
-						}}
-					>
-						{amount}
-					</NumberSelect>
+								onNumberChange(newAmount);
+								validateFields();
+							}}
+						>
+							{amount}
+						</NumberSelect>
+					) : (
+						<Typography className={classes.unavailable}>Unavailable</Typography>
+					)}
 				</Grid>
 			</Grid>
 		</div>
