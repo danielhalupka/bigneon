@@ -1,20 +1,37 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classnames from "classnames";
 import {
 	withStyles,
 	Typography,
 	InputAdornment,
 	Collapse
 } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
+
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
-import IconButton from "../../../../elements/IconButton";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 
 const styles = theme => {
 	return {
 		root: { display: "flex" },
-		inputContainer: { flex: 1, paddingRight: theme.spacing.unit * 4 }
+		inputContainer: {
+			flex: 1,
+			paddingRight: theme.spacing.unit * 4,
+			display: "flex",
+			flexDirection: "column",
+			justifyContent: "center"
+		},
+		dateInputContainer: {
+			marginTop: 8
+		},
+		deleteIconContainer: {
+			display: "flex",
+			flexDirection: "column",
+			justifyContent: "center"
+		}
 	};
 };
 
@@ -27,7 +44,8 @@ const PricePoint = props => {
 		value,
 		errors,
 		validateFields,
-		updatePricePointDetails
+		updatePricePointDetails,
+		onDelete
 	} = props;
 
 	return (
@@ -47,7 +65,12 @@ const PricePoint = props => {
 				/>
 			</div>
 
-			<div className={classes.inputContainer}>
+			<div
+				className={classnames({
+					[classes.inputContainer]: true,
+					[classes.dateInputContainer]: true
+				})}
+			>
 				<DateTimePickerGroup
 					error={errors.startDate}
 					value={startDate}
@@ -59,7 +82,12 @@ const PricePoint = props => {
 				/>
 			</div>
 
-			<div className={classes.inputContainer}>
+			<div
+				className={classnames({
+					[classes.inputContainer]: true,
+					[classes.dateInputContainer]: true
+				})}
+			>
 				<DateTimePickerGroup
 					error={errors.endDate}
 					value={endDate}
@@ -88,6 +116,12 @@ const PricePoint = props => {
 					onBlur={validateFields}
 				/>
 			</div>
+
+			<div className={classes.deleteIconContainer}>
+				<IconButton onClick={onDelete} aria-label="Delete">
+					<DeleteIcon />
+				</IconButton>
+			</div>
 		</div>
 	);
 };
@@ -100,7 +134,8 @@ PricePoint.propTypes = {
 	name: PropTypes.string.isRequired,
 	startDate: PropTypes.object.isRequired,
 	endDate: PropTypes.object.isRequired,
-	value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
+	value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+	onDelete: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(PricePoint);

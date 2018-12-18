@@ -167,7 +167,6 @@ class DateTimePickerGroup extends Component {
 						this.picker = node;
 					}}
 				/>
-
 				<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
 			</FormControl>
 		);

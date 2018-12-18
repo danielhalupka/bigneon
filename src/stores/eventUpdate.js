@@ -169,7 +169,9 @@ class EventUpdate {
 
 		//On new events update the last pricing point to match the end date of the ticketType
 		if (!this.id && details.hasOwnProperty("endDate")) {
-			ticketTypes[index].pricing[ticketTypes[index].pricing.length - 1].endDate = moment(details.endDate);
+			ticketTypes[index].pricing[
+				ticketTypes[index].pricing.length - 1
+			].endDate = moment(details.endDate);
 		}
 
 		this.ticketTypes = ticketTypes;
@@ -209,8 +211,18 @@ class EventUpdate {
 	}
 
 	@action
-	updateEvent(eventDetails) {
+	removeTicketPricing(ticketTypeIndex, ticketPriceIndex) {
+		let { ticketTypes } = this;
 
+		let { pricing } = ticketTypes[ticketTypeIndex];
+		pricing.splice(ticketPriceIndex, 1);
+
+		ticketTypes[ticketTypeIndex].pricing = pricing;
+		this.ticketTypes = ticketTypes;
+	}
+
+	@action
+	updateEvent(eventDetails) {
 		if (!this.id && eventDetails.hasOwnProperty("eventDate")) {
 			eventDetails.showTime = moment(eventDetails.eventDate).set({
 				hour: this.event.showTime.get("hour"),

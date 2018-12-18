@@ -339,6 +339,12 @@ const TicketDetails = observer(props => {
 										}}
 										errors={pricingErrors[pricePointIndex] || {}}
 										validateFields={validateFields}
+										onDelete={() =>
+											eventUpdateStore.removeTicketPricing(
+												index,
+												pricePointIndex
+											)
+										}
 										{...pricePoint}
 									/>
 								</div>
