@@ -206,7 +206,7 @@ const formatDataForInputs = event => {
 			: null,
 		publishDate: publish_date
 			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: new Date(),
+			: null,
 		ageLimit: age_limit || "",
 		venueId: venue_id || "",
 		additionalInfo: additional_info || "",

@@ -126,7 +126,7 @@ class EventUpdate {
 	addTicketType() {
 		//const endDate = this.event.eventDate ? this.event.eventDate : new Date(); //FIXME this will most certainly not work. If a user changes the event date this first ticket type date needs to change.
 		let ticketTypes = this.ticketTypes;
-		const startDate = moment(this.event.eventDate);
+		const startDate = moment();
 		const endDate = moment(this.event.eventDate).add(1, "days");
 
 		const ticketType = {
@@ -279,7 +279,7 @@ class EventUpdate {
 	}
 
 	@action
-	async saveEventDetails() {
+	async saveEventDetails(onId = {}) {
 		this.hasSubmitted = true;
 
 		let id = this.id;
@@ -291,7 +291,10 @@ class EventUpdate {
 		);
 
 		if (id) {
-			const saveEventResponse = await this.saveEvent(formattedEventDetails);
+			const saveEventResponse = await this.saveEvent({
+				...formattedEventDetails,
+				id
+			});
 
 			if (!saveEventResponse.result) {
 				return saveEventResponse;
@@ -304,6 +307,8 @@ class EventUpdate {
 
 			this.id = newEventResponse.result;
 		}
+
+		onId(this.id);
 
 		if (artists && artists.length > 0) {
 			const formattedArtists = formatArtistsForSaving(artists);

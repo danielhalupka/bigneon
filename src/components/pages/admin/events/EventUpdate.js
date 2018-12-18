@@ -127,6 +127,12 @@ class Event extends Component {
 		}
 	}
 
+	updateUrl(id) {
+		if (id) {
+			this.props.history.push(`/admin/events/${id}/edit`);
+		}
+	}
+
 	async saveEventDetails() {
 		this.hasSubmitted = true;
 
@@ -137,15 +143,18 @@ class Event extends Component {
 			});
 		}
 
-		const saveResponse = await eventUpdateStore.saveEventDetails();
+		const saveResponse = await eventUpdateStore.saveEventDetails(
+			this.updateUrl.bind(this)
+		);
+
 		if (!saveResponse.result) {
 			return saveResponse;
 		}
 
 		const { id } = eventUpdateStore;
-		if (id) {
-			this.props.history.push(`/admin/events/${id}/edit`);
-		}
+		this.updateUrl(id);
+
+		eventUpdateStore.loadDetails(id);
 
 		return saveResponse;
 	}
