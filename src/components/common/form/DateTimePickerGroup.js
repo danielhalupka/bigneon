@@ -63,11 +63,15 @@ const styles = theme => {
 		},
 		popover: {
 			maxHeight: "300px"
+		},
+		highlight: {
+			backgroundColor: "#b2b2b2"
 		}
 	};
 };
 
 let timeFormat = "h:mm A";
+
 class DateTimePickerGroup extends Component {
 	constructor(props) {
 		super(props);
@@ -121,7 +125,7 @@ class DateTimePickerGroup extends Component {
 
 	onTimeChanged = event => {
 		let newValue = event.target.value;
-		this.setState({ timeFormatted: newValue, anchorEl: null });
+		this.setState({ timeFormatted: newValue });
 		let { onChange } = this.props;
 
 		onChange(moment(newValue, timeFormat, true));
@@ -147,62 +151,20 @@ class DateTimePickerGroup extends Component {
 			onFocus,
 			onBlur,
 			classes,
-			value
+			value,
+			timeIncrement = 30
 		} = this.props;
 
 		let additionalProps = {};
 		let inputProps = {};
 
-		let times = [
-			"12:00 AM",
-			"12:30 AM",
-			"01:00 AM",
-			"01:30 AM",
-			"02:00 AM",
-			"02:30 AM",
-			"03:00 AM",
-			"03:30 AM",
-			"04:00 AM",
-			"04:30 AM",
-			"05:00 AM",
-			"05:30 AM",
-			"06:00 AM",
-			"06:30 AM",
-			"07:00 AM",
-			"07:30 AM",
-			"08:00 AM",
-			"08:30 AM",
-			"09:00 AM",
-			"09:30 AM",
-			"10:00 AM",
-			"10:30 AM",
-			"11:00 AM",
-			"11:30 AM",
-			"12:00 PM",
-			"12:30 PM",
-			"01:00 PM",
-			"01:30 PM",
-			"02:00 PM",
-			"02:30 PM",
-			"03:00 PM",
-			"03:30 PM",
-			"04:00 PM",
-			"04:30 PM",
-			"05:00 PM",
-			"05:30 PM",
-			"06:00 PM",
-			"06:30 PM",
-			"07:00 PM",
-			"07:30 PM",
-			"08:00 PM",
-			"08:30 PM",
-			"09:00 PM",
-			"09:30 PM",
-			"10:00 PM",
-			"10:30 PM",
-			"11:00 PM",
-			"11:30 PM"
-		];
+		let start = moment().set({ hour: 0, minute: 0, second: 0 });
+		let end = moment(start).add(24, "hours");
+		let times = [];
+		while (start < end) {
+			times.push(start.format("hh:mm A"));
+			start.add(timeIncrement, "minutes");
+		}
 
 		let { anchorEl, timeFormatted, isTimeValid } = this.state;
 
@@ -235,7 +197,7 @@ class DateTimePickerGroup extends Component {
 						/>
 					</div>
 				) : (
-					<div />
+					<div/>
 				)}
 
 				{type === "time" ? (
@@ -261,13 +223,13 @@ class DateTimePickerGroup extends Component {
 								vertical: "top",
 								horizontal: "left"
 							}}
-							disableAutoFocus={true}
 						>
 							<ClickAwayListener onClickAway={this.onTimePickerClose}>
 								<Paper elevation={24} className={classes.popover}>
 									<MenuList id="time-menu">
 										{times.map((time, index) => (
 											<MenuItem
+												className={time === timeFormatted ? classes.highlight : null }
 												key={time}
 												onClick={event => this.onTimeSelected(event, time)}
 											>
@@ -280,7 +242,7 @@ class DateTimePickerGroup extends Component {
 						</Popover>
 					</div>
 				) : (
-					<div />
+					<div/>
 				)}
 				<FormHelperText id={`${name}-error-text`}>
 					{!isTimeValid ? "Not a valid time (e.g. 9:30 PM)" : error}
@@ -299,7 +261,8 @@ DateTimePickerGroup.propTypes = {
 	placeholder: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
-	onFocus: PropTypes.func
+	onFocus: PropTypes.func,
+	timeIncrement: PropTypes.number
 };
 
 export default withStyles(styles)(DateTimePickerGroup);
