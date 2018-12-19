@@ -1,25 +1,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import { DialogContent, DialogContentText } from "@material-ui/core";
 
 import Button from "../../elements/Button";
-import DialogTransition from "../../common/DialogTransition";
 import FacebookButton from "./social/FacebookButton";
 import Divider from "../../common/Divider";
 import LoginForm from "../authentication/forms/LoginForm";
 import SignupForm from "../authentication/forms/SignupForm";
+import Dialog from "../../elements/Dialog";
 
 const styles = {
-	dialog: {
-		maxWidth: 500
-	},
-	dialogTitle: {
-		textAlign: "center"
-	},
-	dialogContent: {
+	content: {
 		textAlign: "center"
 	}
 };
@@ -48,93 +39,88 @@ class RequiresAuthDialog extends Component {
 		this.props.onAuthSuccess();
 	}
 
-	renderContent() {
-		const { classes } = this.props;
-		const { isNewUser } = this.state;
-
-		if (isNewUser === true) {
-			return (
-				<div className={classes.dialog}>
-					<DialogTitle className={classes.dialogTitle} id="dialog-title">
-						Create a free account
-					</DialogTitle>
-
-					<DialogContent className={classes.dialogContent}>
-						<Button
-							variant="text"
-							onClick={() => this.setState({ isNewUser: false })}
-						>
-							Already have an account?
-						</Button>
-						<SignupForm onSuccess={this.onSuccess} />
-					</DialogContent>
-				</div>
-			);
-		}
-
-		if (isNewUser === false) {
-			return (
-				<div className={classes.dialog}>
-					<DialogTitle className={classes.dialogTitle} id="dialog-title">
-						Login to your bigNEON account
-					</DialogTitle>
-
-					<DialogContent className={classes.dialogContent}>
-						<Button
-							variant="text"
-							onClick={() => this.setState({ isNewUser: true })}
-						>
-							New here? Create a free account.
-						</Button>
-						<LoginForm onSuccess={this.onSuccess} />
-					</DialogContent>
-				</div>
-			);
-		}
-
+	renderNewUser() {
 		return (
-			<div className={classes.dialog}>
-				<DialogTitle className={classes.dialogTitle} id="dialog-title">
-					Create a free bigNEON account
-				</DialogTitle>
+			<div>
+				<Button
+					variant="text"
+					onClick={() => this.setState({ isNewUser: false })}
+				>
+					Already have an account?
+				</Button>
+				<SignupForm onSuccess={this.onSuccess} />
+			</div>
+		);
+	}
 
-				<DialogContent className={classes.dialogContent}>
-					<Button
-						variant="text"
-						onClick={() => this.setState({ isNewUser: false })}
-					>
-						Already have an account?
-					</Button>
+	renderNotNewUser() {
+		return (
+			<div>
+				<Button
+					variant="text"
+					onClick={() => this.setState({ isNewUser: true })}
+				>
+					New here? Create a free account.
+				</Button>
+				<LoginForm onSuccess={this.onSuccess} />
+			</div>
+		);
+	}
 
-					<div style={{ marginTop: 20 }} />
+	renderOptions() {
+		return (
+			<div>
+				<div style={{ marginTop: 20 }} />
 
-					{/* <FacebookButton onSuccess={this.onSuccess} /> */}
+				<Button
+					variant="text"
+					onClick={() => this.setState({ isNewUser: false })}
+				>
+					Already have an account?
+				</Button>
 
-					{/* <Divider style={{ marginTop: 20, marginBottom: 20 }}> or </Divider> */}
+				<div style={{ marginTop: 20 }} />
 
-					<Button
-						variant="text"
-						onClick={() => this.setState({ isNewUser: true })}
-					>
-						Sign up with email
-					</Button>
-				</DialogContent>
+				{/* <FacebookButton onSuccess={this.onSuccess} /> */}
+
+				{/* <Divider style={{ marginTop: 20, marginBottom: 20 }}> or </Divider> */}
+
+				<Button
+					variant="text"
+					onClick={() => this.setState({ isNewUser: true })}
+				>
+					Sign up with email
+				</Button>
 			</div>
 		);
 	}
 
 	render() {
-		const { open } = this.props;
+		const { open, classes } = this.props;
+		const { isNewUser } = this.state;
+
+		let title = "";
+		let content = null;
+
+		if (isNewUser === true) {
+			title = "Create a free account";
+			content = this.renderNewUser();
+		} else if (isNewUser === false) {
+			title = "Login to your Big Neon account";
+			content = this.renderNotNewUser();
+		} else {
+			title = "Create a free Big Neon account";
+			content = this.renderOptions();
+		}
 
 		return (
 			<Dialog
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
-				TransitionComponent={DialogTransition}
 				open={open}
 				onClose={this.onClose}
-				aria-labelledby="dialog-title"
+				title={title}
+				iconUrl={"/icons/user-white.svg"}
 			>
-				{this.renderContent()}
+				<div className={classes.content}>{content}</div>
 			</Dialog>
 		);
 	}

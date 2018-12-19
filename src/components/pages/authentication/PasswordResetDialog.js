@@ -1,22 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import {
-	DialogContent,
-	DialogContentText,
-	DialogActions
-} from "@material-ui/core";
 
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail } from "../../../validators";
 import notifications from "../../../stores/notifications";
 import Button from "../../elements/Button";
-import DialogTransition from "../../common/DialogTransition";
 import Bigneon from "../../../helpers/bigneon";
+import Dialog from "../../elements/Dialog";
+import { Typography } from "@material-ui/core";
 
-const styles = {};
+const styles = {
+	actionButtons: {
+		display: "flex",
+		justifyContent: "space-between"
+	}
+};
 
 class PasswordResetDialog extends React.Component {
 	constructor(props) {
@@ -106,24 +105,21 @@ class PasswordResetDialog extends React.Component {
 	}
 
 	render() {
-		const { onClose, open } = this.props;
+		const { onClose, open, classes } = this.props;
 		const { email, isSubmitting, errors } = this.state;
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
 				open={open}
 				onClose={onClose}
-				aria-labelledby="simple-dialog-title"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				title="Reset password"
+				iconUrl={"/icons/link-white.svg"}
 			>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<DialogTitle id="simple-dialog-title">Reset password</DialogTitle>
-
-					<DialogContent>
-						<DialogContentText>
+					<div>
+						<Typography>
 							We'll send you a link to reset your password.
-						</DialogContentText>
+						</Typography>
 						<InputGroup
 							error={errors.email}
 							value={email || this.props.email}
@@ -133,19 +129,15 @@ class PasswordResetDialog extends React.Component {
 							onChange={e => this.setState({ email: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
 						/>
-					</DialogContent>
-					<DialogActions>
-						<Button
-							style={{ marginRight: 10 }}
-							onClick={onClose}
-							color="primary"
-						>
-							Cancel
-						</Button>
-						<Button type="submit" variant="callToAction">
-							{isSubmitting ? "Resetting..." : "Reset password"}
-						</Button>
-					</DialogActions>
+						<div className={classes.actionButtons}>
+							<Button onClick={onClose} color="primary">
+								Cancel
+							</Button>
+							<Button type="submit" variant="callToAction">
+								{isSubmitting ? "Resetting..." : "Reset password"}
+							</Button>
+						</div>
+					</div>
 				</form>
 			</Dialog>
 		);
