@@ -72,7 +72,8 @@ const formatDataForSaving = (event, organizationId) => {
 		topLineInfo,
 		promoImageUrl,
 		externalTicketsUrl,
-		override_status
+		override_status,
+		videoUrl
 	} = event;
 
 	const eventDetails = {
@@ -83,7 +84,8 @@ const formatDataForSaving = (event, organizationId) => {
 		top_line_info: topLineInfo,
 		is_external: externalTicketsUrl !== null,
 		external_url: externalTicketsUrl,
-		override_status
+		override_status,
+		video_url: videoUrl
 	};
 
 	if (
