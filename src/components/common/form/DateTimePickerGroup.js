@@ -121,7 +121,7 @@ class DateTimePickerGroup extends Component {
 
 	onTimeChanged = event => {
 		let newValue = event.target.value;
-		this.setState({ timeFormatted: newValue });
+		this.setState({ timeFormatted: newValue, anchorEl: null });
 		let { onChange } = this.props;
 
 		onChange(moment(newValue, timeFormat, true));
@@ -261,6 +261,7 @@ class DateTimePickerGroup extends Component {
 								vertical: "top",
 								horizontal: "left"
 							}}
+							disableAutoFocus={true}
 						>
 							<ClickAwayListener onClickAway={this.onTimePickerClose}>
 								<Paper elevation={24} className={classes.popover}>
