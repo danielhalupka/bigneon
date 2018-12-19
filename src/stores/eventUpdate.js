@@ -172,6 +172,9 @@ class EventUpdate {
 			ticketTypes[index].pricing[
 				ticketTypes[index].pricing.length - 1
 			].endDate = moment(details.endDate);
+			ticketTypes[index].pricing[
+				ticketTypes[index].pricing.length - 1
+			].endTime = moment(details.endTime);
 		}
 
 		this.ticketTypes = ticketTypes;
@@ -190,11 +193,13 @@ class EventUpdate {
 
 		let { pricing } = ticketTypes[index];
 		let startDate = moment(ticketTypes[index].startDate);
+		let startTime = moment(ticketTypes[index].startTime);
 		let endDate = moment(ticketTypes[index].endDate);
+		let endTime = moment(ticketTypes[index].endTime);
 
 		if (pricing.length) {
 			startDate = moment(pricing[pricing.length - 1].endDate);
-			endDate = moment(ticketTypes[index].endDate);
+			startTime = moment(pricing[pricing.length - 1].endTime);
 		}
 
 		pricing.push({
@@ -202,7 +207,9 @@ class EventUpdate {
 			ticketId: "",
 			name: "",
 			startDate,
+			startTime,
 			endDate,
+			endTime,
 			value: 0
 		});
 
@@ -267,7 +274,7 @@ class EventUpdate {
 	@action
 	changeArtistSetTime(index, setTime) {
 		let artists = this.artists;
-		artists[index].setTime = setTime;
+		artists[index].setTime = setTime.clone();
 		this.artists = artists;
 	}
 

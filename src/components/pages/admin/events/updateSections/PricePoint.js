@@ -40,7 +40,9 @@ const PricePoint = props => {
 		classes,
 		name,
 		startDate,
+		startTime,
 		endDate,
+		endTime,
 		value,
 		errors,
 		validateFields,
@@ -75,8 +77,19 @@ const PricePoint = props => {
 					error={errors.startDate}
 					value={startDate}
 					name="startDate"
-					label="On sale Time"
+					type="date"
+					label="On sale date"
 					onChange={startDate => updatePricePointDetails({ startDate })}
+					onBlur={validateFields}
+					minDate={false}
+				/>
+				<DateTimePickerGroup
+					error={errors.startTime}
+					value={startTime}
+					name="startTime"
+					type="time"
+					label="On sale time"
+					onChange={startTime => updatePricePointDetails({ startTime })}
 					onBlur={validateFields}
 					minDate={false}
 				/>
@@ -92,8 +105,19 @@ const PricePoint = props => {
 					error={errors.endDate}
 					value={endDate}
 					name="endDate"
-					label="End sale Time"
+					type="date"
+					label="End sale date"
 					onChange={endDate => updatePricePointDetails({ endDate })}
+					onBlur={validateFields}
+					minDate={false}
+				/>
+				<DateTimePickerGroup
+					error={errors.endTime}
+					value={endTime}
+					name="endTime"
+					type="time"
+					label="End sale time"
+					onChange={endTime => updatePricePointDetails({ endTime })}
 					onBlur={validateFields}
 					minDate={false}
 				/>

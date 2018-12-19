@@ -22,21 +22,41 @@ const formatForSaving = ticketTypes => {
 			name,
 			pricing,
 			startDate,
+			startTime,
 			endDate,
+			endTime,
 			limitPerPerson
 		} = ticketType;
 
 		let ticket_pricing = [];
 		pricing.forEach(pricePoint => {
-			const { id, name, startDate, endDate, value } = pricePoint;
+			const {
+				id,
+				name,
+				startDate,
+				startTime,
+				endDate,
+				endTime,
+				value
+			} = pricePoint;
 			ticket_pricing.push({
 				id: id ? id : undefined,
 				name,
 				price_in_cents: Math.round(Number(value) * 100),
 				start_date: moment(startDate)
+					.set({
+						hour: startTime.get("hour"),
+						minute: startTime.get("minute"),
+						second: startTime.get("second")
+					})
 					.utc()
 					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 				end_date: moment(endDate)
+					.set({
+						hour: endTime.get("hour"),
+						minute: endTime.get("minute"),
+						second: endTime.get("second")
+					})
 					.utc()
 					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			});
@@ -48,9 +68,19 @@ const formatForSaving = ticketTypes => {
 			capacity: Number(capacity),
 			increment: Number(increment),
 			start_date: moment(startDate)
+				.set({
+					hour: startTime.get("hour"),
+					minute: startTime.get("minute"),
+					second: startTime.get("second")
+				})
 				.utc()
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			end_date: moment(endDate)
+				.set({
+					hour: endTime.get("hour"),
+					minute: endTime.get("minute"),
+					second: endTime.get("second")
+				})
 				.utc()
 				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			limit_per_person:
@@ -96,8 +126,10 @@ const formatForInput = ticket_types => {
 				id: pricePoint.id,
 				ticketId: id,
 				name,
-				startDate,
-				endDate,
+				startDate: startDate.clone(),
+				startTime: startDate,
+				endDate: endDate.clone(),
+				endTime: endDate,
 				value: price_in_cents / 100
 			});
 
@@ -117,8 +149,10 @@ const formatForInput = ticket_types => {
 			capacity: capacity ? capacity : 0,
 			increment: increment ? increment : 1,
 			limitPerPerson: limit_per_person ? limit_per_person : "",
-			startDate: ticketStartDate,
-			endDate: ticketEndDate,
+			startDate: ticketStartDate.clone(),
+			startTime: ticketStartDate,
+			endDate: ticketEndDate.clone(),
+			endTime: ticketEndDate,
 			priceAtDoor, //TODO get the actual value when API works
 			pricing,
 			showPricing: pricing.length > 1
@@ -158,17 +192,30 @@ const validateFields = ticketTypes => {
 	let errors = {};
 
 	ticketTypes.forEach((ticket, index) => {
-		const {
+		let {
 			id,
 			eventId,
 			name,
 			startDate,
+			startTime,
 			endDate,
+			endTime,
 			capacity,
 			increment,
 			//limit,
 			pricing
 		} = ticket;
+
+		startDate = moment(startDate).set({
+			hour: startTime.get("hour"),
+			minute: startTime.get("minute"),
+			second: startTime.get("second")
+		});
+		endDate = moment(endDate).set({
+			hour: endTime.get("hour"),
+			minute: endTime.get("minute"),
+			second: endTime.get("second")
+		});
 
 		const ticketErrors = {};
 		if (!name) {
@@ -206,11 +253,39 @@ const validateFields = ticketTypes => {
 				(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
 			);
 
+			let ticketStartDate = startDate;
+			let ticketEndDate = endDate;
+
 			sorted.forEach((pricingItem, index) => {
-				const { name, startDate, endDate, value } = pricingItem;
+				let {
+					name,
+					startDate,
+					startTime,
+					endDate,
+					endTime,
+					value
+				} = pricingItem;
+
+				startDate = moment(startDate).set({
+					hour: startTime.get("hour"),
+					minute: startTime.get("minute"),
+					second: startTime.get("second")
+				});
+				endDate = moment(endDate).set({
+					hour: endTime.get("hour"),
+					minute: endTime.get("minute"),
+					second: endTime.get("second")
+				});
 
 				//Previous pricing dates needed for current row
 				const previousPricing = index > 0 ? sorted[index - 1] : null;
+				let previousPricingEndDate = previousPricing
+					? moment(previousPricing.endDate).set({
+						hour: previousPricing.endTime.get("hour"),
+						minute: previousPricing.endTime.get("minute"),
+						second: previousPricing.endTime.get("second")
+					  })
+					: null;
 
 				let pricingError = {};
 
@@ -222,14 +297,14 @@ const validateFields = ticketTypes => {
 					pricingError.startDate = "Specify the pricing start time.";
 				} else if (ticket.startDate) {
 					//On sale date for this pricing can't be sooner than event on sale time
-					if (startDate && startDate.diff(ticket.startDate) < 0) {
+					if (startDate && startDate.diff(ticketStartDate) < 0) {
 						// console.log("startDate: ", startDate);
 						// console.log("ticket.startDate: ", ticket.startDate);
 						// console.log("Diff: ", startDate.diff(ticket.startDate));
 						pricingError.startDate = "Time must be after ticket on sale time.";
-					} else if (previousPricing && previousPricing.endDate) {
+					} else if (previousPricing && previousPricingEndDate) {
 						//Check on sale time is after off sale time of previous pricing
-						if (startDate.diff(previousPricing.endDate) < 0) {
+						if (startDate.diff(previousPricingEndDate) < 0) {
 							pricingError.startDate =
 								"Time must be after previous pricing off sale time.";
 						}
@@ -276,8 +351,7 @@ class EventTickets extends Component {
 		this.updateTicketType = this.updateTicketType.bind(this);
 	}
 
-	componentDidMount() {
-	}
+	componentDidMount() {}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);
@@ -288,7 +362,13 @@ class EventTickets extends Component {
 	}
 
 	render() {
-		const { classes, validateFields, errors, ticketTimesDirty, eventStartDate } = this.props;
+		const {
+			classes,
+			validateFields,
+			errors,
+			ticketTimesDirty,
+			eventStartDate
+		} = this.props;
 		const { ticketTypes, ticketTypeActiveIndex } = eventUpdateStore;
 
 		return (
@@ -323,7 +403,7 @@ class EventTickets extends Component {
 					className={classes.addTicketType}
 					onClick={() => eventUpdateStore.addTicketType()}
 				>
-					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
+					<img className={classes.addIcon} src="/icons/add-ticket.svg" />
 					<Typography className={classes.addText} variant="body2">
 						Add another ticket type
 					</Typography>

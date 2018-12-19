@@ -104,7 +104,9 @@ const TicketDetails = observer(props => {
 		name,
 		capacity,
 		startDate,
+		startTime,
 		endDate,
+		endTime,
 		priceAtDoor,
 		showAdditionalOptions,
 		increment,
@@ -117,8 +119,10 @@ const TicketDetails = observer(props => {
 	} = props;
 
 	let useEndDate = endDate;
+	let useEndTime = endTime;
 	if (!ticketTimesDirty) {
-		useEndDate = eventStartDate;
+		useEndDate = eventStartDate.clone();
+		useEndTime = eventStartDate;
 	}
 	const defaultPrice =
 		pricing && pricing[0] && pricing[0].value ? pricing[0].value : "";
@@ -204,9 +208,20 @@ const TicketDetails = observer(props => {
 						<DateTimePickerGroup
 							error={errors.startDate}
 							value={startDate}
-							name="startDate"
+							name="startDate.date"
 							label="Sale start time"
+							type="date"
 							onChange={startDate => updateTicketType(index, { startDate })}
+							onBlur={validateFields}
+							minDate={false}
+						/>
+						<DateTimePickerGroup
+							error={errors.startTime}
+							value={startTime}
+							name="startTime"
+							label="Sale start time"
+							type="time"
+							onChange={startTime => updateTicketType(index, { startTime })}
 							onBlur={validateFields}
 							minDate={false}
 						/>
@@ -216,9 +231,22 @@ const TicketDetails = observer(props => {
 							error={errors.endDate}
 							value={useEndDate}
 							name="endDate"
+							type="date"
 							label="Sale end time"
 							onChange={endDate => {
 								updateTicketType(index, { endDate });
+							}}
+							onBlur={validateFields}
+							minDate={false}
+						/>
+						<DateTimePickerGroup
+							error={errors.endTime}
+							value={useEndTime}
+							name="endTime"
+							type="time"
+							label="Sale end time"
+							onChange={endTime => {
+								updateTicketType(index, { endTime });
 							}}
 							onBlur={validateFields}
 							minDate={false}
@@ -383,7 +411,9 @@ TicketType.propTypes = {
 	validateFields: PropTypes.func.isRequired,
 	updateTicketType: PropTypes.func.isRequired,
 	ticketTimesDirty: PropTypes.bool,
-	eventStartDate: PropTypes.object
+	eventStartDate: PropTypes.object,
+	startDate: PropTypes.object,
+	startTime: PropTypes.object
 	//id: PropTypes.string,
 	//capacity
 	//endDate

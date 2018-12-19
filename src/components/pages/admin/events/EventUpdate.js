@@ -82,17 +82,34 @@ class Event extends Component {
 		eventUpdateStore.updateOrganizationId(user.currentOrganizationId);
 	}
 
+	validateArtists(artists) {
+		let errors = {};
+		artists.forEach((artist, index) => {
+			if (artist.setTime && !artist.setTime.isValid()) {
+				errors[index] = { setTime: "Set time is not valid" };
+			}
+		});
+		if (Object.keys(errors).length > 0) {
+			return errors;
+		}
+
+		return null;
+	}
+
 	validateFields() {
 		if (this.hasSubmitted) {
-			const { event, ticketTypes } = eventUpdateStore;
+			const { event, ticketTypes, artists } = eventUpdateStore;
+			const artistsErrors = this.validateArtists(artists);
+
 			const eventDetailErrors = validateEventFields(event);
 
 			const ticketTypeErrors = validateTicketTypeFields(ticketTypes);
-			if (eventDetailErrors || ticketTypeErrors) {
+			if (artistsErrors || eventDetailErrors || ticketTypeErrors) {
 				this.setState({
 					errors: {
 						event: eventDetailErrors,
-						ticketTypes: ticketTypeErrors
+						ticketTypes: ticketTypeErrors,
+						artists: artistsErrors
 					}
 				});
 
@@ -282,7 +299,9 @@ class Event extends Component {
 						<FormSubHeading>Artists</FormSubHeading>
 					</div>
 
-					{artists !== null ? <Artists artists={artists} /> : null}
+					{artists !== null ? (
+						<Artists artists={artists} errors={errors.artistsErrors} />
+					) : null}
 
 					<div className={classes.spacer} />
 

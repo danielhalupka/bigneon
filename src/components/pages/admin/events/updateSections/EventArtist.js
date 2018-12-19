@@ -62,7 +62,7 @@ const EventArtist = ({
 
 					<DateTimePickerGroup
 						margin="dense"
-						error={error}
+						error={error ? error.setTime : null}
 						value={setTime}
 						name="setTime"
 						label="Set time"
@@ -108,7 +108,7 @@ EventArtist.propTypes = {
 	setTime: PropTypes.object,
 	onChangeSetTime: PropTypes.func.isRequired,
 	onDelete: PropTypes.func.isRequired,
-	error: PropTypes.string,
+	error: PropTypes.object,
 	onBlur: PropTypes.func,
 	socialAccounts: PropTypes.object.isRequired
 };

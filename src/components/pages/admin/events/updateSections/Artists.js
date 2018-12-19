@@ -37,7 +37,7 @@ const formatForInput = artistArray => {
 		return {
 			id: artist.id,
 			setTime: set_time
-				? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 				: null
 		};
 	});
@@ -58,7 +58,6 @@ class ArtistDetails extends Component {
 			availableArtists: null,
 			spotifyAvailableArtists: null,
 			spotifyArtists: {},
-			errors: {},
 			isSubmitting: false,
 			isSearching: false
 		};
@@ -257,8 +256,8 @@ class ArtistDetails extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
-		const { availableArtists, showArtistSelect, errors } = this.state;
+		const { classes, error } = this.props;
+		const { availableArtists, showArtistSelect } = this.state;
 		const { artists } = eventUpdateStore;
 
 		return (
@@ -307,7 +306,7 @@ class ArtistDetails extends Component {
 								imgUrl={
 									thumb_image_url || "/images/profile-pic-placeholder.png"
 								}
-								error={errors.artists ? errors.artists[index] : null}
+								error={error ? error[index] : null}
 								onDelete={() => {
 									eventUpdateStore.removeArtist(index);
 								}}
@@ -337,7 +336,8 @@ class ArtistDetails extends Component {
 
 ArtistDetails.propTypes = {
 	eventId: PropTypes.string,
-	artists: PropTypes.array.isRequired
+	artists: PropTypes.array.isRequired,
+	error: PropTypes.object.isRequired
 };
 
 export const Artists = withStyles(styles)(ArtistDetails);
