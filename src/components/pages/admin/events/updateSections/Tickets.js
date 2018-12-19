@@ -21,16 +21,16 @@ const formatForSaving = ticketTypes => {
 			increment,
 			name,
 			pricing,
-			startDate,
 			startTime,
-			endDate,
 			endTime,
 			limitPerPerson
 		} = ticketType;
 
+		let { startDate, endDate } = ticketType;
+
 		let ticket_pricing = [];
 		pricing.forEach(pricePoint => {
-			const {
+			let {
 				id,
 				name,
 				startDate,
@@ -39,50 +39,57 @@ const formatForSaving = ticketTypes => {
 				endTime,
 				value
 			} = pricePoint;
+
+			startDate = moment(startDate);
+			if (startTime) {
+				startDate = startDate.set({
+					hour: startTime.get("hour"),
+					minute: startTime.get("minute"),
+					second: startTime.get("second")
+				});
+			}
+			endDate = moment(endDate);
+			if (endTime) {
+				endDate = endDate.set({
+					hour: endTime.get("hour"),
+					minute: endTime.get("minute"),
+					second: endTime.get("second")
+				});
+			}
+
 			ticket_pricing.push({
 				id: id ? id : undefined,
 				name,
 				price_in_cents: Math.round(Number(value) * 100),
-				start_date: moment(startDate)
-					.set({
-						hour: startTime.get("hour"),
-						minute: startTime.get("minute"),
-						second: startTime.get("second")
-					})
-					.utc()
-					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-				end_date: moment(endDate)
-					.set({
-						hour: endTime.get("hour"),
-						minute: endTime.get("minute"),
-						second: endTime.get("second")
-					})
-					.utc()
-					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				start_date: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			});
 		});
+
+		startDate = moment(startDate);
+		if (startTime) {
+			startDate = startDate.set({
+				hour: startTime.get("hour"),
+				minute: startTime.get("minute"),
+				second: startTime.get("second")
+			});
+		}
+		endDate = moment(endDate);
+		if (endTime) {
+			endDate = endDate.set({
+				hour: endTime.get("hour"),
+				minute: endTime.get("minute"),
+				second: endTime.get("second")
+			});
+		}
 
 		ticket_types.push({
 			id,
 			name,
 			capacity: Number(capacity),
 			increment: Number(increment),
-			start_date: moment(startDate)
-				.set({
-					hour: startTime.get("hour"),
-					minute: startTime.get("minute"),
-					second: startTime.get("second")
-				})
-				.utc()
-				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-			end_date: moment(endDate)
-				.set({
-					hour: endTime.get("hour"),
-					minute: endTime.get("minute"),
-					second: endTime.get("second")
-				})
-				.utc()
-				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			start_date: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			limit_per_person:
 				limitPerPerson === "" ? undefined : Number(limitPerPerson),
 			ticket_pricing
@@ -206,16 +213,22 @@ const validateFields = ticketTypes => {
 			pricing
 		} = ticket;
 
-		startDate = moment(startDate).set({
-			hour: startTime.get("hour"),
-			minute: startTime.get("minute"),
-			second: startTime.get("second")
-		});
-		endDate = moment(endDate).set({
-			hour: endTime.get("hour"),
-			minute: endTime.get("minute"),
-			second: endTime.get("second")
-		});
+		startDate = moment(startDate);
+		if (startTime) {
+			startDate = startDate.set({
+				hour: startTime.get("hour"),
+				minute: startTime.get("minute"),
+				second: startTime.get("second")
+			});
+		}
+		endDate = moment(endDate);
+		if (endTime) {
+			endDate = endDate.set({
+				hour: endTime.get("hour"),
+				minute: endTime.get("minute"),
+				second: endTime.get("second")
+			});
+		}
 
 		const ticketErrors = {};
 		if (!name) {
@@ -266,16 +279,22 @@ const validateFields = ticketTypes => {
 					value
 				} = pricingItem;
 
-				startDate = moment(startDate).set({
-					hour: startTime.get("hour"),
-					minute: startTime.get("minute"),
-					second: startTime.get("second")
-				});
-				endDate = moment(endDate).set({
-					hour: endTime.get("hour"),
-					minute: endTime.get("minute"),
-					second: endTime.get("second")
-				});
+				startDate = moment(startDate);
+				if (startTime) {
+					startDate = startDate.set({
+						hour: startTime.get("hour"),
+						minute: startTime.get("minute"),
+						second: startTime.get("second")
+					});
+				}
+				endDate = moment(endDate);
+				if (endTime) {
+					endDate = endDate.set({
+						hour: endTime.get("hour"),
+						minute: endTime.get("minute"),
+						second: endTime.get("second")
+					});
+				}
 
 				//Previous pricing dates needed for current row
 				const previousPricing = index > 0 ? sorted[index - 1] : null;
