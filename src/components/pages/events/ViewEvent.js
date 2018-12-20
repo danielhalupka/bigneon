@@ -412,7 +412,6 @@ class ViewEvent extends Component {
 											{additional_info}
 										</Typography>
 
-										<Typography className={classes.heading}>Artists</Typography>
 										{artists.map(({ artist }, index) => (
 											<div key={index} className={classes.artistContainer}>
 												<ArtistSummary headliner={index === 0} {...artist} />
