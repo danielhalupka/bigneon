@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { observer } from "mobx-react";
 
 import user from "../../../../stores/user";
 import Bigneon from "../../../../helpers/bigneon";
@@ -13,6 +14,7 @@ const styles = theme => ({
 	bold: { fontFamily: fontFamilyDemiBold }
 });
 
+@observer
 class InviteAccept extends Component {
 	constructor(props) {
 		super(props);
@@ -124,6 +126,13 @@ class InviteAccept extends Component {
 		} = this.state;
 		const { classes } = this.props;
 
+		let boxOfficeLink;
+		if (user.isOnlyDoorPerson) {
+			boxOfficeLink = "/box-office/guests";
+		} else if (user.isOnlyDoorPersonOrBoxOffice) {
+			boxOfficeLink = "/box-office/sell";
+		}
+
 		return (
 			<div>
 				{/* Final button to accept the invite */}
@@ -191,11 +200,19 @@ class InviteAccept extends Component {
 					open={showSuccessDialog}
 				>
 					<div style={{ paddingTop: 40 }}>
-						<Link to="/admin/events">
-							<Button style={{ width: "100%" }} variant="callToAction">
-								Visit admin dashboard
-							</Button>
-						</Link>
+						{boxOfficeLink ? (
+							<Link to={boxOfficeLink}>
+								<Button style={{ width: "100%" }} variant="callToAction">
+									Visit box office
+								</Button>
+							</Link>
+						) : (
+							<Link to="/admin/events">
+								<Button style={{ width: "100%" }} variant="callToAction">
+									Visit admin dashboard
+								</Button>
+							</Link>
+						)}
 					</div>
 				</Dialog>
 			</div>

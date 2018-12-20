@@ -41,6 +41,9 @@ const BoxOfficeLink = observer(({ classes }) => {
 	let boxOfficeSubRoute = "sell";
 	if (user.isOnlyDoorPerson) {
 		boxOfficeSubRoute = "guests";
+	}
+
+	if (user.isOnlyDoorPersonOrBoxOffice) {
 		studioLink = "/";
 	}
 

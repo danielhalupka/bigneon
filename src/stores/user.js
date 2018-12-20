@@ -364,6 +364,19 @@ class User {
 	}
 
 	@computed
+	get isOnlyDoorPersonOrBoxOffice() {
+		//Don't let them see the rest of studio, just box office functions
+		return (
+			(this.globalRoles.indexOf("DoorPerson") > -1 ||
+				this.globalRoles.indexOf("OrgBoxOffice") > -1) &&
+			!this.isOrgAdmin &&
+			!this.isOrgMember &&
+			!this.isOrgOwner &&
+			!this.isAdmin
+		);
+	}
+
+	@computed
 	get isOrgScanner() {
 		//Currently unused
 		//Trickle down role permissions
