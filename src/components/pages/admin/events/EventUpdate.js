@@ -99,11 +99,12 @@ class Event extends Component {
 	validateFields() {
 		if (this.hasSubmitted) {
 			const { event, ticketTypes, artists } = eventUpdateStore;
+			const { isExternal } = event;
 			const artistsErrors = this.validateArtists(artists);
 
 			const eventDetailErrors = validateEventFields(event);
 
-			const ticketTypeErrors = validateTicketTypeFields(ticketTypes);
+			const ticketTypeErrors = validateTicketTypeFields(isExternal ? [] : ticketTypes);
 			if (artistsErrors || eventDetailErrors || ticketTypeErrors) {
 				this.setState({
 					errors: {
@@ -300,10 +301,10 @@ class Event extends Component {
 					</div>
 
 					{artists !== null ? (
-						<Artists artists={artists} errors={errors.artistsErrors} />
+						<Artists artists={artists} errors={errors.artistsErrors}/>
 					) : null}
 
-					<div className={classes.spacer} />
+					<div className={classes.spacer}/>
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Event details</FormSubHeading>
@@ -313,7 +314,7 @@ class Event extends Component {
 							errors={errors.event || {}}
 						/>
 
-						<div className={classes.spacer} />
+						<div className={classes.spacer}/>
 					</div>
 
 					<div className={classes.paddedContent}>
@@ -321,17 +322,17 @@ class Event extends Component {
 
 						<div className={classes.ticketOptions}>
 							<RadioButton
-								active={externalTicketsUrl === null}
+								active={!isExternal}
 								onClick={() =>
-									eventUpdateStore.updateEvent({ externalTicketsUrl: null })
+									eventUpdateStore.updateEvent({ isExternal: false })
 								}
 							>
 								Big Neon
 							</RadioButton>
 							<RadioButton
-								active={externalTicketsUrl !== null}
+								active={isExternal}
 								onClick={() =>
-									eventUpdateStore.updateEvent({ externalTicketsUrl: "" })
+									eventUpdateStore.updateEvent({ isExternal: true })
 								}
 							>
 								External event
@@ -339,7 +340,7 @@ class Event extends Component {
 						</div>
 					</div>
 
-					{externalTicketsUrl !== null ? (
+					{isExternal ? (
 						<div className={classes.paddedContent}>
 							<InputGroup
 								error={eventErrors.externalTicketsUrl}
@@ -352,7 +353,7 @@ class Event extends Component {
 										externalTicketsUrl: e.target.value
 									})
 								}
-								placeholder="https//my-tix.com/event"
+								placeholder="https://my-tix.com/event"
 							/>
 						</div>
 					) : (
@@ -370,7 +371,7 @@ class Event extends Component {
 					)}
 
 					<div className={classes.paddedContent}>
-						<div className={classes.spacer} />
+						<div className={classes.spacer}/>
 
 						<FormSubHeading>Publish options</FormSubHeading>
 
@@ -413,7 +414,7 @@ class Event extends Component {
 							/>
 						) : null}
 
-						<Divider style={{ marginTop: 20, marginBottom: 40 }} />
+						<Divider style={{ marginTop: 20, marginBottom: 40 }}/>
 
 						<div className={classes.actions}>
 							{isDraft ? (

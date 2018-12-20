@@ -291,7 +291,7 @@ class EventUpdate {
 
 		let id = this.id;
 		const { artists, event, organizationId, ticketTypes } = this;
-
+		const { isExternal } = event;
 		const formattedEventDetails = formatEventDataForSaving(
 			event,
 			organizationId
@@ -326,12 +326,14 @@ class EventUpdate {
 			}
 		}
 
-		const formattedTicketTypes = formatTicketDataForSaving(ticketTypes);
-		for (let index = 0; index < formattedTicketTypes.length; index++) {
-			const ticketType = formattedTicketTypes[index];
-			const saveTicketResponse = await this.saveTicketType(ticketType);
-			if (!saveTicketResponse.result) {
-				return saveTicketResponse;
+		if (!isExternal) {
+			const formattedTicketTypes = formatTicketDataForSaving(ticketTypes);
+			for (let index = 0; index < formattedTicketTypes.length; index++) {
+				const ticketType = formattedTicketTypes[index];
+				const saveTicketResponse = await this.saveTicketType(ticketType);
+				if (!saveTicketResponse.result) {
+					return saveTicketResponse;
+				}
 			}
 		}
 

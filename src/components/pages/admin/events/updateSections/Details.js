@@ -71,6 +71,7 @@ const formatDataForSaving = (event, organizationId) => {
 		additionalInfo,
 		topLineInfo,
 		promoImageUrl,
+		isExternal,
 		externalTicketsUrl,
 		override_status,
 		videoUrl
@@ -82,7 +83,7 @@ const formatDataForSaving = (event, organizationId) => {
 		age_limit: Number(ageLimit),
 		additional_info: additionalInfo,
 		top_line_info: topLineInfo,
-		is_external: externalTicketsUrl !== null,
+		is_external: isExternal,
 		external_url: externalTicketsUrl,
 		override_status,
 		video_url: videoUrl
