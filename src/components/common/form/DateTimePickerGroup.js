@@ -80,7 +80,7 @@ class DateTimePickerGroup extends Component {
 		this.state = {
 			anchorEl: null,
 			timeFormatted: !value
-				? null
+				? ""
 				: value.isValid()
 					? value.format(timeFormat)
 					: value.creationData().input,
@@ -93,7 +93,7 @@ class DateTimePickerGroup extends Component {
 		let { isTimeValid, timeFormatted, dateFormatted } = this.state;
 		let newIsTimeValid = !value || value.isValid();
 		let newTimeFormatted = !value
-			? null
+			? ""
 			: value.isValid()
 				? value.format(timeFormat)
 				: value.creationData().input;
@@ -125,7 +125,7 @@ class DateTimePickerGroup extends Component {
 
 	onTimeChanged = event => {
 		let newValue = event.target.value;
-		this.setState({ timeFormatted: newValue });
+		this.setState({ timeFormatted: newValue, anchorEl: null });
 		let { onChange } = this.props;
 
 		onChange(moment(newValue, timeFormat, true));
@@ -197,7 +197,7 @@ class DateTimePickerGroup extends Component {
 						/>
 					</div>
 				) : (
-					<div/>
+					<div />
 				)}
 
 				{type === "time" ? (
@@ -223,13 +223,16 @@ class DateTimePickerGroup extends Component {
 								vertical: "top",
 								horizontal: "left"
 							}}
+							disableAutoFocus={true}
 						>
 							<ClickAwayListener onClickAway={this.onTimePickerClose}>
 								<Paper elevation={24} className={classes.popover}>
 									<MenuList id="time-menu">
 										{times.map((time, index) => (
 											<MenuItem
-												className={time === timeFormatted ? classes.highlight : null }
+												className={
+													time === timeFormatted ? classes.highlight : null
+												}
 												key={time}
 												onClick={event => this.onTimeSelected(event, time)}
 											>
@@ -242,7 +245,7 @@ class DateTimePickerGroup extends Component {
 						</Popover>
 					</div>
 				) : (
-					<div/>
+					<div />
 				)}
 				<FormHelperText id={`${name}-error-text`}>
 					{!isTimeValid ? "Not a valid time (e.g. 9:30 PM)" : error}
