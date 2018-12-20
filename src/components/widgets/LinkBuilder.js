@@ -16,6 +16,8 @@ const styles = theme => ({
 	}
 });
 
+const {host} = window.location;
+
 @observer
 class WidgetLinkBuilder extends Component {
 	constructor(props) {
@@ -166,7 +168,7 @@ class WidgetLinkBuilder extends Component {
 							<Typography variant="title">Copy the below code:</Typography>
 							<br />
 							<Typography>
-								{`<iframe frameborder=0 height="${numberHeight}px" width="${numberWidth}px" src="http://localhost:3000/widget/embed/${id}?type=${type}"></iframe>`}
+								{`<iframe frameborder=0 height="${numberHeight}px" width="${numberWidth}px" src="http://${host}/widget/embed/${id}?type=${type}"></iframe>`}
 							</Typography>
 						</Card>
 					</Grid>
