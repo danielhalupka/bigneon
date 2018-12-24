@@ -36,6 +36,8 @@ class EventResults {
 							event.event_start,
 							moment.HTML5_FMT.DATETIME_LOCAL_MS
 						).format("dddd, MMM D"),
+						min_ticket_price: event.min_ticket_price || 0,
+						max_ticket_price: event.max_ticket_price || 0,
 						venue,
 						promo_image_url: promo_image_url || "/images/event-placeholder.png"
 					});
