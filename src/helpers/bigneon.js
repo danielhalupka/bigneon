@@ -1,4 +1,4 @@
-import Bigneon from "bn-api-node/dist/bundle.client.js";
+import Bigneon from "bn-api-node/dist/bundle.client";
 
 let bigneon;
 
@@ -16,10 +16,12 @@ export const bigneonFactory = (options = {}, headers = {}, mockData) => {
 			...options
 		};
 		bigneon = new Bigneon.Server(options, headers, mockData);
+
 	}
-	const accessToken = localStorage.getItem("access_token");
-	if (accessToken) {
-		bigneon.client.setToken(accessToken);
+	const access_token = localStorage.getItem("access_token");
+	const refresh_token = localStorage.getItem("refresh_token") || null;
+	if (access_token) {
+		bigneon.client.setTokens({ access_token, refresh_token });
 	}
 	return bigneon;
 };
