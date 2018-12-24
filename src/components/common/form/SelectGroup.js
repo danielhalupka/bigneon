@@ -85,7 +85,7 @@ const SelectGroup = props => {
 SelectGroup.propTypes = {
 	items: PropTypes.array.isRequired,
 	error: PropTypes.string,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 	dropdownWidth: PropTypes.number,
 	dropdownHeight: PropTypes.number,
 	missingItemsLabel: PropTypes.string, //If there are no items, the text you want to display

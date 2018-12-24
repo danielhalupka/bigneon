@@ -36,6 +36,10 @@ const styles = theme => ({
 		display: "flex",
 		justifyContent: "space-around",
 		alignItems: "center"
+	},
+	futureDate: {
+		marginTop: 20,
+		display: "flex"
 	}
 });
 
@@ -104,7 +108,9 @@ class Event extends Component {
 
 			const eventDetailErrors = validateEventFields(event);
 
-			const ticketTypeErrors = validateTicketTypeFields(isExternal ? [] : ticketTypes);
+			const ticketTypeErrors = validateTicketTypeFields(
+				isExternal ? [] : ticketTypes
+			);
 			if (artistsErrors || eventDetailErrors || ticketTypeErrors) {
 				this.setState({
 					errors: {
@@ -301,10 +307,10 @@ class Event extends Component {
 					</div>
 
 					{artists !== null ? (
-						<Artists artists={artists} errors={errors.artistsErrors}/>
+						<Artists artists={artists} errors={errors.artistsErrors || {}} />
 					) : null}
 
-					<div className={classes.spacer}/>
+					<div className={classes.spacer} />
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Event details</FormSubHeading>
@@ -314,7 +320,7 @@ class Event extends Component {
 							errors={errors.event || {}}
 						/>
 
-						<div className={classes.spacer}/>
+						<div className={classes.spacer} />
 					</div>
 
 					<div className={classes.paddedContent}>
@@ -330,7 +336,7 @@ class Event extends Component {
 								Big Neon
 							</RadioButton>
 							<RadioButton
-								active={isExternal}
+								active={!!isExternal}
 								onClick={() =>
 									eventUpdateStore.updateEvent({ isExternal: true })
 								}
@@ -371,7 +377,7 @@ class Event extends Component {
 					)}
 
 					<div className={classes.paddedContent}>
-						<div className={classes.spacer}/>
+						<div className={classes.spacer} />
 
 						<FormSubHeading>Publish options</FormSubHeading>
 
@@ -399,22 +405,53 @@ class Event extends Component {
 						</div>
 
 						{showFutureDate ? (
-							<DateTimePickerGroup
-								type="date-time"
-								error={errors.publishDate}
-								value={event.publishDate}
-								name="eventDate"
-								label="Publish date and time"
-								onChange={publishDate => {
-									eventUpdateStore.updateEvent({
-										publishDate
-									});
-								}}
-								onBlur={this.validateFields.bind(this)}
-							/>
+							<div className={classes.futureDate}>
+								<DateTimePickerGroup
+									type="date"
+									error={errors.publishDate}
+									value={event.publishDate}
+									name="eventDate"
+									label="Publish date"
+									onChange={publishDate => {
+										const publishTime = moment(event.publishDate);
+										publishDate.set({
+											hour: publishTime.get("hour"),
+											minute: publishTime.get("minute"),
+											second: publishTime.get("second")
+										});
+
+										eventUpdateStore.updateEvent({
+											publishDate
+										});
+									}}
+									onBlur={this.validateFields.bind(this)}
+								/>
+								<span style={{ marginRight: 10, marginLeft: 10 }} />
+								<DateTimePickerGroup
+									type="time"
+									error={errors.publishDate}
+									value={event.publishDate}
+									name="eventTime"
+									label="Publish time"
+									onChange={publishTime => {
+										const publishDate = moment(event.publishDate);
+
+										publishDate.set({
+											hour: publishTime.get("hour"),
+											minute: publishTime.get("minute"),
+											second: publishTime.get("second")
+										});
+
+										eventUpdateStore.updateEvent({
+											publishDate
+										});
+									}}
+									onBlur={this.validateFields.bind(this)}
+								/>
+							</div>
 						) : null}
 
-						<Divider style={{ marginTop: 20, marginBottom: 40 }}/>
+						<Divider style={{ marginTop: 20, marginBottom: 40 }} />
 
 						<div className={classes.actions}>
 							{isDraft ? (

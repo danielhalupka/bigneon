@@ -1,36 +1,20 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { InlineTimePicker } from "material-ui-pickers";
 import { InlineDatePicker } from "material-ui-pickers";
-import { InlineDateTimePicker } from "material-ui-pickers";
 import {
 	FormControl,
 	withStyles,
 	FormHelperText,
 	InputAdornment,
 	IconButton,
-	Typography,
 	TextField,
-	Menu,
 	MenuItem,
-	Button,
-	Popper,
 	Paper,
 	MenuList,
 	Popover,
-	Grow,
 	ClickAwayListener
 } from "@material-ui/core";
-import TimeIcon from "@material-ui/icons/AccessTime";
-import SelectGroup from "./SelectGroup";
-import AutoCompleteGroup from "./AutoCompleteGroup";
 import moment from "moment";
-
-const formats = {
-	time: "hh:mm A",
-	date: "MM/DD/YYYY",
-	"date-time": "MM/DD/YYYY hh:mm A"
-};
 
 const placeHolders = {
 	time: "hh:mm am/pm",
@@ -213,6 +197,14 @@ class DateTimePickerGroup extends Component {
 							onChange={this.onTimeChanged}
 							onFocus={onFocus}
 							onBlur={onBlur}
+							//TODO use pink dropdown icon from designs
+							// InputProps={{
+							// 	endAdornment: (
+							// 		<InputAdornment position="end">
+							// 			<TimeIcon />
+							// 		</InputAdornment>
+							// 	)
+							// }}
 						/>
 						<Popover
 							open={Boolean(anchorEl)}

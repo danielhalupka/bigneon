@@ -153,18 +153,9 @@ class ArtistDetails extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Creating new artist failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Creating new artist failed.",
+					error
 				});
 
 				this.setState({ isSubmitting: false });
@@ -256,7 +247,7 @@ class ArtistDetails extends Component {
 	}
 
 	render() {
-		const { classes, error } = this.props;
+		const { classes, errors } = this.props;
 		const { availableArtists, showArtistSelect } = this.state;
 		const { artists } = eventUpdateStore;
 
@@ -306,7 +297,7 @@ class ArtistDetails extends Component {
 								imgUrl={
 									thumb_image_url || "/images/profile-pic-placeholder.png"
 								}
-								error={error ? error[index] : null}
+								error={errors ? errors[index] : null}
 								onDelete={() => {
 									eventUpdateStore.removeArtist(index);
 								}}
@@ -337,7 +328,7 @@ class ArtistDetails extends Component {
 ArtistDetails.propTypes = {
 	eventId: PropTypes.string,
 	artists: PropTypes.array.isRequired,
-	error: PropTypes.object.isRequired
+	errors: PropTypes.object.isRequired
 };
 
 export const Artists = withStyles(styles)(ArtistDetails);

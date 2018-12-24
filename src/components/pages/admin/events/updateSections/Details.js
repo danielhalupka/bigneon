@@ -209,13 +209,15 @@ const formatDataForInputs = event => {
 
 @observer
 class Details extends Component {
-	static doorHoursOptions = Array.from(Array(10+1))
-		.map((_, i) => {
-			if (i === 0) {
-				return { value: 0.5, label: "30 minutes before showtime" };
-			}
-			return { value: i, label: i === 1 ? "1 hour before showtime" : `${i} hours before showtime` };
-		});
+	static doorHoursOptions = Array.from(Array(10 + 1)).map((_, i) => {
+		if (i === 0) {
+			return { value: 0.5, label: "30 minutes before showtime" };
+		}
+		return {
+			value: i,
+			label: i === 1 ? "1 hour before showtime" : `${i} hours before showtime`
+		};
+	});
 
 	constructor(props) {
 		super(props);
@@ -293,6 +295,7 @@ class Details extends Component {
 				label={label}
 				onChange={e => {
 					const venueId = e.target.value;
+
 					this.changeDetails({ venueId });
 				}}
 			/>
@@ -307,7 +310,7 @@ class Details extends Component {
 		const { errors } = this.props;
 		const { override_status } = eventUpdateStore.event;
 
-		const statusOptions = [{ value: "",  label: "Auto" }];
+		const statusOptions = [{ value: "", label: "Auto" }];
 		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
 		let eventOverrideStatusString = Bn.Enums
 			? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING
@@ -435,7 +438,9 @@ class Details extends Component {
 							name="topLineInfo"
 							label="Top line info"
 							type="text"
-							onChange={e => this.changeDetails({ topLineInfo: e.target.value })}
+							onChange={e =>
+								this.changeDetails({ topLineInfo: e.target.value })
+							}
 							onBlur={validateFields}
 							multiline
 						/>
