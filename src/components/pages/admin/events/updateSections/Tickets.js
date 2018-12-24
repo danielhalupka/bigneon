@@ -243,7 +243,7 @@ const validateFields = ticketTypes => {
 			ticketErrors.endDate = "Specify the ticket end time.";
 		} else if (startDate) {
 			//Start date must be before endDate
-			if (endDate.diff(startDate) < 0) {
+			if (endDate.diff(startDate) <= 0) {
 				ticketErrors.endDate = "Off sale time must be after on sale time";
 			}
 		}

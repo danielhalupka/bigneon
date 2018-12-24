@@ -368,16 +368,13 @@ class Venue extends Component {
 			return <Typography variant="body1">Loading organizations...</Typography>;
 		}
 
-		const organizationsObj = {};
-
-		organizations.forEach(organization => {
-			organizationsObj[organization.id] = organization.name;
-		});
+		const organizationOptions = organizations
+			.map(organization => ({ value: organization.id, label: organization.name }));
 
 		return (
 			<SelectGroup
 				value={organizationId}
-				items={organizationsObj}
+				items={organizationOptions}
 				error={errors.organizationId}
 				name={"organization"}
 				label={"Organization"}
@@ -392,16 +389,12 @@ class Venue extends Component {
 			return <Typography variant="body1">Loading regions...</Typography>;
 		}
 
-		const regionsObj = {};
-
-		regions.forEach(region => {
-			regionsObj[region.id] = region.name;
-		});
+		const regionOptions = regions.map(r => ({ value: r.id, label: r.name }));
 
 		return (
 			<SelectGroup
 				value={regionId}
-				items={regionsObj}
+				items={regionOptions}
 				error={errors.regionId}
 				name={"region"}
 				label={"Region"}

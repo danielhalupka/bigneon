@@ -104,9 +104,7 @@ class WidgetLinkBuilder extends Component {
 	renderForm() {
 		const { type, height, width, errors } = this.state;
 
-		const { classes } = this.props;
-
-		const typeObj = { default: "Default" };
+		const typeOptions = [{ value: "default", label: "Default" }];
 
 		return (
 			<Grid container spacing={24}>
@@ -135,7 +133,7 @@ class WidgetLinkBuilder extends Component {
 				<Grid item xs={12} sm={6} lg={4}>
 					<SelectGroup
 						value={type}
-						items={typeObj}
+						items={typeOptions}
 						name={"widget_type"}
 						label={"Type"}
 						onChange={e => {

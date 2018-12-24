@@ -11,13 +11,20 @@ const styles = theme => ({
 	formControl: {
 		width: "100%",
 		marginTop: theme.spacing.unit * 2
+	},
+	formControlNoMargin: {
+		width: "100%"
 	}
 });
+
+const ITEM_PADDING_TOP = 8;
 
 const SelectGroup = props => {
 	const {
 		value,
 		items,
+		dropdownHeight = 60,
+		dropdownWidth = 250,
 		error,
 		name,
 		label,
@@ -26,24 +33,23 @@ const SelectGroup = props => {
 		onFocus,
 		missingItemsLabel,
 		disableUnderline,
-		selectStyle
+		selectStyle,
+		styleClassName = "formControl"
 	} = props;
 	const { classes } = props;
 
-	const keys = Object.keys(items);
-
 	let content = <MenuItem disabled>{missingItemsLabel || "No items"}</MenuItem>;
-	if (keys.length > 0) {
-		content = keys.map(key => (
-			<MenuItem key={key} value={key}>
-				{items[key]}
+	if (items.length > 0) {
+		content = items.map(item => (
+			<MenuItem key={item.value} value={item.value}>
+				{item.label || item.value}
 			</MenuItem>
 		));
 	}
 
 	return (
 		<FormControl
-			className={classes.formControl}
+			className={classes[styleClassName]}
 			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
@@ -59,6 +65,14 @@ const SelectGroup = props => {
 					onBlur,
 					onFocus
 				}}
+				MenuProps={{
+					PaperProps: {
+						style: {
+							maxHeight: dropdownHeight * 4.5 + ITEM_PADDING_TOP,
+							width: dropdownWidth
+						}
+					}
+				}}
 			>
 				{content}
 			</Select>
@@ -69,9 +83,11 @@ const SelectGroup = props => {
 };
 
 SelectGroup.propTypes = {
-	items: PropTypes.object.isRequired,
+	items: PropTypes.array.isRequired,
 	error: PropTypes.string,
 	value: PropTypes.string.isRequired,
+	dropdownWidth: PropTypes.number,
+	dropdownHeight: PropTypes.number,
 	missingItemsLabel: PropTypes.string, //If there are no items, the text you want to display
 	name: PropTypes.string.isRequired,
 	label: PropTypes.string,
@@ -79,7 +95,8 @@ SelectGroup.propTypes = {
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
 	disableUnderline: PropTypes.bool,
-	selectStyle: PropTypes.object
+	selectStyle: PropTypes.object,
+	styleClassName: PropTypes.string
 };
 
 export default withStyles(styles)(SelectGroup);

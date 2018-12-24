@@ -211,6 +211,8 @@ class DateTimePickerGroup extends Component {
 							onClick={event => this.onClick(event)}
 							value={timeFormatted}
 							onChange={this.onTimeChanged}
+							onFocus={onFocus}
+							onBlur={onBlur}
 						/>
 						<Popover
 							open={Boolean(anchorEl)}

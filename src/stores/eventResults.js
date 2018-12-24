@@ -126,13 +126,13 @@ class EventResults {
 	get statesDropdownValues() {
 		//Get the state from the event and make an array of states for use in the filter
 
-		let statesDropdownValues = { all: "Everywhere" };
+		const statesDropdownValues = [{ value: "all", label: "Everywhere" }];
 		if (this.events) {
 			this.events.forEach(({ venue }) => {
 				const { state } = venue;
 
 				if (state) {
-					statesDropdownValues[state] = state;
+					statesDropdownValues.push({ value: state, label: state });
 				}
 			});
 		}

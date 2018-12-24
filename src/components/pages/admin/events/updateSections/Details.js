@@ -66,7 +66,7 @@ const formatDataForSaving = (event, organizationId) => {
 		venueId,
 		doorTime,
 		showTime,
-		redeemDate,
+		doorTimeHours,
 		ageLimit,
 		additionalInfo,
 		topLineInfo,
@@ -107,38 +107,15 @@ const formatDataForSaving = (event, organizationId) => {
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
-	if (
-		eventDate &&
-		doorTime &&
-		moment(eventDate).isValid() &&
-		moment(doorTime).isValid()
-	) {
-		let tmpDoorTime = moment(eventDate);
-		tmpDoorTime.set({
-			hour: doorTime.get("hour"),
-			minute: doorTime.get("minute"),
-			second: doorTime.get("second")
-		});
+	if (eventDate && moment(eventDate).isValid()) {
+		// Set doorTime from showTime and doorTimeHours
+		let tmpDoorTime = moment(eventDate).subtract(doorTimeHours, "h");
 		eventDetails.door_time = moment
 			.utc(tmpDoorTime)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
-	}
 
-	if (
-		eventDate &&
-		redeemDate &&
-		moment(eventDate).isValid() &&
-		moment(redeemDate).isValid()
-	) {
-		let tmpRedeemDate = moment(eventDate);
-		tmpRedeemDate.set({
-			hour: redeemDate.get("hour"),
-			minute: redeemDate.get("minute"),
-			second: redeemDate.get("second")
-		});
-		eventDetails.redeem_date = moment
-			.utc(tmpRedeemDate)
-			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+		// Set redeemDate from doorTime
+		eventDetails.redeem_date = eventDetails.door_time;
 	}
 
 	if (publishDate) {
@@ -197,6 +174,12 @@ const formatDataForInputs = event => {
 	let doorTime = door_time
 		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 		: noon;
+	let redeemDate = redeem_date
+		? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: noon;
+	let doorTimeHours = door_time
+		? showTime.diff(moment.utc(door_time), "m") / 60
+		: 1; // Default: 1 hour
 
 	const eventDetails = {
 		override_status, //TODO get from API
@@ -204,12 +187,11 @@ const formatDataForInputs = event => {
 		eventDate,
 		showTime,
 		doorTime,
-		redeemDate: redeem_date
-			? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: null,
+		doorTimeHours,
 		publishDate: publish_date
 			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null,
+		redeemDate,
 		ageLimit: age_limit || "",
 		venueId: venue_id || "",
 		additionalInfo: additional_info || "",
@@ -227,6 +209,14 @@ const formatDataForInputs = event => {
 
 @observer
 class Details extends Component {
+	static doorHoursOptions = Array.from(Array(10+1))
+		.map((_, i) => {
+			if (i === 0) {
+				return { value: 0.5, label: "30 minutes before showtime" };
+			}
+			return { value: i, label: i === 1 ? "1 hour before showtime" : `${i} hours before showtime` };
+		});
+
 	constructor(props) {
 		super(props);
 
@@ -235,6 +225,7 @@ class Details extends Component {
 		};
 
 		this.changeDetails = this.changeDetails.bind(this);
+		this.handleDoorTimeChange = this.handleDoorTimeChange.bind(this);
 	}
 
 	changeDetails(details) {
@@ -279,13 +270,13 @@ class Details extends Component {
 
 		const { venueId } = eventUpdateStore.event;
 
-		const venuesObj = {};
+		const venueOptions = [];
 
 		let label = "";
 
 		if (venues !== null) {
 			venues.forEach(venue => {
-				venuesObj[venue.id] = venue.name;
+				venueOptions.push({ value: venue.id, label: venue.name });
 			});
 			label = "Venue";
 		} else {
@@ -295,7 +286,7 @@ class Details extends Component {
 		return (
 			<SelectGroup
 				value={venueId}
-				items={venuesObj}
+				items={venueOptions}
 				error={errors.venueId}
 				name={"venues"}
 				missingItemsLabel={"No available venues"}
@@ -316,7 +307,7 @@ class Details extends Component {
 		const { errors } = this.props;
 		const { override_status } = eventUpdateStore.event;
 
-		const statusesObj = { "": "Auto" };
+		const statusOptions = [{ value: "",  label: "Auto" }];
 		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
 		let eventOverrideStatusString = Bn.Enums
 			? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING
@@ -324,7 +315,7 @@ class Details extends Component {
 		for (let statusConst in eventOverrideStatusEnum) {
 			let serverEnum = eventOverrideStatusEnum[statusConst];
 			let displayString = eventOverrideStatusString[serverEnum];
-			statusesObj[serverEnum] = displayString;
+			statusOptions.push({ value: serverEnum, label: displayString });
 		}
 
 		let label = "Event status";
@@ -332,7 +323,7 @@ class Details extends Component {
 		return (
 			<SelectGroup
 				value={override_status || ""}
-				items={statusesObj}
+				items={statusOptions}
 				error={errors.status}
 				name={"status"}
 				label={label}
@@ -349,11 +340,11 @@ class Details extends Component {
 		let { ageLimit } = eventUpdateStore.event;
 		ageLimit = (ageLimit || "0") + "";
 
-		const ageLimits = {
-			"0": "This event is all ages",
-			"21": "This event is 21 and over",
-			"18": "This event is 18 and over"
-		};
+		const ageLimits = [
+			{ value: "0", label: "This event is all ages" },
+			{ value: "21", label: "This event is 21 and over" },
+			{ value: "18", label: "This event is 18 and over" }
+		];
 
 		return (
 			<SelectGroup
@@ -371,20 +362,23 @@ class Details extends Component {
 		);
 	}
 
+	handleDoorTimeChange(e) {
+		const doorTimeHours = e.target.value;
+		this.changeDetails({ doorTimeHours });
+	}
+
 	render() {
 		const { errors = {}, validateFields } = this.props;
 
 		const {
 			name,
 			eventDate,
-			doorTime,
 			showTime,
-			ageLimit,
 			additionalInfo,
 			topLineInfo,
 			videoUrl,
 			showTopLineInfo,
-			redeemDate
+			doorTimeHours = "1"
 		} = eventUpdateStore.event;
 
 		return (
@@ -441,9 +435,7 @@ class Details extends Component {
 							name="topLineInfo"
 							label="Top line info"
 							type="text"
-							onChange={e =>
-								this.changeDetails({ topLineInfo: e.target.value })
-							}
+							onChange={e => this.changeDetails({ topLineInfo: e.target.value })}
 							onBlur={validateFields}
 							multiline
 						/>
@@ -474,19 +466,6 @@ class Details extends Component {
 
 				<Grid item xs={12} sm={12} lg={3}>
 					<DateTimePickerGroup
-						error={errors.doorTime}
-						value={doorTime}
-						name="doorTime"
-						label="Door time"
-						onChange={doorTime => this.changeDetails({ doorTime })}
-						onBlur={validateFields}
-						format="HH:mm"
-						type="time"
-					/>
-				</Grid>
-
-				<Grid item xs={12} sm={12} lg={3}>
-					<DateTimePickerGroup
 						error={errors.showTime}
 						value={showTime}
 						name="showTime"
@@ -497,18 +476,18 @@ class Details extends Component {
 						type="time"
 					/>
 				</Grid>
-				{/*<Grid item xs={12} sm={12} lg={3}>
-						<DateTimePickerGroup
-							error={errors.redeemDate}
-							value={redeemDate}
-							name="redeemDate"
-							label="Redeem Time"
-							onChange={redeemDate => this.changeDetails({ redeemDate })}
-							onBlur={validateFields}
-							format="HH:mm"
-							type="time"
-						/>
-					</Grid>*/}
+
+				<Grid item xs={12} sm={12} lg={3}>
+					<SelectGroup
+						value={doorTimeHours}
+						items={Details.doorHoursOptions}
+						error={errors.doorTime}
+						name="doorTimeHours"
+						label="Door time"
+						styleClassName="formControlNoMargin"
+						onChange={this.handleDoorTimeChange}
+					/>
+				</Grid>
 
 				<Grid item xs={12} sm={12} lg={6}>
 					{this.renderAgeLimits()}
