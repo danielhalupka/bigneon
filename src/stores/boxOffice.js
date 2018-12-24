@@ -20,10 +20,18 @@ class BoxOffice {
 	@observable
 	availableEvents = [];
 
+	@observable
+	ticketTypes = null;
+
+	@observable
+	holds = null;
+
+	@observable
+	guests = null;
+
 	@action
 	refreshEvents() {
 		let organization_id = user.currentOrganizationId;
-
 		if (!organization_id) {
 			this.timeout = setTimeout(() => this.refreshEvents(), 500);
 			return;
@@ -35,6 +43,7 @@ class BoxOffice {
 				const { data, paging } = response.data;
 				this.availableEvents = data;
 
+				this.ticketTypes = null;
 				this.loadCachedCurrentEvent();
 			})
 			.catch(error => {
@@ -46,26 +55,153 @@ class BoxOffice {
 			});
 	}
 
+	@action
+	refreshEventTickets() {
+		this.refreshTicketTypes();
+		this.refreshHolds();
+		this.refreshGuests();
+	}
+
+	@action
+	refreshTicketTypes() {
+		if (!this.activeEventId) {
+			return;
+		}
+
+		Bigneon()
+			.events.read({ id: this.activeEventId })
+			.then(response => {
+				const { ticket_types } = response.data;
+
+				let ticketTypes = {};
+				ticket_types.forEach(({ id, ...ticket_type }) => {
+					ticketTypes[id] = ticket_type;
+				});
+
+				this.ticketTypes = ticketTypes;
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading event ticket types failed."
+				});
+			});
+	}
+
+	@action
+	refreshHolds() {
+		if (!this.activeEventId) {
+			return;
+		}
+
+		Bigneon()
+			.events.holds.index({ event_id: this.activeEventId })
+			.then(response => {
+				const { data } = response.data;
+
+				let holds = {};
+				data.forEach(({ id, ...hold }) => {
+					holds[id] = hold;
+				});
+
+				this.holds = holds;
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading ticket holds failed."
+				});
+			});
+	}
+
+	@action
+	refreshGuests() {
+		if (!this.activeEventId) {
+			return;
+		}
+
+		Bigneon()
+			.events.guests.index({ event_id: this.activeEventId, query: "" })
+			.then(response => {
+				const { data, paging } = response.data; //@TODO Implement pagination
+				let guests = {};
+
+				data.forEach(
+					({
+						user_id,
+						email,
+						first_name,
+						last_name,
+						phone,
+						...ticketDetails
+					}) => {
+						if (!guests[user_id]) {
+							guests[user_id] = {
+								email,
+								first_name,
+								last_name,
+								phone,
+								tickets: [ticketDetails]
+							};
+						} else {
+							guests[user_id].tickets = [
+								...guests[user_id].tickets,
+								ticketDetails
+							];
+						}
+					}
+				);
+
+				this.guests = guests;
+			})
+			.catch(error => {
+				console.error(error);
+
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading guests failed.",
+					error
+				});
+			});
+	}
+
+	@action
 	loadCachedCurrentEvent() {
 		let cachedActiveEventId = localStorage.getItem("boxOfficeActiveEventId");
 		const activeEvent = getEventFromId(
 			this.availableEvents,
 			cachedActiveEventId
 		);
+
+		let eventId = false;
+
 		if (activeEvent) {
-			this.setActiveEventId(cachedActiveEventId);
+			eventId = cachedActiveEventId;
 		} else if (this.availableEvents.length > 0) {
 			//If it doesn't exist locally assume first event
-			this.setActiveEventId(this.availableEvents[0].id);
-		} else {
-			//If the don't have any events
-			this.setActiveEventId(false);
+			eventId = this.availableEvents[0].id;
 		}
+
+		if (eventId) {
+			this.setActiveEventId(eventId);
+		} else {
+			this.resetEventTickets();
+		}
+	}
+
+	@action
+	resetEventTickets() {
+		this.ticketTypes = null;
+		this.holds = null;
+		this.guests = null;
 	}
 
 	@action
 	setActiveEventId(id, reloadPage = false) {
 		this.activeEventId = id;
+
+		this.refreshEventTickets();
 
 		localStorage.setItem("boxOfficeActiveEventId", id);
 

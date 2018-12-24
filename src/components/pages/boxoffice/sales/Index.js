@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
+import { observer } from "mobx-react";
 
 import Bigneon from "../../../../helpers/bigneon";
 import notifications from "../../../../stores/notifications";
@@ -15,6 +16,7 @@ import InputWithButton from "../../../common/form/InputWithButton";
 import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
 import layout from "../../../../stores/layout";
+import BlankSlate from "../common/BlankSlate";
 
 const styles = theme => ({
 	root: {},
@@ -24,26 +26,25 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class TicketSales extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			ticketTypes: null,
 			selectedTickets: {},
 			selectedHolds: {},
-			holds: null,
 			showCheckoutModal: false,
 			isAddingToCart: false,
 			currentOrderDetails: null,
 			holdCode: "",
-			successMessage: ""
+			successMessage: "",
+			eventSelected: null
 		};
 	}
 
 	componentDidMount() {
-		this.refreshTicketTypes();
-		this.refreshHolds();
+		boxOffice.refreshEventTickets();
 	}
 
 	componentWillUnmount() {
@@ -52,72 +53,14 @@ class TicketSales extends Component {
 		}
 	}
 
-	refreshTicketTypes() {
-		const { activeEventId } = boxOffice;
-		if (!activeEventId) {
-			this.timeout = setTimeout(this.refreshTicketTypes.bind(this), 500);
-			return;
-		}
-
-		Bigneon()
-			.events.read({ id: activeEventId })
-			.then(response => {
-				const { ticket_types } = response.data;
-
-				let ticketTypes = {};
-				ticket_types.forEach(({ id, ...ticket_type }) => {
-					ticketTypes[id] = ticket_type;
-				});
-
-				this.setState({ ticketTypes });
-			})
-			.catch(error => {
-				console.error(error);
-				notifications.showFromErrorResponse({
-					error,
-					defaultMessage: "Loading event ticket types failed."
-				});
-			});
-	}
-
-	refreshHolds() {
-		const { activeEventId } = boxOffice;
-		let event_id = activeEventId;
-
-		if (!event_id) {
-			this.timeout = setTimeout(this.refreshHolds.bind(this), 500);
-			return;
-		}
-
-		Bigneon()
-			.events.holds.index({ event_id })
-			.then(response => {
-				const { data } = response.data;
-
-				let holds = {};
-				data.forEach(({ id, ...hold }) => {
-					holds[id] = hold;
-				});
-
-				this.setState({ holds });
-			})
-			.catch(error => {
-				console.error(error);
-				notifications.showFromErrorResponse({
-					error,
-					defaultMessage: "Loading ticket holds failed."
-				});
-			});
-	}
-
 	onCheckoutSuccess(currentOrderDetails) {
 		this.setState({
 			selectedTickets: {},
 			selectedHolds: {},
 			currentOrderDetails
 		});
-		this.refreshTicketTypes();
-		this.refreshHolds();
+
+		boxOffice.refreshEventTickets();
 	}
 
 	async onAddItemsToCart(items) {
@@ -135,7 +78,8 @@ class TicketSales extends Component {
 	}
 
 	async onCheckout() {
-		const { selectedTickets, selectedHolds, ticketTypes, holds } = this.state;
+		const { selectedTickets, selectedHolds } = this.state;
+		const { holds } = boxOffice;
 
 		this.setState({ isAddingToCart: true });
 
@@ -176,7 +120,9 @@ class TicketSales extends Component {
 	}
 
 	renderTicketTypes() {
-		const { ticketTypes, selectedTickets } = this.state;
+		const { selectedTickets } = this.state;
+
+		const { ticketTypes } = boxOffice;
 
 		if (ticketTypes === null) {
 			return <Typography>Loading tickets...</Typography>;
@@ -220,7 +166,8 @@ class TicketSales extends Component {
 	}
 
 	renderHolds() {
-		const { holds, selectedHolds, ticketTypes, holdCode } = this.state;
+		const { selectedHolds, holdCode } = this.state;
+		const { ticketTypes, holds } = boxOffice;
 
 		if (!ticketTypes) {
 			return null;
@@ -288,13 +235,13 @@ class TicketSales extends Component {
 
 	renderBottomBar() {
 		const {
-			ticketTypes,
 			selectedTickets,
-			holds,
 			selectedHolds,
 			showCheckoutModal,
 			isAddingToCart
 		} = this.state;
+
+		const { ticketTypes, holds } = boxOffice;
 
 		if (!ticketTypes || Object.keys(ticketTypes).length < 1) {
 			return null;
@@ -347,13 +294,23 @@ class TicketSales extends Component {
 			return <NotFound />;
 		}
 
+		if (!boxOffice.availableEvents || boxOffice.availableEvents < 1) {
+			return <BlankSlate>No active events found.</BlankSlate>;
+		}
+
+		if (!boxOffice.activeEventId) {
+			return <BlankSlate>No active event selected.</BlankSlate>;
+		}
+
 		const {
-			ticketTypes,
 			showCheckoutModal,
 			currentOrderDetails,
 			successMessage,
 			holdCode
 		} = this.state;
+
+		const { ticketTypes } = boxOffice;
+
 		const { classes } = this.props;
 
 		return (

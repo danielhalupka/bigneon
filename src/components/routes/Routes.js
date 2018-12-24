@@ -52,7 +52,7 @@ import AdminMarketing from "../pages/admin/marketing/Index";
 import AdminReports from "../pages/admin/reports/Index";
 
 //Box office
-import BoxOfficeTicketSales from "../pages/boxoffice/sales/TicketSales";
+import BoxOfficeTicketSales from "../pages/boxoffice/sales/Index";
 
 import InviteDecline from "../pages/admin/invites/Decline";
 import InviteAccept from "../pages/admin/invites/Accept";
@@ -65,7 +65,7 @@ import user from "../../stores/user";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import ReceiveTransfer from "../pages/fanhub/ReceiveTransfer";
-import GuestList from "../pages/boxoffice/guests/GuestList";
+import GuestList from "../pages/boxoffice/guests/Index";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Typography, withStyles, Grid } from "@material-ui/core";
+import { observer } from "mobx-react";
 
 import Bigneon from "../../../../helpers/bigneon";
 import notifications from "../../../../stores/notifications";
@@ -11,6 +12,7 @@ import CheckingInDialog from "./CheckingInDialog";
 import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
 import layout from "../../../../stores/layout";
+import BlankSlate from "../common/BlankSlate";
 
 const styles = theme => ({
 	root: {},
@@ -19,6 +21,7 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class GuestList extends Component {
 	constructor(props) {
 		super(props);
@@ -32,14 +35,12 @@ class GuestList extends Component {
 			showCheckingInDialog: false
 		};
 
-		this.guests = {};
-
 		this.onExpandChange = this.onExpandChange.bind(this);
 		this.onTicketSelect = this.onTicketSelect.bind(this);
 	}
 
 	componentDidMount() {
-		this.refreshGuests();
+		boxOffice.refreshEventTickets();
 	}
 
 	componentWillUnmount() {
@@ -61,101 +62,41 @@ class GuestList extends Component {
 	}
 
 	filterGuestsOnQuery(e) {
-		this.setState(
-			{
-				searchQuery: e.target.value,
-				expandedUserId: null,
-				selectedTickets: {}
-			},
-			this.filterGuests.bind(this)
-		);
-	}
-
-	filterGuests() {
-		const { searchQuery, expandedUserId } = this.state;
-
-		//Filtering required
-		this.setState({ searchQuery }, () => {
-			let filteredGuests = {};
-			Object.keys(this.guests).forEach(user_id => {
-				const { first_name, last_name, tickets } = this.guests[user_id];
-				let ticketIds = [];
-				tickets.forEach(({ id }) => {
-					ticketIds.push(id);
-				});
-
-				if (
-					this.stringContainedInArray(
-						[first_name, last_name, ...ticketIds],
-						searchQuery
-					)
-				) {
-					filteredGuests[user_id] = this.guests[user_id];
-				}
-			});
-
-			this.setState({ filteredGuests });
+		this.setState({
+			searchQuery: e.target.value,
+			expandedUserId: null,
+			selectedTickets: {}
 		});
 	}
 
-	refreshGuests() {
-		const { activeEventId } = boxOffice;
-		if (!activeEventId) {
-			this.timeout = setTimeout(this.refreshGuests.bind(this), 500);
-			return;
+	filteredGuests() {
+		const { guests } = boxOffice;
+		if (!guests) {
+			return {};
 		}
 
-		Bigneon()
-			.events.guests.index({ event_id: activeEventId, query: "" })
-			.then(response => {
-				const { data, paging } = response.data; //@TODO Implement pagination
-				let guests = {};
+		const { searchQuery } = this.state;
 
-				data.forEach(
-					({
-						user_id,
-						email,
-						first_name,
-						last_name,
-						phone,
-						...ticketDetails
-					}) => {
-						if (!guests[user_id]) {
-							guests[user_id] = {
-								email,
-								first_name,
-								last_name,
-								phone,
-								tickets: [ticketDetails]
-							};
-						} else {
-							guests[user_id].tickets = [
-								...guests[user_id].tickets,
-								ticketDetails
-							];
-						}
-					}
-				);
-
-				this.guests = guests;
-				this.filterGuests();
-			})
-			.catch(error => {
-				this.setState({ guests: {} });
-				console.error(error);
-				let message = "Loading guests failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-				notifications.show({
-					message,
-					variant: "error"
-				});
+		//Filtering required
+		let filteredGuests = {};
+		Object.keys(guests).forEach(user_id => {
+			const { first_name, last_name, tickets } = guests[user_id];
+			let ticketIds = [];
+			tickets.forEach(({ id }) => {
+				ticketIds.push(id);
 			});
+
+			if (
+				this.stringContainedInArray(
+					[first_name, last_name, ...ticketIds],
+					searchQuery
+				)
+			) {
+				filteredGuests[user_id] = guests[user_id];
+			}
+		});
+
+		return filteredGuests;
 	}
 
 	onExpandChange(expandedUserId) {
@@ -216,7 +157,7 @@ class GuestList extends Component {
 		}
 
 		this.setState({ isCheckingIn: false, selectedTickets: {} });
-		this.refreshGuests();
+		boxOffice.refreshGuests();
 	}
 
 	renderBottomBar() {
@@ -227,9 +168,11 @@ class GuestList extends Component {
 			expandedUserId
 		} = this.state;
 
+		const { guests } = boxOffice;
+
 		let totalAvailable = 0;
-		if (this.guests && this.guests[expandedUserId]) {
-			const { tickets } = this.guests[expandedUserId];
+		if (guests && guests[expandedUserId]) {
+			const { tickets } = guests[expandedUserId];
 			tickets.forEach(({ status }) => {
 				if (status !== "Redeemed") {
 					totalAvailable++;
@@ -271,13 +214,23 @@ class GuestList extends Component {
 			return <NotFound />;
 		}
 
-		const {
-			filteredGuests,
-			searchQuery,
-			expandedUserId,
-			selectedTickets
-		} = this.state;
+		if (!boxOffice.availableEvents || boxOffice.availableEvents < 1) {
+			return <BlankSlate>No active events found.</BlankSlate>;
+		}
+
+		if (!boxOffice.activeEventId) {
+			return <BlankSlate>No active event selected.</BlankSlate>;
+		}
+
+		if (!boxOffice.guests || boxOffice.guests === {}) {
+			return <BlankSlate>No guests found for event.</BlankSlate>;
+		}
+
+		const { searchQuery, expandedUserId, selectedTickets } = this.state;
+
 		const { classes } = this.props;
+
+		const filteredGuests = this.filteredGuests();
 
 		if (filteredGuests === null) {
 			return <Typography>Loading...</Typography>;

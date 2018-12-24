@@ -16,7 +16,7 @@ const styles = theme => ({
 	}
 });
 
-const {host} = window.location;
+const { host } = window.location;
 
 @observer
 class WidgetLinkBuilder extends Component {
