@@ -295,7 +295,6 @@ class Details extends Component {
 				label={label}
 				onChange={e => {
 					const venueId = e.target.value;
-
 					this.changeDetails({ venueId });
 				}}
 			/>
@@ -310,7 +309,7 @@ class Details extends Component {
 		const { errors } = this.props;
 		const { override_status } = eventUpdateStore.event;
 
-		const statusOptions = [{ value: "", label: "Auto" }];
+		const statusOptions = [{ value: false,  label: "Auto" }];
 		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
 		let eventOverrideStatusString = Bn.Enums
 			? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING
@@ -322,10 +321,11 @@ class Details extends Component {
 		}
 
 		let label = "Event status";
+		let overrideStatus = override_status || false;
 
 		return (
 			<SelectGroup
-				value={override_status || ""}
+				value={overrideStatus}
 				items={statusOptions}
 				error={errors.status}
 				name={"status"}

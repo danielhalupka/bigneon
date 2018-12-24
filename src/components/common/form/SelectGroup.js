@@ -34,7 +34,8 @@ const SelectGroup = props => {
 		missingItemsLabel,
 		disableUnderline,
 		selectStyle,
-		styleClassName = "formControl"
+		styleClassName = "formControl",
+		displayEmpty
 	} = props;
 	const { classes } = props;
 
@@ -73,6 +74,7 @@ const SelectGroup = props => {
 						}
 					}
 				}}
+				displayEmpty={displayEmpty}
 			>
 				{content}
 			</Select>
@@ -85,7 +87,7 @@ const SelectGroup = props => {
 SelectGroup.propTypes = {
 	items: PropTypes.array.isRequired,
 	error: PropTypes.string,
-	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).isRequired,
 	dropdownWidth: PropTypes.number,
 	dropdownHeight: PropTypes.number,
 	missingItemsLabel: PropTypes.string, //If there are no items, the text you want to display
@@ -96,7 +98,8 @@ SelectGroup.propTypes = {
 	onFocus: PropTypes.func,
 	disableUnderline: PropTypes.bool,
 	selectStyle: PropTypes.object,
-	styleClassName: PropTypes.string
+	styleClassName: PropTypes.string,
+	displayEmpty: PropTypes.bool
 };
 
 export default withStyles(styles)(SelectGroup);
