@@ -54,7 +54,7 @@ const styles = theme => {
 	};
 };
 
-let timeFormat = "h:mm A";
+let timeFormat = "hh:mm A";
 
 class DateTimePickerGroup extends Component {
 	constructor(props) {
@@ -96,9 +96,16 @@ class DateTimePickerGroup extends Component {
 	};
 
 	onClick = event => {
-		const { isTimeValid } = this.state;
+		const { isTimeValid, timeFormatted } = this.state;
 		if (isTimeValid) {
 			this.setState({ anchorEl: event.currentTarget });
+			setTimeout(() => {
+				const timeId = timeFormatted.replace(/[^a-zA-Z0-9]+/g, "");
+				const elementById = document.getElementById(timeId);
+				if (elementById) {
+					elementById.scrollIntoView();
+				}
+			}, 250);
 		}
 	};
 
@@ -224,6 +231,7 @@ class DateTimePickerGroup extends Component {
 									<MenuList id="time-menu">
 										{times.map((time, index) => (
 											<MenuItem
+												id={time.replace(/[^a-zA-Z0-9]+/g, "")}
 												className={
 													time === timeFormatted ? classes.highlight : null
 												}
