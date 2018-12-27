@@ -241,7 +241,12 @@ const validateFields = ticketTypes => {
 		} else if (startDate) {
 			//Start date must be before endDate
 			if (endDate.diff(startDate) <= 0) {
-				ticketErrors.endDate = "Off sale time must be after on sale time";
+				if (endDate.diff(startDate, "days") > -1) {
+					//If it differs by less than a day, put the error on the time field instead of the date
+					ticketErrors.endTime = "Off sale time must be after on sale time";
+				} else {
+					ticketErrors.endDate = "Off sale date must be after on sale date";
+				}
 			}
 		}
 
@@ -259,14 +264,14 @@ const validateFields = ticketTypes => {
 			let pricingErrors = {};
 
 			//The server seems to be messing with the array orders somehow.
-			let sorted = pricing.sort(
+			const sortedPricing = [...pricing].sort(
 				(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
 			);
 
 			let ticketStartDate = startDate;
 			let ticketEndDate = endDate;
 
-			sorted.forEach((pricingItem, index) => {
+			sortedPricing.forEach((pricingItem, index) => {
 				let {
 					name,
 					startDate,
@@ -294,7 +299,7 @@ const validateFields = ticketTypes => {
 				}
 
 				//Previous pricing dates needed for current row
-				const previousPricing = index > 0 ? sorted[index - 1] : null;
+				const previousPricing = index > 0 ? sortedPricing[index - 1] : null;
 				let previousPricingEndDate = previousPricing
 					? moment(previousPricing.endDate).set({
 						hour: previousPricing.endTime.get("hour"),
@@ -314,9 +319,6 @@ const validateFields = ticketTypes => {
 				} else if (ticket.startDate) {
 					//On sale date for this pricing can't be sooner than event on sale time
 					if (startDate && startDate.diff(ticketStartDate) < 0) {
-						// console.log("startDate: ", startDate);
-						// console.log("ticket.startDate: ", ticket.startDate);
-						// console.log("Diff: ", startDate.diff(ticket.startDate));
 						pricingError.startDate = "Time must be after ticket on sale time.";
 					} else if (previousPricing && previousPricingEndDate) {
 						//Check on sale time is after off sale time of previous pricing
@@ -332,8 +334,14 @@ const validateFields = ticketTypes => {
 				} else if (startDate) {
 					//Off sale date for this pricing can't be sooner than pricing on sale time
 					if (endDate.diff(startDate) <= 0) {
-						pricingError.endDate =
-							"Off sale time must be after pricing on sale time.";
+						if (endDate.diff(startDate, "days") > -1) {
+							//If it differs by less than a day, put the error on the time field instead of the date
+							pricingError.endTime =
+								"Off sale time must be after pricing on sale time.";
+						} else {
+							pricingError.endDate =
+								"Off sale time must be after pricing on sale time.";
+						}
 					}
 				}
 
