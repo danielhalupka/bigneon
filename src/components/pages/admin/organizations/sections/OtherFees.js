@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core";
+import { withStyles, Grid } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 
 import InputGroup from "../../../../common/form/InputGroup";
@@ -31,13 +31,18 @@ class OtherFees extends Component {
 			Bigneon()
 				.organizations.read({ id: organizationId })
 				.then(response => {
-					const { owner_user_id, event_fee_in_cents } = response.data;
+					const { owner_user_id, client_event_fee_in_cents, company_event_fee_in_cents } = response.data;
+					let clientEventFee = client_event_fee_in_cents
+						? (client_event_fee_in_cents / 100).toFixed(2)
+						: (0).toFixed(2);
+					let companyEventFee = company_event_fee_in_cents
+						? (company_event_fee_in_cents / 100).toFixed(2)
+						: (0).toFixed(2);
 
 					this.setState({
 						owner_user_id: owner_user_id || "",
-						eventFee: event_fee_in_cents
-							? (event_fee_in_cents / 100).toFixed(2)
-							: (0).toFixed(2)
+						clientEventFee,
+						companyEventFee
 					});
 				})
 				.catch(error => {
@@ -57,13 +62,16 @@ class OtherFees extends Component {
 			return true;
 		}
 
-		const { eventFee } = this.state;
-		const { organizationId } = this.props;
+		const { clientEventFee, companyEventFee } = this.state;
 
 		const errors = {};
 
-		if (!eventFee) {
-			errors.eventFee = "Missing event fee.";
+		if (!clientEventFee) {
+			errors.clientEventFee = "Missing client event fee.";
+		}
+
+		if (!companyEventFee) {
+			errors.companyEventFee = "Missing Big Neon event fee.";
 		}
 
 		this.setState({ errors });
@@ -84,11 +92,12 @@ class OtherFees extends Component {
 			return false;
 		}
 
-		const { owner_user_id, eventFee } = this.state;
+		const { clientEventFee, companyEventFee } = this.state;
 		const { organizationId } = this.props;
 
 		let orgDetails = {
-			event_fee_in_cents: Number(eventFee) * 100
+			client_event_fee_in_cents: Number(clientEventFee) * 100,
+			company_event_fee_in_cents: Number(companyEventFee) * 100
 		};
 
 		Bigneon()
@@ -112,8 +121,8 @@ class OtherFees extends Component {
 	}
 
 	render() {
-		const { owner_user_id, eventFee = 0, errors, isSubmitting } = this.state;
-
+		const { owner_user_id, clientEventFee = 0, companyEventFee = 0, errors, isSubmitting } = this.state;
+		const eventFee = Number(clientEventFee) + Number(companyEventFee);
 		const { organizationId } = this.props;
 
 		const { classes } = this.props;
@@ -124,20 +133,57 @@ class OtherFees extends Component {
 		return (
 			<div>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<InputGroup
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">$</InputAdornment>
-							)
-						}}
-						error={errors.eventFee}
-						value={eventFee}
-						name="eventFee"
-						label="Per order fee"
-						type="number"
-						onChange={e => this.setState({ eventFee: e.target.value })}
-						onBlur={this.validateFields.bind(this)}
-					/>
+					<Grid container spacing={24}>
+						<Grid item xs={12} sm={4} lg={4}>
+							<InputGroup
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position="start">$</InputAdornment>
+									)
+								}}
+								error={errors.clientEventFee}
+								value={clientEventFee}
+								name="clientEventFee"
+								label="Per order client fee"
+								type="number"
+								onChange={e => this.setState({ clientEventFee: e.target.value })}
+								onBlur={this.validateFields.bind(this)}
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4} lg={4}>
+							<InputGroup
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position="start">$</InputAdornment>
+									)
+								}}
+								error={errors.companyEventFee}
+								value={companyEventFee}
+								name="companyEventFee"
+								label="Per order Big Neon fee"
+								type="number"
+								onChange={e => this.setState({ companyEventFee: e.target.value })}
+								onBlur={this.validateFields.bind(this)}
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4} lg={4}>
+							<InputGroup
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position="start">$</InputAdornment>
+									)
+								}}
+								error={errors.eventFee}
+								value={eventFee}
+								disabled
+								name="eventFee"
+								label="Total per order fee"
+								type="number"
+								onChange={e => {
+								}}
+							/>
+						</Grid>
+					</Grid>
 
 					<Button
 						disabled={isSubmitting}
