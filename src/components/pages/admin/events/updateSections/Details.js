@@ -103,8 +103,7 @@ const formatDataForSaving = (event, organizationId) => {
 		});
 
 		eventDetails.event_start = moment
-			.utc(eventDate)
-			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+			.utc(eventDate).format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
 	if (eventDate && moment(eventDate).isValid()) {
@@ -161,24 +160,24 @@ const formatDataForInputs = event => {
 	tomorrow.setDate(new Date().getDate() + 1);
 
 	let eventDate = event_start
-		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-		: moment.utc(tomorrow);
+		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		: moment.utc(tomorrow).local();
 	let noon = moment(eventDate).set({
 		hour: "12",
 		minute: "00",
 		second: "00"
 	});
 	let showTime = event_start
-		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: noon;
 	let doorTime = door_time
-		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: noon;
 	let redeemDate = redeem_date
-		? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: noon;
 	let doorTimeHours = door_time
-		? showTime.diff(moment.utc(door_time), "m") / 60
+		? moment.utc(event_start).diff(moment.utc(door_time), "m") / 60
 		: 1; // Default: 1 hour
 
 	const eventDetails = {
@@ -189,7 +188,7 @@ const formatDataForInputs = event => {
 		doorTime,
 		doorTimeHours,
 		publishDate: publish_date
-			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 			: null,
 		redeemDate,
 		ageLimit: age_limit || "",
