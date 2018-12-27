@@ -1,25 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
-import {
-	withStyles,
-	Typography,
-	InputAdornment,
-	Collapse
-} from "@material-ui/core";
+import { withStyles, InputAdornment } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 
 import InputGroup from "../../../../common/form/InputGroup";
-import Button from "../../../../elements/Button";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 
 const styles = theme => {
 	return {
 		root: { display: "flex" },
 		inputContainer: {
-			flex: 1,
-			paddingRight: theme.spacing.unit * 4,
+			paddingRight: theme.spacing.unit,
 			display: "flex",
 			flexDirection: "column",
 			justifyContent: "center"
@@ -52,7 +45,7 @@ const PricePoint = props => {
 
 	return (
 		<div className={classes.root}>
-			<div className={classes.inputContainer}>
+			<div className={classes.inputContainer} style={{ flex: 2 }}>
 				<InputGroup
 					error={errors.name}
 					value={name}
@@ -72,6 +65,7 @@ const PricePoint = props => {
 					[classes.inputContainer]: true,
 					[classes.dateInputContainer]: true
 				})}
+				style={{ flex: 2 }}
 			>
 				<DateTimePickerGroup
 					error={errors.startDate}
@@ -83,6 +77,15 @@ const PricePoint = props => {
 					onBlur={validateFields}
 					minDate={false}
 				/>
+			</div>
+
+			<div
+				className={classnames({
+					[classes.inputContainer]: true,
+					[classes.dateInputContainer]: true
+				})}
+				style={{ flex: 2 }}
+			>
 				<DateTimePickerGroup
 					error={errors.startTime}
 					value={startTime}
@@ -100,6 +103,7 @@ const PricePoint = props => {
 					[classes.inputContainer]: true,
 					[classes.dateInputContainer]: true
 				})}
+				style={{ flex: 2 }}
 			>
 				<DateTimePickerGroup
 					error={errors.endDate}
@@ -111,6 +115,15 @@ const PricePoint = props => {
 					onBlur={validateFields}
 					minDate={false}
 				/>
+			</div>
+
+			<div
+				className={classnames({
+					[classes.inputContainer]: true,
+					[classes.dateInputContainer]: true
+				})}
+				style={{ flex: 2 }}
+			>
 				<DateTimePickerGroup
 					error={errors.endTime}
 					value={endTime}
@@ -123,7 +136,7 @@ const PricePoint = props => {
 				/>
 			</div>
 
-			<div className={classes.inputContainer}>
+			<div className={classes.inputContainer} style={{ flex: 1 }}>
 				<InputGroup
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>

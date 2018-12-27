@@ -209,7 +209,7 @@ const TicketDetails = observer(props => {
 							error={errors.startDate}
 							value={startDate}
 							name="startDate.date"
-							label="Sale start time"
+							label="Sale start date"
 							type="date"
 							onChange={startDate => updateTicketType(index, { startDate })}
 							onBlur={validateFields}
@@ -232,7 +232,7 @@ const TicketDetails = observer(props => {
 							value={useEndDate}
 							name="endDate"
 							type="date"
-							label="Sale end time"
+							label="Sale end date"
 							onChange={endDate => {
 								updateTicketType(index, { endDate });
 							}}
