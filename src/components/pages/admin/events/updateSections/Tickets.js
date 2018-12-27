@@ -4,9 +4,6 @@ import { observer } from "mobx-react";
 import moment from "moment";
 import { withStyles, Typography } from "@material-ui/core";
 
-import Button from "../../../../elements/Button";
-import Bigneon from "../../../../../helpers/bigneon";
-import notifications from "../../../../../stores/notifications";
 import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import TicketType from "./TicketType";
 import eventUpdateStore from "../../../../../stores/eventUpdate";

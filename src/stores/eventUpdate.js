@@ -135,7 +135,7 @@ class EventUpdate {
 			capacity: "",
 			priceAtDoor: "",
 			increment: 1,
-			limitPerPerson: 0,
+			limitPerPerson: 10,
 			startDate,
 			endDate,
 			pricing: [
