@@ -124,6 +124,7 @@ const InputGroup = props => {
 				autoFocus={autoFocus}
 				disabled={disabled}
 				autoComplete={autoComplete}
+				onWheel={e => e.preventDefault()}
 			/>
 
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
