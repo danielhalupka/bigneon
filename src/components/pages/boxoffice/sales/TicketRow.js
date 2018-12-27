@@ -67,6 +67,11 @@ const TicketRow = props => {
 		{ flex: 2, textAlign: "center" }
 	];
 
+	let disabledMessage = disabled ? "Unavailable" : "";
+	if (available < 1) {
+		disabledMessage = "Sold out";
+	}
+
 	let displayPrice = "";
 	if (!disabled) {
 		displayPrice =
@@ -101,8 +106,8 @@ const TicketRow = props => {
 					</div>
 
 					<div style={columnStyles[4]}>
-						{disabled ? (
-							<Typography>Unavailable</Typography>
+						{disabledMessage ? (
+							<Typography>{disabledMessage}</Typography>
 						) : (
 							<NumberSelect
 								onIncrement={() => onChange(value ? value + 1 : 1)}
