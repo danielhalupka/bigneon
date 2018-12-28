@@ -184,6 +184,17 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 			return this.setState({ isCheckingIn: false });
 		}
 
+		for (let index = 0; index < result.length; index++) {
+			const { redeem_key } = result[index];
+			if (!redeem_key) {
+				notifications.show({
+					message: "Redeeming tickets for this event not yet allowed.",
+					variant: "warning"
+				});
+				return this.setState({ isCheckingIn: false });
+			}
+		}
+
 		const response = await this.redeemTickets(result);
 
 		if (response.error) {

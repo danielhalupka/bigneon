@@ -69,6 +69,13 @@ const GuestRow = props => {
 		classes
 	} = props;
 
+	let displayName = `Guest`;
+	if (first_name && last_name) {
+		displayName = `${last_name}, ${first_name}`;
+	} else if (first_name) {
+		displayName = first_name;
+	}
+
 	return (
 		<div className={classes.root}>
 			<Card>
@@ -78,9 +85,7 @@ const GuestRow = props => {
 							<Typography className={classes.indexNumber}>
 								{index + 1}.
 							</Typography>
-							<Typography className={classes.name}>
-								{last_name}, {first_name}
-							</Typography>
+							<Typography className={classes.name}>{displayName}</Typography>
 						</div>
 						<div className={classes.bottomRow}>
 							<Typography className={classes.ticketInfo}>

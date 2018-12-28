@@ -141,17 +141,29 @@ class GuestList extends Component {
 		for (let index = 0; index < ticketIds.length; index++) {
 			const id = ticketIds[index];
 
-			const { error } = await this.redeemSingleTicket({
-				id,
-				...selectedTickets[id]
-			});
+			const { redeem_key, event_id } = selectedTickets[id];
 
-			if (error) {
-				console.error(error);
-				this.setState({ isCheckingIn: false });
-				notifications.showFromErrorResponse({
-					defaultMessage: "Redeeming ticket failed.",
-					error
+			if (redeem_key) {
+				const { error } = await this.redeemSingleTicket({
+					id,
+					redeem_key,
+					event_id
+				});
+
+				if (error) {
+					console.error(error);
+					this.setState({ isCheckingIn: false, showCheckingInDialog: false });
+					notifications.showFromErrorResponse({
+						defaultMessage: "Redeeming ticket failed.",
+						error
+					});
+				}
+			} else {
+				//No redeem key yet
+				this.setState({ isCheckingIn: false, showCheckingInDialog: false });
+				notifications.show({
+					message: "Redeeming tickets for this event not yet allowed.",
+					variant: "warning"
 				});
 			}
 		}
