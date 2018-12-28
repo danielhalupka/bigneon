@@ -8,7 +8,7 @@ import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import TicketType from "./TicketType";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 
-const formatForSaving = ticketTypes => {
+const formatForSaving = (ticketTypes, event) => {
 	let ticket_types = [];
 
 	ticketTypes.forEach(ticketType => {
@@ -19,11 +19,47 @@ const formatForSaving = ticketTypes => {
 			name,
 			pricing,
 			startTime,
+			saleEndTimeOption,
 			endTime,
 			limitPerPerson
 		} = ticketType;
 
 		let { startDate, endDate } = ticketType;
+
+		startDate = moment(startDate);
+		if (startTime) {
+			startDate = startDate.set({
+				hour: startTime.get("hour"),
+				minute: startTime.get("minute"),
+				second: startTime.get("second")
+			});
+		}
+
+		const { doorTime, eventDate } = event;
+
+		switch (saleEndTimeOption) {
+			case "door":
+				endDate = moment(doorTime);
+				break;
+			case "start":
+				endDate = moment(eventDate);
+				break;
+			case "close":
+				endDate = moment(eventDate).add(5, "hours");
+				break;
+
+			//If no option or set to custom, assume they're updating it manually
+			case "custom":
+			default:
+				endDate = moment(endDate);
+				if (endTime) {
+					endDate = endDate.set({
+						hour: endTime.get("hour"),
+						minute: endTime.get("minute"),
+						second: endTime.get("second")
+					});
+				}
+		}
 
 		let ticket_pricing = [];
 		pricing.forEach(pricePoint => {
@@ -45,6 +81,7 @@ const formatForSaving = ticketTypes => {
 					second: startTime.get("second")
 				});
 			}
+
 			endDate = moment(endDate);
 			if (endTime) {
 				endDate = endDate.set({
@@ -63,23 +100,6 @@ const formatForSaving = ticketTypes => {
 			});
 		});
 
-		startDate = moment(startDate);
-		if (startTime) {
-			startDate = startDate.set({
-				hour: startTime.get("hour"),
-				minute: startTime.get("minute"),
-				second: startTime.get("second")
-			});
-		}
-		endDate = moment(endDate);
-		if (endTime) {
-			endDate = endDate.set({
-				hour: endTime.get("hour"),
-				minute: endTime.get("minute"),
-				second: endTime.get("second")
-			});
-		}
-
 		ticket_types.push({
 			id,
 			name,
@@ -96,7 +116,7 @@ const formatForSaving = ticketTypes => {
 	return ticket_types;
 };
 
-const formatForInput = ticket_types => {
+const formatForInput = (ticket_types, event) => {
 	const ticketTypes = [];
 	ticket_types.forEach(ticket_type => {
 		const {
@@ -143,8 +163,22 @@ const formatForInput = ticket_types => {
 		});
 
 		const ticketStartDate = start_date ? moment.utc(start_date).local() : null;
-
 		const ticketEndDate = end_date ? moment.utc(end_date).local() : null;
+
+		let saleEndTimeOption;
+		const { doorTime, eventDate } = event;
+		const closeTime = moment(eventDate).add(5, "hours");
+
+		if (ticketEndDate.isSame(doorTime)) {
+			saleEndTimeOption = "door";
+		} else if (ticketEndDate.isSame(eventDate)) {
+			saleEndTimeOption = "start";
+		} else if (ticketEndDate.isSame(closeTime)) {
+			saleEndTimeOption = "close";
+		} else {
+			//If it's not the same as any of the above the user must have edited it
+			saleEndTimeOption = "custom";
+		}
 
 		const ticketType = {
 			id,
@@ -155,6 +189,7 @@ const formatForInput = ticket_types => {
 			limitPerPerson: limit_per_person ? limit_per_person : "",
 			startDate: ticketStartDate.clone(),
 			startTime: ticketStartDate,
+			saleEndTimeOption,
 			endDate: ticketEndDate.clone(),
 			endTime: ticketEndDate,
 			priceAtDoor, //TODO get the actual value when API works
@@ -202,6 +237,7 @@ const validateFields = ticketTypes => {
 			name,
 			startDate,
 			startTime,
+			saleEndTimeOption,
 			endDate,
 			endTime,
 			capacity,
@@ -218,13 +254,16 @@ const validateFields = ticketTypes => {
 				second: startTime.get("second")
 			});
 		}
-		endDate = moment(endDate);
-		if (endTime) {
-			endDate = endDate.set({
-				hour: endTime.get("hour"),
-				minute: endTime.get("minute"),
-				second: endTime.get("second")
-			});
+
+		if (saleEndTimeOption === "custom") {
+			endDate = moment(endDate);
+			if (endTime) {
+				endDate = endDate.set({
+					hour: endTime.get("hour"),
+					minute: endTime.get("minute"),
+					second: endTime.get("second")
+				});
+			}
 		}
 
 		const ticketErrors = {};
@@ -236,16 +275,18 @@ const validateFields = ticketTypes => {
 			ticketErrors.startDate = "Specify the ticket start time.";
 		}
 
-		if (!endDate) {
-			ticketErrors.endDate = "Specify the ticket end time.";
-		} else if (startDate) {
-			//Start date must be before endDate
-			if (endDate.diff(startDate) <= 0) {
-				if (endDate.diff(startDate, "days") > -1) {
-					//If it differs by less than a day, put the error on the time field instead of the date
-					ticketErrors.endTime = "Off sale time must be after on sale time";
-				} else {
-					ticketErrors.endDate = "Off sale date must be after on sale date";
+		if (saleEndTimeOption === "custom") {
+			if (!endDate) {
+				ticketErrors.endDate = "Specify the ticket end time.";
+			} else if (startDate) {
+				//Start date must be before endDate
+				if (endDate.diff(startDate) <= 0) {
+					if (endDate.diff(startDate, "days") > -1) {
+						//If it differs by less than a day, put the error on the time field instead of the date
+						ticketErrors.endTime = "Off sale time must be after on sale time";
+					} else {
+						ticketErrors.endDate = "Off sale date must be after on sale date";
+					}
 				}
 			}
 		}

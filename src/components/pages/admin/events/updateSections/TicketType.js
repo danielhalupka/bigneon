@@ -7,12 +7,14 @@ import {
 	InputAdornment,
 	Collapse
 } from "@material-ui/core";
+
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
 import IconButton from "../../../../elements/IconButton";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import PricePoint from "./PricePoint";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
+import SelectGroup from "../../../../common/form/SelectGroup";
 
 const styles = theme => {
 	return {
@@ -105,6 +107,7 @@ const TicketDetails = observer(props => {
 		capacity,
 		startDate,
 		startTime,
+		saleEndTimeOption,
 		endDate,
 		endTime,
 		priceAtDoor,
@@ -215,6 +218,8 @@ const TicketDetails = observer(props => {
 							onBlur={validateFields}
 							minDate={false}
 						/>
+					</div>
+					<div className={classes.additionalInputContainer}>
 						<DateTimePickerGroup
 							error={errors.startTime}
 							value={startTime}
@@ -226,33 +231,60 @@ const TicketDetails = observer(props => {
 							minDate={false}
 						/>
 					</div>
-					<div className={classes.additionalInputContainer}>
-						<DateTimePickerGroup
-							error={errors.endDate}
-							value={useEndDate}
-							name="endDate"
-							type="date"
-							label="Sale end date"
-							onChange={endDate => {
-								updateTicketType(index, { endDate });
+				</div>
+				<div className={classes.additionalInputsRow}>
+					<div
+						className={classes.additionalInputContainer}
+						style={{ marginBottom: 10 }}
+					>
+						<SelectGroup
+							value={saleEndTimeOption || "close"}
+							items={[
+								{ value: "door", label: "Event Door Time" },
+								{ value: "start", label: "Event Start Time" },
+								{ value: "close", label: "Event Close Time" },
+								{ value: "custom", label: "Custom" }
+							]}
+							name={"close-times"}
+							label={"Ticket sale end time"}
+							onChange={e => {
+								updateTicketType(index, { saleEndTimeOption: e.target.value });
 							}}
-							onBlur={validateFields}
-							minDate={false}
-						/>
-						<DateTimePickerGroup
-							error={errors.endTime}
-							value={useEndTime}
-							name="endTime"
-							type="time"
-							label="Sale end time"
-							onChange={endTime => {
-								updateTicketType(index, { endTime });
-							}}
-							onBlur={validateFields}
-							minDate={false}
 						/>
 					</div>
 				</div>
+				{saleEndTimeOption === "custom" ? (
+					<div className={classes.additionalInputsRow}>
+						<div className={classes.additionalInputContainer}>
+							<DateTimePickerGroup
+								error={errors.endDate}
+								value={useEndDate}
+								name="endDate"
+								type="date"
+								label="Sale end date"
+								onChange={endDate => {
+									updateTicketType(index, { endDate });
+								}}
+								onBlur={validateFields}
+								minDate={false}
+							/>
+						</div>
+						<div className={classes.additionalInputContainer}>
+							<DateTimePickerGroup
+								error={errors.endTime}
+								value={useEndTime}
+								name="endTime"
+								type="time"
+								label="Sale end time"
+								onChange={endTime => {
+									updateTicketType(index, { endTime });
+								}}
+								onBlur={validateFields}
+								minDate={false}
+							/>
+						</div>
+					</div>
+				) : null}
 
 				<div className={classes.additionalInputsRow}>
 					<div className={classes.additionalInputContainer}>

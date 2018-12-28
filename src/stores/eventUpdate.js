@@ -53,33 +53,25 @@ class EventUpdate {
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 				const { organization_id } = event;
-				this.event = formatEventDataForInputs(event);
+				const formattedEventData = formatEventDataForInputs(event);
+				this.event = formattedEventData;
 				this.artists = formatArtistsForInputs(artists);
 				this.venue = venue;
 				this.organizationId = organization_id;
 
-				this.loadTicketTypes();
+				this.loadTicketTypes(formattedEventData);
 			})
 			.catch(error => {
 				console.error(error);
-				let message = "Loading event details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event details failed.",
+					error
 				});
 			});
 	}
 
 	@action
-	loadTicketTypes(ticket_types) {
+	loadTicketTypes(event) {
 		if (!this.id) {
 			//No event yet, add one ticket by default
 			this.addTicketType();
@@ -92,7 +84,7 @@ class EventUpdate {
 
 				let ticketTypes = [];
 				if (ticket_types) {
-					ticketTypes = formatTicketDataForInputs(ticket_types);
+					ticketTypes = formatTicketDataForInputs(ticket_types, event);
 				}
 
 				this.ticketTypes = ticketTypes;
@@ -327,7 +319,10 @@ class EventUpdate {
 		}
 
 		if (!isExternal) {
-			const formattedTicketTypes = formatTicketDataForSaving(ticketTypes);
+			const formattedTicketTypes = formatTicketDataForSaving(
+				ticketTypes,
+				event
+			);
 			for (let index = 0; index < formattedTicketTypes.length; index++) {
 				const ticketType = formattedTicketTypes[index];
 				const saveTicketResponse = await this.saveTicketType(ticketType);
