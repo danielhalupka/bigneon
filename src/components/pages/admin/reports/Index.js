@@ -6,6 +6,7 @@ import user from "../../../../stores/user";
 import PageHeading from "../../../elements/PageHeading";
 import Card from "../../../elements/Card";
 import StyledLink from "../../../elements/StyledLink";
+import Divider from "../../../common/Divider";
 import Transactions from "./transactions/Transactions";
 
 const styles = theme => ({
@@ -116,6 +117,8 @@ class Reports extends Component {
 				<Card>
 					<div className={classes.content}>
 						{this.renderMenu()}
+						<Divider style={{ marginBottom: 10 }} />
+
 						{this.renderContent()}
 					</div>
 				</Card>

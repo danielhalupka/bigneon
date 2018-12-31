@@ -181,7 +181,7 @@ class EventDashboardContainer extends Component {
 		const { classes, children, subheading } = this.props;
 
 		if (!event) {
-			return <Typography>Loading...</Typography>; //TODO get a spinner or something
+			return <Typography>Loading...</Typography>;
 		}
 
 		const isPublished = moment(event.publish_date) < moment();
@@ -258,7 +258,7 @@ class EventDashboardContainer extends Component {
 								</Typography>
 							</div>
 						</div>
-						<Divider style={{ marginBottom: 40 }} />
+						<Divider style={{ marginBottom: 10 }} />
 
 						{children}
 					</div>

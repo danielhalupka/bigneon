@@ -7,6 +7,9 @@ import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 import TransactionRow from "./TransactionRow";
 import TransactionDialog from "./TransactionDialog";
+import Divider from "../../../../common/Divider";
+import Button from "../../../../elements/Button";
+import downloadCSV from "../../../../../helpers/downloadCSV";
 
 const styles = theme => ({
 	root: {}
@@ -23,6 +26,87 @@ class Transactions extends Component {
 
 	componentDidMount() {
 		this.refreshData();
+	}
+
+	exportCSV() {
+		const { items } = this.state;
+
+		if (!items) {
+			return notifications.show({
+				message: "No rows to export.",
+				variant: "warning"
+			});
+		}
+
+		let csvRows = [];
+
+		csvRows.push([
+			"Event",
+			"Ticket type",
+			"Quantity",
+			"Order type",
+			"Payment method",
+			"Transaction date",
+			"Redemption code",
+			"Order ID",
+			"Order type",
+			"Payment method",
+
+			"Unit price",
+			"Event fee client",
+			"Event fee company",
+			"Event fee gross",
+			"Company fee",
+			"Client fee",
+			"Gross"
+		]);
+
+		items.forEach(item => {
+			const {
+				client_fee_in_cents,
+				company_fee_in_cents,
+				event_fee_gross_in_cents,
+				event_fee_company_in_cents,
+				event_fee_client_in_cents,
+				event_id,
+				event_name,
+				gross,
+				order_id,
+				order_type,
+				payment_method,
+				quantity,
+				redemption_code,
+				ticket_name,
+				transaction_date,
+				unit_price_in_cents,
+				user_id
+			} = item;
+
+			const dollarValue = cents => (cents / 100).toFixed(2);
+
+			csvRows.push([
+				event_name,
+				ticket_name,
+				quantity,
+				order_type,
+				payment_method,
+				transaction_date,
+				redemption_code,
+				order_id.slice(-8),
+				order_type,
+				payment_method,
+
+				dollarValue(unit_price_in_cents),
+				dollarValue(event_fee_client_in_cents),
+				dollarValue(event_fee_company_in_cents),
+				dollarValue(event_fee_gross_in_cents),
+				dollarValue(company_fee_in_cents),
+				dollarValue(client_fee_in_cents),
+				dollarValue(gross)
+			]);
+		});
+
+		downloadCSV(csvRows, "transaction-report");
 	}
 
 	refreshData() {
@@ -111,7 +195,7 @@ class Transactions extends Component {
 		);
 	}
 
-	render() {
+	renderList() {
 		const { items, hoverIndex } = this.state;
 
 		if (items === false) {
@@ -140,8 +224,6 @@ class Transactions extends Component {
 
 		return (
 			<div>
-				{this.renderDialog()}
-
 				<TransactionRow heading>{ths}</TransactionRow>
 
 				{items.map((item, index) => {
@@ -190,6 +272,39 @@ class Transactions extends Component {
 						</TransactionRow>
 					);
 				})}
+			</div>
+		);
+	}
+
+	render() {
+		const { eventId } = this.props;
+
+		return (
+			<div>
+				<div
+					style={{
+						display: "flex",
+						minHeight: 60,
+						alignItems: "center"
+						//borderStyle: "solid"
+					}}
+				>
+					<Typography variant="title">
+						{eventId ? "Event" : "Organization"} transaction report
+					</Typography>
+					<span style={{ flex: 1 }} />
+					<Button
+						iconUrl="/icons/csv-active.svg"
+						variant="text"
+						onClick={this.exportCSV.bind(this)}
+					>
+						Export CSV
+					</Button>
+				</div>
+				<Divider style={{ marginBottom: 40 }} />
+
+				{this.renderDialog()}
+				{this.renderList()}
 			</div>
 		);
 	}
