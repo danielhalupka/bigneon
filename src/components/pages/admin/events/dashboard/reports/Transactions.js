@@ -46,12 +46,33 @@ class Transactions extends Component {
 			})
 			.then(response => {
 				let items = [];
+				let eventFees = {};
 
 				response.data.forEach(item => {
 					const transaction_date = moment(transaction_date).format(
 						"MM/DD/YYYY hh:MM:A"
 					);
-					items.push({ ...item, transaction_date });
+
+					if (item.ticket_name === "Per Event Fees") {
+						eventFees[item.order_id] = item;
+					} else {
+						items.push({ ...item, transaction_date });
+					}
+				});
+
+				items.forEach(row => {
+					let eventFeeGrossInCents = 0;
+					let eventFeeCompanyInCents = 0;
+					let eventFeeClientInCents = 0;
+					if (eventFees.hasOwnProperty(row.order_id)) {
+						eventFeeGrossInCents = eventFees[row.order_id].gross;
+						eventFeeCompanyInCents =
+							eventFees[row.order_id].company_fee_in_cents;
+						eventFeeClientInCents = eventFees[row.order_id].client_fee_in_cents;
+					}
+					row.event_fee_gross_in_cents = eventFeeGrossInCents;
+					row.event_fee_company_in_cents = eventFeeCompanyInCents;
+					row.event_fee_client_in_cents = eventFeeClientInCents;
 				});
 
 				this.setState({ items });
@@ -68,7 +89,7 @@ class Transactions extends Component {
 	}
 
 	renderList() {
-		const { items, activeIndex } = this.state;
+		const { items, hoverIndex, activeIndex } = this.state;
 
 		if (items === false) {
 			//Query failed
@@ -99,11 +120,12 @@ class Transactions extends Component {
 				<TransactionRow heading>{ths}</TransactionRow>
 
 				{items.map((item, index) => {
-					//	console.log(item);
-
 					const {
 						client_fee_in_cents,
 						company_fee_in_cents,
+						event_fee_gross_in_cents,
+						event_fee_company_in_cents,
+						event_fee_client_in_cents,
 						event_id,
 						event_name,
 						gross,
@@ -123,7 +145,7 @@ class Transactions extends Component {
 						ticket_name,
 						order_type,
 						transaction_date,
-						unit_price_in_cents,
+						dollars(unit_price_in_cents),
 						dollars(gross),
 						dollars(company_fee_in_cents),
 						dollars(client_fee_in_cents)
@@ -133,9 +155,11 @@ class Transactions extends Component {
 						<TransactionRow
 							key={index}
 							onClick={() => this.setState({ activeIndex: index })}
+							onMouseEnter={() => this.setState({ hoverIndex: index })}
+							onMouseLeave={() => this.setState({ hoverIndex: null })}
 							active={false}
 							gray={!(index % 2)}
-							active={activeIndex === index}
+							active={hoverIndex === index}
 						>
 							{tds}
 						</TransactionRow>

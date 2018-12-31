@@ -85,7 +85,9 @@ TransactionRow.propTypes = {
 	gray: PropTypes.bool,
 	active: PropTypes.bool,
 	heading: PropTypes.bool,
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
+	onMouseEnter: PropTypes.func,
+	onMouseLeave: PropTypes.func
 };
 
 export default withStyles(styles)(TransactionRow);

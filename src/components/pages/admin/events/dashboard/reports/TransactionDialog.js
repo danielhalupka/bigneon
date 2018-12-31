@@ -90,6 +90,9 @@ class TransactionDialog extends React.Component {
 		const {
 			client_fee_in_cents,
 			company_fee_in_cents,
+			event_fee_gross_in_cents,
+			event_fee_company_in_cents,
+			event_fee_client_in_cents,
 			event_id,
 			event_name,
 			gross,
@@ -124,6 +127,18 @@ class TransactionDialog extends React.Component {
 
 				<Detail label={"Company fee"} classes={classes}>
 					{dollars(company_fee_in_cents)}
+				</Detail>
+
+				<Detail label={"Total event fee"} classes={classes}>
+					{dollars(event_fee_gross_in_cents)}
+				</Detail>
+
+				<Detail label={"Total company event fee"} classes={classes}>
+					{dollars(event_fee_company_in_cents)}
+				</Detail>
+
+				<Detail label={"Total client event fee"} classes={classes}>
+					{dollars(event_fee_client_in_cents)}
 				</Detail>
 
 				<Detail label={"Payment method"} classes={classes}>
