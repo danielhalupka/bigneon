@@ -395,6 +395,15 @@ class User {
 
 		return false;
 	}
+
+	@computed
+	get hasEventSummaryReports() {
+		if (this.isOrgAdmin || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
 }
 
 const user = new User();

@@ -132,7 +132,7 @@ class EventDashboardContainer extends Component {
 		const open = Boolean(anchorReportsEl);
 		const { event } = this.state;
 
-		const { hasTransactionReports } = user;
+		const { hasTransactionReports, hasEventSummaryReports } = user;
 		let items = [];
 
 		if (hasTransactionReports) {
@@ -142,7 +142,19 @@ class EventDashboardContainer extends Component {
 					to={`/admin/events/${event.id}/dashboard/reports/transactions`}
 				>
 					<MenuItem onClick={this.handleReportsMenuClose.bind(this)}>
-						Transactions
+						Transaction details
+					</MenuItem>
+				</Link>
+			);
+		}
+		if (hasEventSummaryReports) {
+			items.push(
+				<Link
+					key="summary"
+					to={`/admin/events/${event.id}/dashboard/reports/summary`}
+				>
+					<MenuItem onClick={this.handleReportsMenuClose.bind(this)}>
+						Event summary
 					</MenuItem>
 				</Link>
 			);

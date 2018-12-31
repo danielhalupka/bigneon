@@ -15,7 +15,7 @@ const styles = theme => ({
 	root: {}
 });
 
-const dollars = cents => `$ ${(cents / 100).toFixed(2)}`;
+const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
 class Transactions extends Component {
 	constructor(props) {
@@ -38,7 +38,17 @@ class Transactions extends Component {
 			});
 		}
 
+		const { eventName } = this.props;
+
 		let csvRows = [];
+
+		let title = "Transaction details report";
+		if (eventName) {
+			title = `${title} - ${eventName}`;
+		}
+
+		csvRows.push([title]);
+		csvRows.push([""]);
 
 		csvRows.push([
 			"Event",
@@ -82,8 +92,6 @@ class Transactions extends Component {
 				user_id
 			} = item;
 
-			const dollarValue = cents => (cents / 100).toFixed(2);
-
 			csvRows.push([
 				event_name,
 				ticket_name,
@@ -96,13 +104,13 @@ class Transactions extends Component {
 				order_type,
 				payment_method,
 
-				dollarValue(unit_price_in_cents),
-				dollarValue(event_fee_client_in_cents),
-				dollarValue(event_fee_company_in_cents),
-				dollarValue(event_fee_gross_in_cents),
-				dollarValue(company_fee_in_cents),
-				dollarValue(client_fee_in_cents),
-				dollarValue(gross)
+				dollars(unit_price_in_cents),
+				dollars(event_fee_client_in_cents),
+				dollars(event_fee_company_in_cents),
+				dollars(event_fee_gross_in_cents),
+				dollars(company_fee_in_cents),
+				dollars(client_fee_in_cents),
+				dollars(gross)
 			]);
 		});
 
@@ -129,9 +137,10 @@ class Transactions extends Component {
 				let eventFees = {};
 
 				response.data.forEach(item => {
-					const transaction_date = moment(transaction_date).format(
-						"MM/DD/YYYY hh:MM:A"
-					);
+					const transaction_date = moment
+						.utc(item.transaction_date)
+						.local()
+						.format("MM/DD/YYYY h:mm:A");
 
 					if (item.ticket_name === "Per Event Fees") {
 						eventFees[item.order_id] = item;
@@ -313,7 +322,8 @@ class Transactions extends Component {
 Transactions.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
-	eventId: PropTypes.string
+	eventId: PropTypes.string,
+	eventName: PropTypes.string
 };
 
 export default withStyles(styles)(Transactions);

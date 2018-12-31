@@ -103,9 +103,8 @@ class Summary extends Component {
 
 	componentDidMount() {
 		//TODO make bn-api issue for date required
-		
-		this.loadEventDetails(this.props.match.params.id);
 
+		this.loadEventDetails(this.props.match.params.id);
 	}
 
 	loadEventDetails(eventId) {
@@ -119,7 +118,6 @@ class Summary extends Component {
 					dayStats: day_stats,
 					chartValues: this.getDailyBreakdownValues(day_stats)
 				});
-
 			})
 			.catch(error => {
 				console.error(error);
@@ -143,12 +141,13 @@ class Summary extends Component {
 
 	getDailyBreakdownValues(dayStats) {
 		let result = [];
-		for (let index = 0; index < dayStats.length; index++) {			result.push({
-			x: moment(dayStats[index].date).format("D"),
-			y: dayStats[index].revenue_in_cents / 100,
-			tooltipTitle: `$${Math.floor(dayStats[index].revenue_in_cents / 100)}`,
-			tooltipText: `${dayStats[index].ticket_sales} Tickets`
-		});
+		for (let index = 0; index < dayStats.length; index++) {
+			result.push({
+				x: Number(moment(dayStats[index].date).format("D")),
+				y: dayStats[index].revenue_in_cents / 100,
+				tooltipTitle: `$${Math.floor(dayStats[index].revenue_in_cents / 100)}`,
+				tooltipText: `${dayStats[index].ticket_sales} Tickets`
+			});
 		}
 
 		return result;
