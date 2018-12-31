@@ -15,6 +15,8 @@ import Button from "../../../../elements/Button";
 import CheckBox from "../../../../elements/form/CheckBox";
 import StyledLink from "../../../../elements/StyledLink";
 import Divider from "../../../../common/Divider";
+import { observer } from "mobx-react";
+import user from "../../../../../stores/user";
 
 const styles = theme => ({
 	rightHeaderOptions: {
@@ -34,13 +36,15 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class EventDashboardContainer extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			event: null,
-			anchorEl: null
+			anchorToolsEl: null,
+			anchorReportsEl: null
 		};
 	}
 
@@ -49,11 +53,19 @@ class EventDashboardContainer extends Component {
 	}
 
 	handleToolsMenu(event) {
-		this.setState({ anchorEl: event.currentTarget });
+		this.setState({ anchorToolsEl: event.currentTarget });
+	}
+
+	handleReportsMenu(event) {
+		this.setState({ anchorReportsEl: event.currentTarget });
 	}
 
 	handleToolsMenuClose() {
-		this.setState({ anchorEl: null });
+		this.setState({ anchorToolsEl: null });
+	}
+
+	handleReportsMenuClose() {
+		this.setState({ anchorReportsEl: null });
 	}
 
 	loadEventDetails(eventId) {
@@ -87,14 +99,14 @@ class EventDashboardContainer extends Component {
 	}
 
 	renderToolsMenu() {
-		const { anchorEl } = this.state;
-		const open = Boolean(anchorEl);
+		const { anchorToolsEl } = this.state;
+		const open = Boolean(anchorToolsEl);
 		const { event } = this.state;
 
 		return (
 			<Menu
 				id="menu-appbar"
-				anchorEl={anchorEl}
+				anchorEl={anchorToolsEl}
 				anchorOrigin={{
 					vertical: "top",
 					horizontal: "right"
@@ -111,6 +123,55 @@ class EventDashboardContainer extends Component {
 						Smart holds
 					</MenuItem>
 				</Link>
+			</Menu>
+		);
+	}
+
+	renderReportsMenu() {
+		const { anchorReportsEl } = this.state;
+		const open = Boolean(anchorReportsEl);
+		const { event } = this.state;
+
+		const { hasTransactionReports } = user;
+		let items = [];
+
+		if (hasTransactionReports) {
+			items.push(
+				<Link
+					key="tx"
+					to={`/admin/events/${event.id}/dashboard/reports/transactions`}
+				>
+					<MenuItem onClick={this.handleReportsMenuClose.bind(this)}>
+						Transactions
+					</MenuItem>
+				</Link>
+			);
+		}
+
+		if (items.length === 0) {
+			items.push(
+				<MenuItem key="none" onClick={this.handleReportsMenuClose.bind(this)}>
+					No reports available
+				</MenuItem>
+			);
+		}
+
+		return (
+			<Menu
+				id="menu-appbar"
+				anchorEl={anchorReportsEl}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "right"
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: "right"
+				}}
+				open={open}
+				onClose={this.handleReportsMenuClose.bind(this)}
+			>
+				{items}
 			</Menu>
 		);
 	}
@@ -171,7 +232,6 @@ class EventDashboardContainer extends Component {
 									{this.renderToolsMenu()}
 									<StyledLink
 										underlined={subheading === "tools"}
-										//to={`/admin/events/${event.id}/dashboard/tools`}
 										onClick={this.handleToolsMenu.bind(this)}
 									>
 										Tools
@@ -180,7 +240,6 @@ class EventDashboardContainer extends Component {
 								<Typography className={classes.menuText}>
 									<StyledLink
 										underlined={subheading === "sales"}
-										//to={`/admin/events/${event.id}/dashboard/sales`}
 										onClick={() =>
 											notifications.show({ message: "Coming soon." })
 										}
@@ -189,12 +248,10 @@ class EventDashboardContainer extends Component {
 									</StyledLink>
 								</Typography>
 								<Typography className={classes.menuText}>
+									{this.renderReportsMenu()}
 									<StyledLink
 										underlined={subheading === "reports"}
-										//to={`/admin/events/${event.id}/dashboard/reports`}
-										onClick={() =>
-											notifications.show({ message: "Coming soon." })
-										}
+										onClick={this.handleReportsMenu.bind(this)}
 									>
 										Reports
 									</StyledLink>

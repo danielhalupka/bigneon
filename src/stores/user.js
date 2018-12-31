@@ -386,6 +386,15 @@ class User {
 
 		return this.globalRoles.indexOf("OrgScanner") > -1;
 	}
+
+	@computed
+	get hasTransactionReports() {
+		if (this.isOrgAdmin || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
 }
 
 const user = new User();

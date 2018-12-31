@@ -234,7 +234,7 @@ const EventHeaderImage = props => {
 								</Typography>
 
 								<Typography className={classes.smallDetailsText}>
-									Order #1223444
+									{/* Order #1223444 */}
 									<br />
 									We've sent your receipt to{" "}
 									<span className={classes.email}>{user.email}</span>
@@ -404,7 +404,7 @@ const EventHeaderImage = props => {
 							</Typography>
 
 							<Typography className={classes.smallDetailsText}>
-								Order #1223444
+								{/* Order #1223444 */}
 								<br />
 								We've sent your receipt to{" "}
 								<span className={classes.email}>{user.email}</span>

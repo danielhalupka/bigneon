@@ -27,7 +27,7 @@ const styles = theme => {
 };
 
 const StyledLink = props => {
-	const { classes, children, to, underlined, onClick } = props;
+	const { classes, children, to, underlined, href, target, onClick } = props;
 
 	const inner = <span className={classes.text}>{children}</span>;
 
@@ -45,7 +45,7 @@ const StyledLink = props => {
 	}
 
 	return (
-		<a className={outerClasses} onClick={onClick}>
+		<a className={outerClasses} href={href} target={target} onClick={onClick}>
 			{inner}
 		</a>
 	);
@@ -54,7 +54,9 @@ const StyledLink = props => {
 StyledLink.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.oneOfType([PropTypes.array, PropTypes.string]).isRequired,
-	to: PropTypes.string,
+	to: PropTypes.string, //Use this to user react-router
+	href: PropTypes.string, //Use this if it needs to load a new page
+	target: PropTypes.string,
 	onClick: PropTypes.func,
 	underlined: PropTypes.bool
 };
