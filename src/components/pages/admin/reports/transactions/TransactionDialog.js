@@ -3,14 +3,11 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 
-import notifications from "../../../../../../stores/notifications";
-import Bigneon from "../../../../../../helpers/bigneon";
-import Dialog from "../../../../../elements/Dialog";
-import {
-	fontFamilyDemiBold,
-	fontFamilyBold
-} from "../../../../../styles/theme";
-import StyledLink from "../../../../../elements/StyledLink";
+import notifications from "../../../../../stores/notifications";
+import Bigneon from "../../../../../helpers/bigneon";
+import Dialog from "../../../../elements/Dialog";
+import { fontFamilyDemiBold, fontFamilyBold } from "../../../../styles/theme";
+import StyledLink from "../../../../elements/StyledLink";
 
 const styles = theme => ({
 	title: {
@@ -19,6 +16,13 @@ const styles = theme => ({
 	},
 	heading: {
 		fontFamily: fontFamilyDemiBold
+	},
+	subheading: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 1.2,
+		color: "#9DA3B4",
+		textAlign: "center",
+		marginBottom: theme.spacing.unit * 2
 	}
 });
 
@@ -169,12 +173,14 @@ class TransactionDialog extends React.Component {
 	}
 
 	render() {
-		const { open, item, onClose } = this.props;
+		const { open, item, onClose, classes } = this.props;
 
 		let title = "";
+		let subheading = "";
 
 		if (item) {
 			title = item.ticket_name;
+			subheading = item.event_name;
 		}
 
 		return (
@@ -185,6 +191,9 @@ class TransactionDialog extends React.Component {
 				onClose={onClose}
 			>
 				<div>
+					{subheading ? (
+						<Typography className={classes.subheading}>{subheading}</Typography>
+					) : null}
 					{this.renderItemDetails()}
 					<br />
 					{this.renderUserDetails()}

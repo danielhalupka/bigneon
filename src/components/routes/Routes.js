@@ -308,7 +308,7 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/admin/reports/"
+									path="/admin/reports/:report?"
 									component={AdminReports}
 									isAuthenticated={isAuthenticated}
 								/>

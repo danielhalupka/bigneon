@@ -6,6 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react";
 
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
@@ -15,7 +16,6 @@ import Button from "../../../../elements/Button";
 import CheckBox from "../../../../elements/form/CheckBox";
 import StyledLink from "../../../../elements/StyledLink";
 import Divider from "../../../../common/Divider";
-import { observer } from "mobx-react";
 import user from "../../../../../stores/user";
 
 const styles = theme => ({

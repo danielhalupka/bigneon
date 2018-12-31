@@ -1,92 +1,124 @@
 import React, { Component } from "react";
-import {
-	Typography,
-	withStyles,
-	CardContent,
-	Card
-} from "@material-ui/core";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Grid from "@material-ui/core/Grid";
-import PageHeading from "../../../elements/PageHeading";
+import { Typography, withStyles } from "@material-ui/core";
+import { observer } from "mobx-react";
 import user from "../../../../stores/user";
 
+import PageHeading from "../../../elements/PageHeading";
+import Card from "../../../elements/Card";
+import StyledLink from "../../../elements/StyledLink";
+import Transactions from "./transactions/Transactions";
+
 const styles = theme => ({
-	paper: {
-		padding: theme.spacing.unit,
+	content: {
+		padding: theme.spacing.unit * 4,
 		marginBottom: theme.spacing.unit
+	},
+	menuContainer: {
+		display: "flex",
+		marginBottom: theme.spacing.unit * 2
+	},
+	menuText: {
+		marginRight: theme.spacing.unit * 4
 	}
 });
+
+@observer
 class Reports extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			activeTab: 0
-		};
-	}
-	
-	componentDidMount() {
-		
+		this.state = {};
 	}
 
-	loadReports() {
-		
-	}
-
-	emptyCard(reportName) {
+	renderMenu() {
 		const { classes } = this.props;
+
+		const report = this.props.match.params.report;
+		const { hasTransactionReports } = user;
+
 		return (
-			<Card className={classes.paper}>
-				<CardContent>
-					<div>
-						This report is not yet available for your organization.
-					</div>
-				</CardContent>
-			</Card>
+			<div className={classes.menuContainer}>
+				<Typography className={classes.menuText}>
+					<StyledLink
+						underlined={!report || report === "ticket-counts"}
+						to={`/admin/reports/ticket-counts`}
+					>
+						Ticket Counts
+					</StyledLink>
+				</Typography>
+
+				{hasTransactionReports ? (
+					<Typography className={classes.menuText}>
+						<StyledLink
+							underlined={report === "transaction-details"}
+							to={`/admin/reports/transaction-details`}
+						>
+							Transaction Detail
+						</StyledLink>
+					</Typography>
+				) : null}
+
+				<Typography className={classes.menuText}>
+					<StyledLink
+						underlined={report === "box-office"}
+						to={`/admin/reports/box-office`}
+					>
+						SalesBox Office Sales
+					</StyledLink>
+				</Typography>
+				<Typography className={classes.menuText}>
+					<StyledLink
+						underlined={report === "reconciliation"}
+						to={`/admin/reports/reconciliation`}
+					>
+						Reconciliation
+					</StyledLink>
+				</Typography>
+				<Typography className={classes.menuText}>
+					<StyledLink
+						underlined={report === "weekly-event-settlement"}
+						to={`/admin/reports/weekly-event-settlement`}
+					>
+						Weekly Event Settlement
+					</StyledLink>
+				</Typography>
+			</div>
 		);
 	}
 
-	render() {
-		const { activeTab } = this.state;
-		const { history } = this.props;
+	renderContent() {
+		const report = this.props.match.params.report;
 		const organizationId = user.currentOrganizationId;
+
+		if (!organizationId) {
+			return <Typography>Loading...</Typography>;
+		}
+
+		//Add report components here as needed
+		switch (report) {
+			case "transaction-details":
+				return <Transactions organizationId={organizationId} />;
+			default:
+				return (
+					<Typography>
+						This report is not yet available for your organization.
+					</Typography>
+				);
+		}
+	}
+
+	render() {
+		const { classes } = this.props;
 
 		return (
 			<div>
 				<PageHeading>Organization Reports</PageHeading>
-				<Tabs
-					value={activeTab}
-					onChange={(event, activeTab) => this.setState({ activeTab })}
-				>
-					<Tab key={0} label="Ticket Counts" />
-					<Tab key={1} label="Transaction Detail" />
-					<Tab key={2} label="Box Office Sales" />
-					<Tab key={3} label="Reconciliation" />
-					<Tab key={4} label="Weekly Event Settlement" />
-				</Tabs>
 
-				<Grid container spacing={24}>
-					<Grid item xs={12} sm={12} lg={12}>
-						{activeTab === 0 ? (
-							this.emptyCard()
-						) : null}
-
-						{activeTab === 1 ? (
-							this.emptyCard()
-						) : null}
-
-						{activeTab === 2 ? (
-							this.emptyCard()
-						) : null}
-
-						{activeTab === 3 ? (
-							this.emptyCard()
-						) : null}
-						{activeTab === 4 ? (
-							this.emptyCard()
-						) : null}
-					</Grid>
-				</Grid>
+				<Card>
+					<div className={classes.content}>
+						{this.renderMenu()}
+						{this.renderContent()}
+					</div>
+				</Card>
 			</div>
 		);
 	}
