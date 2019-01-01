@@ -149,7 +149,7 @@ const EventHeaderImage = props => {
 					<div
 						className={classes.blurryImage}
 						style={{
-							backgroundImage: `url(${promo_image_url})`,
+							backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)),url(${promo_image_url})`,
 							height: height * 1.1
 						}}
 					/>
@@ -280,7 +280,7 @@ const EventHeaderImage = props => {
 					<div
 						className={classes.blurryImage}
 						style={{
-							backgroundImage: `url(${promo_image_url})`,
+							backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${promo_image_url})`,
 							height: height * 1.1
 						}}
 					/>

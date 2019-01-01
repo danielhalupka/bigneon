@@ -16,7 +16,6 @@ const styles = theme => ({
 	media: {
 		width: "100%",
 		height: 190,
-		backgroundColor: "linear-gradient(to top, #000000, rgba(0, 0, 0, 0))",
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "cover",
 		backgroundPosition: "center",
@@ -73,7 +72,7 @@ const ArtistSummary = props => {
 		<Card variant="subCard">
 			<div
 				className={classes.media}
-				style={{ backgroundImage: `url(${imageSrc})` }}
+				style={{ backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${imageSrc})` }}
 			>
 				<div className={classes.mediaTopRow}>
 					{headliner ? <CornerRibbon>Headliner</CornerRibbon> : null}
@@ -137,9 +136,11 @@ const ArtistSummary = props => {
 					</div>
 				</div>
 			</div>
-			<div className={classes.content}>
-				<Typography className={classes.bio}>{bio}</Typography>
-			</div>
+			{bio ? (
+				<div className={classes.content}>
+					<Typography className={classes.bio}>{bio}</Typography>
+				</div>
+			) : null}
 		</Card>
 	);
 };

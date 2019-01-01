@@ -31,7 +31,8 @@ const styles = theme => ({
 		paddingTop: theme.spacing.unit * 4
 	},
 	artistContainer: {
-		marginBottom: theme.spacing.unit * 2
+		marginBottom: theme.spacing.unit * 2,
+		padding: theme.spacing.unit * 2
 	},
 	heading: {
 		fontSize: theme.typography.fontSize * 2,
@@ -405,18 +406,20 @@ class ViewEvent extends Component {
 							>
 								<Grid item xs={12} sm={12} md={6} lg={6}>
 									<div className={classes.eventDetailsContent}>
-										<Typography className={classes.heading}>
-											Description
-										</Typography>
 										<Typography className={classes.description}>
 											{additional_info}
 										</Typography>
-
-										{artists.map(({ artist }, index) => (
-											<div key={index} className={classes.artistContainer}>
-												<ArtistSummary headliner={index === 0} {...artist} />
-											</div>
-										))}
+										<Grid container
+											direction="row"
+											justify="flex-start"
+											alignItems="flex-start"
+										>
+											{artists.map(({ artist }, index) => (
+												<Grid item xs={6} key={index} className={classes.artistContainer}>
+													<ArtistSummary headliner={index === 0} {...artist} />
+												</Grid>
+											))}
+										</Grid>
 									</div>
 								</Grid>
 

@@ -99,7 +99,7 @@ const EventResultCard = ({
 }) => {
 	const style = {};
 	if (promo_image_url) {
-		style.backgroundImage = `url(${promo_image_url})`;
+		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${promo_image_url})`;
 	}
 
 	return (
