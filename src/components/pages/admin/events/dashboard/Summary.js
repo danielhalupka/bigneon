@@ -47,6 +47,10 @@ const styles = theme => {
 			width: 28,
 			marginRight: theme.spacing.unit,
 			marginBottom: theme.spacing.unit
+		},
+		emptyStateIllustration: {
+			width: 200,
+			justifyContent: "center"
 		}
 	};
 };
@@ -260,21 +264,36 @@ class Summary extends Component {
 		if (!event) {
 			return <Typography>Loading...</Typography>;
 		}
+		if (event.is_external){
+			return (
+				<Container eventId={event.id} subheading={"summary"}>
+					<Grid
+						container
+						direction="column"
+						justify="center"
+						alignItems="center"
+					>
+						<img src="/images/no_sales_data_illustration.png" style={{ margin:50,width:200 }} />
+						<Typography variant="title">This event is externally hosted.</Typography>
+					</Grid>
+				</Container>
+			);
+		} else {
+			return (
+				<Container eventId={event.id} subheading={"summary"}>
+					{this.renderBarChart()}
 
-		return (
-			<Container eventId={event.id} subheading={"summary"}>
-				{this.renderBarChart()}
+					<div style={{ marginTop: 60 }} />
 
-				<div style={{ marginTop: 60 }} />
+					{this.renderNumbers()}
 
-				{this.renderNumbers()}
+					<Divider style={{ marginTop: 40, marginBottom: 40 }} />
 
-				<Divider style={{ marginTop: 40, marginBottom: 40 }} />
-
-				<Typography variant="title">Ticket Volumes</Typography>
-				{this.renderTicketVolumes()}
-			</Container>
-		);
+					<Typography variant="title">Ticket Volumes</Typography>
+					{this.renderTicketVolumes()}
+				</Container>
+			);
+		}
 	}
 }
 

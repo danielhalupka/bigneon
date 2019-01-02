@@ -240,34 +240,28 @@ class EventDashboardContainer extends Component {
 										Dashboard
 									</StyledLink>
 								</Typography>
-								<Typography className={classes.menuText}>
-									{this.renderToolsMenu()}
-									<StyledLink
-										underlined={subheading === "tools"}
-										onClick={this.handleToolsMenu.bind(this)}
-									>
-										Tools
-									</StyledLink>
-								</Typography>
-								<Typography className={classes.menuText}>
-									<StyledLink
-										underlined={subheading === "sales"}
-										onClick={() =>
-											notifications.show({ message: "Coming soon." })
-										}
-									>
-										Sales
-									</StyledLink>
-								</Typography>
-								<Typography className={classes.menuText}>
-									{this.renderReportsMenu()}
-									<StyledLink
-										underlined={subheading === "reports"}
-										onClick={this.handleReportsMenu.bind(this)}
-									>
-										Reports
-									</StyledLink>
-								</Typography>
+								{event.is_external ? null : (
+									<Typography className={classes.menuText}>
+										{this.renderToolsMenu()}
+										<StyledLink
+											underlined={subheading === "tools"}
+											onClick={this.handleToolsMenu.bind(this)}
+										>
+											Tools
+										</StyledLink>
+									</Typography>
+								)}
+								{event.is_external ? null : (
+									<Typography className={classes.menuText}>
+										{this.renderReportsMenu()}
+										<StyledLink
+											underlined={subheading === "reports"}
+											onClick={this.handleReportsMenu.bind(this)}
+										>
+											Reports
+										</StyledLink>
+									</Typography>
+								)}
 							</div>
 						</div>
 						<Divider style={{ marginBottom: 10 }} />

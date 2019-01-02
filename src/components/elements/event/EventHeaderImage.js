@@ -181,7 +181,7 @@ const EventHeaderImage = props => {
 								</Typography>
 								<Typography className={classes.eventName}>{name}</Typography>
 								<Typography className={classes.withArtists}>
-									<SupportingArtistsLabel artists={artists} />
+									<SupportingArtistsLabel eventName={name} artists={artists} />
 								</Typography>
 							</div>
 						) : null}
@@ -194,7 +194,7 @@ const EventHeaderImage = props => {
 								</Typography>
 								<Typography className={classes.eventName}>{name}</Typography>
 								<Typography className={classes.withArtistsDetailed}>
-									<SupportingArtistsLabel artists={artists} />
+									<SupportingArtistsLabel eventName={name} artists={artists} />
 								</Typography>
 
 								<div className={classes.spaceLine} />
@@ -218,7 +218,7 @@ const EventHeaderImage = props => {
 								</Typography>
 								<Typography className={classes.eventName}>{name}</Typography>
 								<Typography className={classes.withArtistsDetailed}>
-									<SupportingArtistsLabel artists={artists} />
+									<SupportingArtistsLabel eventName={name} artists={artists} />
 								</Typography>
 
 								<div className={classes.spaceLine} />
@@ -317,7 +317,7 @@ const EventHeaderImage = props => {
 									[classes.withArtistsMobile]: true
 								})}
 							>
-								<SupportingArtistsLabel artists={artists} />
+								<SupportingArtistsLabel eventName={name} artists={artists} />
 							</Typography>
 						</div>
 					) : null}
@@ -347,7 +347,7 @@ const EventHeaderImage = props => {
 									[classes.withArtistsDetailed]: true
 								})}
 							>
-								<SupportingArtistsLabel artists={artists} />
+								<SupportingArtistsLabel eventName={name} artists={artists} />
 							</Typography>
 
 							<div className={classes.spaceLine} />
@@ -388,7 +388,7 @@ const EventHeaderImage = props => {
 									[classes.withArtistsDetailed]: true
 								})}
 							>
-								<SupportingArtistsLabel artists={artists} />
+								<SupportingArtistsLabel eventName={name} artists={artists} />
 							</Typography>
 
 							<div className={classes.spaceLine} />

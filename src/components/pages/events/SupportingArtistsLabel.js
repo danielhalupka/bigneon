@@ -2,14 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 
 //Creates a string like: "With Steve Marly, Bob Sinclair"
-const SupportingArtistsLabel = ({ artists }) => {
-	if (!artists || artists.length < 2) {
+const SupportingArtistsLabel = ({ eventName, artists }) => {
+	if (!artists) {
 		return null;
 	}
 
 	return artists.map(({ artist }, index) => {
 		if (index === 0) {
-			return <span key={index}>with </span>;
+			if(eventName !== artist.name) {
+				return <span key={index}>with {artist.name}{index + 1 < artists.length ? ", " : ""}</span>;
+			} else if(index + 1 < artists.length) {
+				return <span key={index}>with </span>;
+			} else {
+				return null;
+			}
 		}
 
 		return (

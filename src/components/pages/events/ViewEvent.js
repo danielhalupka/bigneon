@@ -167,7 +167,7 @@ class ViewEvent extends Component {
 	get getDetailPageButtonCta() {
 		const { event, hasAvailableTickets } = selectedEvent;
 
-		if (hasAvailableTickets === false) {
+		if (hasAvailableTickets === false && !event.is_external) {
 			return { ctaText: "No available tickets", enabled: false };
 		}
 
@@ -409,13 +409,21 @@ class ViewEvent extends Component {
 										<Typography className={classes.description}>
 											{additional_info}
 										</Typography>
-										<Grid container
+										<Grid
+											container
 											direction="row"
 											justify="flex-start"
 											alignItems="flex-start"
 										>
 											{artists.map(({ artist }, index) => (
-												<Grid item xs={6} key={index} className={classes.artistContainer}>
+												<Grid
+													item
+													xs={12}
+													sm={6}
+													md={6}
+													key={index}
+													className={classes.artistContainer}
+												>
 													<ArtistSummary headliner={index === 0} {...artist} />
 												</Grid>
 											))}

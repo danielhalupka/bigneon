@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { fontFamilyDemiBold, secondaryHex } from "../styles/theme";
@@ -19,6 +20,11 @@ const styles = theme => {
 			fontSize: theme.typography.fontSize * 2.5,
 			lineHeight: 0.5
 		},
+		longHeading: {
+			alignContent: "center",
+			lineHeight: "75%",
+			fontSize: theme.typography.fontSize * 1.57
+		},
 		subheading: {
 			color: secondaryHex,
 			textTransform: "uppercase",
@@ -36,13 +42,34 @@ const styles = theme => {
 const PageHeading = props => {
 	const { classes, iconUrl, children, subheading, style = {} } = props;
 
+	//Calculate the total characters for the heading and adjust style for lengthy ones
+	let totalChars = 0;
+	if (typeof children === "string") {
+		totalChars = children.length;
+	} else if (Array.isArray(children)) {
+		children.forEach(child => {
+			if (typeof child === "string") {
+				totalChars = totalChars + child.length;
+			}
+		});
+	}
+
+	const headingIsLong = totalChars > 21; //Adjust this if needed
+
 	return (
 		<div style={style}>
 			<div className={classes.mainContent}>
 				{iconUrl ? (
 					<img alt={children} src={iconUrl} className={classes.icon} />
 				) : null}
-				<Typography className={classes.heading}>{children}</Typography>
+				<Typography
+					className={classnames({
+						[classes.heading]: true,
+						[classes.longHeading]: headingIsLong
+					})}
+				>
+					{children}
+				</Typography>
 			</div>
 
 			{subheading ? (

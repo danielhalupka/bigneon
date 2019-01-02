@@ -473,7 +473,7 @@ class Details extends Component {
 						error={errors.showTime}
 						value={showTime}
 						name="showTime"
-						label="Show time"
+						label="Showtime"
 						onChange={showTime => this.changeDetails({ showTime })}
 						onBlur={validateFields}
 						format="HH:mm"

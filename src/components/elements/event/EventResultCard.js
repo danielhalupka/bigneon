@@ -120,14 +120,8 @@ const EventResultCard = ({
 							{moment.utc(event_start).format("ddd, MMM Do")}
 						</Typography>
 					</div>
-					<div className={classes.singleDetail} style={{ textAlign: "center" }}>
-						<Typography className={classes.label}>Begins</Typography>
-						<Typography className={classes.value}>
-							{moment.utc(event_start).format("h:mm:a")}
-						</Typography>
-					</div>
 					<div className={classes.singleDetail} style={{ textAlign: "right" }}>
-						<Typography className={classes.label}>Show time</Typography>
+						<Typography className={classes.label}>Showtime</Typography>
 						<Typography className={classes.value}>
 							{moment.utc(event_start).format("h:mm:a")}
 						</Typography>

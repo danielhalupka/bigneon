@@ -358,13 +358,13 @@ const TicketDetails = observer(props => {
 
 				{!showPricing ? (
 					<div>
-						<FormHeading classes={classes}>Auto price point</FormHeading>
+						<FormHeading classes={classes}>Scheduled Price Changes</FormHeading>
 
 						<Button
 							variant="additional"
 							onClick={() => updateTicketType(index, { showPricing: true })}
 						>
-							Add auto price change
+							Schedule a price change
 						</Button>
 					</div>
 				) : null}
@@ -384,7 +384,7 @@ const TicketDetails = observer(props => {
 							return (
 								<div key={pricePointIndex}>
 									<FormHeading classes={classes}>
-										Auto price point {pricePointIndex + 1}
+										Scheduled price change {pricePointIndex + 1}
 									</FormHeading>
 									<PricePoint
 										updatePricePointDetails={pricePointDetails => {
@@ -414,7 +414,7 @@ const TicketDetails = observer(props => {
 						variant="additional"
 						onClick={() => eventUpdateStore.addTicketPricing(index)}
 					>
-						Add auto price change
+						Schedule a price change
 					</Button>
 				</Collapse>
 			</Collapse>

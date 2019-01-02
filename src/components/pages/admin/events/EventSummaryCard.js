@@ -125,6 +125,7 @@ const EventSummaryCard = props => {
 		id,
 		imageUrl,
 		name,
+		isExternal,
 		venueName,
 		menuButton,
 		isPublished,
@@ -181,64 +182,75 @@ const EventSummaryCard = props => {
 										</Grid>
 
 										<Grid item xs={12} sm={12} md={6} lg={6}>
-											<CheckBox style={{ cursor: "text" }} active={isOnSale}>
+											<CheckBox style={{ cursor: "text" }} active={isOnSale || isExternal}>
 												On&nbsp;sale
 											</CheckBox>
 										</Grid>
 									</Grid>
 								)}
 							</div>
-							<div className={classes.totalsContainer}>
-								<Total classes={classes} value={totalSold} color={"#707ced"}>
-									Sold
-								</Total>
+							{!isExternal ? (
+								<div className={classes.totalsContainer}>
+									<Total classes={classes} value={totalSold} color={"#707ced"}>
+										Sold
+									</Total>
 
-								<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider} />
 
-								<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
-									Open
-								</Total>
+									<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
+										Open
+									</Total>
 
-								<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider} />
 
-								<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
-									Held
-								</Total>
+									<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
+										Held
+									</Total>
 
-								<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider} />
 
-								<Total classes={classes} value={totalCapacity}>
-									Capacity
-								</Total>
+									<Total classes={classes} value={totalCapacity}>
+										Capacity
+									</Total>
 
-								<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider} />
 
-								<Total classes={classes} value={`$${totalSales}`}>
-									Sales
-								</Total>
-							</div>
+									<Total classes={classes} value={`$${totalSales}`}>
+										Sales
+									</Total>
+								</div>
+							) : 
+								<div className={classes.totalsContainer}>
+									<Typography variant="caption">Externally Ticketed</Typography>
+								</div>
+							}
 						</div>
-						<div className={classes.row3}>
-							<HorizontalBreakdownBar
-								title="Ticket progress"
-								values={[
-									{ label: "Tickets sold", value: totalSold },
-									{ label: "Tickets open", value: totalOpen },
-									{ label: "Tickets held", value: totalHeld }
-								]}
-							/>
-						</div>
-
-						{!isExpanded ? (
-							<div
-								className={classes.expandIconRow}
-								onClick={() => onExpandClick(id)}
-							>
-								<img src={"/icons/down-active.svg"} />
+						{!isExternal ? (
+							<div className={classes.row3}>
+								<HorizontalBreakdownBar
+									title="Ticket progress"
+									values={[
+										{ label: "Tickets sold", value: totalSold },
+										{ label: "Tickets open", value: totalOpen },
+										{ label: "Tickets held", value: totalHeld }
+									]}
+								/>
 							</div>
-						) : (
-							<div className={classes.expandIconRowPlaceholder}>&nbsp;</div>
-						)}
+						) : null}
+						{isExternal ? 
+							<div className={classes.expandIconRowPlaceholder}>&nbsp;</div> : 
+							(!isExpanded ? (
+								<div
+									className={classes.expandIconRow}
+									onClick={() => onExpandClick(id)}
+								>
+									<img src={"/icons/down-active.svg"} />
+								</div>
+							) : (
+								<div className={classes.expandIconRowPlaceholder}>&nbsp;</div>
+							)
+							)
+						}
 					</div>
 				</div>
 

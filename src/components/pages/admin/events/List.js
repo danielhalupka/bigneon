@@ -195,14 +195,6 @@ class EventsList extends Component {
 						MenuOptionIcon: EditIcon
 					},
 					{
-						text: "Ticket holds",
-						onClick: () =>
-							this.props.history.push(
-								`/admin/events/${this.eventMenuSelected}/dashboard/holds`
-							),
-						MenuOptionIcon: TicketHoldsIcon
-					},
-					{
 						text: "View event",
 						onClick: () =>
 							this.props.history.push(`/events/${this.eventMenuSelected}`),
@@ -221,14 +213,6 @@ class EventsList extends Component {
 						onClick: () =>
 							this.setState({ cancelEventId: this.eventMenuSelected }),
 						MenuOptionIcon: CancelIcon
-					},
-					{
-						text: "Create widget",
-						onClick: () =>
-							this.props.history.push(
-								`/admin/widget-builder/${this.eventMenuSelected}`
-							),
-						MenuOptionIcon: CreateWidgetIcon
 					}
 				];
 
@@ -276,6 +260,7 @@ class EventsList extends Component {
 							id={id}
 							imageUrl={promo_image_url}
 							name={name}
+							isExternal={event.is_external}
 							venueName={venue.name || "Unknown Venue"}
 							eventDate={moment.utc(event.event_start).local()}
 							menuButton={MenuButton}
