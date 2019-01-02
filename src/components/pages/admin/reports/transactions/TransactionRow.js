@@ -46,9 +46,13 @@ const TransactionRow = props => {
 		{ flex: 2, textAlign: "left" },
 		{ flex: 1, textAlign: "left" },
 		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
 		{ flex: 1, textAlign: "left" }
 	];
+
+	//If they're adding the event name, make the second column sider
+	if (children.length === 8) {
+		columnStyles.splice(1, 0, { flex: 3, textAlign: "left" });
+	}
 
 	const columns = children.map((text, index) => {
 		const className = heading
@@ -57,7 +61,12 @@ const TransactionRow = props => {
 				? classes.activeText
 				: classes.text;
 		return (
-			<Typography className={className} key={index} style={columnStyles[index]}>
+			<Typography
+				noWrap
+				className={className}
+				key={index}
+				style={columnStyles[index]}
+			>
 				{text}
 			</Typography>
 		);

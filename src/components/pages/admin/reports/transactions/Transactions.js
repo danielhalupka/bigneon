@@ -38,7 +38,7 @@ class Transactions extends Component {
 			});
 		}
 
-		const { eventName } = this.props;
+		const { eventName, eventId } = this.props;
 
 		let csvRows = [];
 
@@ -220,6 +220,9 @@ class Transactions extends Component {
 			return <Typography>No transactions found.</Typography>;
 		}
 
+		//If we're showing this on an org level then we need to show event names
+		const includeEventName = !this.props.eventId;
+
 		const ths = [
 			"Quantity",
 			"Ticket name",
@@ -227,9 +230,12 @@ class Transactions extends Component {
 			"Time",
 			"Unit price",
 			"Gross",
-			"Company fee",
-			"Client fee"
+			"Fee"
 		];
+
+		if (includeEventName) {
+			ths.splice(1, 0, "Event");
+		}
 
 		return (
 			<div>
@@ -263,9 +269,12 @@ class Transactions extends Component {
 						transaction_date,
 						dollars(unit_price_in_cents),
 						dollars(gross),
-						dollars(company_fee_in_cents),
-						dollars(client_fee_in_cents)
+						dollars(company_fee_in_cents + client_fee_in_cents)
 					];
+
+					if (includeEventName) {
+						tds.splice(1, 0, event_name);
+					}
 
 					return (
 						<TransactionRow
