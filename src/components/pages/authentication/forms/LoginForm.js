@@ -13,6 +13,7 @@ import FacebookButton from "../social/FacebookButton";
 import Divider from "../../../common/Divider";
 import PasswordResetDialog from "../PasswordResetDialog";
 import Bigneon from "../../../../helpers/bigneon";
+import Recaptcha from "../../../common/Recaptcha";
 
 const styles = () => ({});
 
@@ -26,8 +27,13 @@ class LoginForm extends Component {
 			confirmPassword: "",
 			isSubmitting: false,
 			errors: {},
-			resetOpen: false
+			resetOpen: false,
+			recaptchaReponse: null
 		};
+
+		this.handleRecaptchaVerify = this.handleRecaptchaVerify.bind(this);
+		this.handleRecaptchaExpire = this.handleRecaptchaExpire.bind(this);
+		this.validateFields = this.validateFields.bind(this);
 	}
 
 	validateFields() {
@@ -61,10 +67,18 @@ class LoginForm extends Component {
 		return true;
 	}
 
+	handleRecaptchaVerify(response) {
+		this.setState({ recaptchaResponse: response });
+	}
+
+	handleRecaptchaExpire() {
+		this.setState({ recaptchaResponse: null });
+	}
+
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { email, password } = this.state;
+		const { email, password, recaptchaResponse } = this.state;
 
 		this.submitAttempted = true;
 
@@ -72,12 +86,18 @@ class LoginForm extends Component {
 			return false;
 		}
 
+		const params = {
+			email,
+			password
+		};
+
+		if (recaptchaResponse) {
+			params["g-recaptcha-response"] = recaptchaResponse;
+		}
+
 		this.setState({ isSubmitting: true });
 		Bigneon()
-			.auth.create({
-				email,
-				password
-			})
+			.auth.create(params)
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
 				if (access_token) {
@@ -140,6 +160,10 @@ class LoginForm extends Component {
 							type="password"
 							onChange={e => this.setState({ password: e.target.value })}
 							onBlur={this.validateFields.bind(this)}
+						/>
+						<Recaptcha
+							callback={this.handleRecaptchaVerify}
+							expiredCallback={this.handleRecaptchaExpire}
 						/>
 					</CardContent>
 					<CardActions>
