@@ -132,19 +132,12 @@ class EventUpdate {
 			priceAtDoor: "",
 			increment: 1,
 			limitPerPerson: 10,
+			price_in_cents: "",
 			startDate,
 			startTime: startDate,
 			endDate,
-			pricing: [
-				{
-					id: "",
-					ticketId: "", //TODO remove this if not needed
-					name: "Default price point",
-					startDate,
-					endDate,
-					value: ""
-				}
-			]
+			//By default the server will create a Default ticket price point, anything additional added to this array is an override.
+			pricing: []
 		};
 
 		ticketTypes.push(ticketType);
@@ -163,16 +156,6 @@ class EventUpdate {
 		let ticketTypes = this.ticketTypes;
 
 		ticketTypes[index] = { ...ticketTypes[index], ...details };
-
-		//On new events update the last pricing point to match the end date of the ticketType
-		if (!this.id && details.hasOwnProperty("endDate")) {
-			ticketTypes[index].pricing[
-				ticketTypes[index].pricing.length - 1
-			].endDate = moment(details.endDate);
-			ticketTypes[index].pricing[
-				ticketTypes[index].pricing.length - 1
-			].endTime = moment(details.endTime);
-		}
 
 		this.ticketTypes = ticketTypes;
 	}
@@ -207,7 +190,7 @@ class EventUpdate {
 			startTime,
 			endDate,
 			endTime,
-			value: 0
+			value: ticketTypes[index].priceForDisplay || ""
 		});
 
 		ticketTypes[index].pricing = pricing;

@@ -118,7 +118,8 @@ const TicketDetails = observer(props => {
 		showPricing,
 		pricing,
 		eventStartDate,
-		ticketTimesDirty
+		ticketTimesDirty,
+		priceForDisplay
 	} = props;
 
 	let useEndDate = endDate;
@@ -127,8 +128,6 @@ const TicketDetails = observer(props => {
 		useEndDate = eventStartDate.clone();
 		useEndTime = eventStartDate;
 	}
-	const defaultPrice =
-		pricing && pricing[0] && pricing[0].value ? pricing[0].value : "";
 
 	const pricingErrors = errors && errors.pricing ? errors.pricing : {};
 
@@ -174,20 +173,14 @@ const TicketDetails = observer(props => {
 								<InputAdornment position="start">$</InputAdornment>
 							)
 						}}
-						error={errors.value}
-						value={defaultPrice}
+						error={errors.priceForDisplay}
+						value={priceForDisplay}
 						name="value"
 						label="Price"
 						placeholder=""
 						type="number"
 						onChange={e => {
-							let updatedPricePoint = {
-								...pricing[0],
-								value: e.target.value
-							};
-							let updatedPricing = pricing;
-							updatedPricing[0] = updatedPricePoint;
-							updateTicketType(index, { pricing: updatedPricing });
+							updateTicketType(index, { priceForDisplay:  e.target.value });
 						}}
 						onBlur={validateFields}
 					/>
@@ -362,10 +355,14 @@ const TicketDetails = observer(props => {
 
 						<Button
 							variant="additional"
-							onClick={() => updateTicketType(index, { showPricing: true })}
+							onClick={() => {
+								eventUpdateStore.addTicketPricing(index);
+								updateTicketType(index, { showPricing: true });
+							}}
 						>
 							Schedule a price change
 						</Button>
+
 					</div>
 				) : null}
 

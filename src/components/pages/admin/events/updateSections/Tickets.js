@@ -21,7 +21,8 @@ const formatForSaving = (ticketTypes, event) => {
 			startTime,
 			saleEndTimeOption,
 			endTime,
-			limitPerPerson
+			limitPerPerson,
+			priceForDisplay
 		} = ticketType;
 
 		let { startDate, endDate } = ticketType;
@@ -109,6 +110,7 @@ const formatForSaving = (ticketTypes, event) => {
 			end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			limit_per_person:
 				limitPerPerson === "" ? undefined : Number(limitPerPerson),
+			price_in_cents: Number(priceForDisplay) * 100,
 			ticket_pricing
 		});
 	});
@@ -128,7 +130,8 @@ const formatForInput = (ticket_types, event) => {
 			limit_per_person,
 			ticket_pricing,
 			start_date,
-			end_date
+			end_date,
+			price_in_cents
 		} = ticket_type;
 
 		let pricing = [];
@@ -194,7 +197,8 @@ const formatForInput = (ticket_types, event) => {
 			endTime: ticketEndDate,
 			priceAtDoor, //TODO get the actual value when API works
 			pricing,
-			showPricing: pricing.length > 1
+			showPricing: pricing.length > 0,
+			priceForDisplay: price_in_cents / 100
 		};
 
 		ticketTypes.push(ticketType);
@@ -243,7 +247,8 @@ const validateFields = ticketTypes => {
 			capacity,
 			increment,
 			//limit,
-			pricing
+			pricing,
+			priceForDisplay
 		} = ticket;
 
 		startDate = moment(startDate);
@@ -299,9 +304,10 @@ const validateFields = ticketTypes => {
 			ticketErrors.increment = "Increment must be more than 1";
 		}
 
-		if (!pricing) {
-			ticketErrors.pricing = "Add pricing for ticket.";
-		} else {
+		if (priceForDisplay === "" || priceForDisplay < 0 || priceForDisplay === undefined) {
+			ticketErrors.priceForDisplay = "Tickets must have a price";
+		}
+		if (pricing.length) {
 			let pricingErrors = {};
 
 			//The server seems to be messing with the array orders somehow.
