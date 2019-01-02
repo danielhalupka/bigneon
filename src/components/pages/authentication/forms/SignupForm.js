@@ -4,6 +4,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import PropTypes from "prop-types";
 
+import Recaptcha from "../../../common/Recaptcha";
 import InputGroup from "../../../common/form/InputGroup";
 import Button from "../../../elements/Button";
 import user from "../../../../stores/user";
@@ -27,9 +28,13 @@ class SignupForm extends Component {
 			phone: "",
 			password: "",
 			confirmPassword: "",
+			recaptchaResponse: null,
 			isSubmitting: false,
 			errors: {}
 		};
+
+		this.handleRecaptchaVerify = this.handleRecaptchaVerify.bind(this);
+		this.handleRecaptchaExpire = this.handleRecaptchaExpire.bind(this);
 	}
 
 	validateFields() {
@@ -91,13 +96,26 @@ class SignupForm extends Component {
 		return true;
 	}
 
-	onSignupSuccess({ email, password }) {
+	handleRecaptchaVerify(response) {
+		this.setState({ recaptchaResponse: response });
+	}
+
+	handleRecaptchaExpire() {
+		this.setState({ recaptchaResponse: null });
+	}
+
+	onSignupSuccess({ email, password, recaptchaResponse }) {
+		const params = {
+			email,
+			password
+		};
+
+		if (recaptchaResponse) {
+			params["g-recaptcha-response"] = recaptchaResponse;
+		}
 		//Successful signup, now get a token
 		Bigneon()
-			.auth.authenticate({
-				email,
-				password
-			})
+			.auth.authenticate(params)
 			.then(response => {
 				const { access_token, refresh_token } = response.data;
 				if (access_token) {
@@ -146,7 +164,14 @@ class SignupForm extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 
-		const { first_name, last_name, email, phone, password } = this.state;
+		const {
+			first_name,
+			last_name,
+			email,
+			phone,
+			password,
+			recaptchaResponse
+		} = this.state;
 
 		this.submitAttempted = true;
 
@@ -156,16 +181,22 @@ class SignupForm extends Component {
 
 		this.setState({ isSubmitting: true });
 
+		const params = {
+			first_name,
+			last_name,
+			email,
+			//phone,
+			password
+		};
+
+		if (recaptchaResponse) {
+			params["g-recaptcha-response"] = recaptchaResponse;
+		}
+
 		Bigneon()
-			.users.create({
-				first_name,
-				last_name,
-				email,
-				//phone,
-				password
-			})
+			.users.create(params)
 			.then(response => {
-				this.onSignupSuccess({ email, password });
+				this.onSignupSuccess({ email, password, recaptchaResponse });
 			})
 			.catch(error => {
 				console.error(error);
@@ -264,6 +295,12 @@ class SignupForm extends Component {
 									this.setState({ confirmPassword: e.target.value })
 								}
 								onBlur={this.validateFields.bind(this)}
+							/>
+						</Grid>
+						<Grid item xs={12} sm={12} lg={12}>
+							<Recaptcha
+								callback={this.handleRecaptchaVerify}
+								expiredCallback={this.handleRecaptchaExpire}
 							/>
 						</Grid>
 					</Grid>
