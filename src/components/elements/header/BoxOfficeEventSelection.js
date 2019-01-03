@@ -123,31 +123,36 @@ class BoxOfficeEventSelection extends React.Component {
 				open={open}
 				onClose={this.handleClose.bind(this)}
 			>
-				{availableEvents.map(({ id, name, promo_image_url, venue }) => (
-					<MenuItem
-						key={id}
-						onClick={() => {
-							boxOffice.setActiveEventId(id, true);
-							this.handleClose();
-						}}
-						selected={id === activeEventId}
-					>
-						<ListItemIcon>
-							<div
-								className={classes.promoImage}
-								style={{
-									backgroundImage: `url(${promo_image_url ||
-										"/images/app-promo-background.png"})`
-								}}
+				{availableEvents.map(
+					({ id, name, promo_image_url, venue, event_start, door_time }) => (
+						<MenuItem
+							key={id}
+							onClick={() => {
+								boxOffice.setActiveEventId(id, true);
+								this.handleClose();
+							}}
+							selected={id === activeEventId}
+						>
+							<ListItemIcon>
+								<div
+									className={classes.promoImage}
+									style={{
+										backgroundImage: `url(${promo_image_url ||
+											"/images/app-promo-background.png"})`
+									}}
+								/>
+							</ListItemIcon>
+							<ListItemText
+								inset
+								primary={name}
+								secondary={` ${venue.name} - ${displayTime({
+									event_start,
+									door_time
+								})}`}
 							/>
-						</ListItemIcon>
-						<ListItemText
-							inset
-							primary={name}
-							secondary={` ${venue.name} - ${displayTime(event)}`}
-						/>
-					</MenuItem>
-				))}
+						</MenuItem>
+					)
+				)}
 			</Menu>
 		);
 	}
@@ -192,7 +197,7 @@ class BoxOfficeEventSelection extends React.Component {
 							<div>
 								<Typography className={classes.heading}>{name}</Typography>
 								<Typography className={classes.subHeading}>
-									{venue.name} - {displayTime(event)}
+									{venue.name} - {displayTime(activeEventDetails)}
 								</Typography>
 							</div>
 						</Hidden>
