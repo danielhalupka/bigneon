@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { Divider, withStyles } from "@material-ui/core";
+import { Divider, withStyles, Typography } from "@material-ui/core";
 import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
@@ -37,12 +37,16 @@ const styles = theme => ({
 		justifyContent: "space-around",
 		alignItems: "center"
 	},
-	futureDate: {
+	publishDateContainer: {
 		marginTop: 20,
 		display: "flex"
+	},
+	publishedAt: {
+		marginTop: 20
 	}
 });
 
+@observer
 class Event extends Component {
 	constructor(props) {
 		super(props);
@@ -61,8 +65,8 @@ class Event extends Component {
 			this.props.match.params &&
 			this.props.match.params.id
 		) {
-			const eventId = this.props.match.params.id;
-			eventUpdateStore.loadDetails(eventId);
+			this.eventId = this.props.match.params.id;
+			eventUpdateStore.loadDetails(this.eventId);
 			//On loading an event, don't automatically change ticket times
 			this.setState({ ticketTimesDirty: true });
 		} else {
@@ -142,6 +146,7 @@ class Event extends Component {
 
 		//Check if the ID in the URL changed
 		if (currentId && currentId !== prevId) {
+			this.eventId = currentId;
 			eventUpdateStore.updateEvent({ id: currentId });
 		}
 
@@ -178,8 +183,6 @@ class Event extends Component {
 		const { id } = eventUpdateStore;
 		this.updateUrl(id);
 
-		eventUpdateStore.loadDetails(id);
-
 		return saveResponse;
 	}
 
@@ -194,6 +197,7 @@ class Event extends Component {
 		const { result, error } = saveResponse;
 
 		if (result) {
+			eventUpdateStore.loadDetails(this.eventId);
 			notifications.show({ variant: "success", message: "Draft saved." });
 		} else {
 			console.error(error);
@@ -222,7 +226,7 @@ class Event extends Component {
 		};
 	}
 
-	async onPublish() {
+	async onUpdate() {
 		this.setState({ isSubmitting: true });
 
 		const saveResponse = await this.saveEventDetails();
@@ -233,36 +237,14 @@ class Event extends Component {
 		const { result, error } = saveResponse;
 
 		if (result) {
-			const { id } = eventUpdateStore;
+			const { id, event } = eventUpdateStore;
 
-			Bigneon()
-				.events.publish({ id })
-				.then(response => {
-					this.setState({ isSubmitting: false });
-					notifications.show({
-						variant: "success",
-						message: "Event published"
-					});
-				})
-				.catch(error => {
-					console.error(error);
-					this.setState({ isSubmitting: false });
-					if (error.response && error.response.status === 422) {
-						let errors = this.mapValidationErrorResponse(error.response.data);
-
-						this.setState(errors);
-
-						notifications.show({
-							message: "Validation error.",
-							variant: "error"
-						});
-					} else {
-						notifications.show({
-							message: "Event saved but failed to publish.",
-							variant: "error"
-						});
-					}
-				});
+			//If they checked the 'Unpublish' checkbox under 'Publish options'
+			if (event.shouldUnpublish) {
+				this.unPublishEvent(id);
+			} else {
+				this.publishEvent(id);
+			}
 		} else {
 			this.setState({ isSubmitting: false });
 
@@ -273,7 +255,186 @@ class Event extends Component {
 		}
 	}
 
-	@observer
+	publishEvent(id) {
+		Bigneon()
+			.events.publish({ id })
+			.then(response => {
+				this.setState({ isSubmitting: false });
+				eventUpdateStore.loadDetails(this.eventId);
+				notifications.show({
+					variant: "success",
+					message: "Event published."
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				if (error.response && error.response.status === 422) {
+					let errors = this.mapValidationErrorResponse(error.response.data);
+
+					this.setState(errors);
+
+					notifications.show({
+						message: "Validation error.",
+						variant: "error"
+					});
+				} else {
+					notifications.show({
+						message: "Event saved but failed to publish.",
+						variant: "error"
+					});
+				}
+			});
+	}
+
+	unPublishEvent(id) {
+		Bigneon()
+			.events.unpublish({ id })
+			.then(response => {
+				this.setState({ isSubmitting: false });
+				eventUpdateStore.loadDetails(this.eventId);
+				notifications.show({
+					variant: "success",
+					message: "Event updated."
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ isSubmitting: false });
+				notifications.showFromErrorResponse({
+					defaultMessage: "Failed to unpublish event.",
+					error
+				});
+			});
+	}
+
+	renderDraftOptions() {
+		const { errors } = this.state;
+		const { classes } = this.props;
+		const { event } = eventUpdateStore;
+		const hasPublishDate = !!event.publishDate;
+
+		return (
+			<div>
+				<FormSubHeading>Publish options</FormSubHeading>
+
+				<div className={classes.ticketOptions}>
+					<RadioButton
+						active={!hasPublishDate}
+						onClick={() =>
+							eventUpdateStore.updateEvent({
+								publishDate: null
+							})
+						}
+					>
+						Immediately
+					</RadioButton>
+					<RadioButton
+						active={hasPublishDate}
+						onClick={() =>
+							eventUpdateStore.updateEvent({
+								publishDate: moment()
+							})
+						}
+					>
+						Future date
+					</RadioButton>
+				</div>
+
+				{hasPublishDate ? (
+					<div className={classes.publishDateContainer}>
+						<DateTimePickerGroup
+							type="date"
+							error={errors.publishDate}
+							value={event.publishDate}
+							name="eventDate"
+							label="Publish date"
+							onChange={publishDate => {
+								const publishTime = moment(event.publishDate);
+								publishDate.set({
+									hour: publishTime.get("hour"),
+									minute: publishTime.get("minute"),
+									second: publishTime.get("second")
+								});
+
+								eventUpdateStore.updateEvent({
+									publishDate
+								});
+							}}
+							onBlur={this.validateFields.bind(this)}
+						/>
+						<span style={{ marginRight: 10, marginLeft: 10 }} />
+						<DateTimePickerGroup
+							type="time"
+							error={errors.publishDate}
+							value={event.publishDate}
+							name="eventTime"
+							label="Publish time"
+							onChange={publishTime => {
+								const publishDate = moment(event.publishDate);
+
+								publishDate.set({
+									hour: publishTime.get("hour"),
+									minute: publishTime.get("minute"),
+									second: publishTime.get("second")
+								});
+
+								eventUpdateStore.updateEvent({
+									publishDate
+								});
+							}}
+							onBlur={this.validateFields.bind(this)}
+						/>
+					</div>
+				) : null}
+			</div>
+		);
+	}
+
+	renderPublishedOptions() {
+		const { errors } = this.state;
+		const { classes } = this.props;
+		const { event } = eventUpdateStore;
+		const hasPublishDate = !!event.publishDate;
+		const shouldUnpublish = !!event.shouldUnpublish;
+
+		return (
+			<div>
+				<FormSubHeading>Publish options</FormSubHeading>
+
+				<div className={classes.ticketOptions}>
+					<RadioButton
+						active={!shouldUnpublish}
+						onClick={() =>
+							eventUpdateStore.updateEvent({
+								shouldUnpublish: false
+							})
+						}
+					>
+						Published
+					</RadioButton>
+					<RadioButton
+						active={shouldUnpublish}
+						onClick={() =>
+							eventUpdateStore.updateEvent({
+								shouldUnpublish: true
+							})
+						}
+					>
+						Unpublish
+					</RadioButton>
+				</div>
+
+				{!shouldUnpublish ? (
+					<Typography className={classes.publishedAt}>
+						Published at{" "}
+						{moment(event.publishDate).format("MM/DD/YYYY hh:mm A")}
+					</Typography>
+				) : null}
+			</div>
+		);
+	}
+
 	render() {
 		const { errors, isSubmitting, ticketTimesDirty } = this.state;
 
@@ -283,9 +444,9 @@ class Event extends Component {
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
 
-		const showFutureDate = !!event.publishDate;
-
 		const isDraft = status === "Draft";
+		const isPublished = status === "Published";
+
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/events-multi.svg">
@@ -379,77 +540,8 @@ class Event extends Component {
 					<div className={classes.paddedContent}>
 						<div className={classes.spacer} />
 
-						<FormSubHeading>Publish options</FormSubHeading>
-
-						<div className={classes.ticketOptions}>
-							<RadioButton
-								active={!showFutureDate}
-								onClick={() =>
-									eventUpdateStore.updateEvent({
-										publishDate: null
-									})
-								}
-							>
-								Immediately
-							</RadioButton>
-							<RadioButton
-								active={showFutureDate}
-								onClick={() =>
-									eventUpdateStore.updateEvent({
-										publishDate: moment()
-									})
-								}
-							>
-								Future date
-							</RadioButton>
-						</div>
-
-						{showFutureDate ? (
-							<div className={classes.futureDate}>
-								<DateTimePickerGroup
-									type="date"
-									error={errors.publishDate}
-									value={event.publishDate}
-									name="eventDate"
-									label="Publish date"
-									onChange={publishDate => {
-										const publishTime = moment(event.publishDate);
-										publishDate.set({
-											hour: publishTime.get("hour"),
-											minute: publishTime.get("minute"),
-											second: publishTime.get("second")
-										});
-
-										eventUpdateStore.updateEvent({
-											publishDate
-										});
-									}}
-									onBlur={this.validateFields.bind(this)}
-								/>
-								<span style={{ marginRight: 10, marginLeft: 10 }} />
-								<DateTimePickerGroup
-									type="time"
-									error={errors.publishDate}
-									value={event.publishDate}
-									name="eventTime"
-									label="Publish time"
-									onChange={publishTime => {
-										const publishDate = moment(event.publishDate);
-
-										publishDate.set({
-											hour: publishTime.get("hour"),
-											minute: publishTime.get("minute"),
-											second: publishTime.get("second")
-										});
-
-										eventUpdateStore.updateEvent({
-											publishDate
-										});
-									}}
-									onBlur={this.validateFields.bind(this)}
-								/>
-							</div>
-						) : null}
+						{isDraft ? this.renderDraftOptions() : null}
+						{isPublished ? this.renderPublishedOptions() : null}
 
 						<Divider style={{ marginTop: 20, marginBottom: 40 }} />
 
@@ -472,7 +564,7 @@ class Event extends Component {
 							<div style={{ width: "45%" }}>
 								<Button
 									disabled={isSubmitting}
-									onClick={this.onPublish.bind(this)}
+									onClick={this.onUpdate.bind(this)}
 									size="large"
 									fullWidth
 									variant="callToAction"
