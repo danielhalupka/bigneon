@@ -159,12 +159,14 @@ class EventSummary extends Component {
 					revenueTotals.totalRevenue += fee.total_client_fee_in_cents;
 				});
 
-				const otherFees = other_fees[0];
+				let otherFees = other_fees[0];
 
 				if (otherFees) {
 					revenueTotals.totalOnlineRevenue +=
 						otherFees.total_client_fee_in_cents;
 					revenueTotals.totalRevenue += otherFees.total_client_fee_in_cents;
+				} else {
+					otherFees = { total_client_fee_in_cents : 0 };
 				}
 
 				this.setState({

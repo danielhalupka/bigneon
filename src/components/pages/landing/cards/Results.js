@@ -52,7 +52,7 @@ const EventsList = ({ events }) => {
 					console.error("Not found: ");
 					return null;
 				}
-
+				event.door_time = event.door_time || event.event_start;
 				return (
 					<Grid item xs={12} sm={6} lg={4} key={event.id}>
 						<EventResultCard {...event} />
