@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography, withStyles } from "@material-ui/core";
-import moment from "moment";
+import moment from "moment-timezone";
 import { Link } from "react-router-dom";
 
 import PropTypes from "prop-types";
@@ -101,6 +101,13 @@ const EventResultCard = ({
 	if (promo_image_url) {
 		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${promo_image_url})`;
 	}
+	const venueTimezone = "America/Los_Angeles"; //TODO: Replace with venue timezone from service
+	const eventStartDateMoment = moment.utc(event_start);
+
+	const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
+		"ddd, MMM Do"
+	);
+	const displayShowTime = moment(eventStartDateMoment).tz(venueTimezone).format("h:mm A");
 
 	return (
 		<Link to={`/events/${id}`}>
@@ -117,13 +124,13 @@ const EventResultCard = ({
 					<div className={classes.singleDetail} style={{ textAlign: "left" }}>
 						<Typography className={classes.label}>Date</Typography>
 						<Typography className={classes.value}>
-							{moment.utc(event_start).format("ddd, MMM Do")}
+							{displayEventStartDate}
 						</Typography>
 					</div>
 					<div className={classes.singleDetail} style={{ textAlign: "right" }}>
 						<Typography className={classes.label}>Showtime</Typography>
 						<Typography className={classes.value}>
-							{moment.utc(event_start).format("h:mm:a")}
+							{displayShowTime}
 						</Typography>
 					</div>
 				</div>

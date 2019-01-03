@@ -1,5 +1,5 @@
 import { observable, action, computed } from "mobx";
-import moment from "moment";
+import moment from "moment-timezone";
 import createGoogleMapsLink from "../helpers/createGoogleMapsLink";
 import Bigneon from "../helpers/bigneon";
 
@@ -56,14 +56,14 @@ class SelectedEvent {
 				this.organization = organization;
 				this.user_is_interested = user_is_interested;
 				this.artists = artists;
-
-				const eventStartDateMoment = moment(event_start);
-
-				const displayEventStartDate = eventStartDateMoment.format(
+				const venueTimezone = "America/Los_Angeles"; //TODO: Replace with venue timezone from service
+				const eventStartDateMoment = moment.utc(event_start);
+				const eventDoorDateMoment = moment.utc(door_time);
+				const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
 					"dddd, MMMM Do YYYY"
 				);
-				const displayDoorTime = moment(door_time).format("hA");
-				const displayShowTime = moment(event_start).format("hA");
+				const displayDoorTime = moment(eventDoorDateMoment).tz(venueTimezone).format("h:mm A");
+				const displayShowTime = moment(eventStartDateMoment).tz(venueTimezone).format("h:mm A");
 
 				this.venue = { ...venue, googleMapsLink: createGoogleMapsLink(venue) };
 

@@ -227,9 +227,9 @@ class CheckoutSelection extends Component {
 					start_date,
 					end_date
 				}) => {
-					let nowIsValidTime = moment().isBetween(
-						moment(start_date),
-						moment(end_date)
+					let nowIsValidTime = moment.utc().isBetween(
+						moment.utc(start_date),
+						moment.utc(end_date)
 					);
 					//Not in a valid date for this ticket_type
 					if (!nowIsValidTime) {

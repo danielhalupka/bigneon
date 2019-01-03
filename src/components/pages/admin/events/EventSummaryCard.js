@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Collapse from "@material-ui/core/Collapse";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import CheckBox from "../../../elements/form/CheckBox";
@@ -143,7 +143,13 @@ const EventSummaryCard = props => {
 	} = props;
 
 	const mediaStyle = imageUrl ? { backgroundImage: `url(${imageUrl})` } : {};
+	const venueTimezone = "America/Los_Angeles"; //TODO: Replace with venue timezone from service
+	const eventStartDateMoment = moment.utc(eventDate);
 
+	const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
+		"dddd, MMMM Do YYYY h:mm A"
+	);
+	
 	return (
 		<Card variant="block">
 			<div className={classes.root}>
@@ -162,7 +168,7 @@ const EventSummaryCard = props => {
 									{venueName}
 								</Typography>
 								<Typography variant="caption">
-									{moment(eventDate).format("dddd, MMMM Do YYYY")}
+									{displayEventStartDate}
 								</Typography>
 							</div>
 							<div>{menuButton}</div>
