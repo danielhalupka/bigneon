@@ -7,13 +7,15 @@ import { callToActionBackground, fontFamilyDemiBold } from "../../styles/theme";
 import AppButton from "../AppButton";
 
 //TODO change external links
-const rootUrl = "https://www.bigneon.com";
+const rootUrl = "";
 const links = [
 	//{ label: "About Us", href: `${rootUrl}/about` },
-	//{ label: "Venues & Promoters", href: `${rootUrl}/venues-and-promoters` },
+	{ label: "About Us", href: `${rootUrl}/venues-and-promoters.html` },
+	{ label: "Sell Tickets", href: `${rootUrl}/venues-and-promoters.html#contact-chat` },
 	//{ label: "News", href: `${rootUrl}/blog` },
 	//{ label: "FAQ", href: `${rootUrl}/faq` },
-	{ label: "Get in Touch", href: `${rootUrl}/#contact-chat` }
+	{ label: "Support", href: `${rootUrl}/venues-and-promoters.html#contact-chat` }
+	
 ];
 
 const privacyPolicyLink = `${rootUrl}/privacy.html`;
@@ -133,7 +135,7 @@ const Footer = props => {
 				</div>
 				<div className={classes.copyrightContainer}>
 					<Typography className={classes.copyright}>
-						Copyright 2018. Big Neon LLC. All Rights Reserved.
+						Copyright 2019. BigNeon, Inc. All Rights Reserved.
 						<a
 							className={classes.termsLink}
 							href={privacyPolicyLink}

@@ -199,24 +199,12 @@ class RightHeaderMenu extends React.Component {
 		return (
 			<span className={classes.menuButton} style={{ paddingTop: 4 }}>
 				<Link to="/login" className={classes.menuLink}>
-					<Typography variant="subheading">Sign In</Typography>
-				</Link>
-
-				<Hidden smDown implementation="css" className={classes.menuLink}>
-					<Link to="/help">
-						<Typography variant="subheading">Help</Typography>
-					</Link>
-				</Hidden>
-
-				<Hidden smDown implementation="css" className={classes.menuLink}>
 					<Button
 						variant="callToAction"
-						target="_blank"
-						href={process.env.REACT_APP_DOWNLOAD_APP}
 					>
-						Get the App
+						Sign In
 					</Button>
-				</Hidden>
+				</Link>
 			</span>
 		);
 	}

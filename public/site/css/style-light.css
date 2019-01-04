@@ -176,7 +176,7 @@ body {
   font-family: TTCommons-Regular;
 }
 .color-strip {
-  height: 2px;
+  height: 2.5px;
   width: 100%;
   margin:0;
   position: fixed;
@@ -188,13 +188,13 @@ body {
   animation: color-change-2x 2s linear infinite alternate both;
 }
 .intro {
-  background-color: #19081e;
-  background-image: url("/site/images/intro-background-dark.png");
+  background-color: #fafafa;
+  background-image: url("/site/images/logo-background.png");
   background-repeat: no-repeat;
   background-position: top center;
   line-height: 1;
   text-align: center;
-  color: #fafafa;
+  color: #19081e;
   min-height: 850px;
   /* display: flex;
   flex-direction: column;
@@ -203,6 +203,7 @@ body {
   padding-top: 150px;
   background-size: cover;
   background-repeat: no-repeat;
+  background-attachment: fixed;
   background-position: center center;
 }
 
@@ -241,7 +242,7 @@ body {
   /* font-size: 7rem; */
   line-height: 1;
   font-size: 70px;
-  color: #fafafa;
+  color: #19081e;
   letter-spacing: 0px;
   text-align: center;
   line-height: 80px;
@@ -256,7 +257,7 @@ body {
 
 .intro h3 {
   font-family: TTCommons-Bold;
-  font-size: 40px;
+  font-size: 1.7rem;
   line-height: 1;
   letter-spacing: 0px;
   text-align: center;
@@ -277,7 +278,7 @@ body {
 }
 
 .intro-logo {
-  width: 500px;
+  width: 200px;
   margin-bottom: 120px;
   -webkit-animation: puff-in-center 0.7s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
 	        animation: puff-in-center 0.7s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
@@ -285,7 +286,7 @@ body {
 
 @media only screen and (max-width: 500px) {
   .intro-logo {
-    width: 250px;
+    width: 200px;
   }
 
   .intro p {
@@ -362,7 +363,7 @@ body {
   border-radius: 5px;
   box-shadow: 0 40px 35px -30px rgba(0,0,0,0.17);
 
-  background-image: url("/site/images/bigneon-screen-app.png");
+  background-image: url("/site/images/video.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top center;
@@ -563,12 +564,12 @@ body {
   color: #979797;
 }
 .testimonial-container {
-  background: linear-gradient(-180deg, #000000 0%, #241826 100%);
+  background: #F9F9F9;
   padding-top: 125px;
   padding-bottom: 125px;
 }
 .testimonial-section {
-  background: transparent;
+  background: #F9F9F9;
   max-width: 1296px;
 }
 
@@ -596,6 +597,7 @@ body {
 
 @media only screen and (max-width: 575.98px) {
   .testimonial-container {
+    background: #F9F9F9;
     padding-top: 65px;
     padding-bottom: 65px;
   }
@@ -609,14 +611,11 @@ body {
     width: 100%;
     margin-bottom: 10px;
   }
-  .testimonial-col .client-logo {
-    margin-bottom:60px;
-  }
 }
 
 .testimonial-col .text .author {
 
-color: #fafafa;
+color: #707CED;
 font-size: 24px;
 font-family: TTCommons-DemiBold;
 font-weight: 600;
@@ -631,24 +630,9 @@ margin-bottom: 30px;
   font-size: 17px;
   font-weight: 300;
 }
-.testimonial-col .client-logo.rv{
-  width:180px;
-}
-.testimonial-col .client-logo.pw {
-  width:330px;
-}
-.testimonial-col .client-logo.bp {
-  width:280px;
-}
 
-.testimonial-col .text .author img {
-  float: left;
-  width: auto;
-  height: 45px;
-  margin-right: 15px;
-}
 .blog-section {
-  margin-top: 30px;
+  margin-top: 60px;
 }
 
 .blog-col {
@@ -903,12 +887,7 @@ a:hover h3 {
   text-shadow: none;
   opacity: 1;
 }
-.modal-dialog{
-  max-width: 1200px;
-}
-.modal-backdrop.show {
-    opacity: .8;
-}
+
 /* BLOG POST */
 
 .blog-header {
@@ -978,7 +957,7 @@ a:hover h3 {
 }
 
 .blog-section {
-  margin-bottom: 30px;
+  margin-bottom: 60px;
 }
 
 .blog-section h1 {
@@ -990,7 +969,7 @@ a:hover h3 {
 .blog-section h2 {
   font-family: TTCommons-DemiBold;
   font-size: 2.2rem;
-  margin-bottom: 25px;;
+  margin-bottom: 70px;
 }
 
 .blog-section p {
