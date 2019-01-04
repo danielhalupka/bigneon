@@ -7,7 +7,7 @@ import classNames from "classnames";
 
 import TopCardIcon from "./TopCardIcon";
 
-const styles = {
+const styles = theme => ({
 	root: {
 		borderRadius: 4
 	},
@@ -47,7 +47,11 @@ const styles = {
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.69)",
 		paddingLeft: 50,
 		paddingRight: 50,
-		paddingBottom: 20
+		paddingBottom: 20,
+		[theme.breakpoints.down("sm")]: {
+			paddingLeft: 5,
+			paddingRight: 5
+		}
 	},
 	iconSpacer: {
 		marginTop: 30
@@ -58,7 +62,7 @@ const styles = {
 		marginLeft: "10%",
 		backgroundImage: "linear-gradient(to left, #e53d96, #5491cc)"
 	}
-};
+});
 
 const CustomCard = props => {
 	const {

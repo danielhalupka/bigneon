@@ -10,9 +10,15 @@ import Typography from "@material-ui/core/Typography";
 import Card from "./Card";
 import { fontFamilyBold } from "../styles/theme";
 
-const styles = {
+const styles = theme => ({
 	root: {
 		borderRadius: 4
+	},
+	content: {
+		[theme.breakpoints.down("sm")]: {
+			paddingLeft: 0,
+			paddingRight: 0
+		}
 	},
 	iconDiv: {
 		display: "flex",
@@ -36,7 +42,7 @@ const styles = {
 		fontFamily: fontFamilyBold,
 		textAlign: "center"
 	}
-};
+});
 
 const CustomDialog = props => {
 	const { children, onClose, iconUrl, title, classes, ...rest } = props;
@@ -62,7 +68,7 @@ const CustomDialog = props => {
 						{title}
 					</Typography>
 				) : null}
-				<DialogContent>{children}</DialogContent>
+				<DialogContent className={classes.content}>{children}</DialogContent>
 			</Card>
 		</Dialog>
 	);
