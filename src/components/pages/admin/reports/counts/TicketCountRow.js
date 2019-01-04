@@ -2,29 +2,22 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, Typography } from "@material-ui/core";
 import classNames from "classnames";
+import { fontFamilyDemiBold, primaryHex } from "../../../../styles/theme";
 
 const styles = theme => {
 	return {
 		root: {
 			paddingLeft: theme.spacing.unit * 2,
 			paddingRight: theme.spacing.unit * 2,
+
 			paddingTop: theme.spacing.unit,
 			paddingBottom: theme.spacing.unit,
+
 			display: "flex"
 		},
 		default: {},
 		gray: {
 			backgroundColor: "#f5f7fa"
-		},
-		active: {
-			backgroundColor: theme.palette.secondary.main,
-			color: "#FFFFFF"
-		},
-		text: {
-			fontSize: theme.typography.fontSize * 0.9
-		},
-		activeText: {
-			color: "#FFFFFF"
 		},
 		heading: {
 			backgroundColor: "#000000",
@@ -35,23 +28,37 @@ const styles = theme => {
 			fontSize: theme.typography.fontSize * 0.8,
 			color: "#FFFFFF"
 		},
+		total: {
+			backgroundColor: primaryHex,
+			borderBottomLeftRadius: 8,
+			borderBottomRightRadius: 8
+		},
+		totalText: {
+			color: "#FFFFFF",
+			borderRadius: 4
+		},
+		text: {
+			fontSize: theme.typography.fontSize * 0.9
+		},
 		pointer: {
 			cursor: "pointer"
 		}
 	};
 };
 
-const TransactionRow = props => {
-	const { heading, gray, active, children, onClick, classes, ...rest } = props;
+const TicketCountRow = props => {
+	const { heading, gray, children, onClick, classes, total, ...rest } = props;
 
 	const columnStyles = [
-		{ flex: 1, textAlign: "left" },
+		{ flex: 3, textAlign: "left" },
 		{ flex: 2, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
 		{ flex: 2, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" }
+		{ flex: 2, textAlign: "left" },
+		{ flex: 2, textAlign: "left" },
+		{ flex: 2, textAlign: "left" },
+		{ flex: 2, textAlign: "left" },
+		{ flex: 2, textAlign: "left" },
+		{ flex: 2, textAlign: "left" }
 	];
 
 	//If they're adding the event name, make the second column sider
@@ -64,9 +71,9 @@ const TransactionRow = props => {
 			<Typography
 				noWrap
 				className={classNames({
-					[classes.text]: true,
 					[classes.headingText]: heading,
-					[classes.activeText]: active
+					[classes.text]: !heading,
+					[classes.totalText]: total
 				})}
 				key={index}
 				style={columnStyles[index]}
@@ -80,10 +87,10 @@ const TransactionRow = props => {
 		<div
 			className={classNames({
 				[classes.root]: true,
-				[classes.heading]: heading,
 				[classes.gray]: gray,
-				[classes.active]: active,
-				[classes.pointer]: !!onClick
+				[classes.pointer]: !!onClick,
+				[classes.total]: total,
+				[classes.heading]: heading
 			})}
 			onClick={onClick}
 			{...rest}
@@ -93,15 +100,15 @@ const TransactionRow = props => {
 	);
 };
 
-TransactionRow.propTypes = {
+TicketCountRow.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.array.isRequired,
 	gray: PropTypes.bool,
-	active: PropTypes.bool,
+	total: PropTypes.bool,
 	heading: PropTypes.bool,
 	onClick: PropTypes.func,
 	onMouseEnter: PropTypes.func,
 	onMouseLeave: PropTypes.func
 };
 
-export default withStyles(styles)(TransactionRow);
+export default withStyles(styles)(TicketCountRow);

@@ -166,7 +166,7 @@ class EventSummary extends Component {
 						otherFees.total_client_fee_in_cents;
 					revenueTotals.totalRevenue += otherFees.total_client_fee_in_cents;
 				} else {
-					otherFees = { total_client_fee_in_cents : 0 };
+					otherFees = { total_client_fee_in_cents: 0 };
 				}
 
 				this.setState({
@@ -412,7 +412,7 @@ class EventSummary extends Component {
 					);
 				})}
 
-				<EventSummaryRow ticketTypeRow gray={true}>
+				<EventSummaryRow ticketTypeRow total>
 					{[
 						"Total sales",
 						" ",
@@ -463,7 +463,7 @@ class EventSummary extends Component {
 
 					return (
 						<div key={ticketId}>
-							<EventSummaryRow ticketTypeRow gray={true}>
+							<EventSummaryRow ticketTypeRow gray>
 								{[
 									name,
 									" ",
@@ -492,7 +492,7 @@ class EventSummary extends Component {
 					);
 				})}
 
-				<EventSummaryRow ticketTypeRow gray={true}>
+				<EventSummaryRow ticketTypeRow total noRadius>
 					{[
 						"Other fees",
 						" ",
@@ -504,7 +504,7 @@ class EventSummary extends Component {
 					]}
 				</EventSummaryRow>
 
-				<EventSummaryRow ticketTypeRow gray={true}>
+				<EventSummaryRow ticketTypeRow total>
 					{[
 						"Total revenue share",
 						" ",

@@ -2,30 +2,46 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, Typography } from "@material-ui/core";
 import classNames from "classnames";
-import { fontFamilyDemiBold } from "../../../../../styles/theme";
+import { fontFamilyDemiBold, primaryHex } from "../../../../../styles/theme";
 
 const styles = theme => {
 	return {
 		root: {
 			paddingLeft: theme.spacing.unit * 2,
 			paddingRight: theme.spacing.unit * 2,
-
-			paddingTop: theme.spacing.unit * 2,
-			paddingBottom: theme.spacing.unit * 2,
-
-			display: "flex",
-			borderRadius: 4
+			paddingTop: theme.spacing.unit,
+			paddingBottom: theme.spacing.unit,
+			display: "flex"
 		},
 		default: {},
 		gray: {
 			backgroundColor: "#f5f7fa"
 		},
-		text: {},
+		text: {
+			fontSize: theme.typography.fontSize * 0.9
+		},
 		textTicketType: {
-			fontFamily: fontFamilyDemiBold
+			fontFamily: fontFamilyDemiBold,
+			fontSize: theme.typography.fontSize * 0.95
+		},
+		heading: {
+			backgroundColor: "#000000",
+			borderTopLeftRadius: 8,
+			borderTopRightRadius: 8
 		},
 		headingText: {
-			fontSize: theme.typography.caption.fontSize
+			fontSize: theme.typography.fontSize * 0.8,
+			color: "#FFFFFF"
+		},
+		total: {
+			backgroundColor: primaryHex
+		},
+		radiusTotal: {
+			borderBottomLeftRadius: 8,
+			borderBottomRightRadius: 8
+		},
+		totalText: {
+			color: "#FFFFFF"
 		},
 		pointer: {
 			cursor: "pointer"
@@ -37,10 +53,12 @@ const TransactionRow = props => {
 	const {
 		heading,
 		gray,
+		total,
 		children,
 		onClick,
 		classes,
 		ticketTypeRow,
+		noRadius,
 		...rest
 	} = props;
 
@@ -55,14 +73,17 @@ const TransactionRow = props => {
 	];
 
 	const columns = children.map((text, index) => {
-		let className = heading ? classes.headingText : classes.text;
-
-		if (ticketTypeRow) {
-			className = classes.textTicketType;
-		}
-
 		return (
-			<Typography className={className} key={index} style={columnStyles[index]}>
+			<Typography
+				className={classNames({
+					[classes.text]: true,
+					[classes.headingText]: heading,
+					[classes.textTicketType]: ticketTypeRow,
+					[classes.totalText]: total
+				})}
+				key={index}
+				style={columnStyles[index]}
+			>
 				{text}
 			</Typography>
 		);
@@ -70,11 +91,14 @@ const TransactionRow = props => {
 
 	return (
 		<div
-			className={classNames(
-				classes.root,
-				gray ? classes.gray : "",
-				onClick ? classes.pointer : ""
-			)}
+			className={classNames({
+				[classes.root]: true,
+				[classes.gray]: gray,
+				[classes.pointer]: !!onClick,
+				[classes.total]: total,
+				[classes.heading]: heading,
+				[classes.radiusTotal]: total && !noRadius
+			})}
 			onClick={onClick}
 			{...rest}
 		>
@@ -87,9 +111,11 @@ TransactionRow.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.array.isRequired,
 	gray: PropTypes.bool,
+	total: PropTypes.bool,
 	heading: PropTypes.bool,
 	onClick: PropTypes.func,
-	ticketTypeRow: PropTypes.bool
+	ticketTypeRow: PropTypes.bool,
+	noRadius: PropTypes.bool
 };
 
 export default withStyles(styles)(TransactionRow);

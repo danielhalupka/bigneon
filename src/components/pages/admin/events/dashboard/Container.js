@@ -36,6 +36,9 @@ const styles = theme => ({
 	}
 });
 
+const isActiveReportMenu = type =>
+	(window.location.pathname || "").endsWith(type);
+
 @observer
 class EventDashboardContainer extends Component {
 	constructor(props) {
@@ -132,8 +135,28 @@ class EventDashboardContainer extends Component {
 		const open = Boolean(anchorReportsEl);
 		const { event } = this.state;
 
-		const { hasTransactionReports, hasEventSummaryReports } = user;
+		const {
+			hasTransactionReports,
+			hasEventSummaryReports,
+			hasTicketCountReports
+		} = user;
 		let items = [];
+
+		if (hasEventSummaryReports) {
+			items.push(
+				<Link
+					key="summary"
+					to={`/admin/events/${event.id}/dashboard/reports/summary`}
+				>
+					<MenuItem
+						selected={isActiveReportMenu("summary")}
+						onClick={this.handleReportsMenuClose.bind(this)}
+					>
+						Event summary
+					</MenuItem>
+				</Link>
+			);
+		}
 
 		if (hasTransactionReports) {
 			items.push(
@@ -141,20 +164,24 @@ class EventDashboardContainer extends Component {
 					key="tx"
 					to={`/admin/events/${event.id}/dashboard/reports/transactions`}
 				>
-					<MenuItem onClick={this.handleReportsMenuClose.bind(this)}>
+					<MenuItem
+						selected={isActiveReportMenu("transactions")}
+						onClick={this.handleReportsMenuClose.bind(this)}
+					>
 						Transaction details
 					</MenuItem>
 				</Link>
 			);
 		}
-		if (hasEventSummaryReports) {
+
+		if (hasTicketCountReports) {
 			items.push(
 				<Link
-					key="summary"
-					to={`/admin/events/${event.id}/dashboard/reports/summary`}
+					key="ticket-counts"
+					to={`/admin/events/${event.id}/dashboard/reports/ticket-counts`}
 				>
-					<MenuItem onClick={this.handleReportsMenuClose.bind(this)}>
-						Event summary
+					<MenuItem selected={isActiveReportMenu("ticket-counts")} onClick={this.handleReportsMenuClose.bind(this)}>
+						Ticket counts
 					</MenuItem>
 				</Link>
 			);

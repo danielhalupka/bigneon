@@ -404,6 +404,15 @@ class User {
 
 		return false;
 	}
+
+	@computed
+	get hasTicketCountReports() {
+		if (this.isOrgAdmin || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
 }
 
 const user = new User();

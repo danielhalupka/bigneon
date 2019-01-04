@@ -8,6 +8,7 @@ import Card from "../../../elements/Card";
 import StyledLink from "../../../elements/StyledLink";
 import Divider from "../../../common/Divider";
 import Transactions from "./transactions/Transactions";
+import TicketCounts from "./counts/TicketCounts";
 
 const styles = theme => ({
 	content: {
@@ -34,18 +35,20 @@ class Reports extends Component {
 		const { classes } = this.props;
 
 		const report = this.props.match.params.report;
-		const { hasTransactionReports } = user;
+		const { hasTransactionReports, hasTicketCountReports } = user;
 
 		return (
 			<div className={classes.menuContainer}>
-				<Typography className={classes.menuText}>
-					<StyledLink
-						underlined={!report || report === "ticket-counts"}
-						to={`/admin/reports/ticket-counts`}
-					>
-						Ticket Counts
-					</StyledLink>
-				</Typography>
+				{hasTicketCountReports ? (
+					<Typography className={classes.menuText}>
+						<StyledLink
+							underlined={!report || report === "ticket-counts"}
+							to={`/admin/reports/ticket-counts`}
+						>
+							Ticket Counts
+						</StyledLink>
+					</Typography>
+				) : null}
 
 				{hasTransactionReports ? (
 					<Typography className={classes.menuText}>
@@ -63,7 +66,7 @@ class Reports extends Component {
 						underlined={report === "box-office"}
 						to={`/admin/reports/box-office`}
 					>
-						SalesBox Office Sales
+						Box Office Sales
 					</StyledLink>
 				</Typography>
 				<Typography className={classes.menuText}>
@@ -94,8 +97,15 @@ class Reports extends Component {
 			return <Typography>Loading...</Typography>;
 		}
 
+		const { hasTransactionReports, hasTicketCountReports } = user;
+
 		//Add report components here as needed
 		switch (report) {
+			case undefined:
+			case "ticket-counts":
+				return hasTicketCountReports ? (
+					<TicketCounts organizationId={organizationId} />
+				) : null;
 			case "transaction-details":
 				return <Transactions organizationId={organizationId} />;
 			default:

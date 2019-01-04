@@ -8,6 +8,7 @@ import user from "../../../../../../stores/user";
 import Container from "../Container";
 import TransactionsList from "../../../reports/transactions/Transactions";
 import EventSummary from "./EventSummary";
+import TicketCounts from "../../../reports/counts/TicketCounts";
 
 const styles = theme => ({
 	root: {}
@@ -62,6 +63,16 @@ class Report extends Component {
 			case "summary":
 				content = (
 					<EventSummary
+						eventName={eventName}
+						organizationId={organizationId}
+						eventId={eventId}
+					/>
+				);
+				break;
+
+			case "ticket-counts":
+				content = (
+					<TicketCounts
 						eventName={eventName}
 						organizationId={organizationId}
 						eventId={eventId}

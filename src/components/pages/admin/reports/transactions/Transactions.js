@@ -12,7 +12,13 @@ import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 
 const styles = theme => ({
-	root: {}
+	root: {},
+	header: {
+		display: "flex",
+		minHeight: 60,
+		alignItems: "center"
+		//borderStyle: "solid"
+	}
 });
 
 const dollars = cents => `$${(cents / 100).toFixed(2)}`;
@@ -295,18 +301,11 @@ class Transactions extends Component {
 	}
 
 	render() {
-		const { eventId } = this.props;
+		const { eventId, classes } = this.props;
 
 		return (
 			<div>
-				<div
-					style={{
-						display: "flex",
-						minHeight: 60,
-						alignItems: "center"
-						//borderStyle: "solid"
-					}}
-				>
+				<div className={classes.header} >
 					<Typography variant="title">
 						{eventId ? "Event" : "Organization"} transaction report
 					</Typography>
