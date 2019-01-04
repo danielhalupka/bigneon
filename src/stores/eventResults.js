@@ -127,19 +127,23 @@ class EventResults {
 	@computed
 	get statesDropdownValues() {
 		//Get the state from the event and make an array of states for use in the filter
-
-		const statesDropdownValues = [{ value: "all", label: "Everywhere" }];
+		const statesDropdownValues = { all: "Everywhere" };
 		if (this.events) {
 			this.events.forEach(({ venue }) => {
 				const { state } = venue;
 
 				if (state) {
-					statesDropdownValues.push({ value: state, label: state });
+					statesDropdownValues[state] = state;
 				}
 			});
 		}
 
-		return statesDropdownValues;
+		const resultArray = Object.keys(statesDropdownValues).map(value => ({
+			value,
+			label: statesDropdownValues[value]
+		}));
+
+		return resultArray;
 	}
 }
 
