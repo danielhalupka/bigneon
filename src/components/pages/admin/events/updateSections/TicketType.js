@@ -61,14 +61,15 @@ const FormHeading = ({ classes, children }) => (
 	</Typography>
 );
 
-const TicketHeading = ({
-	classes,
-	index,
-	name,
-	onEditClick,
-	deleteTicketType,
-	active
-}) => (
+const TicketHeading = (
+	{
+		classes,
+		index,
+		name,
+		onEditClick,
+		deleteTicketType,
+		active
+	}) => (
 	<div className={classes.ticketHeader}>
 		<FormHeading classes={classes}>
 			{name ? `${index + 1}. ${name}` : "Add your new ticket"}
@@ -83,6 +84,7 @@ const TicketHeading = ({
 			<IconButton onClick={deleteTicketType} iconUrl="/icons/delete-gray.svg">
 				Delete
 			</IconButton>
+
 		</div>
 	</div>
 );
@@ -122,6 +124,7 @@ const TicketDetails = observer(props => {
 		priceForDisplay
 	} = props;
 
+	let isCancelled = status === "Cancelled";
 	let useEndDate = endDate;
 	let useEndTime = endTime;
 	if (!ticketTimesDirty) {
@@ -180,7 +183,7 @@ const TicketDetails = observer(props => {
 						placeholder=""
 						type="number"
 						onChange={e => {
-							updateTicketType(index, { priceForDisplay:  e.target.value });
+							updateTicketType(index, { priceForDisplay: e.target.value });
 						}}
 						onBlur={validateFields}
 					/>
@@ -370,13 +373,13 @@ const TicketDetails = observer(props => {
 					{pricing
 						.slice()
 						.sort(
-							(a, b) =>
-								a.startDate < b.startDate
+							(a, b) => {
+								return a.startDate < b.startDate
 									? -1
 									: a.startDate > b.startDate
 										? 1
-										: 0
-						)
+										: 0;
+							})
 						.map((pricePoint, pricePointIndex) => {
 							return (
 								<div key={pricePointIndex}>

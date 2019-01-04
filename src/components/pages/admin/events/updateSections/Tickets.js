@@ -2,11 +2,17 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import moment from "moment";
-import { withStyles, Typography } from "@material-ui/core";
+import {
+	withStyles,
+	Typography
+
+} from "@material-ui/core";
+import Dialog from "../../../../elements/Dialog";
 
 import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import TicketType from "./TicketType";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
+import Button from "../../../../elements/Button";
 
 const formatForSaving = (ticketTypes, event) => {
 	let ticket_types = [];
@@ -131,7 +137,8 @@ const formatForInput = (ticket_types, event) => {
 			ticket_pricing,
 			start_date,
 			end_date,
-			price_in_cents
+			price_in_cents,
+			status
 		} = ticket_type;
 
 		let pricing = [];
@@ -198,7 +205,8 @@ const formatForInput = (ticket_types, event) => {
 			priceAtDoor, //TODO get the actual value when API works
 			pricing,
 			showPricing: pricing.length > 0,
-			priceForDisplay: price_in_cents / 100
+			priceForDisplay: price_in_cents / 100,
+			status
 		};
 
 		ticketTypes.push(ticketType);
@@ -208,6 +216,10 @@ const formatForInput = (ticket_types, event) => {
 };
 
 const styles = theme => ({
+	root: {
+		paddingLeft: theme.spacing.unit * 12,
+		paddingRight: theme.spacing.unit * 2
+	},
 	addTicketType: {
 		marginRight: theme.spacing.unit * 8,
 		marginLeft: theme.spacing.unit * 12,
@@ -228,6 +240,15 @@ const styles = theme => ({
 	},
 	addText: {
 		fontSize: 22
+	},
+	title: {
+		textTransform: "uppercase",
+		fontFamily: "TTCommons-DemiBold",
+		opacity: 0.5
+	},
+	inactiveContent: {
+		paddingTop: theme.spacing.unit * 2,
+		paddingBottom: theme.spacing.unit * 2
 	}
 });
 
@@ -352,7 +373,7 @@ const validateFields = ticketTypes => {
 						hour: previousPricing.endTime.get("hour"),
 						minute: previousPricing.endTime.get("minute"),
 						second: previousPricing.endTime.get("second")
-					  })
+					})
 					: null;
 
 				let pricingError = {};
@@ -420,16 +441,80 @@ class EventTickets extends Component {
 	constructor(props) {
 		super(props);
 		this.updateTicketType = this.updateTicketType.bind(this);
+		this.state = {
+			deleteIndex: false,
+			areYouSureDeleteTicketDialogOpen: false
+		};
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+	}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);
 	}
 
+	openDeleteDialog(index) {
+		this.setState({ deleteIndex: index, areYouSureDeleteTicketDialogOpen: true });
+	}
+
 	deleteTicketType(index) {
-		eventUpdateStore.deleteTicketType(index);
+
+		eventUpdateStore.cancelTicketType(index).then(result => {
+			console.log(result);
+		});
+		this.onDialogClose();
+	}
+
+	onDialogClose() {
+		this.setState({ deleteIndex: false, areYouSureDeleteTicketDialogOpen: false });
+	}
+
+	renderAreYouSureDeleteDialog() {
+		const { areYouSureDeleteTicketDialogOpen, deleteIndex } = this.state;
+
+		const onClose = this.onDialogClose.bind(this);
+
+		return (
+
+			<Dialog
+				open={areYouSureDeleteTicketDialogOpen}
+				onClose={onClose}
+				title="Are you sure you want to cancel this ticket?"
+
+			>
+				<div>
+					<div>
+						<Typography>
+							Cancelling a ticket will stop any further sales of the ticket. All purchased tickets will
+							stay
+							valid.
+						</Typography>
+
+					</div>
+					<div style={{ display: "flex" }}>
+						<Button
+							style={{ marginRight: 5, flex: 1 }}
+							onClick={onClose}
+							color="primary"
+						>
+							Cancel
+						</Button>
+						<Button
+							style={{ marginLeft: 5, flex: 1 }}
+							type="submit"
+							variant="callToAction"
+							onClick={() => {
+								this.deleteTicketType(deleteIndex);
+							}}
+						>
+							I Am Sure, Cancel Ticket
+						</Button>
+					</div>
+				</div>
+
+			</Dialog>
+		);
 	}
 
 	render() {
@@ -444,28 +529,38 @@ class EventTickets extends Component {
 
 		return (
 			<div>
+				{this.renderAreYouSureDeleteDialog()}
 				{ticketTypes.map((ticketType, index) => {
 					const active = index === ticketTypeActiveIndex;
+					const isCancelled = ticketType.status === "Cancelled";
 					return (
 						<LeftAlignedSubCard key={index} active={active}>
-							<TicketType
-								onEditClick={() => {
-									const newIndex =
-										eventUpdateStore.ticketTypeActiveIndex === index
-											? null
-											: index;
-									eventUpdateStore.ticketTypeActivate(newIndex);
-								}}
-								updateTicketType={this.updateTicketType}
-								deleteTicketType={() => this.deleteTicketType(index)}
-								active={active}
-								index={index}
-								validateFields={validateFields}
-								errors={errors && errors[index] ? errors[index] : {}}
-								ticketTimesDirty={ticketTimesDirty}
-								eventStartDate={eventStartDate}
-								{...ticketType}
-							/>
+							{isCancelled ? (
+								<div className={classes.root}>
+									<div className={classes.inactiveContent}>
+										<Typography className={classes.title} variant="subheading">{index + 1}. {ticketType.name} (Cancelled)</Typography></div>
+								</div>
+							) : (
+								<TicketType
+									onEditClick={() => {
+										const newIndex =
+											eventUpdateStore.ticketTypeActiveIndex === index
+												? null
+												: index;
+										eventUpdateStore.ticketTypeActivate(newIndex);
+									}}
+									updateTicketType={this.updateTicketType}
+									deleteTicketType={() => this.openDeleteDialog(index)}
+									active={active}
+									index={index}
+									validateFields={validateFields}
+									errors={errors && errors[index] ? errors[index] : {}}
+									ticketTimesDirty={ticketTimesDirty}
+									eventStartDate={eventStartDate}
+									{...ticketType}
+								/>
+							)}
+
 						</LeftAlignedSubCard>
 					);
 				})}
@@ -474,7 +569,7 @@ class EventTickets extends Component {
 					className={classes.addTicketType}
 					onClick={() => eventUpdateStore.addTicketType()}
 				>
-					<img className={classes.addIcon} src="/icons/add-ticket.svg" />
+					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
 					<Typography className={classes.addText} variant="body2">
 						Add another ticket type
 					</Typography>
@@ -490,7 +585,8 @@ EventTickets.propTypes = {
 	eventStartDate: PropTypes.object.isRequired,
 	errors: PropTypes.object,
 	ticketTimesDirty: PropTypes.bool,
-	onChangeDate: PropTypes.func
+	onChangeDate: PropTypes.func,
+	onDeleteTicketType: PropTypes.func
 };
 
 export const Tickets = withStyles(styles)(EventTickets);

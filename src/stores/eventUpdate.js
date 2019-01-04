@@ -387,36 +387,52 @@ class EventUpdate {
 
 		if (id) {
 			return new Promise(resolve => {
-				Bigneon()
-					.events.ticketTypes.update({
+				Bigneon().events.ticketTypes.update(
+					{
 						id,
 						event_id,
 						...ticketType
-					})
-					.then(() => {
-						resolve({ result: id, error: false });
-					})
-					.catch(error => {
-						console.error(error);
-						resolve({ result: false, error });
-					});
+					}
+				).then(() => {
+					resolve({ result: id, error: false });
+				}).catch(error => {
+					console.error(error);
+					resolve({ result: false, error });
+				});
 			});
 		} else {
 			return new Promise(resolve => {
-				Bigneon()
-					.events.ticketTypes.create({
-						event_id,
-						...ticketType
-					})
-					.then(result => {
-						resolve({ result, error: false });
-					})
-					.catch(error => {
-						console.error(error);
-						resolve({ result: false, error });
-					});
+				Bigneon().events.ticketTypes.create({
+					event_id,
+					...ticketType
+				}).then(result => {
+					resolve({ result, error: false });
+				}).catch(error => {
+					console.error(error);
+					resolve({ result: false, error });
+				});
 			});
 		}
+	}
+
+	async cancelTicketType(index) {
+		const deleteTicketType = this.deleteTicketType.bind(this);
+		return new Promise((resolve) => {
+			let ticketTypes = this.ticketTypes;
+			let ticketType = ticketTypes[index];
+			Bigneon().events.ticketTypes.cancel({ event_id: this.id, ticket_type_id: ticketType.id }).then(result => {
+				console.log(result.data);
+				deleteTicketType(index);
+				resolve({ result: result.data, error: false });
+			}).catch(error => {
+				console.error(error);
+				notifications.show({
+					message: "Update event failed.",
+					variant: "error"
+				});
+				resolve({ result: false, error });
+			});
+		});
 	}
 
 	@action
