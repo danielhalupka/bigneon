@@ -193,10 +193,10 @@ class EventTicketsCard extends Component {
 			<div className={classes.ticketContainer}>
 				<EventTicketRow>
 					<span>
-						<CheckBox
-							active={this.allSelected()}
-							onClick={this.toggleAllTickets.bind(this)}
-						/>
+						{/*<CheckBox*/}
+						{/*active={this.allSelected()}*/}
+						{/*onClick={this.toggleAllTickets.bind(this)}*/}
+						{/*/>*/}
 					</span>
 					<Typography className={classes.ticketDetailsText}>
 						Ticket #
@@ -225,11 +225,13 @@ class EventTicketsCard extends Component {
 
 					return (
 						<EventTicketRow key={id} item>
-							<CheckBox
-								disabled={disabled}
-								active={checkedTicketsIds.indexOf(id) !== -1}
-								onClick={() => this.toggleTicketCheckbox(id)}
-							/>
+							{/*TODO uncomment and remove span when adding back transfers*/}
+							{/*<CheckBox*/}
+							{/*disabled={disabled}*/}
+							{/*active={checkedTicketsIds.indexOf(id) !== -1}*/}
+							{/*onClick={() => this.toggleTicketCheckbox(id)}*/}
+							{/*/>*/}
+							<span />
 							<Typography className={classes.ticketDetailsText}>{`#${id.slice(
 								-8
 							)}`}</Typography>
@@ -252,6 +254,7 @@ class EventTicketsCard extends Component {
 								<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
 									show qr
 								</StyledLink>
+								{/*TODO uncomment when adding back transfers*/}
 								{/* <span style={{ marginRight: 10 }} />
 								<StyledLink underlined onClick={() => onShowTransferQR([id])}>
 									transfer
