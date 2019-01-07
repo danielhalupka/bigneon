@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withStyles, Grid } from "@material-ui/core";
+import { withStyles, Grid, Typography } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import PropTypes from "prop-types";
@@ -14,8 +14,14 @@ import FacebookButton from "../social/FacebookButton";
 import Divider from "../../../common/Divider";
 import Bigneon from "../../../../helpers/bigneon";
 import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
+import StyledLink from "../../../elements/StyledLink";
 
-const styles = () => ({});
+const styles = theme => ({
+	privacy: {
+		fontSize: theme.typography.fontSize * 0.8,
+		marginBottom: theme.spacing.unit
+	}
+});
 
 class SignupForm extends Component {
 	constructor(props) {
@@ -220,6 +226,8 @@ class SignupForm extends Component {
 			errors
 		} = this.state;
 
+		const { classes } = this.props;
+
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				<CardContent>
@@ -308,6 +316,22 @@ class SignupForm extends Component {
 				<CardActions>
 					<Grid container spacing={24}>
 						<Grid item xs={12} sm={12} lg={12}>
+							<Typography className={classes.privacy}>
+								By signing up I agree to BigNeon's{" "}
+								<StyledLink underlined thin href="/terms.html" target="_blank">
+									terms of service
+								</StyledLink>{" "}
+								&{" "}
+								<StyledLink
+									underlined
+									thin
+									href="/privacy.html"
+									target="_blank"
+								>
+									privacy policy
+								</StyledLink>
+							</Typography>
+
 							<Button
 								disabled={isSubmitting}
 								type="submit"

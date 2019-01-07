@@ -20,6 +20,9 @@ const styles = theme => {
 			color: theme.palette.secondary.main,
 			cursor: "pointer"
 		},
+		thinUnderlined: {
+			borderWidth: 1
+		},
 		text: {
 			color: theme.palette.text.primary
 		}
@@ -27,13 +30,23 @@ const styles = theme => {
 };
 
 const StyledLink = props => {
-	const { classes, children, to, underlined, href, target, onClick } = props;
+	const {
+		classes,
+		children,
+		to,
+		underlined,
+		thin,
+		href,
+		target,
+		onClick
+	} = props;
 
 	const inner = <span className={classes.text}>{children}</span>;
 
 	const outerClasses = classnames({
 		[classes.default]: !underlined,
-		[classes.underlined]: underlined
+		[classes.underlined]: underlined,
+		[classes.thinUnderlined]: thin
 	});
 
 	if (to) {
@@ -58,7 +71,8 @@ StyledLink.propTypes = {
 	href: PropTypes.string, //Use this if it needs to load a new page
 	target: PropTypes.string,
 	onClick: PropTypes.func,
-	underlined: PropTypes.bool
+	underlined: PropTypes.bool,
+	thin: PropTypes.bool //Thinner underlining
 };
 
 export default withStyles(styles)(StyledLink);
