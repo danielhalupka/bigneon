@@ -2,17 +2,14 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import moment from "moment";
-import {
-	withStyles,
-	Typography
-
-} from "@material-ui/core";
+import { withStyles, Typography } from "@material-ui/core";
 import Dialog from "../../../../elements/Dialog";
 
 import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import TicketType from "./TicketType";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import Button from "../../../../elements/Button";
+import { DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME } from "./Details";
 
 const formatForSaving = (ticketTypes, event) => {
 	let ticket_types = [];
@@ -52,9 +49,11 @@ const formatForSaving = (ticketTypes, event) => {
 				endDate = moment(eventDate);
 				break;
 			case "close":
-				endDate = moment(eventDate).add(5, "hours");
+				endDate = event.endTime ? moment(event.endTime) : moment(eventDate).add(
+					DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
+					"hours"
+				);
 				break;
-
 			//If no option or set to custom, assume they're updating it manually
 			case "custom":
 			default:
@@ -176,8 +175,11 @@ const formatForInput = (ticket_types, event) => {
 		const ticketEndDate = end_date ? moment.utc(end_date).local() : null;
 
 		let saleEndTimeOption;
-		const { doorTime, eventDate } = event;
-		const closeTime = moment(eventDate).add(5, "hours");
+		const { doorTime, eventDate, endTime } = event;
+		const closeTime = endTime ? moment(endTime) : moment(eventDate).add(
+			DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
+			"hours"
+		);
 
 		if (ticketEndDate.isSame(doorTime)) {
 			saleEndTimeOption = "door";
@@ -325,15 +327,19 @@ const validateFields = ticketTypes => {
 			ticketErrors.increment = "Increment must be more than 1";
 		}
 
-		if (priceForDisplay === "" || priceForDisplay < 0 || priceForDisplay === undefined) {
+		if (
+			priceForDisplay === "" ||
+			priceForDisplay < 0 ||
+			priceForDisplay === undefined
+		) {
 			ticketErrors.priceForDisplay = "Tickets must have a price";
 		}
 		if (pricing.length) {
 			let pricingErrors = {};
 
 			//The server seems to be messing with the array orders somehow.
-			const sortedPricing = [...pricing].sort(
-				(a, b) => (!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate)
+			const sortedPricing = [...pricing].sort((a, b) =>
+				!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate
 			);
 
 			let ticketStartDate = startDate;
@@ -373,7 +379,7 @@ const validateFields = ticketTypes => {
 						hour: previousPricing.endTime.get("hour"),
 						minute: previousPricing.endTime.get("minute"),
 						second: previousPricing.endTime.get("second")
-					})
+					  })
 					: null;
 
 				let pricingError = {};
@@ -447,19 +453,20 @@ class EventTickets extends Component {
 		};
 	}
 
-	componentDidMount() {
-	}
+	componentDidMount() {}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);
 	}
 
 	openDeleteDialog(index) {
-		this.setState({ deleteIndex: index, areYouSureDeleteTicketDialogOpen: true });
+		this.setState({
+			deleteIndex: index,
+			areYouSureDeleteTicketDialogOpen: true
+		});
 	}
 
 	deleteTicketType(index) {
-
 		eventUpdateStore.cancelTicketType(index).then(result => {
 			console.log(result);
 		});
@@ -467,7 +474,10 @@ class EventTickets extends Component {
 	}
 
 	onDialogClose() {
-		this.setState({ deleteIndex: false, areYouSureDeleteTicketDialogOpen: false });
+		this.setState({
+			deleteIndex: false,
+			areYouSureDeleteTicketDialogOpen: false
+		});
 	}
 
 	renderAreYouSureDeleteDialog() {
@@ -476,21 +486,17 @@ class EventTickets extends Component {
 		const onClose = this.onDialogClose.bind(this);
 
 		return (
-
 			<Dialog
 				open={areYouSureDeleteTicketDialogOpen}
 				onClose={onClose}
 				title="Are you sure you want to cancel this ticket?"
-
 			>
 				<div>
 					<div>
 						<Typography>
-							Cancelling a ticket will stop any further sales of the ticket. All purchased tickets will
-							stay
-							valid.
+							Cancelling a ticket will stop any further sales of the ticket. All
+							purchased tickets will stay valid.
 						</Typography>
-
 					</div>
 					<div style={{ display: "flex" }}>
 						<Button
@@ -512,7 +518,6 @@ class EventTickets extends Component {
 						</Button>
 					</div>
 				</div>
-
 			</Dialog>
 		);
 	}
@@ -538,7 +543,10 @@ class EventTickets extends Component {
 							{isCancelled ? (
 								<div className={classes.root}>
 									<div className={classes.inactiveContent}>
-										<Typography className={classes.title} variant="subheading">{index + 1}. {ticketType.name} (Cancelled)</Typography></div>
+										<Typography className={classes.title} variant="subheading">
+											{index + 1}. {ticketType.name} (Cancelled)
+										</Typography>
+									</div>
 								</div>
 							) : (
 								<TicketType
@@ -560,7 +568,6 @@ class EventTickets extends Component {
 									{...ticketType}
 								/>
 							)}
-
 						</LeftAlignedSubCard>
 					);
 				})}
@@ -569,7 +576,7 @@ class EventTickets extends Component {
 					className={classes.addTicketType}
 					onClick={() => eventUpdateStore.addTicketType()}
 				>
-					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
+					<img className={classes.addIcon} src="/icons/add-ticket.svg" />
 					<Typography className={classes.addText} variant="body2">
 						Add another ticket type
 					</Typography>

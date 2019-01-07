@@ -238,7 +238,7 @@ const TicketDetails = observer(props => {
 							items={[
 								{ value: "door", label: "Event Door Time" },
 								{ value: "start", label: "Event Start Time" },
-								{ value: "close", label: "Event Close Time" },
+								{ value: "close", label: "Event End Time" },
 								{ value: "custom", label: "Custom" }
 							]}
 							name={"close-times"}

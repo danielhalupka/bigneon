@@ -15,6 +15,8 @@ import Bn from "bn-api-node";
 
 const styles = theme => ({});
 
+export const DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME = 5; //For lack of a better var name
+
 const validateFields = event => {
 	const errors = {};
 
@@ -74,7 +76,8 @@ const formatDataForSaving = (event, organizationId) => {
 		isExternal,
 		externalTicketsUrl,
 		override_status,
-		videoUrl
+		videoUrl,
+		endTime
 	} = event;
 
 	const eventDetails = {
@@ -103,7 +106,8 @@ const formatDataForSaving = (event, organizationId) => {
 		});
 
 		eventDetails.event_start = moment
-			.utc(eventDate).format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+			.utc(eventDate)
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
 	if (eventDate && moment(eventDate).isValid()) {
@@ -123,6 +127,14 @@ const formatDataForSaving = (event, organizationId) => {
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	} else if (publishDate === null) {
 		eventDetails.publish_date = null;
+	}
+
+	if (endTime) {
+		eventDetails.event_end = moment
+			.utc(endTime)
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+	} else {
+		eventDetails.event_end = null;
 	}
 
 	if (promoImageUrl) {
@@ -152,6 +164,7 @@ const formatDataForInputs = event => {
 		external_url,
 		publish_date,
 		redeem_date,
+		event_end,
 		override_status = "",
 		status = "Draft"
 	} = event;
@@ -159,26 +172,32 @@ const formatDataForInputs = event => {
 	const tomorrow = new Date();
 	tomorrow.setDate(new Date().getDate() + 1);
 
-	let eventDate = event_start
+	const eventDate = event_start
 		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: moment.utc(tomorrow).local();
-	let noon = moment(eventDate).set({
+	const noon = moment(eventDate).set({
 		hour: "12",
 		minute: "00",
 		second: "00"
 	});
-	let showTime = event_start
+	const showTime = event_start
 		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: noon;
-	let doorTime = door_time
+	const doorTime = door_time
 		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: noon;
-	let redeemDate = redeem_date
+	const redeemDate = redeem_date
 		? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 		: noon;
-	let doorTimeHours = door_time
+	const doorTimeHours = door_time
 		? moment.utc(event_start).diff(moment.utc(door_time), "m") / 60
 		: 1; // Default: 1 hour
+	const publishDate = publish_date
+		? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		: null;
+	const endTime = event_end
+		? moment.utc(event_end, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		: null;
 
 	const eventDetails = {
 		override_status, //TODO get from API
@@ -186,10 +205,9 @@ const formatDataForInputs = event => {
 		eventDate,
 		showTime,
 		doorTime,
+		endTime,
 		doorTimeHours,
-		publishDate: publish_date
-			? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-			: null,
+		publishDate,
 		redeemDate,
 		ageLimit: age_limit || "",
 		venueId: venue_id || "",
@@ -308,7 +326,7 @@ class Details extends Component {
 		const { errors } = this.props;
 		const { override_status } = eventUpdateStore.event;
 
-		const statusOptions = [{ value: false,  label: "Auto" }];
+		const statusOptions = [{ value: false, label: "Auto" }];
 		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
 		let eventOverrideStatusString = Bn.Enums
 			? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING
@@ -376,6 +394,7 @@ class Details extends Component {
 			name,
 			eventDate,
 			showTime,
+			endTime,
 			additionalInfo,
 			topLineInfo,
 			videoUrl,
@@ -490,6 +509,69 @@ class Details extends Component {
 						label="Door time"
 						styleClassName="formControlNoMargin"
 						onChange={this.handleDoorTimeChange}
+					/>
+				</Grid>
+
+				<Grid item xs={12} sm={12} lg={6}>
+					<DateTimePickerGroup
+						type="date"
+						error={errors.endTime}
+						value={endTime}
+						name="endTime"
+						label="Event end date"
+						onChange={newEndDate => {
+							let updatedEndTime = newEndDate;
+
+							let adjustTime;
+
+							//Adjust time part of newly selected date
+							if (endTime) {
+								adjustTime = endTime;
+							} else if (showTime) {
+								adjustTime = moment(showTime).add(
+									DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
+									"hours"
+								);
+							}
+
+							if (adjustTime) {
+								updatedEndTime.set({
+									hour: adjustTime.get("hour"),
+									minute: adjustTime.get("minute"),
+									second: adjustTime.get("second")
+								});
+							}
+
+							this.changeDetails({ endTime: updatedEndTime });
+						}}
+						onBlur={validateFields}
+					/>
+				</Grid>
+				<Grid item xs={12} sm={12} lg={6}>
+					<DateTimePickerGroup
+						type="time"
+						error={errors.endTime}
+						value={endTime}
+						name="endTime"
+						label="Event end time"
+						onChange={newEndTime => {
+							let updatedEndTime = moment();
+
+							if (endTime) {
+								updatedEndTime = moment(endTime);
+							} else if (eventDate) {
+								updatedEndTime = moment(eventDate);
+							}
+
+							updatedEndTime.set({
+								hour: newEndTime.get("hour"),
+								minute: newEndTime.get("minute"),
+								second: newEndTime.get("second")
+							});
+
+							this.changeDetails({ endTime: updatedEndTime });
+						}}
+						onBlur={validateFields}
 					/>
 				</Grid>
 
