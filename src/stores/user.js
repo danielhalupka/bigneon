@@ -132,9 +132,9 @@ class User {
 						}
 					});
 			},
-			e => {
+			onError || (e => {
 				console.error(e);
-			}
+			})
 		);
 	}
 
@@ -170,12 +170,11 @@ class User {
 					this.onLogout();
 				} else {
 					this.token = false;
-					notifications.show({
+
+					onError ? onError(error) : notifications.show({
 						message: "Failed to refresh session.",
 						variant: "error"
 					});
-
-					onError(error);
 				}
 			});
 	}

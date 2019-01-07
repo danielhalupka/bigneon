@@ -4,9 +4,11 @@ import { Typography, withStyles, CardMedia } from "@material-ui/core";
 import notifications from "../../../stores/notifications";
 import user from "../../../stores/user";
 import Bigneon from "../../../helpers/bigneon";
+import { observer } from "mobx-react";
 
 const styles = theme => ({});
 
+@observer
 class ReceiveTransfer extends Component {
 	constructor(props) {
 		super(props);
@@ -28,6 +30,11 @@ class ReceiveTransfer extends Component {
 
 		this.setState({ transferAuth });
 
+		//If we just landed on this page, make sure the user is logged in first
+		user.refreshUser(() => this.receiveTransfer(), () => this.attemptReceive());
+	}
+
+	attemptReceive() {
 		if (!user.isAuthenticated) {
 			//Show dialog for the user to signup/login, try again when they're authenticated
 			user.showAuthRequiredDialog(this.receiveTransfer.bind(this));
