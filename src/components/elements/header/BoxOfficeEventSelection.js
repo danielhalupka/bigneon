@@ -124,34 +124,41 @@ class BoxOfficeEventSelection extends React.Component {
 				onClose={this.handleClose.bind(this)}
 			>
 				{availableEvents.map(
-					({ id, name, promo_image_url, venue, event_start, door_time }) => (
-						<MenuItem
-							key={id}
-							onClick={() => {
-								boxOffice.setActiveEventId(id, true);
-								this.handleClose();
-							}}
-							selected={id === activeEventId}
-						>
-							<ListItemIcon>
-								<div
-									className={classes.promoImage}
-									style={{
-										backgroundImage: `url(${promo_image_url ||
+					({ id, name, promo_image_url, venue, event_start, door_time }) => {
+						let displayTimes = {
+							event_start:  moment.utc(event_start).local(),
+							door_time: moment.utc(door_time || event_start).local()
+						};
+						if (venue.timezone) {
+							displayTimes.event_start = moment.utc(event_start).tz(venue.timezone);
+							displayTimes.door_time = moment.utc(door_time || event_start).tz(venue.timezone);
+						}
+						return (
+							<MenuItem
+								key={id}
+								onClick={() => {
+									boxOffice.setActiveEventId(id, true);
+									this.handleClose();
+								}}
+								selected={id === activeEventId}
+							>
+								<ListItemIcon>
+									<div
+										className={classes.promoImage}
+										style={{
+											backgroundImage: `url(${promo_image_url ||
 											"/images/app-promo-background.png"})`
-									}}
+										}}
+									/>
+								</ListItemIcon>
+								<ListItemText
+									inset
+									primary={name}
+									secondary={` ${venue.name} - ${displayTime(displayTimes)}`}
 								/>
-							</ListItemIcon>
-							<ListItemText
-								inset
-								primary={name}
-								secondary={` ${venue.name} - ${displayTime({
-									event_start,
-									door_time
-								})}`}
-							/>
-						</MenuItem>
-					)
+							</MenuItem>
+						);
+					}
 				)}
 			</Menu>
 		);
@@ -176,6 +183,14 @@ class BoxOfficeEventSelection extends React.Component {
 			promo_image_url,
 			venue
 		} = activeEventDetails;
+		let displayTimes = {
+			event_start:  moment.utc(event_start).local(),
+			door_time: moment.utc(door_time || event_start).local()
+		};
+		if (venue.timezone) {
+			displayTimes.event_start = moment.utc(event_start).tz(venue.timezone);
+			displayTimes.door_time = moment.utc(door_time || event_start).tz(venue.timezone);
+		}
 
 		return (
 			<div className={classes.root}>
@@ -189,7 +204,7 @@ class BoxOfficeEventSelection extends React.Component {
 						className={classes.promoImage}
 						style={{
 							backgroundImage: `url(${promo_image_url ||
-								"/images/app-promo-background.png"})`
+							"/images/app-promo-background.png"})`
 						}}
 					/>
 					<div className={classes.nameDiv}>
@@ -197,7 +212,7 @@ class BoxOfficeEventSelection extends React.Component {
 							<div>
 								<Typography className={classes.heading}>{name}</Typography>
 								<Typography className={classes.subHeading}>
-									{venue.name} - {displayTime(activeEventDetails)}
+									{venue.name} - {displayTime(displayTimes)}
 								</Typography>
 							</div>
 						</Hidden>
