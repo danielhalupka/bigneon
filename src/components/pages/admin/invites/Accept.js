@@ -81,6 +81,13 @@ class InviteAccept extends Component {
 		this.props.history.push(`/sign-up`);
 	}
 
+	goToLoginFirst() {
+		//Save the token, then take them to the login page
+		localStorage.setItem("security_token", this.security_token);
+
+		this.props.history.push(`/login`);
+	}
+
 	acceptInvite() {
 		Bigneon()
 			.invitations.accept({ security_token: this.security_token })
@@ -117,6 +124,17 @@ class InviteAccept extends Component {
 		) : null;
 	}
 
+	renderUserEmail() {
+		const { email } = user;
+		const { classes } = this.props;
+
+		if (email) {
+			return <Typography className={classes.text}>Currently logged in as: <span className={classes.bold}>{email}</span>.</Typography>;
+		}
+
+		return null;
+	}
+
 	render() {
 		const {
 			showSuccessDialog,
@@ -142,6 +160,7 @@ class InviteAccept extends Component {
 					open={showAcceptDialog}
 				>
 					{this.renderOrgDetails()}
+					{this.renderUserEmail()}
 
 					<div style={{ paddingTop: 40 }}>
 						<Button
@@ -150,6 +169,16 @@ class InviteAccept extends Component {
 							style={{ width: "100%" }}
 						>
 							Accept invite
+						</Button>
+
+						<Button
+							onClick={() => {
+								user.onLogout();
+								this.goToLoginFirst();
+							}}
+							style={{ width: "100%", marginTop: 10 }}
+						>
+							Logout and switch account
 						</Button>
 					</div>
 				</Dialog>

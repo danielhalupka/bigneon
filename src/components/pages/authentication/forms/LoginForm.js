@@ -105,7 +105,16 @@ class LoginForm extends Component {
 					localStorage.setItem("refresh_token", refresh_token);
 
 					//Pull user data with our new token
-					user.refreshUser(this.props.onSuccess);
+					user.refreshUser(() => {
+						//If we have a security token, send them to the accept invite page first
+						const security_token = localStorage.getItem("security_token");
+						console.log("security_token: ", security_token);
+						if (security_token) {
+							this.props.onSuccess(`/invites/accept?token=${security_token}`);
+						} else {
+							this.props.onSuccess();
+						}
+					});
 				} else {
 					this.setState({ isSubmitting: false });
 

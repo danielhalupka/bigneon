@@ -6,6 +6,7 @@ import Container from "./Container";
 import LoginForm from "./forms/LoginForm";
 import user from "../../../stores/user";
 import Button from "../../elements/Button";
+import SignupForm from "./Signup";
 
 class Login extends Component {
 	componentDidMount() {
@@ -22,7 +23,9 @@ class Login extends Component {
 				<Link to="/sign-up">
 					<Button variant="text">New here? Create a free account.</Button>
 				</Link>
-				<LoginForm onSuccess={() => this.props.history.push("/")} />
+				<LoginForm
+					onSuccess={(href = "/") => this.props.history.push(href)} //Can optionally change where to redirect to
+			 	/>
 			</Container>
 		);
 	}
