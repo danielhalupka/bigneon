@@ -116,7 +116,7 @@ class TicketCounts extends Component {
 			totalAllocation += allocation_count;
 			totalSoldOnlineCount += online_count;
 			totalBoxOfficeCount += box_office_count;
-			totalSoldCount += allocation_count - available_count;
+			totalSoldCount += online_count + box_office_count;
 			totalCompsCount += comp_count;
 			totalHoldsCount += hold_count;
 			totalOpenCount += available_count;
@@ -127,7 +127,7 @@ class TicketCounts extends Component {
 				allocation_count,
 				online_count,
 				box_office_count,
-				allocation_count - available_count,
+				online_count + box_office_count,
 				comp_count,
 				hold_count,
 				available_count,
