@@ -135,7 +135,7 @@ const EventSummaryCard = props => {
 		totalOpen,
 		totalHeld,
 		totalCapacity,
-		totalSales,
+		totalSalesInCents,
 		isExpanded,
 		onExpandClick,
 		ticketTypes,
@@ -221,7 +221,7 @@ const EventSummaryCard = props => {
 
 									<div className={classes.totalsDivider} />
 
-									<Total classes={classes} value={`$${totalSales}`}>
+									<Total classes={classes} value={`$${(totalSalesInCents/100).toFixed(2)}`}>
 										Sales
 									</Total>
 								</div>
@@ -267,9 +267,7 @@ const EventSummaryCard = props => {
 								<Grid key={index} item xs={12} sm={6} lg={4}>
 									<TicketTypeSalesBarChart
 										name={ticketType.name}
-										totalRevenue={Math.floor(
-											ticketType.sales_total_in_cents / 100
-										)}
+										totalRevenueInCents={ticketType.sales_total_in_cents}
 										values={[
 											{
 												label: "Sold",
@@ -309,7 +307,7 @@ EventSummaryCard.propTypes = {
 	totalOpen: PropTypes.number.isRequired,
 	totalHeld: PropTypes.number.isRequired,
 	totalCapacity: PropTypes.number.isRequired,
-	totalSales: PropTypes.number.isRequired,
+	totalSalesInCents: PropTypes.number.isRequired,
 	isExpanded: PropTypes.bool.isRequired,
 	onExpandClick: PropTypes.func.isRequired,
 	ticketTypes: PropTypes.array.isRequired,

@@ -270,7 +270,7 @@ class EventsList extends Component {
 							totalOpen={event.tickets_open}
 							totalHeld={event.tickets_held}
 							totalCapacity={event.total_tickets}
-							totalSales={Math.floor(event.sales_total_in_cents / 100)}
+							totalSalesInCents={event.sales_total_in_cents}
 							isExpanded={expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
 							ticketTypes={event.ticket_types}

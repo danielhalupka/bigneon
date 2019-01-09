@@ -95,7 +95,7 @@ const Bar = ({ classes, value, maxValue, index }) => {
 };
 
 const TicketTypeSalesBarChart = props => {
-	const { name, totalRevenue, classes, values } = props;
+	const { name, totalRevenueInCents, classes, values } = props;
 
 	let maxValue = 0;
 	values.forEach(({ value }) => {
@@ -111,7 +111,7 @@ const TicketTypeSalesBarChart = props => {
 					<Typography className={classes.name}>{name}</Typography>
 					<Typography
 						className={classes.totalRevenue}
-					>{`$${totalRevenue}`}</Typography>
+					>{`$${(totalRevenueInCents/100).toFixed(2)}`}</Typography>
 				</div>
 				<div className={classes.chartBackground}>
 					<div className={classes.horizontalLine} />
@@ -147,7 +147,7 @@ const TicketTypeSalesBarChart = props => {
 TicketTypeSalesBarChart.propTypes = {
 	classes: PropTypes.object.isRequired,
 	name: PropTypes.string.isRequired,
-	totalRevenue: PropTypes.number.isRequired,
+	totalRevenueInCents: PropTypes.number.isRequired,
 	values: PropTypes.arrayOf(
 		PropTypes.shape({
 			label: PropTypes.string.isRequired,

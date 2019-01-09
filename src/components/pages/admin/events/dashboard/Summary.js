@@ -149,7 +149,7 @@ class Summary extends Component {
 			result.push({
 				x: Number(moment(dayStats[index].date).format("D")),
 				y: dayStats[index].revenue_in_cents / 100,
-				tooltipTitle: `$${Math.floor(dayStats[index].revenue_in_cents / 100)}`,
+				tooltipTitle: `$${(dayStats[index].revenue_in_cents / 100).toFixed(2)}`,
 				tooltipText: `${dayStats[index].ticket_sales} Tickets`
 			});
 		}
@@ -179,7 +179,7 @@ class Summary extends Component {
 					<NumberCard
 						active={activeNumbersCard === "revenue"}
 						label="Revenue"
-						value={"$" + Math.floor(event.sales_total_in_cents / 100)}
+						value={"$" + (event.sales_total_in_cents / 100).toFixed(2)}
 						iconName="chart"
 						classes={classes}
 					/>
@@ -245,7 +245,7 @@ class Summary extends Component {
 					<Grid key={index} item xs={12} sm={6} lg={4}>
 						<TicketTypeSalesBarChart
 							name={tt.name}
-							totalRevenue={Math.floor(tt.sales_total_in_cents / 100)}
+							totalRevenueInCents={tt.sales_total_in_cents}
 							values={[
 								{ label: "Sold", value: tt.sold_held + tt.sold_unreserved },
 								{ label: "Open", value: tt.open },
