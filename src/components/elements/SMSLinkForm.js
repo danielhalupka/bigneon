@@ -136,7 +136,7 @@ class SMSLinkForm extends Component {
 			<div className={classes.smsContainer}>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<InputGroup
-						label="Cellphone number"
+						label="Mobile number"
 						value={phone}
 						type="phone"
 						name="phone"

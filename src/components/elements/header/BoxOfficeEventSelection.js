@@ -126,7 +126,7 @@ class BoxOfficeEventSelection extends React.Component {
 				{availableEvents.map(
 					({ id, name, promo_image_url, venue, event_start, door_time }) => {
 						let displayTimes = {
-							event_start:  moment.utc(event_start).local(),
+							event_start: moment.utc(event_start).local(),
 							door_time: moment.utc(door_time || event_start).local()
 						};
 						if (venue.timezone) {
@@ -184,7 +184,7 @@ class BoxOfficeEventSelection extends React.Component {
 			venue
 		} = activeEventDetails;
 		let displayTimes = {
-			event_start:  moment.utc(event_start).local(),
+			event_start: moment.utc(event_start).local(),
 			door_time: moment.utc(door_time || event_start).local()
 		};
 		if (venue.timezone) {

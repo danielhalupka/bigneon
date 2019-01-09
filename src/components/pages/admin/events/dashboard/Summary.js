@@ -273,7 +273,7 @@ class Summary extends Component {
 						justify="center"
 						alignItems="center"
 					>
-						<img src="/images/no_sales_data_illustration.png" style={{ margin:50,width:200 }} />
+						<img src="/images/no_sales_data_illustration.png" style={{ margin: 50,width: 200 }} />
 						<Typography variant="title">This event is externally hosted.</Typography>
 					</Grid>
 				</Container>

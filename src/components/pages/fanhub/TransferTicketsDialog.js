@@ -144,13 +144,13 @@ class TransferTicketsDialog extends Component {
 
 		if (!emailOrCellphoneNumber) {
 			errors.emailOrCellphoneNumber =
-				"Missing cellphone number or email address.";
+				"Missing mobile number or email address.";
 		} else if (
 			!validEmail(emailOrCellphoneNumber) &&
 			!validPhone(emailOrCellphoneNumber)
 		) {
 			errors.emailOrCellphoneNumber =
-				"Invalid cellphone number or email address.";
+				"Invalid mobile number or email address.";
 		}
 
 		this.setState({ errors });

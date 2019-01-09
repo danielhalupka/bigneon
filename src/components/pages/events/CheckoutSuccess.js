@@ -18,7 +18,7 @@ import InputGroup from "../../common/form/InputGroup";
 import user from "../../../stores/user";
 import SMSLinkForm from "../../elements/SMSLinkForm";
 
-const qrWidth = 300;
+const overlayCardWidth = 350;
 
 const styles = theme => ({
 	eventSubCardContent: {
@@ -27,22 +27,26 @@ const styles = theme => ({
 		paddingBottom: theme.spacing.unit * 4,
 		backgroundColor: theme.palette.background.default
 	},
-	qrContainer: {
+	cardContent: {
 		padding: theme.spacing.unit
 	},
 	appDetails: {
-		paddingTop: theme.spacing.unit * 2,
-		textAlign: "center"
+		paddingTop: theme.spacing.unit * 2
 	},
 	appHeading: {
 		textTransform: "uppercase",
 		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 1.1,
 		marginBottom: theme.spacing.unit
 	},
 	appDetail: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.9,
 		marginBottom: theme.spacing.unit
+	},
+	appButtonContainer: {
+		display: "flex",
+		justifyContent: "space-around"
 	}
 });
 
@@ -92,7 +96,7 @@ class CheckoutSuccess extends Component {
 					padding: 10
 				}}
 			>
-				<QRCode size={qrWidth} fgColor={"#000000"} value={qrText} />
+				<QRCode size={overlayCardWidth} fgColor={"#000000"} value={qrText} />
 			</Card>
 		);
 	}
@@ -124,6 +128,43 @@ class CheckoutSuccess extends Component {
 
 		const headerHeight = 750;
 
+		const appDetails = (
+			<div>
+				<div className={classes.appDetails}>
+					<Typography className={classes.appHeading}>
+							Get the bigNEON app
+						<br />
+							to access your tickets
+					</Typography>
+					<Typography className={classes.appDetail}>
+							The mobile app is required to use your tickets at the show
+					</Typography>
+					<br />
+
+					<div className={classes.appButtonContainer}>
+						<AppButton
+							color="black"
+							href={process.env.REACT_APP_STORE_IOS}
+							variant="ios"
+							style={{ marginRight: 2 }}
+						>
+							iOS
+						</AppButton>
+
+						<AppButton
+							color="black"
+							href={process.env.REACT_APP_STORE_ANDROID}
+							variant="android"
+							style={{ marginLeft: 2 }}
+						>
+							Android
+						</AppButton>
+					</div>
+				</div>
+				<SMSLinkForm />
+			</div>
+		);
+
 		return (
 			<div>
 				<EventHeaderImage
@@ -139,7 +180,7 @@ class CheckoutSuccess extends Component {
 						<EventDetailsOverlayCard
 							style={{
 								width: "25%",
-								minWidth: qrWidth + 100,
+								minWidth: overlayCardWidth + 100,
 								maxWidth: 400,
 								top: headerHeight / 3.1,
 								right: 200,
@@ -148,8 +189,8 @@ class CheckoutSuccess extends Component {
 							imageSrc={promo_image_url}
 						>
 							<div className={classes.eventSubCardContent}>
-								<div className={classes.qrContainer}>
-									<SMSLinkForm />
+								<div className={classes.cardContent}>
+									{appDetails}
 								</div>
 							</div>
 						</EventDetailsOverlayCard>
@@ -165,38 +206,10 @@ class CheckoutSuccess extends Component {
 								top: 500
 							}}
 						>
-							<SMSLinkForm />
+							<div className={classes.cardContent}>
+								{appDetails}
+							</div>
 						</EventDetailsOverlayCard>
-
-						<div className={classes.appDetails}>
-							<Typography className={classes.appHeading}>
-								Get the bigNEON app
-								<br />
-								to access your tickets
-							</Typography>
-							<Typography className={classes.appDetail}>
-								The mobile app is required to use your tickets at the show
-							</Typography>
-							<br />
-
-							<AppButton
-								color="black"
-								href={process.env.REACT_APP_STORE_IOS}
-								variant="ios"
-							>
-								iOS
-							</AppButton>
-
-							<span style={{ marginLeft: 20 }} />
-
-							<AppButton
-								color="black"
-								href={process.env.REACT_APP_STORE_ANDROID}
-								variant="android"
-							>
-								Android
-							</AppButton>
-						</div>
 					</Hidden>
 				</div>
 			</div>

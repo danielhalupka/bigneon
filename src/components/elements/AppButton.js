@@ -72,9 +72,9 @@ const AppButton = props => {
 	);
 };
 AppButton.defaultProps = {
-	size: "medium",
 	variant: "default",
-	color: "white"
+	color: "white",
+	style: {}
 };
 
 AppButton.propTypes = {

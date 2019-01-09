@@ -250,34 +250,34 @@ const EventHeaderImage = props => {
 									<span className={classes.email}>{user.email}</span>
 								</Typography>
 
-								<Divider
-									light
-									height={1}
-									style={{ marginTop: 20, marginBottom: 30 }}
-								/>
+								{/*<Divider*/}
+								{/*light*/}
+								{/*height={1}*/}
+								{/*style={{ marginTop: 20, marginBottom: 30 }}*/}
+								{/*/>*/}
 
-								<Typography className={classes.topLineInfo}>
-									Get the big NEON app
-									<br />
-									to access your tickets
-								</Typography>
-								<Typography className={classes.smallDetailsText}>
-									The mobile app is required to use your tickets at the show
-								</Typography>
-								<br />
+								{/*<Typography className={classes.topLineInfo}>*/}
+								{/*Get the big NEON app*/}
+								{/*<br />*/}
+								{/*to access your tickets*/}
+								{/*</Typography>*/}
+								{/*<Typography className={classes.smallDetailsText}>*/}
+								{/*The mobile app is required to use your tickets at the show*/}
+								{/*</Typography>*/}
+								{/*<br />*/}
 
-								<AppButton href={process.env.REACT_APP_STORE_IOS} variant="ios">
-									iOS
-								</AppButton>
+								{/*<AppButton href={process.env.REACT_APP_STORE_IOS} variant="ios">*/}
+								{/*iOS*/}
+								{/*</AppButton>*/}
 
-								<span style={{ marginLeft: 20 }} />
+								{/*<span style={{ marginLeft: 20 }} />*/}
 
-								<AppButton
-									href={process.env.REACT_APP_STORE_ANDROID}
-									variant="android"
-								>
-									Android
-								</AppButton>
+								{/*<AppButton*/}
+								{/*href={process.env.REACT_APP_STORE_ANDROID}*/}
+								{/*variant="android"*/}
+								{/*>*/}
+								{/*Android*/}
+								{/*</AppButton>*/}
 							</div>
 						) : null}
 					</Grid>

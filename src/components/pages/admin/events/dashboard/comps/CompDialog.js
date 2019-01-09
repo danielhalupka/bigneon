@@ -143,7 +143,7 @@ class CompDialog extends React.Component {
 						error={errors.contact}
 						value={comp.email || comp.phone}
 						name="email"
-						label="Cell Phone Number or Email Address"
+						label="Mobile Number or Email Address"
 						placeholder="- Enter share method (optional)"
 						type="text"
 						onChange={e => {

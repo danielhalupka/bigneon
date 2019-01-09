@@ -87,7 +87,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 			!validEmail(emailOrCellphoneNumber)
 		) {
 			return notifications.show({
-				message: "Invalid cellphone number or email.",
+				message: "Invalid mobile number or email.",
 				variant: "warning"
 			});
 		}
