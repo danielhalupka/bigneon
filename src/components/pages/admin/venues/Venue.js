@@ -17,6 +17,7 @@ import { validPhone } from "../../../../validators";
 import PageHeading from "../../../elements/PageHeading";
 import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
 import cloudinaryWidget from "../../../../helpers/cloudinaryWidget";
+import moment from "moment-timezone";
 
 const styles = theme => ({
 	paper: {
@@ -55,6 +56,7 @@ class Venue extends Component {
 			place_id: "",
 			phone: "",
 			organizationId: "",
+			timezone: moment.tz.guess(),
 			organizations: null,
 			regions: null,
 			errors: {},
@@ -79,7 +81,8 @@ class Venue extends Component {
 						postal_code,
 						phone,
 						region_id,
-						promo_image_url
+						promo_image_url,
+						timezone
 					} = response.data;
 
 					this.setState({
@@ -91,7 +94,8 @@ class Venue extends Component {
 						postal_code: postal_code || "",
 						phone: phone || "",
 						regionId: region_id || "",
-						imageUrl: promo_image_url
+						imageUrl: promo_image_url,
+						timezone: timezone || moment.tz.guess()
 					});
 				})
 				.catch(error => {
@@ -193,7 +197,8 @@ class Venue extends Component {
 			country,
 			postal_code,
 			organizationId,
-			venueId
+			venueId,
+			timezone
 		} = this.state;
 		const phone = removePhoneFormatting(this.state.phone);
 
@@ -204,7 +209,8 @@ class Venue extends Component {
 			"city",
 			"state",
 			"country",
-			"postal_code"
+			"postal_code",
+			"timezone"
 		];
 		required.forEach(field => {
 			if (!this.state[field]) {
@@ -315,6 +321,7 @@ class Venue extends Component {
 			country,
 			place_id,
 			postal_code,
+			timezone,
 			latitude = null,
 			longitude = null,
 			imageUrl
@@ -332,7 +339,8 @@ class Venue extends Component {
 			google_place_id: place_id,
 			latitude,
 			longitude,
-			promo_image_url: imageUrl
+			promo_image_url: imageUrl,
+			timezone
 		};
 
 		//If we're updating an existing venue
@@ -359,6 +367,24 @@ class Venue extends Component {
 
 				this.props.history.push("/admin/venues");
 			}
+		);
+	}
+
+	renderTimezones() {
+		const { timezone, errors } = this.state;
+		const timezones = moment.tz.names().map(name => ({
+			value: name,
+			label: name
+		}));
+		return (
+			<SelectGroup
+				value={timezone}
+				items={timezones}
+				error={errors.timezone}
+				name={"timezone"}
+				label={"Timezone"}
+				onChange={e => this.setState({ timezone: e.target.value })}
+			/>
 		);
 	}
 
@@ -431,6 +457,7 @@ class Venue extends Component {
 			latitude,
 			longitude
 		};
+
 		const { classes } = this.props;
 		return (
 			<div>
@@ -473,6 +500,7 @@ class Venue extends Component {
 									/>
 
 									{!venueId ? this.renderOrganizations() : null}
+									{this.renderTimezones()}
 									{this.renderRegions()}
 									<InputGroup
 										error={errors.phone}
