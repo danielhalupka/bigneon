@@ -65,29 +65,34 @@ const styles = theme => ({
 	eventName: {
 		color: "#FFFFFF",
 		fontFamily: fontFamilyBold,
-		fontSize: theme.typography.fontSize * 3,
-		lineHeight: 1,
 		marginBottom: theme.spacing.unit
 	},
 	eventNameMobile: {
-		fontSize: theme.typography.fontSize * 3,
 		marginBottom: 0
+	},
+	shortEventNameText: {
+		fontSize: theme.typography.fontSize * 3,
+		lineHeight: 1
+	},
+	longEventNameText: {
+		fontSize: theme.typography.fontSize * 1.8,
+		lineHeight: 0.9
 	},
 	withArtists: {
 		color: "#9da3b4",
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 2,
-		lineHeight: 1
+		lineHeight: 0.9
 	},
 	withArtistsDetailed: {
-		color: "#FFFFFF",
+		color: "#9da3b4",
 		fontSize: theme.typography.fontSize * 1.6,
 		lineHeight: 1
 	},
 	withArtistsMobile: {
 		color: "#9da3b4",
 		fontFamily: fontFamilyDemiBold,
-		lineHeight: 2,
+		lineHeight: 1,
 		fontSize: theme.typography.fontSize * 1.5
 	},
 	spaceLine: {
@@ -142,6 +147,10 @@ const EventHeaderImage = props => {
 		//desktopTop = 0;
 	}
 
+	//Adjust these thresholds as needed
+	const eventNameIsLongDesktop = name.length > 65;
+	const eventNameIsLongMobile = name.length > 30;
+
 	return (
 		<div>
 			{/* DESKTOP */}
@@ -180,7 +189,7 @@ const EventHeaderImage = props => {
 								<Typography className={classes.topLineInfo}>
 									{nl2br(top_line_info)}
 								</Typography>
-								<Typography className={classes.eventName}>{name}</Typography>
+								<Typography className={classNames({ [classes.eventName]: true, [classes.longEventNameText]: eventNameIsLongDesktop, [classes.shortEventNameText]: !eventNameIsLongDesktop })}>{name}</Typography>
 								<Typography className={classes.withArtists}>
 									<SupportingArtistsLabel eventName={name} artists={artists} />
 								</Typography>
@@ -193,7 +202,7 @@ const EventHeaderImage = props => {
 								<Typography className={classes.topLineInfo}>
 									{top_line_info}
 								</Typography>
-								<Typography className={classes.eventName}>{name}</Typography>
+								<Typography className={classNames({ [classes.eventName]: true, [classes.longEventNameText]: eventNameIsLongDesktop, [classes.shortEventNameText]: !eventNameIsLongDesktop })}>{name}</Typography>
 								<Typography className={classes.withArtistsDetailed}>
 									<SupportingArtistsLabel eventName={name} artists={artists} />
 								</Typography>
@@ -217,7 +226,7 @@ const EventHeaderImage = props => {
 								<Typography className={classes.topLineInfo}>
 									Success! You're going to
 								</Typography>
-								<Typography className={classes.eventName}>{name}</Typography>
+								<Typography className={classNames({ [classes.eventName]: true, [classes.longEventNameText]: eventNameIsLongDesktop, [classes.shortEventNameText]: !eventNameIsLongDesktop })}>{name}</Typography>
 								<Typography className={classes.withArtistsDetailed}>
 									<SupportingArtistsLabel eventName={name} artists={artists} />
 								</Typography>
@@ -307,7 +316,9 @@ const EventHeaderImage = props => {
 							<Typography
 								className={classNames({
 									[classes.eventName]: true,
-									[classes.eventNameMobile]: true
+									[classes.eventNameMobile]: true,
+									[classes.longEventNameText]: eventNameIsLongMobile,
+									[classes.shortEventNameText]: !eventNameIsLongMobile
 								})}
 							>
 								{name}
@@ -337,7 +348,9 @@ const EventHeaderImage = props => {
 							<Typography
 								className={classNames({
 									[classes.eventName]: true,
-									[classes.eventNameMobile]: true
+									[classes.eventNameMobile]: true,
+									[classes.longEventNameText]: eventNameIsLongMobile,
+									[classes.shortEventNameText]: !eventNameIsLongMobile
 								})}
 							>
 								{name}
@@ -378,7 +391,9 @@ const EventHeaderImage = props => {
 							<Typography
 								className={classNames({
 									[classes.eventName]: true,
-									[classes.eventNameMobile]: true
+									[classes.eventNameMobile]: true,
+									[classes.longEventNameText]: eventNameIsLongMobile,
+									[classes.shortEventNameText]: !eventNameIsLongMobile
 								})}
 							>
 								{name}

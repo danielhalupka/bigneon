@@ -311,6 +311,10 @@ class CheckoutSelection extends Component {
 					<Typography className={classes.eventSubCardHeading}>
 						Purchase tickets
 					</Typography>
+
+					{/*<Typography className={classes.eventSubCardDescription}>*/}
+					{/*{additional_info}*/}
+					{/*</Typography>*/}
 				</div>
 
 				{this.renderTicketPricing()}
