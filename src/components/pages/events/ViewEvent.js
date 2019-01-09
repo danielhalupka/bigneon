@@ -19,6 +19,7 @@ import ArtistSummary from "../../elements/event/ArtistSummary";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import DateFlag from "../../elements/event/DateFlag";
 import SocialIconLink from "../../elements/social/SocialIconLink";
+import nl2br from "../../../helpers/nl2br";
 
 const styles = theme => ({
 	root: {},
@@ -272,7 +273,6 @@ class ViewEvent extends Component {
 			is_external,
 			external_url
 		} = event;
-
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
@@ -407,7 +407,7 @@ class ViewEvent extends Component {
 								<Grid item xs={12} sm={12} md={6} lg={6}>
 									<div className={classes.eventDetailsContent}>
 										<Typography className={classes.description}>
-											{additional_info}
+											{nl2br(additional_info)}
 										</Typography>
 										<Grid
 											container

@@ -11,6 +11,7 @@ import DateFlag from "./DateFlag";
 import Divider from "../../common/Divider";
 import user from "../../../stores/user";
 import AppButton from "../AppButton";
+import nl2br from "../../../helpers/nl2br";
 
 const styles = theme => ({
 	blurContainer: {
@@ -177,7 +178,7 @@ const EventHeaderImage = props => {
 						{variant === "simple" ? (
 							<div>
 								<Typography className={classes.topLineInfo}>
-									{top_line_info}
+									{nl2br(top_line_info)}
 								</Typography>
 								<Typography className={classes.eventName}>{name}</Typography>
 								<Typography className={classes.withArtists}>

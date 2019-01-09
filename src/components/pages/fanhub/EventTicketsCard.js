@@ -17,6 +17,7 @@ import EventTicketRow from "./EventTicketRow";
 import CheckBox from "../../elements/form/CheckBox";
 import DateFlag from "../../elements/event/DateFlag";
 import SupportingArtistsLabel from "../events/SupportingArtistsLabel";
+import nl2br from "../../../helpers/nl2br";
 
 const styles = theme => ({
 	cardContent: {
@@ -378,7 +379,7 @@ class EventTicketsCard extends Component {
 						<div className={classes.row1}>
 							<div>
 								<Typography className={classes.topLineInfo}>
-									{top_line_info}
+									{nl2br(top_line_info)}
 								</Typography>
 								<Typography className={classes.eventName}>{name}</Typography>
 								<Typography className={classes.date}>
