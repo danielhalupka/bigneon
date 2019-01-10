@@ -36,6 +36,27 @@ var BigNeonWidget = {};
 		return strTime;
 	}
 
+	function prepareDateTime(dateTime) {
+		if (!dateTime) {
+			return false;
+		}
+		dateTime = dateTime.replace(/[a-zA-Z]+$/g, "").replace(/\.\d+$/g, "");
+		var parts = dateTime.split("T");
+		return parts.join(" ");
+	}
+
+	function parseLocalizedDateTime(localizedDateTime, utcDateTime) {
+		var date;
+		if (localizedDateTime) {
+			//Use the date time exactly as it is displayed
+			date = new Date(prepareDateTime(localizedDateTime));
+		} else {
+			//Set it as a UTC time and show the users current local version
+			date = new Date(prepareDateTime(utcDateTime) + " UTC");
+		}
+		return date;
+	}
+
 	function getPrice(event) {
 		var min = event.min_ticket_price / 100;
 		var max = event.max_ticket_price / 100;
@@ -81,8 +102,8 @@ var BigNeonWidget = {};
 		var parent = document.querySelector(target);
 
 		events.data.forEach(event => {
-			var eventDate = new Date(event.event_start);
-			var doorTime = new Date(event.door_time);
+			var eventDate = parseLocalizedDateTime(event.localized_times.event_start, event.event_start);
+			var doorTime = parseLocalizedDateTime(event.localized_times.door_time, event.door_time);
 			var priceText = getPrice(event);
 
 			var row = document.createElement("a");
@@ -90,15 +111,15 @@ var BigNeonWidget = {};
 			row.setAttribute("target", "_blank");
 
 			var eventModuleContainer = document.createElement("div");
-			eventModuleContainer.className = "event-container";
+			eventModuleContainer.className = "bn-event-container";
 			row.appendChild(eventModuleContainer);
 
 			var eventModuleImageContainer = document.createElement("div");
-			eventModuleImageContainer.className = "event-image";
+			eventModuleImageContainer.className = "bn-event-image";
 			eventModuleContainer.appendChild(eventModuleImageContainer);
 
 			var eventModuleDate = document.createElement("h3");
-			eventModuleDate.className = "event-date";
+			eventModuleDate.className = "bn-event-date";
 			var eventDateFormatted = `${days[eventDate.getDay()]} ${months[eventDate.getMonth()]} ${eventDate.getDate()} ${eventDate.getFullYear()}`;
 			eventModuleDate.innerText = eventDateFormatted;
 			eventModuleImageContainer.appendChild(eventModuleDate);
@@ -111,36 +132,36 @@ var BigNeonWidget = {};
 			}
 
 			var eventModuleTextContainer = document.createElement("div");
-			eventModuleTextContainer.className = "event-text";
+			eventModuleTextContainer.className = "bn-event-text";
 			eventModuleContainer.append(eventModuleTextContainer);
 
 			var eventModuleDateMobile = document.createElement("h3");
-			eventModuleDateMobile.className = "event-date-mobile";
+			eventModuleDateMobile.className = "bn-event-date-mobile";
 			eventModuleDateMobile.innerText = eventDateFormatted;
 			eventModuleTextContainer.appendChild(eventModuleDateMobile);
 
 			var eventModuleArtists = document.createElement("h2");
-			eventModuleArtists.className = "event-artists";
+			eventModuleArtists.className = "bn-event-artists";
 			eventModuleArtists.innerText = event.name;
 			eventModuleTextContainer.appendChild(eventModuleArtists);
 
 			var eventModuleTime = document.createElement("p");
-			eventModuleTime.className = "event-time";
+			eventModuleTime.className = "bn-event-time";
 			eventModuleTime.innerText = formatAMPM(doorTime);
 			eventModuleTextContainer.appendChild(eventModuleTime);
 
 			var eventModuleButtonContainer = document.createElement("div");
-			eventModuleButtonContainer.className = "event-button";
+			eventModuleButtonContainer.className = "bn-event-button";
 			eventModuleContainer.appendChild(eventModuleButtonContainer);
 
 			var eventModuleButton = document.createElement("button");
-			eventModuleButton.className = "buy-button buy-button-module";
+			eventModuleButton.className = "bn-buy-button bn-buy-button-module";
 			eventModuleButton.id = `bigneon-buy-button-${event.id}`;
 			eventModuleButton.innerText = "Tickets";
 			eventModuleButtonContainer.appendChild(eventModuleButton);
 
 			var eventModulePrice = document.createElement("p");
-			eventModulePrice.className = "event-price";
+			eventModulePrice.className = "bn-event-price";
 			eventModulePrice.innerText = priceText;
 			eventModuleButtonContainer.appendChild(eventModulePrice);
 
