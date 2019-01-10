@@ -14,6 +14,7 @@ import Divider from "../../../common/Divider";
 import PasswordResetDialog from "../PasswordResetDialog";
 import Bigneon from "../../../../helpers/bigneon";
 import Recaptcha from "../../../common/Recaptcha";
+import analytics from "../../../../helpers/analytics";
 
 const styles = () => ({});
 
@@ -105,10 +106,11 @@ class LoginForm extends Component {
 					localStorage.setItem("refresh_token", refresh_token);
 
 					//Pull user data with our new token
-					user.refreshUser(() => {
+					user.refreshUser((newUser) => {
+						analytics.identify({ ...newUser, method: "login" });
+
 						//If we have a security token, send them to the accept invite page first
 						const security_token = localStorage.getItem("security_token");
-						console.log("security_token: ", security_token);
 						if (security_token) {
 							this.props.onSuccess(`/invites/accept?token=${security_token}`);
 						} else {

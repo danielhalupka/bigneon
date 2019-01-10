@@ -15,6 +15,7 @@ import Divider from "../../../common/Divider";
 import Bigneon from "../../../../helpers/bigneon";
 import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
 import StyledLink from "../../../elements/StyledLink";
+import analytics from "../../../../helpers/analytics";
 
 const styles = theme => ({
 	privacy: {
@@ -129,7 +130,9 @@ class SignupForm extends Component {
 					localStorage.setItem("refresh_token", refresh_token);
 
 					//Pull user data with our new token
-					user.refreshUser(() => {
+					user.refreshUser((newUser) => {
+						analytics.identify({ ...newUser, method: "signup" });
+
 						//If we have a security token, send them to the accept invite page first
 						const security_token = localStorage.getItem("security_token");
 						if (security_token) {

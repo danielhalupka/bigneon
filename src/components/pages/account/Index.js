@@ -14,6 +14,7 @@ import Divider from "../../common/Divider";
 import ProfilePicture from "./ProfilePicture";
 import InputGroup from "../../common/form/InputGroup";
 import removePhoneFormatting from "../../../helpers/removePhoneFormatting";
+import analytics from "../../../helpers/analytics";
 
 const styles = theme => ({
 	root: {},
@@ -93,7 +94,7 @@ class Account extends Component {
 		}
 
 		const { firstName, lastName, email } = this.state;
-		const phone = removePhoneFormatting(this.state.phone);
+		const phone = this.state.phone ? removePhoneFormatting(this.state.phone) : "";
 
 		const errors = {};
 
@@ -111,10 +112,8 @@ class Account extends Component {
 			errors.email = "Invalid email address.";
 		}
 
-		if (!phone) {
-			errors.phone = "Missing phone number.";
-		} else if (!validPhone(phone)) {
-			errors.phone = "Invalid phone number.";
+		if (phone && !validPhone(phone)) {
+			errors.phone = "Invalid mobile number.";
 		}
 
 		this.setState({ errors });
@@ -151,26 +150,18 @@ class Account extends Component {
 				notifications.show({ message: "Account updated.", variant: "success" });
 				this.setState({ isSubmitting: false });
 
-				//Then load from API for the freshest data
-				user.refreshUser();
+				user.refreshUser(newUserDetails => {
+					analytics.identify(newUserDetails);
+				});
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Failed to update profile.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-					console.error(error.response.data);
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				console.error(error);
+				notifications.showFromErrorResponse({
+					defaultMessage: "Failed to update profile.",
+					error
 				});
 			});
 	}
