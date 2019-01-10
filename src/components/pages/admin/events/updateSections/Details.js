@@ -228,6 +228,9 @@ const formatDataForInputs = event => {
 class Details extends Component {
 	static doorHoursOptions = Array.from(Array(10 + 1)).map((_, i) => {
 		if (i === 0) {
+			return { value: 0, label: "Same as showtime" };
+		}
+		if (i === 1) {
 			return { value: 0.5, label: "30 minutes before showtime" };
 		}
 		return {
@@ -316,10 +319,6 @@ class Details extends Component {
 				}}
 			/>
 		);
-	}
-
-	validateFields() {
-		//TODO might be needed later, use the function at the top
 	}
 
 	renderStatus() {
