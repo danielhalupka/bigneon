@@ -56,8 +56,7 @@ class TicketCounts extends Component {
 
 		if (!eventCounts) {
 			return notifications.show({
-				message: "No data to export.",
-				variant: "warning"
+				message: "No data to export."
 			});
 		}
 		const ticketCounts = eventCounts[eventId];
@@ -71,8 +70,6 @@ class TicketCounts extends Component {
 		csvRows.push(["Ticket counts report"]);
 		csvRows.push([eventName]);
 		csvRows.push([""]);
-
-		console.log("Export event: ", ticketCounts);
 
 		let totalAllocation = 0;
 		let totalSoldOnlineCount = 0;

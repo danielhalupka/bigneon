@@ -11,10 +11,17 @@ import FanRow from "./FanRow";
 import Card from "../../../elements/Card";
 import { fontFamilyDemiBold, primaryHex } from "../../../styles/theme";
 import user from "../../../../stores/user";
+import Button from "../../../elements/Button";
+import downloadCSV from "../../../../helpers/downloadCSV";
 
 const imageSize = 40;
 
 const styles = theme => ({
+	header: {
+		display: "flex",
+		justifyContent: "space-between",
+		alignItems: "flex-end"
+	},
 	content: {
 		padding: theme.spacing.unit * 6,
 		paddingLeft: theme.spacing.unit * 8,
@@ -75,6 +82,54 @@ class FanList extends Component {
 		if (this.timeout) {
 			clearTimeout(this.timeout);
 		}
+	}
+
+	exportCSV() {
+		const { users } = this.state;
+
+		if (!users ||  users.length === 0) {
+			return notifications.show({
+				message: "No fans to export."
+			});
+		}
+
+		let csvRows = [];
+
+		csvRows.push(["Fans"]);
+		csvRows.push([""]);
+		csvRows.push([
+			"First name",
+			"Last name",
+			"Email",
+			"Last order date",
+			"Orders",
+			"Revenue",
+			"Date added"
+		]);
+
+		users.forEach(user => {
+			const {
+				first_name,
+				last_name,
+				email,
+				last_order_time,
+				order_count,
+				revenue_in_cents,
+				created_at
+			} = user;
+
+			csvRows.push([
+				first_name,
+				last_name,
+				email,
+				moment.utc(last_order_time).local().format("MM/DD/YYYY h:mm:A"),
+				order_count,
+				`$${Math.round(revenue_in_cents / 100)}`,
+				moment.utc(created_at).local().format("MM/DD/YYYY h:mm:A")
+			]);
+		});
+
+		downloadCSV(csvRows, "fans");
 	}
 
 	loadFans() {
@@ -165,7 +220,7 @@ class FanList extends Component {
 									<Typography className={classes.itemText}>{email}</Typography>
 									<Typography className={classes.itemText}>
 										{last_order_time
-											? moment(last_order_time).format("DD/MM/YYYY")
+											? moment.utc(last_order_time).local().format("MM/DD/YYYY")
 											: "-"}
 									</Typography>
 									<Typography className={classes.itemText}>
@@ -175,7 +230,7 @@ class FanList extends Component {
 										${Math.round(revenue_in_cents / 100)}
 									</Typography>
 									<Typography className={classes.itemText}>
-										{created_at ? moment(created_at).format("DD/MM/YYYY") : "-"}
+										{created_at ? moment.utc(created_at).local().format("MM/DD/YYYY") : "-"}
 									</Typography>
 								</FanRow>
 							</Link>
@@ -192,12 +247,22 @@ class FanList extends Component {
 
 		return (
 			<div>
-				<PageHeading
-					iconUrl="/icons/fan-hub-multi.svg"
-					subheading={users ? `${users.length} total fans` : null}
-				>
+
+				<div className={classes.header}>
+					<PageHeading
+						iconUrl="/icons/fan-hub-multi.svg"
+						subheading={users ? `${users.length} total fans` : null}
+					>
 					Fans
-				</PageHeading>
+					</PageHeading>
+					<Button
+						iconUrl="/icons/csv-active.svg"
+						variant="text"
+						onClick={this.exportCSV.bind(this)}
+					>
+						Export CSV
+					</Button>
+				</div>
 
 				<div className={classes.spacer} />
 
