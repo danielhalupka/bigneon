@@ -119,6 +119,23 @@ class ArtistDetails extends Component {
 		}
 	}
 
+	onDelete(index) {
+		const { event, artists } = eventUpdateStore;
+		const { availableArtists } = this.state;
+		const id = artists[index].id;
+		const selectedArtist = availableArtists.find(a => a.id === id);
+		const currentEventPromoUrl = event.promoImageUrl || "";
+
+		//If the event promo image was set by this artist, remove it
+		if (currentEventPromoUrl === selectedArtist.image_url) {
+			eventUpdateStore.updateEvent({
+				promoImageUrl: ""
+			});
+		}
+
+		eventUpdateStore.removeArtist(index);
+	}
+
 	createNewArtist(nameOrObj) {
 		//TODO make a creatingArtist state var to show it's being done so the user doesn't keep trying
 		const defaultNewArtist = {
@@ -298,9 +315,7 @@ class ArtistDetails extends Component {
 									thumb_image_url || "/images/profile-pic-placeholder.png"
 								}
 								error={errors ? errors[index] : null}
-								onDelete={() => {
-									eventUpdateStore.removeArtist(index);
-								}}
+								onDelete={() => this.onDelete(index)}
 							/>
 						</LeftAlignedSubCard>
 					);
