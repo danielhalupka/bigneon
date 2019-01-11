@@ -97,18 +97,9 @@ class Order extends Component {
 				})
 				.catch(error => {
 					console.error(error);
-					let message = "Loading order details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
+					notifications.showFromErrorResponse({
+						defaultMessage: "Loading order details failed.",
+						error
 					});
 				});
 		} else {
@@ -129,20 +120,23 @@ class Order extends Component {
 		//We can only get the event name from fields in the items array. Append a list if there's more than one.
 		let eventName = "";
 		let fee_total_in_cents = 0;
-		items.forEach(
-			({ description, item_type, unit_price_in_cents, quantity }) => {
-				if (item_type === "Tickets") {
-					if (eventName === "") {
-						eventName = description;
-					} else {
-						eventName = `${eventName}, ${description}`;
+
+		if (items) {
+			items.forEach(
+				({ description, item_type, unit_price_in_cents, quantity }) => {
+					if (item_type === "Tickets") {
+						if (eventName === "") {
+							eventName = description;
+						} else {
+							eventName = `${eventName}, ${description}`;
+						}
+					} else if (item_type === "Fees" || item_type === "EventFees") {
+						fee_total_in_cents =
+							fee_total_in_cents + unit_price_in_cents * quantity;
 					}
-				} else if (item_type === "Fees" || item_type === "EventFees") {
-					fee_total_in_cents =
-						fee_total_in_cents + unit_price_in_cents * quantity;
 				}
-			}
-		);
+			);
+		}
 
 		const orderNumber = id.slice(-8); //TODO eventually this will also come in the API
 
@@ -195,7 +189,7 @@ class Order extends Component {
 						/>
 						<Divider style={{ marginBottom: 15 }} />
 
-						{items.map(item => {
+						{items ? items.map(item => {
 							const {
 								id,
 								ticket_type_id,
@@ -233,7 +227,7 @@ class Order extends Component {
 									<Divider style={{ marginBottom: 15 }} />
 								</div>
 							);
-						})}
+						}): null}
 
 						<LineEntry
 							col1={null}
