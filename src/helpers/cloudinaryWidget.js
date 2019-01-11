@@ -1,10 +1,10 @@
 export default (onResult, onError, tags = []) => {
 	cloudinary.openUploadWidget(
 		{
-			cloud_name: "bigneon-dev",
-			upload_preset: "dthcf8uc",
+			cloud_name: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
+			upload_preset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
 			tags,
-			api_key: "263756936281765"
+			api_key: process.env.REACT_APP_CLOUDINARY_API_KEY
 		},
 		(error, result) => {
 			if (error) {
