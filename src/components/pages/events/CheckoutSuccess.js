@@ -17,6 +17,7 @@ import Button from "../../elements/Button";
 import InputGroup from "../../common/form/InputGroup";
 import user from "../../../stores/user";
 import SMSLinkForm from "../../elements/SMSLinkForm";
+import Meta from "./Meta";
 
 const overlayCardWidth = 350;
 
@@ -167,6 +168,8 @@ class CheckoutSuccess extends Component {
 
 		return (
 			<div>
+				<Meta type={"success"} {...event} />
+
 				<EventHeaderImage
 					variant="success"
 					height={headerHeight}

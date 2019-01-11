@@ -20,6 +20,7 @@ import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCar
 import DateFlag from "../../elements/event/DateFlag";
 import SocialIconLink from "../../elements/social/SocialIconLink";
 import nl2br from "../../../helpers/nl2br";
+import Meta from "./Meta";
 
 const styles = theme => ({
 	root: {},
@@ -273,6 +274,7 @@ class ViewEvent extends Component {
 			is_external,
 			external_url
 		} = event;
+
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
@@ -385,6 +387,8 @@ class ViewEvent extends Component {
 
 		return (
 			<div>
+				<Meta {...event} />
+
 				<EventHeaderImage {...event} artists={artists} />
 
 				<Grid container spacing={0} direction="row" justify="center">

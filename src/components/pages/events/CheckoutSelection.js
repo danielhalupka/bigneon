@@ -16,6 +16,7 @@ import { fontFamilyDemiBold } from "../../styles/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import InputWithButton from "../../common/form/InputWithButton";
 import moment from "moment";
+import Meta from "./Meta";
 
 const styles = theme => ({
 	root: {},
@@ -345,6 +346,8 @@ class CheckoutSelection extends Component {
 
 		return (
 			<div>
+				<Meta type={"selection"} {...event} />
+
 				<EventHeaderImage
 					variant="detailed"
 					height={headerHeight}

@@ -6,6 +6,7 @@ import Container from "./Container";
 import user from "../../../stores/user";
 import SignupForm from "./forms/SignupForm";
 import Button from "../../elements/Button";
+import Meta from "./Meta";
 
 class Signup extends Component {
 	componentDidMount() {
@@ -18,6 +19,7 @@ class Signup extends Component {
 	render() {
 		return (
 			<Container {...this.props} type="signup">
+				<Meta type="sign-up" />
 				<Typography variant="headline">Create your account</Typography>
 				<Link to="/login">
 					<Button variant="text">Already have an account?</Button>

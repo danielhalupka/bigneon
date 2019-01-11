@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
 import Button from "../../elements/Button";
 import Bigneon from "../../../helpers/bigneon";
@@ -24,6 +25,7 @@ import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCar
 import Divider from "../../common/Divider";
 import orders from "../../../stores/orders";
 import tickets from "../../../stores/tickets";
+import Meta from "./Meta";
 
 const styles = theme => ({
 	root: {
@@ -378,6 +380,7 @@ class CheckoutConfirmation extends Component {
 
 		return (
 			<div className={classes.root}>
+				<Meta type={"checkout"} {...event} />
 				<EventHeaderImage
 					variant="detailed"
 					height={headerHeight}
