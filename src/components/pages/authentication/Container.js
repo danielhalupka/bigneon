@@ -32,11 +32,12 @@ const styles = theme => ({
 
 		paddingTop: theme.spacing.unit * 2
 	},
-	login: {
-		backgroundImage: `url(/images/login-bg.jpg)`
-	},
-	signup: {
-		backgroundImage: `url(/images/signup-bg.jpg)`
+	background: {
+		backgroundRepeat: "no-repeat",
+		backgroundSize: "cover",
+		backgroundPosition: "center",
+		backgroundColor: "#19081e",
+		backgroundImage: `url(/images/intro-background-dark.png)`
 	},
 	paper: {
 		padding: theme.spacing.unit * 2,
@@ -56,7 +57,7 @@ const Container = props => {
 		<div className={classes.root}>
 			<AppBar history={history} />
 
-			<main className={classnames(classes.content, classes[type])}>
+			<main className={classnames(classes.content, classes.background)}>
 				<div className={classes.toolbar} />
 
 				<Grid container justify="center">
