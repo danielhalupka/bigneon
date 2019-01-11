@@ -3,6 +3,8 @@ import ReactGA from "react-ga";
 const GOOGLE_ANALYTICS_KEY = process.env.REACT_APP_GOOGLE_ANALYTICS_KEY;
 const SEGMENT_KEY = process.env.REACT_APP_SEGMENT_KEY;
 
+let referrer = ""; //Previous href to be used for segment page tracking
+
 const initSegment = () => {
 	if (!SEGMENT_KEY) {
 		console.warn("No segment write key found.");
@@ -139,7 +141,15 @@ const page = ()  => {
 	const analytics = window.analytics; //Segment analytics
 
 	if (analytics) {
-		analytics.page(); //Segment
+		analytics.page({
+			path: window.location.pathname,
+			referrer,
+			search: window.location.search,
+			url: window.location.href
+		}); //Segment
+
+		//For next page track
+		referrer = window.location.href;
 	}
 
 	if (GOOGLE_ANALYTICS_KEY) {
