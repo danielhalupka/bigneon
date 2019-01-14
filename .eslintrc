@@ -41,7 +41,8 @@
 	  "beforeColon": false,
 	  "afterColon": true
 	}],
-	"brace-style": ["error", "1tbs", { "allowSingleLine": false }]
+	"brace-style": ["error", "1tbs", { "allowSingleLine": false }],
+	"space-infix-ops": ["error"]
   },
   "env": {
     "browser": true,

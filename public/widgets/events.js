@@ -3,7 +3,7 @@ var BigNeonWidget = {};
 	/** Helper Functions */
 	function getSyncScriptParams() {
 		var scripts = document.getElementsByTagName("script");
-		var lastScript = scripts[scripts.length-1];
+		var lastScript = scripts[scripts.length - 1];
 		return {
 			organizationId: lastScript.getAttribute("data-organization-id"),
 			target: lastScript.getAttribute("data-target"),
@@ -31,7 +31,7 @@ var BigNeonWidget = {};
 		var ampm = hours >= 12 ? "pm" : "am";
 		hours = hours % 12;
 		hours = hours ? hours : 12; // the hour '0' should be '12'
-		minutes = ("0"+minutes).slice(-2);
+		minutes = ("0" + minutes).slice(-2);
 		var strTime = hours + ":" + minutes + " " + ampm;
 		return strTime;
 	}

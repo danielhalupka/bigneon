@@ -221,7 +221,7 @@ const EventSummaryCard = props => {
 
 									<div className={classes.totalsDivider} />
 
-									<Total classes={classes} value={`$${(totalSalesInCents/100).toFixed(2)}`}>
+									<Total classes={classes} value={`$${(totalSalesInCents / 100).toFixed(2)}`}>
 										Sales
 									</Total>
 								</div>

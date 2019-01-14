@@ -128,7 +128,7 @@ class Order extends Component {
 				(item) => {
 					const { description, item_type, unit_price_in_cents, quantity } = item;
 
-					if (item_type === "Fees" || item_type === "EventFees" || item_type ==="PerUnitFees") {
+					if (item_type === "Fees" || item_type === "EventFees" || item_type === "PerUnitFees") {
 						fee_total_in_cents =
 							fee_total_in_cents + unit_price_in_cents * quantity;
 					} else {

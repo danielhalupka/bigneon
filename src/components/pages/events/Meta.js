@@ -6,8 +6,8 @@ import { Helmet } from "react-helmet";
 
 const Meta = ({ type, id, name, additional_info, promo_image_url, ...event }) => {
 	let site = process.env.REACT_APP_WEB_URL;
-	if (site.substring(site.length-1) == "/") {
-		site = site.substring(0, site.length-1);
+	if (site.substring(site.length - 1) == "/") {
+		site = site.substring(0, site.length - 1);
 	}
 
 	const url = `${site}/events/${id}`;

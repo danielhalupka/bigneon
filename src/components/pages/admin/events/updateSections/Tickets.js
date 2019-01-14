@@ -536,8 +536,16 @@ class EventTickets extends Component {
 			<div>
 				{this.renderAreYouSureDeleteDialog()}
 				{ticketTypes.map((ticketType, index) => {
-					const active = index === ticketTypeActiveIndex;
+					let active = index === ticketTypeActiveIndex;
 					const isCancelled = ticketType.status === "Cancelled";
+
+					const ticketTypeErrors = errors && errors[index] ? errors[index] : {};
+
+					//If we have errors, force their eyes to see them
+					if (Object.keys(ticketTypeErrors).length > 0) {
+						active = true;
+					}
+
 					return (
 						<LeftAlignedSubCard key={index} active={active}>
 							{isCancelled ? (
@@ -562,7 +570,7 @@ class EventTickets extends Component {
 									active={active}
 									index={index}
 									validateFields={validateFields}
-									errors={errors && errors[index] ? errors[index] : {}}
+									errors={ticketTypeErrors}
 									ticketTimesDirty={ticketTimesDirty}
 									eventStartDate={eventStartDate}
 									{...ticketType}

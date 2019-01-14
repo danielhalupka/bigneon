@@ -113,18 +113,15 @@ const TicketDetails = observer(props => {
 		endDate,
 		endTime,
 		priceAtDoor,
-		showAdditionalOptions,
 		increment,
 		limitPerPerson,
 		description,
-		showPricing,
 		pricing,
 		eventStartDate,
 		ticketTimesDirty,
 		priceForDisplay
 	} = props;
 
-	let isCancelled = status === "Cancelled";
 	let useEndDate = endDate;
 	let useEndTime = endTime;
 	if (!ticketTimesDirty) {
@@ -133,6 +130,23 @@ const TicketDetails = observer(props => {
 	}
 
 	const pricingErrors = errors && errors.pricing ? errors.pricing : {};
+
+	//If we have errors with fields under 'additional options' or 'schedule a price change', then we need to force fields to be visible
+	let { showAdditionalOptions, showPricing } = props;
+
+	if (errors && Object.keys(errors).length > 0) {
+		//Check if error is not with name, capacity, priceForDisplay. If there are other errors then show additional options.
+		Object.keys(errors).forEach(errorKey => {
+			if (errorKey !== "name" && errorKey !== "capacity" && errorKey !== "priceForDisplay") {
+				showAdditionalOptions = true;
+			}
+		});
+
+		if (Object.keys(pricingErrors).length > 0) {
+			showAdditionalOptions = true;
+			showPricing = true;
+		}
+	}
 
 	return (
 		<div className={classes.activeContent}>

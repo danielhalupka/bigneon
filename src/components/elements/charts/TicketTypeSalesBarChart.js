@@ -111,7 +111,7 @@ const TicketTypeSalesBarChart = props => {
 					<Typography className={classes.name}>{name}</Typography>
 					<Typography
 						className={classes.totalRevenue}
-					>{`$${(totalRevenueInCents/100).toFixed(2)}`}</Typography>
+					>{`$${(totalRevenueInCents / 100).toFixed(2)}`}</Typography>
 				</div>
 				<div className={classes.chartBackground}>
 					<div className={classes.horizontalLine} />
