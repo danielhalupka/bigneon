@@ -121,21 +121,36 @@ class Order extends Component {
 		let eventName = "";
 		let fee_total_in_cents = 0;
 
+		let listItems = [];
+
 		if (items) {
 			items.forEach(
-				({ description, item_type, unit_price_in_cents, quantity }) => {
-					if (item_type === "Tickets") {
-						if (eventName === "") {
-							eventName = description;
-						} else {
-							eventName = `${eventName}, ${description}`;
-						}
-					} else if (item_type === "Fees" || item_type === "EventFees") {
+				(item) => {
+					const { description, item_type, unit_price_in_cents, quantity } = item;
+
+					if (item_type === "Fees" || item_type === "EventFees" || item_type ==="PerUnitFees") {
 						fee_total_in_cents =
 							fee_total_in_cents + unit_price_in_cents * quantity;
+					} else {
+						listItems.push(item);
+
+						if (item_type === "Tickets") {
+							if (eventName === "") {
+								eventName = description;
+							} else {
+								eventName = `${eventName}, ${description}`;
+							}
+						}
 					}
 				}
 			);
+
+			listItems.push({
+				id: "service-fees",
+				quantity: 1,
+				unit_price_in_cents: fee_total_in_cents,
+				description: "Service fees"
+			});
 		}
 
 		const orderNumber = id.slice(-8); //TODO eventually this will also come in the API
@@ -189,14 +204,11 @@ class Order extends Component {
 						/>
 						<Divider style={{ marginBottom: 15 }} />
 
-						{items ? items.map(item => {
+						{listItems.map(item => {
 							const {
 								id,
-								ticket_type_id,
-								ticket_pricing_id,
 								quantity,
 								unit_price_in_cents,
-								item_type,
 								description
 							} = item;
 
@@ -227,7 +239,7 @@ class Order extends Component {
 									<Divider style={{ marginBottom: 15 }} />
 								</div>
 							);
-						}): null}
+						})}
 
 						<LineEntry
 							col1={null}
