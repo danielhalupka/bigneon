@@ -20,6 +20,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import user from "../../../../../stores/user";
 import IconButton from "../../../../elements/IconButton";
 import DialogTransition from "../../../../common/DialogTransition";
+import SelectGroup from "../../../../common/form/SelectGroup";
 
 //Multi Select
 import Select from "@material-ui/core/Select";
@@ -176,7 +177,7 @@ class Team extends Component {
 				roles: inviteRoles
 			})
 			.then(response => {
-				this.setState({ email: "", inviteRoles: ["OrgMember"],isSubmitting: false });
+				this.setState({ email: "", inviteRoles: ["OrgMember"], isSubmitting: false });
 
 				notifications.show({
 					message: "User invited to organization.",
@@ -356,7 +357,7 @@ class Team extends Component {
 		);
 	}
 
-	renderRoles(selectRoles = [], userId = "") {
+	renderRoles(selectRoles = [], userId = "", allowMultiple = false) {
 		const { classes } = this.props;
 		const roles = Bn.Enums && Bn.Enums.USER_ROLES_STRING ? Bn.Enums.USER_ROLES_STRING : {};
 		if (!(user.isAdmin || user.isOrgOwner || user.isOrgAdmin)) {
@@ -372,41 +373,64 @@ class Team extends Component {
 			roleArray.push({ role: role, name: roles[role] });
 		}
 		let disabledRoles = [Bn.Enums.UserRole.ORG_ADMIN, Bn.Enums.UserRole.ORG_OWNER];
+		let singleRole = selectRoles.length ? selectRoles[0] : "";
 		return (
-			<FormControl className={classes.formControl} >
-				<InputLabel
-					htmlFor={userId || "invite-input"}>{userId ? ("User Roles") : ("New User Roles")}</InputLabel>
-				<Select
-					multiple
-					value={selectRoles}
-					onChange={(e) => {
-						const roles = e.target.value;
-						if (userId) {
-							this.updateUserRole(userId, roles);
-							this.storeUserRole(userId);
-						} else {
-							this.setState({ inviteRoles: roles });
-						}
-					}}
-					input={<Input id={userId || "invite-input"}/>}
-					renderValue={selected => {
-						if (typeof selected === "string") {
-							return roles[selected];
-						}
-						return selected.map(role => roles[role]).join(", ");
-					}}
-					MenuProps={MenuProps}
-				>
-					{roleArray.map(role => (
-						<MenuItem key={role.role} value={role.role}
-								  disabled={user.isOrgAdmin && (disabledRoles.indexOf(role.role) > -1)}>
-							<Checkbox checked={selectRoles.indexOf(role.role) > -1}/>
-							<ListItemText primary={role.name}/>
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-
+			<div>
+				{
+					allowMultiple ? (
+						<FormControl className={classes.formControl}>
+							<InputLabel
+								htmlFor={userId || "invite-input"}>{userId ? ("User Roles") : ("New User Roles")}</InputLabel>
+							<Select
+								multiple
+								value={selectRoles}
+								onChange={(e) => {
+									const roles = e.target.value;
+									if (userId) {
+										this.updateUserRole(userId, roles);
+										this.storeUserRole(userId);
+									} else {
+										this.setState({ inviteRoles: roles });
+									}
+								}}
+								input={<Input id={userId || "invite-input"}/>}
+								renderValue={selected => {
+									if (typeof selected === "string") {
+										return roles[selected];
+									}
+									return selected.map(role => roles[role]).join(", ");
+								}}
+								MenuProps={MenuProps}
+							>
+								{roleArray.map(role => (
+									<MenuItem key={role.role} value={role.role}
+											  disabled={user.isOrgAdmin && (disabledRoles.indexOf(role.role) > -1)}>
+										<Checkbox checked={selectRoles.indexOf(role.role) > -1}/>
+										<ListItemText primary={role.name}/>
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					) : (
+						<SelectGroup
+							value={singleRole}
+							items={roleArray.map(role => ({ value: role.role, name: role.name }))}
+							name={"Role"}
+							missingItemsLabel={"Invalid Role"}
+							label={"Role"}
+							onChange={e => {
+								const roles = [e.target.value];
+								if (userId) {
+									this.updateUserRole(userId, roles);
+									this.storeUserRole(userId);
+								} else {
+									this.setState({ inviteRoles: roles });
+								}
+							}}
+						/>
+					)
+				}
+			</div>
 		);
 	}
 
