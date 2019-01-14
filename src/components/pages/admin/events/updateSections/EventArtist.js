@@ -8,6 +8,7 @@ import Button from "../../../../elements/Button";
 import FormatInputLabel from "../../../../elements/form/FormatInputLabel";
 import SocialIconLink from "../../../../elements/social/SocialIconLink";
 import IconButton from "../../../../elements/IconButton";
+import CheckBox from "../../../../elements/form/CheckBox";
 
 const styles = theme => ({
 	root: {
@@ -39,20 +40,22 @@ const styles = theme => ({
 });
 
 const EventArtist = ({
-	classes,
-	imgUrl,
-	title,
-	typeHeading,
-	setTime,
-	onChangeSetTime,
-	onDelete,
-	error,
-	onBlur,
-	socialAccounts
-}) => {
+						 classes,
+						 imgUrl,
+						 title,
+						 typeHeading,
+						 setTime,
+						 onChangeSetTime,
+						 onDelete,
+						 error,
+						 onBlur,
+						 socialAccounts,
+						 importance,
+						 onChangeImportance
+					 }) => {
 	return (
 		<div className={classes.root}>
-			<CardMedia className={classes.image} image={imgUrl} title={"Artist"} />
+			<CardMedia className={classes.image} image={imgUrl} title={"Artist"}/>
 			<div className={classes.content}>
 				<div className={classes.leftColumn}>
 					<Typography variant="body1" style={{ marginTop: 10 }}>
@@ -71,6 +74,11 @@ const EventArtist = ({
 						type="time"
 						onBlur={onBlur}
 					/>
+					<CheckBox active={importance === 0} onClick={() => {
+						onChangeImportance(importance);
+					}}>
+						Headline act
+					</CheckBox>
 				</div>
 
 				<div className={classes.rightColumn}>
@@ -110,7 +118,9 @@ EventArtist.propTypes = {
 	onDelete: PropTypes.func.isRequired,
 	error: PropTypes.object,
 	onBlur: PropTypes.func,
-	socialAccounts: PropTypes.object.isRequired
+	socialAccounts: PropTypes.object.isRequired,
+	importance: PropTypes.number.isRequired,
+	onChangeImportance: PropTypes.func
 };
 
 export default withStyles(styles)(EventArtist);

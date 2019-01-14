@@ -22,8 +22,9 @@ const styles = theme => ({
 });
 
 const formatForSaving = artists => {
-	const artistArray = artists.map(({ id, setTime }) => ({
+	const artistArray = artists.map(({ id, setTime, importance = 0 }) => ({
 		artist_id: id,
+		importance,
 		set_time: setTime
 			? moment.utc(setTime).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			: null
@@ -33,9 +34,10 @@ const formatForSaving = artists => {
 };
 
 const formatForInput = artistArray => {
-	const artists = artistArray.map(({ artist, set_time }) => {
+	const artists = artistArray.map(({ artist, set_time, importance = 0 }) => {
 		return {
 			id: artist.id,
+			importance,
 			setTime: set_time
 				? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 				: null
@@ -271,7 +273,7 @@ class ArtistDetails extends Component {
 		return (
 			<div>
 				{artists.map((eventArtist, index) => {
-					const { id, setTime } = eventArtist;
+					const { id, setTime, importance } = eventArtist;
 
 					let name = "Loading..."; // If we haven't loaded all the available artists we won't have this guys name yet
 					let thumb_image_url = "";
@@ -308,8 +310,12 @@ class ArtistDetails extends Component {
 								typeHeading={index === 0 ? "Headline act *" : "Supporting act"}
 								title={name}
 								setTime={setTime}
+								importance={importance}
 								onChangeSetTime={setTime => {
 									eventUpdateStore.changeArtistSetTime(index, setTime);
+								}}
+								onChangeImportance={currentImportance => {
+									eventUpdateStore.changeArtistImportance(index, currentImportance ? 0 : 1);
 								}}
 								imgUrl={
 									thumb_image_url || "/images/profile-pic-placeholder.png"

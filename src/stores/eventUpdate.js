@@ -247,7 +247,7 @@ class EventUpdate {
 	@action
 	addArtist(id) {
 		let artists = this.artists;
-		artists.push({ id, setTime: null });
+		artists.push({ id, setTime: null, importance: artists.length === 0 ? 0 : 1 });
 		this.artists = artists;
 	}
 
@@ -255,6 +255,13 @@ class EventUpdate {
 	changeArtistSetTime(index, setTime) {
 		let artists = this.artists;
 		artists[index].setTime = setTime.clone();
+		this.artists = artists;
+	}
+
+	@action
+	changeArtistImportance(index, importance) {
+		let artists = this.artists;
+		artists[index].importance = importance;
 		this.artists = artists;
 	}
 
@@ -421,7 +428,6 @@ class EventUpdate {
 			let ticketTypes = this.ticketTypes;
 			let ticketType = ticketTypes[index];
 			Bigneon().events.ticketTypes.cancel({ event_id: this.id, ticket_type_id: ticketType.id }).then(result => {
-				console.log(result.data);
 				deleteTicketType(index);
 				resolve({ result: result.data, error: false });
 			}).catch(error => {
