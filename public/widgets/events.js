@@ -40,7 +40,7 @@ var BigNeonWidget = {};
 		if (!dateTime) {
 			return false;
 		}
-		dateTime = dateTime.replace(/[a-zA-Z]+$/g, "").replace(/\.\d+$/g, "");
+		dateTime = dateTime.replace(/[a-zA-Z]+$/g, "").replace(/\.\d+$/g, "").replace(/ [-|+]+\d{4}$/,"");
 		var parts = dateTime.split("T");
 		return parts.join(" ");
 	}
@@ -50,6 +50,7 @@ var BigNeonWidget = {};
 		if (localizedDateTime) {
 			//Use the date time exactly as it is displayed
 			date = new Date(prepareDateTime(localizedDateTime));
+
 		} else {
 			//Set it as a UTC time and show the users current local version
 			date = new Date(prepareDateTime(utcDateTime) + " UTC");
@@ -103,7 +104,7 @@ var BigNeonWidget = {};
 
 		events.data.forEach(event => {
 			var eventDate = parseLocalizedDateTime(event.localized_times.event_start, event.event_start);
-			var doorTime = parseLocalizedDateTime(event.localized_times.door_time, event.door_time);
+			var doorTime = parseLocalizedDateTime(event.localized_times.door_time || event.localized_times.event_start, event.door_time || event.event_start);
 			var priceText = getPrice(event);
 
 			var row = document.createElement("a");
