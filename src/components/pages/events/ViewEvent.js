@@ -25,7 +25,8 @@ import Meta from "./Meta";
 const styles = theme => ({
 	root: {},
 	container: {
-		paddingBottom: theme.spacing.unit * 15
+		paddingBottom: theme.spacing.unit * 15,
+		minHeight: 600
 	},
 	eventDetailsContent: {
 		paddingLeft: theme.spacing.unit * 2,
