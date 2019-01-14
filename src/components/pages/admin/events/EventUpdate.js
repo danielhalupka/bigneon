@@ -456,7 +456,7 @@ class Event extends Component {
 					<CardMedia
 						src={event.promoImageUrl}
 						alt="Event promo image"
-						caption="Recommended image size 1920 x 1080"
+						caption="Recommended image size 2160px x 1080px"
 						onUrlUpdate={promoImageUrl => {
 							eventUpdateStore.updateEvent({ promoImageUrl });
 						}}
