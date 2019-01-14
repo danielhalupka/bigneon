@@ -69,7 +69,8 @@ class FanList extends Component {
 		super(props);
 
 		this.state = {
-			users: null
+			users: null,
+			isExporting: false
 		};
 	}
 
@@ -85,51 +86,76 @@ class FanList extends Component {
 	}
 
 	exportCSV() {
-		const { users } = this.state;
+		const organization_id = user.currentOrganizationId;
 
-		if (!users ||  users.length === 0) {
-			return notifications.show({
-				message: "No fans to export."
-			});
+		if (!organization_id) {
+			return null;
 		}
 
-		let csvRows = [];
+		this.setState({ isExporting: true });
 
-		csvRows.push(["Fans"]);
-		csvRows.push([""]);
-		csvRows.push([
-			"First name",
-			"Last name",
-			"Email",
-			"Last order date",
-			"Orders",
-			"Revenue",
-			"Date added"
-		]);
+		Bigneon()
+			.organizations.fans.index({ organization_id, limit: 99999999 }) //TODO api needs to handle all results queries
+			.then(response => {
+				const { data } = response.data;
 
-		users.forEach(user => {
-			const {
-				first_name,
-				last_name,
-				email,
-				last_order_time,
-				order_count,
-				revenue_in_cents,
-				created_at
-			} = user;
+				console.log(response.data);
 
-			csvRows.push([
-				first_name,
-				last_name,
-				email,
-				moment.utc(last_order_time).local().format("MM/DD/YYYY h:mm:A"),
-				order_count,
-				`$${Math.round(revenue_in_cents / 100)}`,
-				moment.utc(created_at).local().format("MM/DD/YYYY h:mm:A")
-			]);
-		});
+				if (!data ||  data.length === 0) {
+					return notifications.show({
+						message: "No fans to export."
+					});
+				}
 
-		downloadCSV(csvRows, "fans");
+				let csvRows = [];
+
+				csvRows.push(["Fans"]);
+				csvRows.push([""]);
+				csvRows.push([
+					"First name",
+					"Last name",
+					"Email",
+					"Last order date",
+					"Orders",
+					"Revenue",
+					"Date added"
+				]);
+
+				data.forEach(user => {
+					const {
+						first_name,
+						last_name,
+						email,
+						last_order_time,
+						order_count,
+						revenue_in_cents,
+						created_at
+					} = user;
+
+					csvRows.push([
+						first_name,
+						last_name,
+						email,
+						moment.utc(last_order_time).local().format("MM/DD/YYYY h:mm:A"),
+						order_count,
+						`$${Math.round(revenue_in_cents / 100)}`,
+						moment.utc(created_at).local().format("MM/DD/YYYY h:mm:A")
+					]);
+				});
+
+				this.setState({ isExporting: false });
+
+				downloadCSV(csvRows, "fans");
+			})
+			.catch(error => {
+				this.setState({ isExporting: false });
+
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Listing fans failed."
+				});
+			});
 	}
 
 	loadFans() {
@@ -242,7 +268,7 @@ class FanList extends Component {
 	}
 
 	render() {
-		const { users } = this.state;
+		const { users, isExporting } = this.state;
 		const { classes } = this.props;
 
 		return (
@@ -258,9 +284,9 @@ class FanList extends Component {
 					<Button
 						iconUrl="/icons/csv-active.svg"
 						variant="text"
-						onClick={this.exportCSV.bind(this)}
+						onClick={!isExporting ? this.exportCSV.bind(this) : null}
 					>
-						Export CSV
+						{isExporting ? "Exporting..." : "Export CSV"}
 					</Button>
 				</div>
 
