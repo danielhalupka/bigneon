@@ -12,7 +12,7 @@ const Meta = ({ type, id, name, additional_info, promo_image_url, ...event }) =>
 
 	const url = `${site}/events/${id}`;
 	let title;
-
+	let description = `${name} - Find tickets to live events and concerts on Big Neon.`; 
 	//If they're at a later stage of the event checkout, adjust title accordingly
 	switch (type) {
 		case "selection":
@@ -25,20 +25,29 @@ const Meta = ({ type, id, name, additional_info, promo_image_url, ...event }) =>
 			title = `Success - ${name}`;
 			break;
 		default:
-			title = name;
+			title = `${name} Tickets on Big Neon` ;
 	}
 
 	return (
-		<Helmet>
-			<title>{title}</title>
-
-			<meta property="og:title" content={title} /><meta property="og:type" content="website" />
-			<meta property="og:url" content={url} />
-			<meta property="og:image" content="https://www.bigneon.com/site/images/bigneon-screen-app.png" />
-			{additional_info ? <meta property="og:description" content={additional_info} /> : null}
-			{additional_info ? <meta name="description" content={additional_info} /> : null}
-			{promo_image_url ? <link rel="image_src" href={promo_image_url} /> : null}
-		</Helmet>
+		<Helmet
+			title={title}
+			meta={[
+				{ property: "og:title", content: title },
+				{ property: "og:type", content: "website" },
+				{ property: "og:url", content: url },
+				{ property: "og:description", content: description },
+				{ property: "og:image", content: promo_image_url },
+				{ name: "twitter:site", content: "bigneon.com" },
+				{ name: "twitter:creator", content: "bigneon" },
+				{ name: "twitter:title", content: title },
+				{ name: "twitter:image", content: promo_image_url },
+				{ name: "description", content: description }
+			]}
+			link={[
+				{ rel: "canonical", href: url },
+				{ rel: "image_src", href: promo_image_url }
+			]}
+		/>
 	);
 };
 

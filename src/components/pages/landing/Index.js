@@ -5,6 +5,7 @@ import Results from "./cards/Results";
 import Hero from "./Hero";
 import eventResults from "../../../stores/eventResults";
 import notifications from "../../../stores/notifications";
+import Meta from "./Meta";
 
 const styles = theme => ({});
 
@@ -34,6 +35,7 @@ class Home extends Component {
 
 		return (
 			<div>
+				<Meta />
 				<Hero />
 				<Grid container justify="center">
 					<Grid item xs={11} sm={11} lg={10}>
