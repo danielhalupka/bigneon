@@ -60,9 +60,11 @@ const FanHistoryCard = ({
 							for <span className={classes.boldSpan}>{event_name}</span>
 						</Typography>
 						<div className={classes.bottomRow}>
-							<Typography className={classes.orderLink}>
+							<a href={`/orders/${order_id}`} target="_blank">
+								<Typography className={classes.orderLink}>
 								Order #{order_id.slice(-6)}
-							</Typography>
+								</Typography>
+							</a>
 							<div className={classes.verticalDividerSmall} />
 							<Typography className={classes.bold}>
 								${(revenue_in_cents / 100).toFixed(2)}
@@ -76,28 +78,6 @@ const FanHistoryCard = ({
 		</Card>
 	</div>
 );
-
-// class FanHistoryCard extends Component {
-// 	constructor(props) {
-// 		super(props);
-// 	}
-
-// 	render() {
-// 		const {
-// 			order_date,
-// 			type,
-// 			event_name,
-// 			order_id,
-
-// 			revenue_in_cents,
-// 			ticket_sales
-// 		} = this.props.item;
-
-// 		return (
-
-// 		);
-// 	}
-// }
 
 FanHistoryCard.propTypes = {
 	order_date: PropTypes.string.isRequired,
