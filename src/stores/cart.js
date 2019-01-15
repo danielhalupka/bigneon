@@ -8,10 +8,11 @@ const itemListToSave = selectedTickets => {
 
 	let items = [];
 	ticketIds.forEach(id => {
-		const quantity = parseInt(selectedTickets[id]);
+		const quantity = parseInt(selectedTickets[id].quantity);
 		items.push({
 			ticket_type_id: id,
-			quantity
+			quantity,
+			redemption_code: selectedTickets[id].redemption_code
 		});
 	});
 

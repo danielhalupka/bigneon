@@ -65,10 +65,13 @@ class CheckoutSelection extends Component {
 					let ticketSelection = {};
 
 					items.forEach(({ ticket_type_id, quantity, redemption_code }) => {
-						if (ticket_type_id && !redemption_code) {
-							ticketSelection[ticket_type_id] = ticketSelection[ticket_type_id]
-								? ticketSelection[ticket_type_id] + quantity
-								: quantity;
+						if (ticket_type_id) {
+							ticketSelection[ticket_type_id] = {
+								quantity: ticketSelection[ticket_type_id]
+									? ticketSelection[ticket_type_id] + quantity
+									: quantity,
+								redemption_code: redemption_code
+							};
 						}
 					});
 
@@ -108,7 +111,7 @@ class CheckoutSelection extends Component {
 
 		Object.keys(ticketSelection).forEach(ticketTypeId => {
 			const selectedTicketCount = ticketSelection[ticketTypeId];
-			if (selectedTicketCount && selectedTicketCount > 0) {
+			if (selectedTicketCount && selectedTicketCount.quantity > 0) {
 				//Validate the user is buying in the correct increments
 				const ticketType = ticket_types.find(({ id }) => {
 					return id === ticketTypeId;
@@ -116,7 +119,7 @@ class CheckoutSelection extends Component {
 
 				const increment = ticketType ? ticketType.increment : 1;
 
-				if (selectedTicketCount % increment !== 0) {
+				if (selectedTicketCount.quantity % increment !== 0) {
 					errors[ticketTypeId] = `Please order in increments of ${increment}`;
 				}
 			}
@@ -140,16 +143,28 @@ class CheckoutSelection extends Component {
 		}
 
 		this.setState({ isSubmittingPromo: true }, () => {
-			cart.applyPromo(code);
-			this.onSubmit(true);
+			selectedEvent.applyRedemptionCode(code, error => {
+				this.setState({ isSubmittingPromo: false });
+
+				if (error.response.status === 404) {
+					notifications.show({
+						message: "Promo code does not exist",
+						variant: "error"
+					});
+				} else {
+					const formattedError = notifications.showFromErrorResponse({
+						error,
+						defaultMessage: "Failed to apply promo code.",
+						variant: "error"
+					});
+
+					console.error(error);
+				}
+			});
 		});
 	}
 
-	onSubmit(isPromoCodeOnly) {
-		if (!isPromoCodeOnly) {
-			cart.applyPromo(null);
-		}
-
+	onSubmit() {
 		const { id } = selectedEvent;
 		cart.setLatestEventId(id);
 		const { ticketSelection } = this.state;
@@ -169,13 +184,16 @@ class CheckoutSelection extends Component {
 
 		let emptySelection = true;
 		Object.keys(ticketSelection).forEach(ticketTypeId => {
-			if (ticketSelection[ticketTypeId] && ticketSelection[ticketTypeId] > 0) {
+			if (
+				ticketSelection[ticketTypeId] &&
+				ticketSelection[ticketTypeId].quantity > 0
+			) {
 				emptySelection = false;
 			}
 		});
 
 		//If the existing cart is empty and they haven't selected anything
-		if (cart.ticketCount === 0 && emptySelection && !isPromoCodeOnly) {
+		if (cart.ticketCount === 0 && emptySelection) {
 			return notifications.show({
 				message: "Select tickets first."
 			});
@@ -184,9 +202,9 @@ class CheckoutSelection extends Component {
 		this.setState({ isSubmitting: true });
 
 		cart.replace(
-			isPromoCodeOnly ? [] : ticketSelection,
+			ticketSelection,
 			() => {
-				if (!emptySelection || isPromoCodeOnly) {
+				if (!emptySelection) {
 					this.props.history.push(`/events/${id}/tickets/confirmation`);
 				} else {
 					//They had something in their cart, but they removed and updated
@@ -221,17 +239,16 @@ class CheckoutSelection extends Component {
 				({
 					id,
 					name,
-					status,
 					ticket_pricing,
 					increment,
 					limit_per_person,
 					start_date,
-					end_date
+					end_date,
+					redemption_code
 				}) => {
-					let nowIsValidTime = moment.utc().isBetween(
-						moment.utc(start_date),
-						moment.utc(end_date)
-					);
+					let nowIsValidTime = moment
+						.utc()
+						.isBetween(moment.utc(start_date), moment.utc(end_date));
 					//Not in a valid date for this ticket_type
 					if (!nowIsValidTime) {
 						return;
@@ -254,12 +271,15 @@ class CheckoutSelection extends Component {
 							available={!!ticket_pricing}
 							price={price}
 							error={errors[id]}
-							amount={ticketSelection[id]}
+							amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}
 							increment={increment}
 							limitPerPerson={limit_per_person}
 							onNumberChange={amount =>
 								this.setState(({ ticketSelection }) => {
-									ticketSelection[id] = Number(amount) < 0 ? 0 : amount;
+									ticketSelection[id] = {
+										quantity: Number(amount) < 0 ? 0 : amount,
+										redemption_code
+									};
 									return { ticketSelection };
 								})
 							}
@@ -332,7 +352,7 @@ class CheckoutSelection extends Component {
 
 				<Button
 					disabled={isSubmitting}
-					onClick={() => this.onSubmit(false)}
+					onClick={() => this.onSubmit()}
 					size="large"
 					style={{ width: "100%" }}
 					variant="callToAction"

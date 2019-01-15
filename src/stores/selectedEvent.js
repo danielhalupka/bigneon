@@ -59,11 +59,15 @@ class SelectedEvent {
 				const venueTimezone = "America/Los_Angeles"; //TODO: Replace with venue timezone from service
 				const eventStartDateMoment = moment.utc(event_start);
 				const eventDoorDateMoment = moment.utc(door_time);
-				const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
-					"dddd, MMMM Do YYYY"
-				);
-				const displayDoorTime = moment(eventDoorDateMoment).tz(venueTimezone).format("h:mm A");
-				const displayShowTime = moment(eventStartDateMoment).tz(venueTimezone).format("h:mm A");
+				const displayEventStartDate = eventStartDateMoment
+					.tz(venueTimezone)
+					.format("dddd, MMMM Do YYYY");
+				const displayDoorTime = moment(eventDoorDateMoment)
+					.tz(venueTimezone)
+					.format("h:mm A");
+				const displayShowTime = moment(eventStartDateMoment)
+					.tz(venueTimezone)
+					.format("h:mm A");
 
 				this.venue = { ...venue, googleMapsLink: createGoogleMapsLink(venue) };
 
@@ -92,6 +96,26 @@ class SelectedEvent {
 
 				onError(message);
 			});
+	}
+
+	@action
+	applyRedemptionCode(redemptionCode, onError = error => {}) {
+		Bigneon()
+			.redemptionCodes.read({ code: redemptionCode })
+			.then(
+				response => {
+					const { data } = response;
+
+					this.ticket_types.forEach((tt, index) => {
+						if (tt.id === data.ticket_type.id) {
+							this.ticket_types[index] = data.ticket_type;
+						}
+					});
+				},
+				error => {
+					onError(error);
+				}
+			);
 	}
 
 	@action
