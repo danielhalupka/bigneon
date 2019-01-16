@@ -124,7 +124,7 @@ class BoxOfficeEventSelection extends React.Component {
 				onClose={this.handleClose.bind(this)}
 			>
 				{availableEvents.map(
-					({ id, name, promo_image_url, venue, event_start, door_time }) => {
+					({ id, name, promo_image_url, venue, event_start, door_time, status }) => {
 						let displayTimes = {
 							event_start: moment.utc(event_start).local(),
 							door_time: moment.utc(door_time || event_start).local()
@@ -141,6 +141,7 @@ class BoxOfficeEventSelection extends React.Component {
 									this.handleClose();
 								}}
 								selected={id === activeEventId}
+								style={{ opacity: status === "Draft" ? 0.5 : 1 }}
 							>
 								<ListItemIcon>
 									<div
@@ -181,7 +182,9 @@ class BoxOfficeEventSelection extends React.Component {
 			event_start,
 			door_time,
 			promo_image_url,
-			venue
+			venue,
+			status,
+			publish_date
 		} = activeEventDetails;
 		let displayTimes = {
 			event_start: moment.utc(event_start).local(),
@@ -191,6 +194,9 @@ class BoxOfficeEventSelection extends React.Component {
 			displayTimes.event_start = moment.utc(event_start).tz(venue.timezone);
 			displayTimes.door_time = moment.utc(door_time || event_start).tz(venue.timezone);
 		}
+
+		let publishIsInFuture = moment.utc(publish_date) > moment.utc();
+		let invalidStatus = status === "Draft" ? "(Un-Published)" : publishIsInFuture ? "(Pre-Published)" : "";
 
 		return (
 			<div className={classes.root}>
@@ -210,7 +216,11 @@ class BoxOfficeEventSelection extends React.Component {
 					<div className={classes.nameDiv}>
 						<Hidden smDown implementation="css">
 							<div>
-								<Typography className={classes.heading}>{name}</Typography>
+								<Typography className={classes.heading}>
+									{name}
+									<span style={{ flex: 1 }}/>
+									<sup>{invalidStatus}</sup>
+								</Typography>
 								<Typography className={classes.subHeading}>
 									{venue.name} - {displayTime(displayTimes)}
 								</Typography>

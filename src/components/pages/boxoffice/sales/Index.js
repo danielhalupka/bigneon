@@ -121,7 +121,7 @@ class TicketSales extends Component {
 
 	renderTicketTypes() {
 		const { selectedTickets } = this.state;
-
+		const { status } = boxOffice.activeEventDetails;
 		const { ticketTypes } = boxOffice;
 
 		if (ticketTypes === null) {
@@ -139,7 +139,7 @@ class TicketSales extends Component {
 
 			let disabled = false;
 			let price_in_cents = 0;
-			if (ticket_pricing) {
+			if (ticket_pricing && status === "Published") {
 				price_in_cents = ticket_pricing.price_in_cents;
 			} else {
 				disabled = true; //No pricing yet so ticket probably not available for sale yet
