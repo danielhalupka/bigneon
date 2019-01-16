@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import Card from "./Card";
 import { fontFamilyBold } from "../styles/theme";
 import TopCardIcon from "./TopCardIcon";
+import iosScrollBackgroundHack from "../../helpers/iosScrollBackgroundHack";
 
 const styles = theme => ({
 	root: {
@@ -73,6 +74,8 @@ const CustomDialog = props => {
 				TransitionComponent={DialogTransition}
 				onClose={onClose}
 				aria-labelledby="dialog-title"
+				onEntering={() => iosScrollBackgroundHack(true) }
+				onExiting={() => iosScrollBackgroundHack(false)}
 				{...rest}
 			>
 				<div>
@@ -93,7 +96,6 @@ const CustomDialog = props => {
 
 	return (
 		<Dialog
-			fullScreen
 			TransitionComponent={DialogTransition}
 			onClose={onClose}
 			aria-labelledby="dialog-title"
