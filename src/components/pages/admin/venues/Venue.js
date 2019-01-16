@@ -179,7 +179,12 @@ class Venue extends Component {
 					variant: "error"
 				});
 			},
-			["venue-images"]
+			["venue-images"],
+			{
+				cropping: true,
+				cropping_coordinates_mode: "custom",
+				cropping_aspect_ratio: 2.0
+			}
 		);
 	}
 

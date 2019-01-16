@@ -95,7 +95,12 @@ class ProfilePicture extends Component {
 					variant: "error"
 				});
 			},
-			["profile-pictures"]
+			["profile-pictures"],
+			{
+				cropping: true,
+				cropping_coordinates_mode: "custom",
+				cropping_aspect_ratio: 1.0
+			}
 		);
 	}
 

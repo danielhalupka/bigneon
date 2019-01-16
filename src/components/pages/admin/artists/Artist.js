@@ -234,7 +234,12 @@ class Artist extends Component {
 					variant: "error"
 				});
 			},
-			["artist-images"]
+			["artist-images"],
+			{
+				cropping: true,
+				cropping_coordinates_mode: "custom",
+				cropping_aspect_ratio: 1.0
+			}
 		);
 	}
 

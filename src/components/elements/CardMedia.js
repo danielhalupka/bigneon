@@ -81,7 +81,12 @@ const uploadWidget = onSuccess => {
 				});
 			}
 		},
-		["event-images"]
+		["event-images"],
+		{
+			cropping: true,
+			cropping_coordinates_mode: "custom",
+			cropping_aspect_ratio: 2.0
+		}
 	);
 };
 

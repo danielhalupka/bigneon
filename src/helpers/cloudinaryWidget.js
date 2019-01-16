@@ -1,13 +1,14 @@
-export default (onResult, onError, tags = []) => {
+export default (onResult, onError, tags = [], options = {}) => {
 	cloudinary.openUploadWidget(
 		{
-			cropping: true,
-			cropping_aspect_ratio: 2.0,
+			resource_type: "image",
 			theme: "minimal",
+			multiple: false,
 			cloud_name: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
 			upload_preset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
+			api_key: process.env.REACT_APP_CLOUDINARY_API_KEY,
 			tags,
-			api_key: process.env.REACT_APP_CLOUDINARY_API_KEY
+			...options
 		},
 		(error, result) => {
 			if (error) {
