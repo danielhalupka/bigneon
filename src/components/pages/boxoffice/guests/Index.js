@@ -51,7 +51,7 @@ class GuestList extends Component {
 
 	stringContainedInArray(strList, searchQuery) {
 		for (let index = 0; index < strList.length; index++) {
-			const str = strList[index].toLowerCase();
+			const str = strList[index] ? strList[index].toLowerCase() : "";
 
 			if (str.includes(searchQuery.toLowerCase())) {
 				return true;

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>icons/close/white</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Mobile_FAN_Checkout" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Mobile_Checkout_contact-and-payment-details_login_v2" transform="translate(-335.000000, -20.000000)" fill="#FF22B2">
+            <g id="modal">
+                <g id="icons/close/white" transform="translate(335.000000, 20.000000)">
+                    <g id="Close-Pink">
+                        <path d="M19.5714286,0.428571429 C19,-0.142857143 18.1428571,-0.142857143 17.5714286,0.428571429 L10,8 L2.42857143,0.428571429 C1.85714286,-0.142857143 1,-0.142857143 0.428571429,0.428571429 C-0.142857143,1 -0.142857143,1.85714286 0.428571429,2.42857143 L8,10 L0.428571429,17.5714286 C-0.142857143,18.1428571 -0.142857143,19 0.428571429,19.5714286 C0.714285714,19.8571429 1,20 1.42857143,20 C1.85714286,20 2.14285714,19.8571429 2.42857143,19.5714286 L10,12 L17.5714286,19.5714286 C17.8571429,19.8571429 18.2857143,20 18.5714286,20 C18.8571429,20 19.2857143,19.8571429 19.5714286,19.5714286 C20.1428571,19 20.1428571,18.1428571 19.5714286,17.5714286 L12,10 L19.5714286,2.42857143 C20.1428571,1.85714286 20.1428571,1 19.5714286,0.428571429 Z" id="Fill-1"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

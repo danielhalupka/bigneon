@@ -1,16 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-
-import DialogTransition from "./DialogTransition";
-
-const styles = theme => {
-	return {
-		root: { backgroundColor: theme.palette.grey.A300 }
-	};
-};
+import Dialog from "../elements/Dialog";
 
 class AuthenticateCheckDialog extends React.Component {
 	render() {
@@ -18,13 +8,10 @@ class AuthenticateCheckDialog extends React.Component {
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
-				aria-labelledby="please-authenticate"
 				open={true}
-				className={classes.root}
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				title={"Loading..."}
 			>
-				<DialogTitle id="please-authenticate">{"Loading..."}</DialogTitle>
+				<div />
 			</Dialog>
 		);
 	}
@@ -34,4 +21,4 @@ AuthenticateCheckDialog.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(AuthenticateCheckDialog);
+export default AuthenticateCheckDialog;

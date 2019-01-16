@@ -6,12 +6,10 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
 import grey from "@material-ui/core/colors/grey";
 
 import { primaryHex } from "../styles/theme";
-import DialogTransition from "./DialogTransition";
+import Dialog from "../elements/Dialog";
 
 const styles = {
 	avatar: {
@@ -34,13 +32,10 @@ class SelectOptionDialog extends React.Component {
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
 				onClose={onClose}
-				aria-labelledby="simple-dialog-title"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 				{...other}
+				title={heading}
 			>
-				<DialogTitle id="simple-dialog-title">{heading}</DialogTitle>
 				<div>
 					<List>
 						{Object.keys(items).map(key => (

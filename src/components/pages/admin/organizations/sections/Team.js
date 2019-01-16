@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-	Dialog,
-	DialogActions,
-	DialogTitle,
-	Typography,
-	withStyles
-} from "@material-ui/core";
+import { Typography, withStyles } from "@material-ui/core";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
@@ -19,7 +13,6 @@ import OrgUserRow from "./OrgUserRow";
 import Grid from "@material-ui/core/Grid/Grid";
 import user from "../../../../../stores/user";
 import IconButton from "../../../../elements/IconButton";
-import DialogTransition from "../../../../common/DialogTransition";
 import SelectGroup from "../../../../common/form/SelectGroup";
 
 //Multi Select
@@ -30,6 +23,7 @@ import FormControl from "@material-ui/core/FormControl";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import InputLabel from "@material-ui/core/InputLabel";
+import Dialog from "../../../../elements/Dialog";
 
 const imageSize = 40;
 
@@ -331,17 +325,11 @@ class Team extends Component {
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
 				open={areYouSureDialogOpen}
 				onClose={onClose}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				title={dialogTitle}
 			>
-				<DialogTitle id="alert-dialog-title">
-					{dialogTitle}
-				</DialogTitle>
-				<DialogActions>
+				<div>
 					<Button onClick={onClose}>Cancel</Button>
 					<Button
 						variant="warning"
@@ -352,7 +340,7 @@ class Team extends Component {
 					>
 						Remove User
 					</Button>
-				</DialogActions>
+				</div>
 			</Dialog>
 		);
 	}

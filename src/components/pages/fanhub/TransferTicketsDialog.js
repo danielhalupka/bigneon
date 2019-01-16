@@ -1,16 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import DialogContent from "@material-ui/core/DialogContent";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import DialogActions from "@material-ui/core/DialogActions";
 import QRCode from "qrcode.react";
 
 import { primaryHex } from "../../styles/theme";
-import DialogTransition from "../../common/DialogTransition";
 import Button from "../../elements/Button";
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail, validPhone } from "../../../validators";

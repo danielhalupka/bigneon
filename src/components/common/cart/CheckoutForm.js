@@ -4,11 +4,11 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 
 import notification from "../../../stores/notifications";
-import { Grid, Typography, Dialog, DialogTitle } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import Button from "../../elements/Button";
 import user from "../../../stores/user";
-import DialogTransition from "../DialogTransition";
 import { fontFamilyDemiBold } from "../../styles/theme";
+import Dialog from "../../elements/Dialog";
 
 const styles = theme => ({
 	paymentContainer: {
@@ -96,14 +96,10 @@ class CheckoutForm extends Component {
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
-				aria-labelledby="please-authenticate"
 				open={!!statusMessage}
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				title={statusMessage || ""}
 			>
-				<DialogTitle id="please-authenticate">
-					{statusMessage || ""}
-				</DialogTitle>
+				<div />
 			</Dialog>
 		);
 	}

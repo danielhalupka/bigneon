@@ -1,19 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import {
-	DialogContent,
-	DialogContentText,
-	DialogActions,
-	Typography
-} from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 
 import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
+import Dialog from "../../../elements/Dialog";
 import Bigneon from "../../../../helpers/bigneon";
-import DialogTransition from "../../../common/DialogTransition";
 
 const styles = {};
 
@@ -98,22 +91,19 @@ class CancelEventDialog extends React.Component {
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
 				open={!!id}
 				onClose={onClose}
-				aria-labelledby="simple-dialog-title"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				title={"Cancel event"}
 			>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<DialogTitle id="simple-dialog-title">Cancel event</DialogTitle>
-
-					<DialogContent>
-						<DialogContentText>
+					<div>
+						<Typography>
 							Are you sure you want to cancel this event?
-						</DialogContentText>
-						{name ? <Typography variant="display1">{name}</Typography> : null}
-					</DialogContent>
-					<DialogActions>
+						</Typography>
+						{name ? <Typography>{name}</Typography> : null}
+					</div>
+					<div>
+						<br />
 						<Button
 							style={{ marginRight: 10 }}
 							onClick={onClose}
@@ -124,7 +114,7 @@ class CancelEventDialog extends React.Component {
 						<Button disabled={isSubmitting} type="submit" variant="warning">
 							{isSubmitting ? "Cancelling..." : "Cancel event"}
 						</Button>
-					</DialogActions>
+					</div>
 				</form>
 			</Dialog>
 		);

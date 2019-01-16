@@ -5,22 +5,17 @@ import {
 	Grid,
 	InputAdornment,
 	IconButton,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
 	Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
-import DialogTransition from "../../../../common/DialogTransition";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 import FeeRow from "./FeeRow";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
+import Dialog from "../../../../elements/Dialog";
 
 const styles = theme => ({
 	dollarValue: {},
@@ -303,25 +298,20 @@ class FeeSchedule extends Component {
 
 		return (
 			<Dialog
-				TransitionComponent={DialogTransition}
 				open={areYouSureDialogOpen}
 				onClose={onClose}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-				BackdropProps={{ style: { backgroundColor: "transparent" } }}
+				title={"Create this new fee schedule?"}
 			>
-				<DialogTitle id="alert-dialog-title">
-					Are you sure you want to create this new fee schedule?
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
+				<div>
+					<Typography>
 						Adding a new fee schedule archives the previous one but existing
 						events will still belong to the fee schedule that was active at the
 						time the event was created.
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={onClose}>Cancel</Button>
+					</Typography>
+				</div>
+				<div>
+					<br />
+					<Button style={{ marginRight: 10 }} onClick={onClose}>Cancel</Button>
 					<Button
 						variant="primary"
 						onClick={this.saveNewFeeSchedule.bind(this)}
@@ -329,7 +319,7 @@ class FeeSchedule extends Component {
 					>
 						I Am Sure, Update Fee Schedule
 					</Button>
-				</DialogActions>
+				</div>
 			</Dialog>
 		);
 	}
