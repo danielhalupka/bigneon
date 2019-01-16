@@ -1,160 +1,278 @@
 import ReactGA from "react-ga";
 
-const GOOGLE_ANALYTICS_KEY = process.env.REACT_APP_GOOGLE_ANALYTICS_KEY;
-const SEGMENT_KEY = process.env.REACT_APP_SEGMENT_KEY;
+const ga = {
+	name: "ga",
+	// true if GA has been initialized at least once
+	enabled: false,
+	disabledWarning: "No Google analytics key provided. Google Analytics is disabled.",
 
-let referrer = ""; //Previous href to be used for segment page tracking
+	addTrackingKey(key) {
+		// GA support multiple tracking keys
+		ReactGA.initialize(key);
+		this.enabled = true;
 
-const initSegment = () => {
-	if (!SEGMENT_KEY) {
-		console.warn("No segment write key found.");
-		return;
-	}
-
-	// Create a queue, but don't obliterate an existing one!
-	const analytics = window.analytics = window.analytics || [];
-
-	// If the real analytics.js is already on the page return.
-	if (analytics.initialize) return;
-
-	// If the snippet was invoked already show an error.
-	if (analytics.invoked) {
-		if (window.console && console.error) {
-			console.error("Segment snippet included twice.");
+		if (window[`ga-disable-${key}`]) {
+			delete window[`ga-disable-${key}`];
 		}
-		return;
+	},
+
+	pageView(uri) {
+		ReactGA.pageview(uri);
+	},
+
+	removeTrackingKey(key) {
+		window[`ga-disable-${key}`] = true;
+	},
+
+	track(category, action, data) {
+		ReactGA.ga("send", "event", category, action, data);
+	},
+
+	identify(user) {
+		// https://developers.google.com/analytics/devguides/collection/analyticsjs/cookies-user-id#user_id
+		ReactGA.set("userId", user.id);
+		ReactGA.ga("send", "event", "authentication", "user-id available");
 	}
-
-	// Invoked flag, to make sure the snippet
-	// is never invoked twice.
-	analytics.invoked = true;
-
-	// A list of the methods in Analytics.js to stub.
-	analytics.methods = [
-		"trackSubmit",
-		"trackClick",
-		"trackLink",
-		"trackForm",
-		"pageview",
-		"identify",
-		"reset",
-		"group",
-		"track",
-		"ready",
-		"alias",
-		"debug",
-		"page",
-		"once",
-		"off",
-		"on"
-	];
-
-	// Define a factory to create stubs. These are placeholders
-	// for methods in Analytics.js so that you never have to wait
-	// for it to load to actually record data. The `method` is
-	// stored as the first argument, so we can replay the data.
-	analytics.factory = function(method){
-		return function(){
-			var args = Array.prototype.slice.call(arguments);
-			args.unshift(method);
-			analytics.push(args);
-			return analytics;
-		};
-	};
-
-	// For each of our methods, generate a queueing stub.
-	for (let i = 0; i < analytics.methods.length; i++) {
-		const key = analytics.methods[i];
-		analytics[key] = analytics.factory(key);
-	}
-
-	// Define a method to load Analytics.js from our CDN,
-	// and that will be sure to only ever load it once.
-	analytics.load = function(key, options){
-		// Create an async script element based on your key.
-		const script = document.createElement("script");
-		script.type = "text/javascript";
-		script.async = true;
-		script.src = "https://cdn.segment.com/analytics.js/v1/"
-			+ key + "/analytics.min.js";
-
-		// Insert our script next to the first script element.
-		const first = document.getElementsByTagName("script")[0];
-		first.parentNode.insertBefore(script, first);
-		analytics._loadOptions = options;
-	};
-
-	// Add a version to keep track of what's in the wild.
-	analytics.SNIPPET_VERSION = "4.1.0";
-
-	// Load Analytics.js with your key, which will automatically
-	// load the tools you've enabled for your account. Boosh!
-	analytics.load(SEGMENT_KEY);
-
-	// Make the first page call to load the integrations. If
-	// you'd like to manually name or tag the page, edit or
-	// move this call however you'd like.
-	page();
 };
 
-const initGA = () => {
-	if (!GOOGLE_ANALYTICS_KEY) {
-		console.warn("No google analytics key found.");
-		return;
-	}
+const facebook = {
+	keys: [],
+	name: "facebook",
+	enabled: false,
+	fbq: null,
 
-	ReactGA.initialize(GOOGLE_ANALYTICS_KEY);
-};
+	load() {
+		if (this.fbq) {
+			// Already loaded
+			return;
+		}
 
-const init = () => {
-	initSegment();
-	initGA();
-};
+		// Facebook snippet - called with `this` instead of window to get the `fbq` function
+		/* eslint-disable */
+		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+		n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(this,
+		document,'script','https://connect.facebook.net/en_US/fbevents.js');
+		/* eslint-enable */
 
-const identify = ({ id, firstName, lastName, email, method }) => {
-	const analytics = window.analytics; //Segment analytics
+	},
 
-	if (analytics) {
-		analytics.identify(id, {
-			firstName,
-			lastName,
-			email
+	addTrackingKey(key) {
+		if (!this.loaded) {
+			this.load();
+		}
+
+		// Support for multiple pixel ids: https://developers.facebook.com/docs/facebook-pixel/advanced/#multipixels
+		this.fbq("init", key);
+		this.keys.push(key);
+
+		this.enabled = true;
+	},
+
+	removeTrackingKey(key) {
+		const index = this.keys.indexOf(key);
+		if (index > -1) {
+			this.keys.splice(index, 1);
+		}
+	},
+
+	pageView() {
+		this.keys.forEach(k => {
+			this.fbq.track("trackSingle", k, "PageView");
+		});
+	},
+
+	track(type, data) {
+		this.keys.forEach(k => {
+			this.fbq.track("trackSingle", k, type, data);
+		});
+	},
+
+	identify(user) {
+		this.keys.forEach(k => {
+			this.fbq("setUserProperties", k, user);
 		});
 	}
-
-	//If this function is called from login/sign up it needs additional tracking functions
-	switch (method) {
-		case "login" :
-			if (analytics) {
-				analytics.track("Signed In");
-			}
-			break;
-		case "signup" :
-			if (analytics) {
-				analytics.track("Signed Up");
-			}
-			break;
-	}
 };
 
-const page = ()  => {
-	const analytics = window.analytics; //Segment analytics
+const segment = {
+	name: "segment",
+	enabled: false,
+	disabledWarning: "No Segment write key given. Segment is disabled.",
+	referrer: "",
 
-	if (analytics) {
-		analytics.page({
-			path: window.location.pathname,
-			referrer,
-			search: window.location.search,
-			url: window.location.href
-		}); //Segment
+	load(key) {
+		if (this.segment) {
+			// Already loaded - cannot be invoked twice
+			return;
+		}
+
+		const analytics = (this.segment = []);
+
+		if (analytics.initialize) return;
+
+		// A list of the methods in Analytics.js to stub.
+		analytics.methods = [
+			"trackSubmit",
+			"trackClick",
+			"trackLink",
+			"trackForm",
+			"pageview",
+			"identify",
+			"reset",
+			"group",
+			"track",
+			"ready",
+			"alias",
+			"debug",
+			"page",
+			"once",
+			"off",
+			"on"
+		];
+
+		// Define a factory to create stubs. These are placeholders
+		// for methods in Analytics.js so that you never have to wait
+		// for it to load to actually record data. The `method` is
+		// stored as the first argument, so we can replay the data.
+		analytics.factory = function(method) {
+			return function() {
+				var args = Array.prototype.slice.call(arguments);
+				args.unshift(method);
+				analytics.push(args);
+				return analytics;
+			};
+		};
+
+		// For each of our methods, generate a queueing stub.
+		for (let i = 0; i < analytics.methods.length; i++) {
+			const key = analytics.methods[i];
+			analytics[key] = analytics.factory(key);
+		}
+
+		// Define a method to load Analytics.js from our CDN,
+		// and that will be sure to only ever load it once.
+		analytics.load = function(key, options) {
+			return new Promise((resolve, _reject) => {
+				// Create an async script element based on your key.
+				const script = document.createElement("script");
+				script.type = "text/javascript";
+				script.async = true;
+				script.src = "https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js";
+				script.onload = () => {
+					resolve();
+				};
+
+				// Insert our script next to the first script element.
+				const first = document.getElementsByTagName("script")[0];
+				first.parentNode.insertBefore(script, first);
+				analytics._loadOptions = options;
+			});
+		};
+
+		// Add a version to keep track of what's in the wild.
+		analytics.SNIPPET_VERSION = "4.1.0";
+
+		// Load Analytics.js with your key, which will automatically
+		// load the tools you've enabled for your account. Boosh!
+		return analytics.load(key);
+	},
+
+	addTrackingKey(key) {
+		if (!this.loaded) {
+			this.loaded = true; // Assume loading succeeds
+			this.load(key);
+			this.pageView();
+			this.enabled = true;
+		} else {
+			console.warn("Implementation of segment currently does not support multiple segment keys");
+		}
+	},
+
+	removeTrackingKey(_key) {
+		console.warn("removeTrackingKey is no supported by Segment");
+	},
+
+	pageView() {
+		const { location } = window;
+		this.segment.page({
+			path: location.pathname,
+			referrer: this.referrer,
+			search: location.search,
+			url: location.href
+		});
 
 		//For next page track
-		referrer = window.location.href;
-	}
+		this.referrer = window.location.href;
+	},
 
-	if (GOOGLE_ANALYTICS_KEY) {
-		ReactGA.pageview(window.location.pathname + window.location.search); //GA
+	track(event, properties, options, callback) {
+		this.segment.track(event, properties, options, callback);
+	},
+
+	identify({ id, firstName, lastName, email, method }) {
+		this.segment.identify(id, { firstName, lastName, email });
+
+		//If this function is called from login/sign up it needs additional tracking functions
+		switch (method) {
+			case "login":
+				this.segment.track("Signed In");
+				break;
+			case "signup":
+				this.segment.track("Signed Up");
+				break;
+		}
 	}
 };
 
-export default { init, page, identify };
+const providers = [facebook, ga, segment];
+
+const init = providerOptions => {
+	Object.keys(providerOptions).forEach(k => {
+		const opts = providerOptions[k];
+		addTrackingKey(k, opts);
+	});
+};
+
+const addTrackingKey = (providerName, options) => {
+	const provider = getProvider(providerName);
+	if (!provider) {
+		console.error(`No analytics provider named '${providerName}'`);
+		return;
+	}
+
+	// If falsey option passed the provider is disabled
+	if (!options) {
+		console.warn(provider.disabledWarning || `Tracking for ${providerName} has been disabled.`);
+		return;
+	}
+
+	provider.addTrackingKey(options);
+};
+
+const removeTrackingKey = (providerName, key) => {
+	const provider = getProvider(providerName);
+	if (!provider) {
+		console.error(`No analytics provider named '${providerName}'`);
+		return;
+	}
+
+	provider.removeTrackingKey(key);
+};
+
+const getProvider = name => providers.find(p => p.name == name);
+
+const page = (...args) => {
+	const enabledProviders = providers.filter(p => p.enabled);
+	enabledProviders.forEach(p => p.pageView(...args));
+};
+
+// Identify for all enabled analytics providers
+// @param user object {id, firstName, lastName, email, method}
+const identify = user => {
+	const enabledProviders = providers.filter(p => p.enabled);
+	enabledProviders.forEach(p => p.identify(user));
+};
+
+export default { init, addTrackingKey, getProvider, removeTrackingKey, page, identify };

@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import Hidden from "@material-ui/core/Hidden";
 
 import Button from "../../elements/Button";
+import OrgAnalytics from "../../common/OrgAnalytics";
 import SocialButton from "../../common/social/SocialButton";
 import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";
@@ -116,11 +117,7 @@ const styles = theme => ({
 @observer
 class ViewEvent extends Component {
 	componentDidMount() {
-		if (
-			this.props.match &&
-			this.props.match.params &&
-			this.props.match.params.id
-		) {
+		if (this.props.match && this.props.match.params && this.props.match.params.id) {
 			const { id } = this.props.match.params;
 
 			selectedEvent.refreshResult(id, errorMessage => {
@@ -273,26 +270,20 @@ class ViewEvent extends Component {
 			displayShowTime,
 			eventStartDateMoment,
 			is_external,
+			tracking_keys,
 			external_url
 		} = event;
 
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
-					<Typography className={classes.eventSubCardHeading}>
-						Time and location
-					</Typography>
+					<Typography className={classes.eventSubCardHeading}>Time and location</Typography>
 					<DateFlag date={eventStartDateMoment} />
 				</div>
 				<div className={classes.eventSubCardRow2}>
 					<div className={classes.textAndIconRow}>
-						<img
-							className={classes.eventSubCardIcon}
-							src="/icons/events-black.svg"
-						/>
-						<Typography className={classes.eventSubCardSubHeading}>
-							Date and time
-						</Typography>
+						<img className={classes.eventSubCardIcon} src="/icons/events-black.svg" />
+						<Typography className={classes.eventSubCardSubHeading}>Date and time</Typography>
 					</div>
 
 					<Typography className={classes.eventSubCardSubText}>
@@ -310,14 +301,9 @@ class ViewEvent extends Component {
 
 				<div className={classes.eventSubCardRow3}>
 					<div className={classes.textAndIconRow}>
-						<img
-							className={classes.eventSubCardIcon}
-							src="/icons/location-black.svg"
-						/>
+						<img className={classes.eventSubCardIcon} src="/icons/location-black.svg" />
 						<Link to={`/venues/${venue.id}`}>
-							<Typography className={classes.eventSubCardSubHeading}>
-								{venue.name}
-							</Typography>
+							<Typography className={classes.eventSubCardSubHeading}>{venue.name}</Typography>
 						</Link>
 					</div>
 
@@ -326,9 +312,7 @@ class ViewEvent extends Component {
 						{venue.postal_code}, {venue.state}, {venue.country}
 						{venue.googleMapsLink ? (
 							<a target="_blank" href={venue.googleMapsLink}>
-								<span className={classes.eventSubCardSubLink}>
-									&nbsp;-&nbsp;view map
-								</span>
+								<span className={classes.eventSubCardSubLink}>&nbsp;-&nbsp;view map</span>
 							</a>
 						) : null}
 					</Typography>
@@ -338,9 +322,7 @@ class ViewEvent extends Component {
 
 				<div className={classes.eventSubCardRow4}>
 					{hasAvailableTickets ? (
-						<Typography className={classes.eventSubCardSubHeading}>
-							Tickets
-						</Typography>
+						<Typography className={classes.eventSubCardSubHeading}>Tickets</Typography>
 					) : null}
 					<br />
 
@@ -383,11 +365,11 @@ class ViewEvent extends Component {
 		);
 
 		//On mobile we need to move the description and artist details down. But we don't know how much space the overlayed div will take.
-		const mobileMarginAdjustment =
-			600 + (ticket_types ? ticket_types.length * 50 : 50);
+		const mobileMarginAdjustment = 600 + (ticket_types ? ticket_types.length * 50 : 50);
 
 		return (
 			<div>
+				<OrgAnalytics trackingKeys={tracking_keys} />
 				<Meta {...event} />
 
 				<EventHeaderImage {...event} artists={artists} />
@@ -397,9 +379,7 @@ class ViewEvent extends Component {
 						<Card variant="plain">
 							<Hidden mdUp>
 								<div
-									style={{
-										marginTop: mobileMarginAdjustment
-									}}
+									style={{ marginTop: mobileMarginAdjustment }}
 								/>
 							</Hidden>
 							<Grid
@@ -414,12 +394,7 @@ class ViewEvent extends Component {
 										<Typography className={classes.description}>
 											{nl2br(additional_info)}
 										</Typography>
-										<Grid
-											container
-											direction="row"
-											justify="flex-start"
-											alignItems="flex-start"
-										>
+										<Grid container direction="row" justify="flex-start" alignItems="flex-start">
 											{artists.map(({ artist }, index) => (
 												<Grid
 													item

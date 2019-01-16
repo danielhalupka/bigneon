@@ -27,7 +27,7 @@ class SelectedEvent {
 
 	@action
 	refreshResult(id, onError = () => {}) {
-		//If we're updating the state to a different event just reset the values first so it doesn't load old data in components observing thi
+		//If we're updating the state to a different event just reset the values first so it doesn't load old data in components observing this
 		if (id !== this.id) {
 			this.event = null;
 			this.venue = null;
