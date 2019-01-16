@@ -13,6 +13,7 @@ import { fontFamilyDemiBold, primaryHex } from "../../../styles/theme";
 import user from "../../../../stores/user";
 import Button from "../../../elements/Button";
 import downloadCSV from "../../../../helpers/downloadCSV";
+import { Pagination, urlPageParam } from "../../../elements/Pagination";
 
 const imageSize = 40;
 
@@ -70,7 +71,9 @@ class FanList extends Component {
 
 		this.state = {
 			users: null,
-			isExporting: false
+			paging: {},
+			isExporting: false,
+			isLoading: true
 		};
 	}
 
@@ -98,8 +101,6 @@ class FanList extends Component {
 			.organizations.fans.index({ organization_id, limit: 99999999 }) //TODO api needs to handle all results queries
 			.then(response => {
 				const { data } = response.data;
-
-				console.log(response.data);
 
 				if (!data ||  data.length === 0) {
 					return notifications.show({
@@ -158,7 +159,8 @@ class FanList extends Component {
 			});
 	}
 
-	loadFans() {
+	loadFans(page = urlPageParam()) {
+		this.setState(({ isLoading: true }));
 		const organization_id = user.currentOrganizationId;
 
 		if (!organization_id) {
@@ -167,11 +169,16 @@ class FanList extends Component {
 		}
 
 		Bigneon()
-			.organizations.fans.index({ organization_id })
+			.organizations.fans.index({
+				organization_id, page,
+				limit: 20
+				//sort?: ""
+			})
 			.then(response => {
-				const { data } = response.data;
+				const { data, paging } = response.data;
+				this.setState({ users: data, paging });
 
-				this.setState({ users: data });
+				this.setState(({ isLoading: false }));
 			})
 			.catch(error => {
 				console.error(error);
@@ -179,11 +186,13 @@ class FanList extends Component {
 					error,
 					defaultMessage: "Listing fans failed."
 				});
+
+				this.setState(({ isLoading: false }));
 			});
 	}
 
 	renderUsers() {
-		const { users } = this.state;
+		const { users, paging, isLoading } = this.state;
 		const { classes } = this.props;
 
 		if (users === null) {
@@ -262,6 +271,9 @@ class FanList extends Component {
 							</Link>
 						);
 					})}
+
+					<br />
+					<Pagination isLoading={isLoading} paging={paging} onChange={this.loadFans.bind(this)} />
 				</div>
 			</Card>
 		);
