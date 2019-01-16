@@ -1,29 +1,34 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import { Card, CardContent } from "@material-ui/core";
 import {
-	withStyles,
-	Grid,
-	CardActions,
-	CardContent,
-	Card,
-	InputAdornment,
-	IconButton,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	List,
-	ListItem,
-	Avatar,
-	ListItemText
+	withStyles
 } from "@material-ui/core";
-import user from "../../../../../stores/user";
+import VenueEventApi from "./endpoints/VenueEventApi";
+import Bigneon from "../../../../../helpers/bigneon";
+import SelectGroup from "../../../../common/form/SelectGroup";
 
 const styles = theme => ({
 	paper: {
 		padding: theme.spacing.unit,
 		marginBottom: theme.spacing.unit
+	},
+	content: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
+	menuContainer: {
+		display: "flex",
+		marginBottom: theme.spacing.unit * 2
+	},
+	menuText: {
+		marginRight: theme.spacing.unit * 4
+	},
+	pre: {
+		backgroundColor: "#efefef",
+		padding: "5px"
 	}
 });
 
@@ -32,26 +37,50 @@ class ApiCard extends Component {
 		super(props);
 
 		this.state = {
+			activeTab: 0,
 			errors: {},
-			isSubmitting: false
+			isSubmitting: false,
+			venues: [],
+			venueId: ""
 		};
 	}
 
 	componentDidMount() {
 		const { organizationId } = this.props;
+		Bigneon().organizations.venues.index({ organization_id: organizationId }).then(result => {
+			let { data } = result;
+			let { paging } = data;
+			let venues = [];
+			let venueId = "";
+			if (paging.total) {
+				venues = data.data;
+				venueId = venues[0].id;
+			}
+			this.setState(({ venues, venueId }));
+		});
 	}
 
 	render() {
 		const { classes } = this.props;
-
+		const { activeTab, venues, venueId } = this.state;
+		const venueItems = venues.map(item => ({ value: item.id, label: item.name }));
 		return (
 			<Card className={classes.paper}>
 				<CardContent>
-					<div>
-						Please contact your account executive for your API key and developer
-						documents to implement custom integrations between Big Neon and your
-						owned media properties.
-					</div>
+					<SelectGroup value={venueId} items={venueItems} name={"venue-id"}
+								 label={"Venue"}
+								 onChange={e => {
+									 this.setState({ venueId: e.target.value });
+								 }}/>
+					<Tabs
+						value={activeTab}
+						onChange={(event, activeTab) => this.setState({ activeTab })}
+					>
+						<Tab key={0} label="Events by Venue"/>
+					</Tabs>
+					{activeTab === 0 && venueId ? (
+						<VenueEventApi classes={classes} venueId={venueId}/>) : (<h3>No Venues Available</h3>)}
+
 				</CardContent>
 			</Card>
 		);
