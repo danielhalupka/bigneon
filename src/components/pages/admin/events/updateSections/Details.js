@@ -15,7 +15,7 @@ import Bn from "bn-api-node";
 
 const styles = theme => ({});
 
-export const DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME = 5; //For lack of a better var name
+export const DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME = 24; //For lack of a better var name
 
 const validateFields = event => {
 	const errors = {};
