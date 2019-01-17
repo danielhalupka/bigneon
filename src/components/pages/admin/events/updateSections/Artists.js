@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { Typography, withStyles } from "@material-ui/core";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import MenuItem from "@material-ui/core/MenuItem";
 import moment from "moment";
 
 import Button from "../../../../elements/Button";
@@ -213,6 +216,40 @@ class ArtistDetails extends Component {
 		}, 500);
 	}
 
+	renderSelectOption(props) {
+		const id = props.value;
+		const { spotifyArtists, availableArtists } = this.state;
+
+		let icon;
+		if (spotifyArtists.hasOwnProperty(id)) {
+			icon = <img alt="Spotify" style={{ width: 20, height: 20 }} src="/images/spotify.png" />;
+		} else if (availableArtists.find(a => a.id === id)) {
+			icon = <img alt="Big Neon" style={{ width: 20, height: 20 }} src="/images/bn-logo.png" />;
+		} else {
+			//Assume it's the create menu item
+			icon = <img alt="Create" style={{ width: 14, height: 14 }} src="/icons/add-active.svg" />;
+		}
+
+		return (
+			<MenuItem
+				buttonRef={props.innerRef}
+				selected={props.isFocused}
+				component="div"
+				style={{
+					fontWeight: props.isSelected ? 500 : 400
+				}}
+				{...props.innerProps}
+			>
+				{icon ?
+					<ListItemIcon>
+						{icon}
+					</ListItemIcon>
+					: null}
+				<ListItemText inset primary={props.children} />
+			</MenuItem>
+		);
+	}
+
 	renderAddNewArtist() {
 		//Pass through the currently selected artist if one has been selected
 		const {
@@ -261,6 +298,7 @@ class ArtistDetails extends Component {
 						: `Create a new artist "${label}"`
 				}
 				onCreateOption={this.createNewArtist.bind(this)}
+				renderSelectOption={this.renderSelectOption.bind(this)}
 			/>
 		);
 	}

@@ -109,14 +109,6 @@ function ValueContainer(props) {
 	);
 }
 
-const components = {
-	Option,
-	Control,
-	NoOptionsMessage,
-	Placeholder,
-	ValueContainer
-};
-
 class AutoCompleteGroup extends React.Component {
 	constructor(props) {
 		super(props);
@@ -158,7 +150,8 @@ class AutoCompleteGroup extends React.Component {
 			onChange,
 			onBlur,
 			onFocus,
-			style
+			style,
+			renderSelectOption
 		} = this.props;
 
 		const selectStyles = {
@@ -175,6 +168,14 @@ class AutoCompleteGroup extends React.Component {
 
 		//If they pass through the function to create a new entry then it needs to be a different component
 		const SelectComponent = onCreateOption ? Creatable : Select;
+
+		const components = {
+			Option: renderSelectOption || Option,
+			Control,
+			NoOptionsMessage,
+			Placeholder,
+			ValueContainer
+		};
 
 		return (
 			<div>
@@ -224,7 +225,8 @@ AutoCompleteGroup.propTypes = {
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
 	style: PropTypes.object,
-	onInputChange: PropTypes.func
+	onInputChange: PropTypes.func,
+	renderSelectOption: PropTypes.func
 };
 
 export default withStyles(styles, { withTheme: true })(AutoCompleteGroup);
