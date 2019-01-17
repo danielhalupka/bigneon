@@ -134,7 +134,11 @@ const formatDataForSaving = (event, organizationId) => {
 			.utc(endTime)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	} else {
-		eventDetails.event_end = null;
+		//Set default if not set
+		const overrideEndTime = moment(eventDate).add(DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME, "h");
+		eventDetails.event_end = moment
+			.utc(overrideEndTime)
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
 	if (promoImageUrl) {
