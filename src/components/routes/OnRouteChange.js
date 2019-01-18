@@ -11,7 +11,8 @@ const removeContainerRoutes = [
 	"/widget",
 	"/login",
 	"/sign-up",
-	"/mobile_stripe_token_auth"
+	"/mobile_stripe_token_auth",
+	"/exports"
 ];
 
 class OnRouteChange extends Component {

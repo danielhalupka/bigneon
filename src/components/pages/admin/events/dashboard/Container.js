@@ -126,6 +126,11 @@ class EventDashboardContainer extends Component {
 						Smart holds
 					</MenuItem>
 				</Link>
+				<a href={`/exports/events/${event.id}/guests`} target="_blank">
+					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+						Export guest list
+					</MenuItem>
+				</a>
 			</Menu>
 		);
 	}
@@ -180,7 +185,9 @@ class EventDashboardContainer extends Component {
 					key="ticket-counts"
 					to={`/admin/events/${event.id}/dashboard/reports/ticket-counts`}
 				>
-					<MenuItem selected={isActiveReportMenu("ticket-counts")} onClick={this.handleReportsMenuClose.bind(this)}>
+					<MenuItem selected={isActiveReportMenu("ticket-counts")}
+							  onClick={this.handleReportsMenuClose.bind(this)}
+					>
 						Ticket counts
 					</MenuItem>
 				</Link>
