@@ -230,7 +230,7 @@ const formatDataForInputs = event => {
 
 @observer
 class Details extends Component {
-	static doorHoursOptions = Array.from(Array(10 + 1)).map((_, i) => {
+	static doorHoursOptions = Array.from(Array(10 + 2)).map((_, i) => {
 		if (i === 0) {
 			return { value: 0, label: "Same as showtime" };
 		}
@@ -238,8 +238,8 @@ class Details extends Component {
 			return { value: 0.5, label: "30 minutes before showtime" };
 		}
 		return {
-			value: i,
-			label: i === 1 ? "1 hour before showtime" : `${i} hours before showtime`
+			value: i - 1,
+			label: i - 1 === 1 ? "1 hour before showtime" : `${i - 1} hours before showtime`
 		};
 	});
 
