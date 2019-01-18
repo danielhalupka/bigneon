@@ -53,9 +53,10 @@ const EventsList = ({ events }) => {
 					return null;
 				}
 				event.door_time = event.door_time || event.event_start;
+				const { timezone } = venue;
 				return (
 					<Grid item xs={12} sm={6} lg={4} key={event.id}>
-						<EventResultCard {...event}/>
+						<EventResultCard venueTimezone={timezone} {...event}/>
 					</Grid>
 				);
 			})}

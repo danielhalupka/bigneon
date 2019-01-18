@@ -246,7 +246,7 @@ class EventsList extends Component {
 						</Menu>
 					</div>
 				);
-
+				const { timezone } = venue;
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<EventSummaryCard
@@ -268,6 +268,7 @@ class EventsList extends Component {
 							isExpanded={expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
 							ticketTypes={event.ticket_types}
+							venueTimezone={timezone}
 						/>
 					</Grid>
 				);

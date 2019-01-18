@@ -87,11 +87,12 @@ class ViewVenue extends Component {
 	}
 
 	renderEvents() {
-		const { events } = this.state;
+		const { events, venue } = this.state;
 
 		if (events === null) {
 			return <Typography variant="subheading">Finding events...</Typography>;
 		}
+		const { timezone } = venue;
 
 		return events.map(event => {
 			//TODO remove this. It's a temp fix until bn-api changes this field name.
@@ -104,6 +105,7 @@ class ViewVenue extends Component {
 				<Grid key={event.id} item xs={12} sm={12} md={6} lg={4}>
 					<EventResultCard
 						{...event}
+						venueTimezone={timezone}
 						max_ticket_price={max_ticket_price}
 						min_ticket_price={min_ticket_price}
 					/>

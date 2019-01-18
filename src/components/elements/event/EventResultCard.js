@@ -96,13 +96,14 @@ const EventResultCard = ({
 	event_start,
 	door_time,
 	min_ticket_price,
-	max_ticket_price
+	max_ticket_price,
+	venueTimezone
 }) => {
 	const style = {};
 	if (promo_image_url) {
 		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${promo_image_url})`;
 	}
-	const venueTimezone = "America/Los_Angeles"; //TODO: Replace with venue timezone from service
+	venueTimezone = venueTimezone || "America/Los_Angeles";
 	const eventStartDateMoment = moment.utc(event_start);
 
 	const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
@@ -149,7 +150,8 @@ EventResultCard.propTypes = {
 	event_start: PropTypes.string.isRequired,
 	door_time: PropTypes.string.isRequired,
 	min_ticket_price: PropTypes.number.isRequired,
-	max_ticket_price: PropTypes.number.isRequired
+	max_ticket_price: PropTypes.number.isRequired,
+	venueTimezone: PropTypes.string
 };
 
 export default withStyles(styles)(EventResultCard);
