@@ -41,8 +41,6 @@ class SelectedEvent {
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 
-				// console.log(response.data);
-
 				const {
 					id,
 					event_start,
@@ -56,7 +54,9 @@ class SelectedEvent {
 				this.organization = organization;
 				this.user_is_interested = user_is_interested;
 				this.artists = artists;
-				const venueTimezone = "America/Los_Angeles"; //TODO: Replace with venue timezone from service
+				this.venue = { ...venue, googleMapsLink: createGoogleMapsLink(venue) };
+
+				const venueTimezone = venue.timezone || "America/Los_Angeles";
 				const eventStartDateMoment = moment.utc(event_start);
 				const eventDoorDateMoment = moment.utc(door_time);
 				const displayEventStartDate = eventStartDateMoment
@@ -68,8 +68,6 @@ class SelectedEvent {
 				const displayShowTime = moment(eventStartDateMoment)
 					.tz(venueTimezone)
 					.format("h:mm A");
-
-				this.venue = { ...venue, googleMapsLink: createGoogleMapsLink(venue) };
 
 				this.id = id;
 
