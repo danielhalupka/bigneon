@@ -1,18 +1,19 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Typography, withStyles } from "@material-ui/core";
 import moment from "moment-timezone";
 import { Link } from "react-router-dom";
 
-import PropTypes from "prop-types";
 import Card from "../Card";
 import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
+import MaintainAspectRatio from "../MaintainAspectRatio";
 
 const styles = theme => ({
 	card: {
 		maxWidth: 400
 	},
 	media: {
-		height: 200,
+		height: "100%",
 		width: "100%",
 		backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)",
 		backgroundRepeat: "no-repeat",
@@ -112,14 +113,16 @@ const EventResultCard = ({
 	return (
 		<Link to={`/events/${id}`}>
 			<Card borderLess variant="default">
-				<div className={classes.media} style={style}>
-					<PriceTag
-						min={min_ticket_price}
-						max={max_ticket_price}
-						classes={classes}
-					/>
-					<Typography className={classes.name}>{name}</Typography>
-				</div>
+				<MaintainAspectRatio heightRatio={0.5}>
+					<div className={classes.media} style={style}>
+						<PriceTag
+							min={min_ticket_price}
+							max={max_ticket_price}
+							classes={classes}
+						/>
+						<Typography className={classes.name}>{name}</Typography>
+					</div>
+				</MaintainAspectRatio>
 				<div className={classes.detailsContent}>
 					<div className={classes.singleDetail} style={{ textAlign: "left" }}>
 						<Typography className={classes.label}>Date</Typography>

@@ -39,15 +39,9 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit,
 		flex: "1 0 auto"
 	},
-	media: {
-		width: "100%",
-		maxWidth: 350,
-		height: 240
-	},
 	actionButtons: {
 		padding: theme.spacing.unit
 	},
-
 	rightHeaderOptions: {
 		display: "flex",
 		justifyContent: "flex-end",

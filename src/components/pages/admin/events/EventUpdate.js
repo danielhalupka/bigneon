@@ -7,7 +7,7 @@ import notifications from "../../../../stores/notifications";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import Card from "../../../elements/Card";
-import CardMedia from "../../../elements/CardMedia";
+import PromoImage from "./updateSections/PromoImage";
 import { Artists } from "./updateSections/Artists";
 import { EventDetails, validateEventFields } from "./updateSections/Details";
 import { Tickets, validateTicketTypeFields } from "./updateSections/Tickets";
@@ -453,7 +453,7 @@ class Event extends Component {
 					{event ? "Update" : "Create"} event
 				</PageHeading>
 				<Card variant="form" className={classes.paper}>
-					<CardMedia
+					<PromoImage
 						src={event.promoImageUrl}
 						alt="Event promo image"
 						caption="Recommended image size 2160px x 1080px"

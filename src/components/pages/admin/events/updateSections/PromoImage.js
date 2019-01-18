@@ -4,14 +4,16 @@ import { withStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import CardMedia from "@material-ui/core/CardMedia";
-import notifications from "../../stores/notifications";
-import cloudinaryWidget from "../../helpers/cloudinaryWidget";
+
+import notifications from "../../../../../stores/notifications";
+import cloudinaryWidget from "../../../../../helpers/cloudinaryWidget";
+import MaintainAspectRatio from "../../../../elements/MaintainAspectRatio";
 
 const height = 480;
 
 const styles = theme => ({
 	media: {
-		height
+		height: "100%"
 	},
 	noMedia: {
 		cursor: "pointer",
@@ -100,7 +102,9 @@ const CustomCardMedia = props => {
 	if (src) {
 		return (
 			<div>
-				<CardMedia className={classes.media} image={src} title={alt} />
+				<MaintainAspectRatio heightRatio={0.5}>
+					<CardMedia className={classes.media} image={src} title={alt} />
+				</MaintainAspectRatio>
 
 				<div className={classes.iconDiv}>
 					<div className={classes.caption}>

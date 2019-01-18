@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "../Card";
+import MaintainAspectRatio from "../MaintainAspectRatio";
 
 const styles = theme => ({
 	root: {
@@ -10,7 +11,7 @@ const styles = theme => ({
 	},
 	media: {
 		width: "100%",
-		height: 240,
+		height: "100%",
 		backgroundColor: "linear-gradient(to top, #000000, rgba(0, 0, 0, 0))",
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "cover",
@@ -33,10 +34,12 @@ const EventDetailsOverlayCard = props => {
 		<div className={classes.root} style={style}>
 			<Card variant="subCard">
 				{imageSrc ? (
-					<div
-						className={classes.media}
-						style={{ backgroundImage: `url(${imageSrc})` }}
-					/>
+					<MaintainAspectRatio heightRatio={0.5}>
+						<div
+							className={classes.media}
+							style={{ backgroundImage: `url(${imageSrc})` }}
+						/>
+					</MaintainAspectRatio>
 				) : null}
 
 				<div className={classes.content}>{children}</div>
