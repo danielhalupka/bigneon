@@ -107,6 +107,9 @@ class Routes extends Component {
 		this.interval = setInterval(() => {
 			user.refreshUser();
 		}, 5 * 60 * 1000); //every 5min
+
+		// Signal that js is ready for prerendering
+		window.prerenderReady = true;
 	}
 
 	componentWillUnmount() {

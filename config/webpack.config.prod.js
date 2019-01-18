@@ -1,9 +1,11 @@
 "use strict";
+/* global Buffer */
 
 const autoprefixer = require("autoprefixer");
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const ManifestPlugin = require("webpack-manifest-plugin");
 const InterpolateHtmlPlugin = require("react-dev-utils/InterpolateHtmlPlugin");
@@ -43,8 +45,8 @@ const cssFilename = "static/css/[name].[contenthash:8].css";
 // However, our output is structured with css, js and media folders.
 // To have this structure working with relative paths, we have to use custom options.
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
-// Making sure that the publicPath goes back to to build folder.
-	? { publicPath: Array(cssFilename.split("/").length).join("../") }
+	? // Making sure that the publicPath goes back to to build folder.
+	  { publicPath: Array(cssFilename.split("/").length).join("../") }
 	: {};
 
 // This is the production configuration.
@@ -331,7 +333,20 @@ module.exports = {
 		new WriteFilePlugin({
 			path: `${paths.appBuild}/version.json`,
 			content: JSON.stringify({ version: require("../package.json").version })
-		})
+		}),
+		new CopyWebpackPlugin([
+			{
+				from: `${paths.config}/netlify_redirects`,
+				to: `${paths.appBuild}/_redirects`,
+				toType: "file",
+				transform(content, path) {
+					const strBuf = content.toString("utf8");
+					return Buffer.from(
+						strBuf.replace("[api_url]", process.env.NETLIFY_REDIRECT_API_URL)
+					);
+				}
+			}
+		])
 	],
 	// Some libraries import Node modules but don't use them in the browser.
 	// Tell Webpack to provide empty mocks for them so importing them works.

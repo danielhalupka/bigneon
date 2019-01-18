@@ -1,0 +1,2 @@
+/api/* [api_url]/:splat 200!
+/* /index.html 200
