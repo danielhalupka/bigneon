@@ -16,7 +16,8 @@ const ga = {
 		}
 	},
 
-	pageView(uri) {
+	pageView() {
+		const uri = window.location.pathname + window.location.search;
 		ReactGA.pageview(uri);
 	},
 
