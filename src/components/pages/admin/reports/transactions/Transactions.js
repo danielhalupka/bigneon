@@ -46,7 +46,7 @@ class Transactions extends Component {
 
 		const { eventName, eventId } = this.props;
 
-		let csvRows = [];
+		const csvRows = [];
 
 		let title = "Transaction details report";
 		if (eventName) {
@@ -139,8 +139,8 @@ class Transactions extends Component {
 		Bigneon()
 			.reports.transactionDetails(queryParams)
 			.then(response => {
-				let items = [];
-				let eventFees = {};
+				const items = [];
+				const eventFees = {};
 
 				response.data.forEach(item => {
 					const transaction_date = moment
@@ -305,11 +305,11 @@ class Transactions extends Component {
 
 		return (
 			<div>
-				<div className={classes.header} >
+				<div className={classes.header}>
 					<Typography variant="title">
 						{eventId ? "Event" : "Organization"} transaction report
 					</Typography>
-					<span style={{ flex: 1 }} />
+					<span style={{ flex: 1 }}/>
 					<Button
 						iconUrl="/icons/csv-active.svg"
 						variant="text"
@@ -318,7 +318,7 @@ class Transactions extends Component {
 						Export CSV
 					</Button>
 				</div>
-				<Divider style={{ marginBottom: 40 }} />
+				<Divider style={{ marginBottom: 40 }}/>
 
 				{this.renderDialog()}
 				{this.renderList()}

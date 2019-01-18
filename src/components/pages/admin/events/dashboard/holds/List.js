@@ -230,11 +230,11 @@ class TicketHoldList extends Component {
 				{showHoldDialog && this.renderDialog()}
 				<div style={{ display: "flex" }}>
 					<Typography variant="title">Manage Ticket Holds</Typography>
-					<span style={{ flex: 1 }} />
+					<span style={{ flex: 1 }}/>
 					<Button onClick={e => this.onAddHold()}>Create Hold</Button>
 				</div>
 
-				<Divider style={{ marginBottom: 40 }} />
+				<Divider style={{ marginBottom: 40 }}/>
 
 				{this.renderList()}
 			</Container>

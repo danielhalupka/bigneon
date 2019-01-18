@@ -83,7 +83,7 @@ class TicketSales extends Component {
 
 		this.setState({ isAddingToCart: true });
 
-		let items = [];
+		const items = [];
 
 		//Add all plain tickets to items
 		Object.keys(selectedTickets).forEach(ticket_type_id => {
@@ -291,7 +291,7 @@ class TicketSales extends Component {
 
 	render() {
 		if (!layout.allowedBoxOffice) {
-			return <NotFound />;
+			return <NotFound/>;
 		}
 
 		if (!boxOffice.availableEvents || boxOffice.availableEvents < 1) {
@@ -336,8 +336,8 @@ class TicketSales extends Component {
 
 				{this.renderTicketTypes()}
 
-				<br />
-				<br />
+				<br/>
+				<br/>
 
 				<PageHeading iconUrl="/icons/tickets-active.svg">
 					Holds {holdCode ? `(for code '${holdCode}')` : ""}

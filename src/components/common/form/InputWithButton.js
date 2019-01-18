@@ -93,7 +93,7 @@ class InputWithButton extends Component {
 
 		return (
 			<div className={classes.root} style={style}>
-				{iconUrl ? <img className={classes.icon} src={iconUrl} /> : null}
+				{iconUrl ? <img className={classes.icon} src={iconUrl}/> : null}
 				<div className={classes.inputContainer}>
 					<input
 						className={classes.input}

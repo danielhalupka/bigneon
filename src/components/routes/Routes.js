@@ -74,11 +74,11 @@ const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 			{...rest}
 			render={props =>
 				isAuthenticated === null ? (
-					<AuthenticateCheckDialog isLoading={true} />
+					<AuthenticateCheckDialog isLoading={true}/>
 				) : isAuthenticated === true ? (
-					<Component {...props} />
+					<Component {...props}/>
 				) : (
-					<Redirect to="/login" />
+					<Redirect to="/login"/>
 				)
 			}
 		/>
@@ -132,17 +132,17 @@ class Routes extends Component {
 									path="/element-showcase"
 									component={ElementShowcase}
 								/>
-								<Route exact path="/" component={Home} />
-								<Route exact path="/events" component={Home} />
-								<Route exact path="/sign-up" component={Signup} />
-								<Route exact path="/login" component={Login} />
-								<Route exact path="/password-reset" component={PasswordReset} />
+								<Route exact path="/" component={Home}/>
+								<Route exact path="/events" component={Home}/>
+								<Route exact path="/sign-up" component={Signup}/>
+								<Route exact path="/login" component={Login}/>
+								<Route exact path="/password-reset" component={PasswordReset}/>
 								<Route
 									exact
 									path="/invites/decline"
 									component={InviteDecline}
 								/>
-								<Route exact path="/invites/accept" component={InviteAccept} />
+								<Route exact path="/invites/accept" component={InviteAccept}/>
 								<Route
 									exact
 									path="/tickets/receive"
@@ -172,8 +172,8 @@ class Routes extends Component {
 									component={Order}
 									isAuthenticated={isAuthenticated}
 								/>
-								<Route exact path="/venues/:id" component={ViewVenue} />
-								<Route exact path="/events/:id" component={ViewEvent} />
+								<Route exact path="/venues/:id" component={ViewVenue}/>
+								<Route exact path="/events/:id" component={ViewEvent}/>
 								<Route
 									exact
 									path="/events/:id/tickets"
@@ -341,13 +341,13 @@ class Routes extends Component {
 								/>
 
 								{/* TODO these will be moved into their own Routes.js when web pack is changes to serve different compiled bundles */}
-								<Route exact path="/widget/qr/:id" component={EventQR} />
+								<Route exact path="/widget/qr/:id" component={EventQR}/>
 								<Route
 									exact
 									path="/widget/embed/:id"
 									component={EmbeddedWidget}
 								/>
-								<Route component={NotFound} />
+								<Route component={NotFound}/>
 							</Switch>
 						</OnRouteChange>
 					</Container>

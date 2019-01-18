@@ -138,7 +138,7 @@ const segment = {
 		// stored as the first argument, so we can replay the data.
 		analytics.factory = function(method) {
 			return function() {
-				var args = Array.prototype.slice.call(arguments);
+				const args = Array.prototype.slice.call(arguments);
 				args.unshift(method);
 				analytics.push(args);
 				return analytics;

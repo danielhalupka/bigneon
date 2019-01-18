@@ -119,7 +119,7 @@ class OrganizationsList extends Component {
 				<Link to={"/admin/organizations/create"}>
 					<Button variant="callToAction">Create organization</Button>
 				</Link>
-				<br />
+				<br/>
 				<Grid container spacing={24}>
 					{this.renderOrganizations()}
 				</Grid>

@@ -49,7 +49,7 @@ class CompDialog extends React.Component {
 			Bigneon()
 				.holds.read({ id: holdId })
 				.then(holdData => {
-					let hold = holdData.data;
+					const hold = holdData.data;
 					this.setState({ hold });
 				});
 		} else {
@@ -70,7 +70,7 @@ class CompDialog extends React.Component {
 
 		this.setState({ isSubmitting: true });
 
-		let { ...saveData } = comp;
+		const { ...saveData } = comp;
 		if (saveData.email === "") {
 			delete saveData.email;
 		}
@@ -83,7 +83,7 @@ class CompDialog extends React.Component {
 			.then(response => {
 				const { id } = response.data;
 				this.setState({ isSubmitting: false });
-				let message = `Successfully ${comp.id ? "updated" : "created"} comp`;
+				const message = `Successfully ${comp.id ? "updated" : "created"} comp`;
 				notifications.show({
 					message,
 					variant: "success"
@@ -112,11 +112,11 @@ class CompDialog extends React.Component {
 			...other
 		} = this.props;
 
-		let iconUrl = "/icons/tickets-white.svg";
+		const iconUrl = "/icons/tickets-white.svg";
 
 		const { comp, errors } = this.state;
 
-		let isSubmitting = false;
+		const isSubmitting = false;
 		return (
 			<Dialog
 				onClose={onClose}
@@ -147,7 +147,7 @@ class CompDialog extends React.Component {
 						placeholder="- Enter share method (optional)"
 						type="text"
 						onChange={e => {
-							let value = e.target.value.trim();
+							const value = e.target.value.trim();
 							if (value.indexOf("@") !== -1) {
 								comp.email = value;
 								comp.phone = "";

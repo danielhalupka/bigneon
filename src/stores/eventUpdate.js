@@ -117,7 +117,7 @@ class EventUpdate {
 	@action
 	addTicketType() {
 		//const endDate = this.event.eventDate ? this.event.eventDate : new Date(); //FIXME this will most certainly not work. If a user changes the event date this first ticket type date needs to change.
-		let ticketTypes = this.ticketTypes;
+		const ticketTypes = this.ticketTypes;
 		const startDate = moment().set({
 			hour: 12,
 			minute: 30,
@@ -153,7 +153,7 @@ class EventUpdate {
 
 	@action
 	updateTicketType(index, details) {
-		let ticketTypes = this.ticketTypes;
+		const ticketTypes = this.ticketTypes;
 
 		ticketTypes[index] = { ...ticketTypes[index], ...details };
 
@@ -162,20 +162,20 @@ class EventUpdate {
 
 	@action
 	deleteTicketType(index) {
-		let ticketTypes = this.ticketTypes;
+		const ticketTypes = this.ticketTypes;
 		ticketTypes.splice(index, 1);
 		this.ticketTypes = ticketTypes;
 	}
 
 	@action
 	addTicketPricing(index) {
-		let { ticketTypes } = this;
+		const { ticketTypes } = this;
 
-		let { pricing } = ticketTypes[index];
+		const { pricing } = ticketTypes[index];
 		let startDate = moment(ticketTypes[index].startDate);
 		let startTime = moment(ticketTypes[index].startTime);
-		let endDate = moment(ticketTypes[index].endDate);
-		let endTime = moment(ticketTypes[index].endTime);
+		const endDate = moment(ticketTypes[index].endDate);
+		const endTime = moment(ticketTypes[index].endTime);
 
 		if (pricing.length) {
 			startDate = moment(pricing[pricing.length - 1].endDate);
@@ -199,9 +199,9 @@ class EventUpdate {
 
 	@action
 	removeTicketPricing(ticketTypeIndex, ticketPriceIndex) {
-		let { ticketTypes } = this;
+		const { ticketTypes } = this;
 
-		let { pricing } = ticketTypes[ticketTypeIndex];
+		const { pricing } = ticketTypes[ticketTypeIndex];
 		pricing.splice(ticketPriceIndex, 1);
 
 		ticketTypes[ticketTypeIndex].pricing = pricing;
@@ -246,28 +246,28 @@ class EventUpdate {
 
 	@action
 	addArtist(id) {
-		let artists = this.artists;
+		const artists = this.artists;
 		artists.push({ id, setTime: null, importance: artists.length === 0 ? 0 : 1 });
 		this.artists = artists;
 	}
 
 	@action
 	changeArtistSetTime(index, setTime) {
-		let artists = this.artists;
+		const artists = this.artists;
 		artists[index].setTime = setTime.clone();
 		this.artists = artists;
 	}
 
 	@action
 	changeArtistImportance(index, importance) {
-		let artists = this.artists;
+		const artists = this.artists;
 		artists[index].importance = importance;
 		this.artists = artists;
 	}
 
 	@action
 	removeArtist(index) {
-		let artists = this.artists;
+		const artists = this.artists;
 		artists.splice(index, 1);
 		this.artists = artists;
 	}
@@ -276,7 +276,7 @@ class EventUpdate {
 	async saveEventDetails(onId = {}) {
 		this.hasSubmitted = true;
 
-		let id = this.id;
+		const id = this.id;
 		const { artists, event, organizationId, ticketTypes } = this;
 		const { isExternal } = event;
 		const formattedEventDetails = formatEventDataForSaving(
@@ -425,8 +425,8 @@ class EventUpdate {
 	async cancelTicketType(index) {
 		const deleteTicketType = this.deleteTicketType.bind(this);
 		return new Promise((resolve) => {
-			let ticketTypes = this.ticketTypes;
-			let ticketType = ticketTypes[index];
+			const ticketTypes = this.ticketTypes;
+			const ticketType = ticketTypes[index];
 			Bigneon().events.ticketTypes.cancel({ event_id: this.id, ticket_type_id: ticketType.id }).then(result => {
 				deleteTicketType(index);
 				resolve({ result: result.data, error: false });

@@ -35,7 +35,7 @@ class MaintainAspectRatio extends Component {
 		const { heightRatio, ...props } = this.props;
 		const height = divWidth * heightRatio;
 
-		return <div style={{ height }} ref={this.containerDiv} {...props} />;
+		return <div style={{ height }} ref={this.containerDiv} {...props}/>;
 	}
 }
 

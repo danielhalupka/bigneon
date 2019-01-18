@@ -182,7 +182,7 @@ class User {
 	loadCachedOrganizationRoles() {
 		const availableOrgIds = Object.keys(this.organizationRoles);
 
-		let organizationId = localStorage.getItem("currentOrganizationId");
+		const organizationId = localStorage.getItem("currentOrganizationId");
 		if (organizationId && availableOrgIds.includes(organizationId)) {
 			this.setCurrentOrganizationRoles(organizationId);
 		} else if (availableOrgIds.length > 0) {

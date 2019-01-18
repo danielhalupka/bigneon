@@ -42,8 +42,8 @@ class LocationInputGroup extends React.Component {
 
 		const { showGoogle } = this.state;
 
-		let usingGoogleMaps = showGoogle;
-		let geocodeByAddressPromise = usingGoogleMaps
+		const usingGoogleMaps = showGoogle;
+		const geocodeByAddressPromise = usingGoogleMaps
 			? geocodeByAddress
 			: address =>
 				new Promise((resolve, reject) => {

@@ -65,7 +65,7 @@ class TicketCounts extends Component {
 
 		const eventName = ticketCounts[ticketIds[0]].totals.event_name;
 
-		let csvRows = [];
+		const csvRows = [];
 
 		csvRows.push(["Ticket counts report"]);
 		csvRows.push([eventName]);
@@ -202,7 +202,7 @@ class TicketCounts extends Component {
 			const ticketCounts = eventCounts[eventId];
 			return (
 				<div>
-					<EventTicketCountTable ticketCounts={ticketCounts} />
+					<EventTicketCountTable ticketCounts={ticketCounts}/>
 				</div>
 			);
 		}
@@ -236,9 +236,9 @@ class TicketCounts extends Component {
 
 							<Typography className={classes.subheading}>Inventory</Typography>
 
-							<EventTicketCountTable ticketCounts={ticketCounts} />
+							<EventTicketCountTable ticketCounts={ticketCounts}/>
 
-							<Divider style={{ marginTop: 20, marginBottom: 20 }} />
+							<Divider style={{ marginTop: 20, marginBottom: 20 }}/>
 						</div>
 					);
 				})}
@@ -255,7 +255,7 @@ class TicketCounts extends Component {
 					<Typography variant="title">
 						{eventId ? "Event" : "Organization"} ticket counts report
 					</Typography>
-					<span style={{ flex: 1 }} />
+					<span style={{ flex: 1 }}/>
 					{eventId ? (
 						<Button
 							iconUrl="/icons/csv-active.svg"
@@ -266,7 +266,7 @@ class TicketCounts extends Component {
 						</Button>
 					) : null}
 				</div>
-				<Divider style={{ marginBottom: 40 }} />
+				<Divider style={{ marginBottom: 40 }}/>
 				{this.renderList()}
 			</div>
 		);

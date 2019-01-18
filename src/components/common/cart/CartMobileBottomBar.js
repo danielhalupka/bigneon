@@ -42,9 +42,9 @@ const CartMobileBottomBar = observer(({ classes }) => {
 		return null;
 	}
 
-	let LinkContainer = latestEventId
-		? props => <Link {...props} />
-		: props => <div {...props} />;
+	const LinkContainer = latestEventId
+		? props => <Link {...props}/>
+		: props => <div {...props}/>;
 
 	//Hide on pages that it's not needed
 	if (
@@ -62,7 +62,7 @@ const CartMobileBottomBar = observer(({ classes }) => {
 			>
 				<div className={classes.bar}>
 					<span className={classes.iconLabelSpan}>
-						<ShoppingCartIcon className={classes.icon} />
+						<ShoppingCartIcon className={classes.icon}/>
 						<Typography className={classes.label}>
 							{ticketCount} ticket
 							{ticketCount > 1 ? "s" : ""}
@@ -70,7 +70,7 @@ const CartMobileBottomBar = observer(({ classes }) => {
 					</span>
 
 					<span className={classes.iconLabelSpan}>
-						<TimerIcon className={classes.icon} />
+						<TimerIcon className={classes.icon}/>
 						<Typography className={classes.label}>
 							<span className={classes.expiryTimeSpan}>
 								{formattedExpiryTime}

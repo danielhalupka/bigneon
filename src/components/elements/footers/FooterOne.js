@@ -104,7 +104,7 @@ const Footer = props => {
 					/>
 				</div>
 
-				<img />
+				<img/>
 
 				<div className={classes.linksContainer}>
 					{links.map(({ label, href }, index) => (
@@ -124,7 +124,7 @@ const Footer = props => {
 					>
 						iOS
 					</AppButton>
-					<span className={classes.appLinkSpacer} />
+					<span className={classes.appLinkSpacer}/>
 					<AppButton
 						variant="android"
 						color="black"
@@ -148,7 +148,7 @@ const Footer = props => {
 						</a>
 					</Typography>
 				</div>
-				<div className={classes.bottomBorder} />
+				<div className={classes.bottomBorder}/>
 			</div>
 		</div>
 	);

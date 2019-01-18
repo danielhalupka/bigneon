@@ -91,7 +91,7 @@ class Event extends Component {
 	}
 
 	validateArtists(artists) {
-		let errors = {};
+		const errors = {};
 		artists.forEach((artist, index) => {
 			if (artist.setTime && !artist.setTime.isValid()) {
 				errors[index] = { setTime: "Set time is not valid" };
@@ -211,8 +211,8 @@ class Event extends Component {
 	}
 
 	mapValidationErrorResponse(data) {
-		let fields = Object.keys(data.fields);
-		let errors = {};
+		const fields = Object.keys(data.fields);
+		const errors = {};
 		for (let i = 0; i < fields.length; i++) {
 			if (/venue\./.test(fields[i])) {
 				errors.venueId = data.fields[fields[i]][0].code;
@@ -270,7 +270,7 @@ class Event extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				if (error.response && error.response.status === 422) {
-					let errors = this.mapValidationErrorResponse(error.response.data);
+					const errors = this.mapValidationErrorResponse(error.response.data);
 
 					this.setState(errors);
 
@@ -363,7 +363,7 @@ class Event extends Component {
 							}}
 							onBlur={this.validateFields.bind(this)}
 						/>
-						<span style={{ marginRight: 10, marginLeft: 10 }} />
+						<span style={{ marginRight: 10, marginLeft: 10 }}/>
 						<DateTimePickerGroup
 							type="time"
 							error={errors.publishDate}
@@ -468,10 +468,10 @@ class Event extends Component {
 					</div>
 
 					{artists !== null ? (
-						<Artists artists={artists} errors={errors.artistsErrors || {}} />
+						<Artists artists={artists} errors={errors.artistsErrors || {}}/>
 					) : null}
 
-					<div className={classes.spacer} />
+					<div className={classes.spacer}/>
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Event details</FormSubHeading>
@@ -481,7 +481,7 @@ class Event extends Component {
 							errors={errors.event || {}}
 						/>
 
-						<div className={classes.spacer} />
+						<div className={classes.spacer}/>
 					</div>
 
 					<div className={classes.paddedContent}>
@@ -538,12 +538,12 @@ class Event extends Component {
 					)}
 
 					<div className={classes.paddedContent}>
-						<div className={classes.spacer} />
+						<div className={classes.spacer}/>
 
 						{isDraft ? this.renderDraftOptions() : null}
 						{isPublished ? this.renderPublishedOptions() : null}
 
-						<Divider style={{ marginTop: 20, marginBottom: 40 }} />
+						<Divider style={{ marginTop: 20, marginBottom: 40 }}/>
 
 						<div className={classes.actions}>
 							{isDraft ? (

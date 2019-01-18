@@ -123,7 +123,7 @@ const Footer = props => {
 					</div>
 				</div>
 
-				<div className={classes.bottomBorder} />
+				<div className={classes.bottomBorder}/>
 			</div>
 		</div>
 	);

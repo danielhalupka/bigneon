@@ -5,7 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import classNames from "classnames";
 
-let minWidth = 160;
+const minWidth = 160;
 
 const styles = theme => {
 	return {
@@ -66,7 +66,7 @@ const AppButton = props => {
 			target="_blank"
 			{...rest}
 		>
-			<img alt={children} className={classes.leftIcon} src={iconUrl} />
+			<img alt={children} className={classes.leftIcon} src={iconUrl}/>
 			{children}
 		</Button>
 	);

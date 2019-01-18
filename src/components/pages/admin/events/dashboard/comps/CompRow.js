@@ -76,7 +76,7 @@ const CompRow = props => {
 							onClick && onClick(id, name);
 						}}
 					>
-						<img alt={name} src={iconUrl} className={classes.icon} />
+						<img alt={name} src={iconUrl} className={classes.icon}/>
 					</span>
 				))}
 			</span>

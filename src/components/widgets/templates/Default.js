@@ -75,7 +75,7 @@ const Default = props => {
 					Details
 				</Button>
 
-				<div style={{ marginTop: 10 }} />
+				<div style={{ marginTop: 10 }}/>
 
 				<Button
 					href={`/events/${id}/tickets`}

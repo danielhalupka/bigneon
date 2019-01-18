@@ -59,7 +59,7 @@ const SocialButton = props => {
 			href={href}
 			target={href ? "_blank" : null}
 		>
-			<img style={{ height: size * 0.4 }} className={classes.icon} src={src} />
+			<img style={{ height: size * 0.4 }} className={classes.icon} src={src}/>
 		</Button>
 	);
 };

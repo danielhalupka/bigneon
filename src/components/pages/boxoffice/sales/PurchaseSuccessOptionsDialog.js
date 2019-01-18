@@ -60,7 +60,7 @@ class PurchaseSuccessOptionsDialog extends React.Component {
 	}
 
 	async transferTickets(tickets, emailOrCellphoneNumber) {
-		let ticket_ids = [];
+		const ticket_ids = [];
 		for (let index = 0; index < tickets.length; index++) {
 			ticket_ids.push(tickets[index].id);
 		}

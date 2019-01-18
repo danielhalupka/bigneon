@@ -55,10 +55,10 @@ const Container = props => {
 
 	return (
 		<div className={classes.root}>
-			<AppBar history={history} />
+			<AppBar history={history}/>
 
 			<main className={classnames(classes.content, classes.background)}>
-				<div className={classes.toolbar} />
+				<div className={classes.toolbar}/>
 
 				<Grid container justify="center">
 					<Grid item xs={12} sm={12} md={6} lg={4}>

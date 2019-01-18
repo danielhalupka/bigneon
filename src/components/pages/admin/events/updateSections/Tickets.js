@@ -12,7 +12,7 @@ import Button from "../../../../elements/Button";
 import { DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME } from "./Details";
 
 const formatForSaving = (ticketTypes, event) => {
-	let ticket_types = [];
+	const ticket_types = [];
 
 	ticketTypes.forEach(ticketType => {
 		const {
@@ -67,16 +67,17 @@ const formatForSaving = (ticketTypes, event) => {
 				}
 		}
 
-		let ticket_pricing = [];
+		const ticket_pricing = [];
 		pricing.forEach(pricePoint => {
-			let {
+			const {
 				id,
-				name,
-				startDate,
-				startTime,
-				endDate,
-				endTime,
+				name, startTime, endTime,
 				value
+			} = pricePoint;
+
+			let {
+				startDate,
+				endDate
 			} = pricePoint;
 
 			startDate = moment(startDate);
@@ -140,8 +141,8 @@ const formatForInput = (ticket_types, event) => {
 			status
 		} = ticket_type;
 
-		let pricing = [];
-		let priceAtDoor = "";
+		const pricing = [];
+		const priceAtDoor = "";
 		ticket_pricing.forEach(pricePoint => {
 			const { name, price_in_cents } = pricePoint;
 
@@ -255,23 +256,24 @@ const styles = theme => ({
 });
 
 const validateFields = ticketTypes => {
-	let errors = {};
+	const errors = {};
 
 	ticketTypes.forEach((ticket, index) => {
-		let {
+
+		const {
 			id,
 			eventId,
-			name,
-			startDate,
-			startTime,
-			saleEndTimeOption,
-			endDate,
-			endTime,
+			name, startTime,
+			saleEndTimeOption, endTime,
 			capacity,
-			increment,
-			//limit,
-			pricing,
+			increment, pricing,
 			priceForDisplay
+		} = ticket;
+
+		let {
+			startDate,
+			endDate
+			//limit,
 		} = ticket;
 
 		startDate = moment(startDate);
@@ -335,24 +337,25 @@ const validateFields = ticketTypes => {
 			ticketErrors.priceForDisplay = "Tickets must have a price";
 		}
 		if (pricing.length) {
-			let pricingErrors = {};
+			const pricingErrors = {};
 
 			//The server seems to be messing with the array orders somehow.
 			const sortedPricing = [...pricing].sort((a, b) =>
 				!a.startDate || !b.startDate ? 1 : a.startDate - b.startDate
 			);
 
-			let ticketStartDate = startDate;
-			let ticketEndDate = endDate;
+			const ticketStartDate = startDate;
+			const ticketEndDate = endDate;
 
 			sortedPricing.forEach((pricingItem, index) => {
-				let {
-					name,
-					startDate,
-					startTime,
-					endDate,
-					endTime,
+				const {
+					name, startTime, endTime,
 					value
+				} = pricingItem;
+
+				let {
+					startDate,
+					endDate
 				} = pricingItem;
 
 				startDate = moment(startDate);
@@ -374,15 +377,15 @@ const validateFields = ticketTypes => {
 
 				//Previous pricing dates needed for current row
 				const previousPricing = index > 0 ? sortedPricing[index - 1] : null;
-				let previousPricingEndDate = previousPricing
+				const previousPricingEndDate = previousPricing
 					? moment(previousPricing.endDate).set({
 						hour: previousPricing.endTime.get("hour"),
 						minute: previousPricing.endTime.get("minute"),
 						second: previousPricing.endTime.get("second")
-					  })
+					})
 					: null;
 
-				let pricingError = {};
+				const pricingError = {};
 
 				if (!name) {
 					pricingError.name = "Missing pricing name.";
@@ -453,7 +456,8 @@ class EventTickets extends Component {
 		};
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+	}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);
@@ -584,7 +588,7 @@ class EventTickets extends Component {
 					className={classes.addTicketType}
 					onClick={() => eventUpdateStore.addTicketType()}
 				>
-					<img className={classes.addIcon} src="/icons/add-ticket.svg" />
+					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
 					<Typography className={classes.addText} variant="body2">
 						Add another ticket type
 					</Typography>

@@ -131,7 +131,7 @@ class OrganizationUpdateCard extends Component {
 		const { owner_user_id, google_ga_key, facebook_pixel_key } = this.state;
 		const { organizationId } = this.props;
 
-		let orgDetails = {
+		const orgDetails = {
 			google_ga_key,
 			facebook_pixel_key
 		};

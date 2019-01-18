@@ -33,8 +33,8 @@ class NotificationList extends React.Component {
 
 	renderItems() {
 		const { items } = this.props;
-		let menuItems = [];
-		for (let i in items) {
+		const menuItems = [];
+		for (const i in items) {
 			menuItems.push(
 				<MenuItem key={`notification_menu_item_${i}`}> {items[i]}</MenuItem>
 			);

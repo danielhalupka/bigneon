@@ -116,7 +116,7 @@ const AppPromoCard = props => {
 					})}
 				>
 					The mobile app is required to use
-					<br />
+					<br/>
 					your tickets at the show
 				</Typography>
 

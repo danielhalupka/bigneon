@@ -130,7 +130,7 @@ class OrganizationUpdateCard extends Component {
 		const { owner_user_id, sendgrid_api_key } = this.state;
 		const { organizationId } = this.props;
 
-		let orgDetails = {
+		const orgDetails = {
 			sendgrid_api_key
 		};
 

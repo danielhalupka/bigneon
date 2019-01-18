@@ -53,9 +53,9 @@ const MenuItem = props => {
 
 	let expandIcon = null;
 	if (expand === true) {
-		expandIcon = <ExpandLess className={classes.expandIcon} />;
+		expandIcon = <ExpandLess className={classes.expandIcon}/>;
 	} else if (expand === false) {
-		expandIcon = <ExpandMore className={classes.expandIcon} />;
+		expandIcon = <ExpandMore className={classes.expandIcon}/>;
 	}
 
 	let listItem;
@@ -71,7 +71,7 @@ const MenuItem = props => {
 					[classes.listItem]: !active
 				})}
 			>
-				<img alt={children} src={iconUrl} className={classes.icon} />
+				<img alt={children} src={iconUrl} className={classes.icon}/>
 
 				<Typography
 					className={classes.textSmall}
@@ -89,21 +89,20 @@ const MenuItem = props => {
 				className={active ? classes.activeListItem : classes.listItem}
 			>
 				<ListItemIcon className={classes.iconContainer}>
-					<img alt={children} src={iconUrl} className={classes.icon} />
+					<img alt={children} src={iconUrl} className={classes.icon}/>
 				</ListItemIcon>
 
 				<ListItemText
 					inset
 					disableTypography
-					primary={
+					primary={(
 						<Typography
 							className={classes.text}
 							variant="body1"
 							color={active ? "secondary" : "textSecondary"}
 						>
 							{children}
-						</Typography>
-					}
+						</Typography>)}
 				/>
 				{expandIcon}
 			</ListItem>

@@ -11,7 +11,7 @@ const Meta = ({ type }) => {
 	}
 
 	const url = `${site}/${type}`;
-	let appName = process.env.REACT_APP_NAME;
+	const appName = process.env.REACT_APP_NAME;
 	let title = "";
 	let description = "";
 
@@ -30,11 +30,11 @@ const Meta = ({ type }) => {
 		<Helmet>
 			<title>{title}</title>
 
-			<meta property="og:title" content={title} /><meta property="og:type" content="website" />
-			<meta property="og:url" content={url} />
-			<link rel="image_src" href="https://www.bigneon.com/site/images/home-logo.png" />
-			<meta property="og:description" content={description} />
-			<meta name="description" content={description} />
+			<meta property="og:title" content={title}/><meta property="og:type" content="website"/>
+			<meta property="og:url" content={url}/>
+			<link rel="image_src" href="https://www.bigneon.com/site/images/home-logo.png"/>
+			<meta property="og:description" content={description}/>
+			<meta name="description" content={description}/>
 		</Helmet>
 	);
 };

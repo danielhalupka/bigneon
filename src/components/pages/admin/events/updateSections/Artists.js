@@ -198,7 +198,7 @@ class ArtistDetails extends Component {
 					spotify: 1
 				});
 				results = results.data.data;
-				let spotifyArtists = {};
+				const spotifyArtists = {};
 				results
 					.filter(artist => !artist.id && artist.spotify_id)
 					.forEach(artist => {
@@ -222,12 +222,12 @@ class ArtistDetails extends Component {
 
 		let icon;
 		if (spotifyArtists.hasOwnProperty(id)) {
-			icon = <img alt="Spotify" style={{ width: 20, height: 20 }} src="/images/spotify.png" />;
+			icon = <img alt="Spotify" style={{ width: 20, height: 20 }} src="/images/spotify.png"/>;
 		} else if (availableArtists.find(a => a.id === id)) {
-			icon = <img alt="Big Neon" style={{ width: 20, height: 20 }} src="/images/bn-logo.png" />;
+			icon = <img alt="Big Neon" style={{ width: 20, height: 20 }} src="/images/bn-logo.png"/>;
 		} else {
 			//Assume it's the create menu item
-			icon = <img alt="Create" style={{ width: 14, height: 14 }} src="/icons/add-active.svg" />;
+			icon = <img alt="Create" style={{ width: 14, height: 14 }} src="/icons/add-active.svg"/>;
 		}
 
 		return (
@@ -241,11 +241,11 @@ class ArtistDetails extends Component {
 				{...props.innerProps}
 			>
 				{icon ?
-					<ListItemIcon>
+					(<ListItemIcon>
 						{icon}
-					</ListItemIcon>
+					</ListItemIcon>)
 					: null}
-				<ListItemText inset primary={props.children} />
+				<ListItemText inset primary={props.children}/>
 			</MenuItem>
 		);
 	}
@@ -263,13 +263,13 @@ class ArtistDetails extends Component {
 
 		const artistsObj = {};
 		availableArtists.forEach(artist => {
-			let id = artist.id || artist.spotify_id;
+			const id = artist.id || artist.spotify_id;
 			artistsObj[id] = artist.name;
 		});
 
 		if (spotifyAvailableArtists) {
 			spotifyAvailableArtists.forEach(artist => {
-				let id = artist.id || artist.spotify_id;
+				const id = artist.id || artist.spotify_id;
 				artistsObj[id] = artist.name;
 			});
 		}

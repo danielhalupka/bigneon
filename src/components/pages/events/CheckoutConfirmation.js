@@ -284,7 +284,7 @@ class CheckoutConfirmation extends Component {
 						col3={`$ ${((pricePerTicketInCents / 100) * quantity).toFixed(2)}`}
 						classes={classes}
 					/>
-					<Divider style={{ marginTop: 15 }} />
+					<Divider style={{ marginTop: 15 }}/>
 				</div>
 			);
 		});
@@ -305,9 +305,9 @@ class CheckoutConfirmation extends Component {
 			<div>
 				<TicketLineTotal
 					col1={
-						<Link to={`/events/${id}/tickets`}>
+						(<Link to={`/events/${id}/tickets`}>
 							<span className={classes.backLink}>Change tickets</span>
-						</Link>
+						</Link>)
 					}
 					col2={<span className={classes.subTotal}>Service fees:</span>}
 					col3={`$${(serviceFeesInCents / 100).toFixed(2)}`}
@@ -321,7 +321,7 @@ class CheckoutConfirmation extends Component {
 					classes={classes}
 				/>
 
-				<Divider />
+				<Divider/>
 			</div>
 		);
 	}
@@ -361,7 +361,7 @@ class CheckoutConfirmation extends Component {
 				{user.isAuthenticated && cartSummary ? (
 					<div>
 						{cartSummary.orderTotalInCents > 0 ?
-							(<CheckoutForm onToken={this.onCheckout.bind(this)} />)
+							(<CheckoutForm onToken={this.onCheckout.bind(this)}/>)
 							: (
 								<Button variant="callToAction" style={{ width: "100%" }} onClick={this.onFreeCheckout.bind(this)}>Complete</Button>
 							)
@@ -380,7 +380,7 @@ class CheckoutConfirmation extends Component {
 
 		return (
 			<div className={classes.root}>
-				<Meta type={"checkout"} {...event} />
+				<Meta type={"checkout"} {...event}/>
 				<EventHeaderImage
 					variant="detailed"
 					height={headerHeight}

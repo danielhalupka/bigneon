@@ -102,7 +102,7 @@ const TicketRow = props => {
 						{displayPrice}
 					</Typography>
 					<div style={columnStyles[3]}>
-						<div className={classes.verticalDivider} />
+						<div className={classes.verticalDivider}/>
 					</div>
 
 					<div style={columnStyles[4]}>

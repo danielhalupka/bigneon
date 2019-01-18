@@ -62,7 +62,7 @@ class CheckoutSelection extends Component {
 			cart.refreshCart(() => {
 				const { items } = cart;
 				if (items && items.length > 0) {
-					let ticketSelection = {};
+					const ticketSelection = {};
 
 					items.forEach(({ ticket_type_id, quantity, redemption_code }) => {
 						if (ticket_type_id) {
@@ -107,7 +107,7 @@ class CheckoutSelection extends Component {
 		const { ticketSelection } = this.state;
 		const { ticket_types } = selectedEvent;
 
-		let errors = {};
+		const errors = {};
 
 		Object.keys(ticketSelection).forEach(ticketTypeId => {
 			const selectedTicketCount = ticketSelection[ticketTypeId];
@@ -234,7 +234,7 @@ class CheckoutSelection extends Component {
 			return null; //Still loading this
 		}
 
-		let ticketTypeRendered = ticket_types
+		const ticketTypeRendered = ticket_types
 			.map(
 				({
 					id,
@@ -246,7 +246,7 @@ class CheckoutSelection extends Component {
 					end_date,
 					redemption_code
 				}) => {
-					let nowIsValidTime = moment
+					const nowIsValidTime = moment
 						.utc()
 						.isBetween(moment.utc(start_date), moment.utc(end_date));
 					//Not in a valid date for this ticket_type
@@ -366,7 +366,7 @@ class CheckoutSelection extends Component {
 
 		return (
 			<div>
-				<Meta type={"selection"} {...event} />
+				<Meta type={"selection"} {...event}/>
 
 				<EventHeaderImage
 					variant="detailed"

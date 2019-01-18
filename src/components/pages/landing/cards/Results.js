@@ -55,7 +55,7 @@ const EventsList = ({ events }) => {
 				event.door_time = event.door_time || event.event_start;
 				return (
 					<Grid item xs={12} sm={6} lg={4} key={event.id}>
-						<EventResultCard {...event} />
+						<EventResultCard {...event}/>
 					</Grid>
 				);
 			})}
@@ -80,9 +80,9 @@ const Results = observer(props => {
 
 	return (
 		<div>
-			<ResultsRegionFilter />
+			<ResultsRegionFilter/>
 
-			{hasResults === true ? <EventsList events={events} /> : null}
+			{hasResults === true ? <EventsList events={events}/> : null}
 
 			{hasResults === false ? (
 				<NoResults

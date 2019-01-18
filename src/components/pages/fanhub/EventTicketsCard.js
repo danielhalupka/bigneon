@@ -232,7 +232,7 @@ class EventTicketsCard extends Component {
 							{/*active={checkedTicketsIds.indexOf(id) !== -1}*/}
 							{/*onClick={() => this.toggleTicketCheckbox(id)}*/}
 							{/*/>*/}
-							<span />
+							<span/>
 							<Typography className={classes.ticketDetailsText}>{`#${id.slice(
 								-8
 							)}`}</Typography>
@@ -305,7 +305,7 @@ class EventTicketsCard extends Component {
 						this.handleMenuClick(e);
 					}}
 				>
-					<MoreHorizIcon fontSize={"large"} />
+					<MoreHorizIcon fontSize={"large"}/>
 				</IconButton>
 
 				<Menu
@@ -326,7 +326,7 @@ class EventTicketsCard extends Component {
 								{/* <ListItemIcon>
 									<MenuOptionIcon />
 								</ListItemIcon> */}
-								<ListItemText primary={text} />
+								<ListItemText primary={text}/>
 							</MenuItem>
 						);
 					})}
@@ -371,7 +371,7 @@ class EventTicketsCard extends Component {
 									"/images/event-placeholder.png"})`
 							}}
 						>
-							<DateFlag date={moment(event_start)} />
+							<DateFlag date={moment(event_start)}/>
 						</div>
 					</Hidden>
 
@@ -394,7 +394,7 @@ class EventTicketsCard extends Component {
 								{venue.name}
 							</Typography>
 							<Typography className={classes.artists}>
-								<SupportingArtistsLabel artists={artists} />
+								<SupportingArtistsLabel artists={artists}/>
 							</Typography>
 						</div>
 

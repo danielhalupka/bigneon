@@ -19,7 +19,7 @@ class EventResults {
 		Bigneon()
 			.events.index({ ...params, status: "Published" }) //Always force published
 			.then(response => {
-				let events = [];
+				const events = [];
 
 				const { data, paging } = response.data; //@TODO Implement pagination
 				data.forEach(eventData => {
@@ -94,7 +94,7 @@ class EventResults {
 			return [];
 		}
 
-		let filteredEvents = [];
+		const filteredEvents = [];
 		this.events.forEach(eventData => {
 			const { venue } = eventData;
 			const { state } = venue;

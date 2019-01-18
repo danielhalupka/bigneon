@@ -6,7 +6,7 @@ import user from "./user";
 const itemListToSave = selectedTickets => {
 	const ticketIds = Object.keys(selectedTickets);
 
-	let items = [];
+	const items = [];
 	ticketIds.forEach(id => {
 		const quantity = parseInt(selectedTickets[id].quantity);
 		items.push({
@@ -225,8 +225,8 @@ class Cart {
 		//TODO get order fees and total costs from API, not manually adding up
 		let orderTotalInCents = 0;
 		let serviceFeesInCents = 0;
-		let ticketItemList = [];
-		let feeItemList = [];
+		const ticketItemList = [];
+		const feeItemList = [];
 
 		this.items.forEach(item => {
 			const {

@@ -108,7 +108,7 @@ class FanList extends Component {
 					});
 				}
 
-				let csvRows = [];
+				const csvRows = [];
 
 				csvRows.push(["Fans"]);
 				csvRows.push([""]);
@@ -272,8 +272,8 @@ class FanList extends Component {
 						);
 					})}
 
-					<br />
-					<Pagination isLoading={isLoading} paging={paging} onChange={this.loadFans.bind(this)} />
+					<br/>
+					<Pagination isLoading={isLoading} paging={paging} onChange={this.loadFans.bind(this)}/>
 				</div>
 			</Card>
 		);
@@ -302,7 +302,7 @@ class FanList extends Component {
 					</Button>
 				</div>
 
-				<div className={classes.spacer} />
+				<div className={classes.spacer}/>
 
 				{this.renderUsers()}
 			</div>

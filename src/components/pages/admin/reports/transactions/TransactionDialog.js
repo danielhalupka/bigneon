@@ -195,7 +195,7 @@ class TransactionDialog extends React.Component {
 						<Typography className={classes.subheading}>{subheading}</Typography>
 					) : null}
 					{this.renderItemDetails()}
-					<br />
+					<br/>
 					{this.renderUserDetails()}
 				</div>
 			</Dialog>

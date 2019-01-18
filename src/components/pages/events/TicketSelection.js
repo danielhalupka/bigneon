@@ -53,7 +53,7 @@ const TicketSelection = props => {
 
 	return (
 		<div>
-			<Divider style={{ margin: 0 }} />
+			<Divider style={{ margin: 0 }}/>
 			<Grid alignItems="center" className={classes.container} container>
 				<Grid item xs={3} sm={3} md={4} lg={3}>
 					<Typography className={classes.price}>

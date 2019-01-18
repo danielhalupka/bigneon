@@ -133,9 +133,9 @@ const EventHeaderImage = props => {
 		height
 	} = props;
 
-	let desktopTop = 60; // * 0.35;
+	const desktopTop = 60; // * 0.35;
 
-	let justifyContent = "flex-end";
+	const justifyContent = "flex-end";
 
 	if (variant === "details") {
 		//justifyContent = "flex-end";
@@ -191,29 +191,29 @@ const EventHeaderImage = props => {
 								</Typography>
 								<Typography className={classNames({ [classes.eventName]: true, [classes.longEventNameText]: eventNameIsLongDesktop, [classes.shortEventNameText]: !eventNameIsLongDesktop })}>{name}</Typography>
 								<Typography className={classes.withArtists}>
-									<SupportingArtistsLabel eventName={name} artists={artists} />
+									<SupportingArtistsLabel eventName={name} artists={artists}/>
 								</Typography>
 							</div>
 						) : null}
 
 						{variant === "detailed" ? (
 							<div>
-								<DateFlag variant="rounded" date={eventStartDateMoment} />
+								<DateFlag variant="rounded" date={eventStartDateMoment}/>
 								<Typography className={classes.topLineInfo}>
 									{top_line_info}
 								</Typography>
 								<Typography className={classNames({ [classes.eventName]: true, [classes.longEventNameText]: eventNameIsLongDesktop, [classes.shortEventNameText]: !eventNameIsLongDesktop })}>{name}</Typography>
 								<Typography className={classes.withArtistsDetailed}>
-									<SupportingArtistsLabel eventName={name} artists={artists} />
+									<SupportingArtistsLabel eventName={name} artists={artists}/>
 								</Typography>
 
-								<div className={classes.spaceLine} />
+								<div className={classes.spaceLine}/>
 
 								<Typography className={classes.smallDetailsText}>
 									{displayEventStartDate}
-									<br />
+									<br/>
 									Doors {displayDoorTime} - Show {displayShowTime}
-									<br />
+									<br/>
 									{age_limit
 										? `This event is for over ${age_limit} year olds`
 										: "This event is for all ages"}
@@ -228,16 +228,16 @@ const EventHeaderImage = props => {
 								</Typography>
 								<Typography className={classNames({ [classes.eventName]: true, [classes.longEventNameText]: eventNameIsLongDesktop, [classes.shortEventNameText]: !eventNameIsLongDesktop })}>{name}</Typography>
 								<Typography className={classes.withArtistsDetailed}>
-									<SupportingArtistsLabel eventName={name} artists={artists} />
+									<SupportingArtistsLabel eventName={name} artists={artists}/>
 								</Typography>
 
-								<div className={classes.spaceLine} />
+								<div className={classes.spaceLine}/>
 
 								<Typography className={classes.smallDetailsText}>
 									{displayEventStartDate}
-									<br />
+									<br/>
 									Doors {displayDoorTime} - Show {displayShowTime}
-									<br />
+									<br/>
 									{age_limit
 										? `This event is for over ${age_limit} year olds`
 										: "This event is for all ages"}
@@ -245,7 +245,7 @@ const EventHeaderImage = props => {
 
 								<Typography className={classes.smallDetailsText}>
 									{/* Order #1223444 */}
-									<br />
+									<br/>
 									We've sent your receipt to{" "}
 									<span className={classes.email}>{user.email}</span>
 								</Typography>
@@ -329,14 +329,14 @@ const EventHeaderImage = props => {
 									[classes.withArtistsMobile]: true
 								})}
 							>
-								<SupportingArtistsLabel eventName={name} artists={artists} />
+								<SupportingArtistsLabel eventName={name} artists={artists}/>
 							</Typography>
 						</div>
 					) : null}
 
 					{variant === "detailed" ? (
 						<div>
-							<DateFlag variant="rounded" date={eventStartDateMoment} />
+							<DateFlag variant="rounded" date={eventStartDateMoment}/>
 							<Typography
 								className={classNames({
 									[classes.topLineInfo]: true,
@@ -361,16 +361,16 @@ const EventHeaderImage = props => {
 									[classes.withArtistsDetailed]: true
 								})}
 							>
-								<SupportingArtistsLabel eventName={name} artists={artists} />
+								<SupportingArtistsLabel eventName={name} artists={artists}/>
 							</Typography>
 
-							<div className={classes.spaceLine} />
+							<div className={classes.spaceLine}/>
 
 							<Typography className={classes.smallDetailsText}>
 								{displayEventStartDate}
-								<br />
+								<br/>
 								Doors {displayDoorTime} - Show {displayShowTime}
-								<br />
+								<br/>
 								{age_limit
 									? `This event is for over ${age_limit} year olds`
 									: "This event is for all ages"}
@@ -404,16 +404,16 @@ const EventHeaderImage = props => {
 									[classes.withArtistsDetailed]: true
 								})}
 							>
-								<SupportingArtistsLabel eventName={name} artists={artists} />
+								<SupportingArtistsLabel eventName={name} artists={artists}/>
 							</Typography>
 
-							<div className={classes.spaceLine} />
+							<div className={classes.spaceLine}/>
 
 							<Typography className={classes.smallDetailsText}>
 								{displayEventStartDate}
-								<br />
+								<br/>
 								Doors {displayDoorTime} - Show {displayShowTime}
-								<br />
+								<br/>
 								{age_limit
 									? `This event is for over ${age_limit} year olds`
 									: "This event is for all ages"}
@@ -421,7 +421,7 @@ const EventHeaderImage = props => {
 
 							<Typography className={classes.smallDetailsText}>
 								{/* Order #1223444 */}
-								<br />
+								<br/>
 								We've sent your receipt to{" "}
 								<span className={classes.email}>{user.email}</span>
 							</Typography>

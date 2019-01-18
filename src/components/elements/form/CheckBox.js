@@ -75,10 +75,10 @@ const CheckBox = ({
 						[classes.disabledActiveSquare]: !!disabled
 					})}
 				>
-					<img className={classes.checkmark} src="/icons/checkmark-white.svg" />
+					<img className={classes.checkmark} src="/icons/checkmark-white.svg"/>
 				</div>
 			) : (
-				<div className={classes.square} />
+				<div className={classes.square}/>
 			)}
 			{children ? (
 				<Typography className={classes[active ? "labelActive" : "label"]}>

@@ -144,7 +144,7 @@ class Summary extends Component {
 	}
 
 	getDailyBreakdownValues(dayStats) {
-		let result = [];
+		const result = [];
 		for (let index = 0; index < dayStats.length; index++) {
 			result.push({
 				x: Number(moment(dayStats[index].date).format("D")),
@@ -159,7 +159,7 @@ class Summary extends Component {
 
 	renderBarChart() {
 		const { chartValues } = this.state;
-		return <VerticalBarChart values={chartValues} />;
+		return <VerticalBarChart values={chartValues}/>;
 	}
 
 	renderNumbers() {
@@ -273,7 +273,7 @@ class Summary extends Component {
 						justify="center"
 						alignItems="center"
 					>
-						<img src="/images/no_sales_data_illustration.png" style={{ margin: 50,width: 200 }} />
+						<img src="/images/no_sales_data_illustration.png" style={{ margin: 50,width: 200 }}/>
 						<Typography variant="title">This event is externally hosted.</Typography>
 					</Grid>
 				</Container>
@@ -283,11 +283,11 @@ class Summary extends Component {
 				<Container eventId={event.id} subheading={"summary"}>
 					{this.renderBarChart()}
 
-					<div style={{ marginTop: 60 }} />
+					<div style={{ marginTop: 60 }}/>
 
 					{this.renderNumbers()}
 
-					<Divider style={{ marginTop: 40, marginBottom: 40 }} />
+					<Divider style={{ marginTop: 40, marginBottom: 40 }}/>
 
 					<Typography variant="title">Ticket Volumes</Typography>
 					{this.renderTicketVolumes()}

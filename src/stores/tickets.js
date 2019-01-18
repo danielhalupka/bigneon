@@ -24,7 +24,7 @@ class Tickets {
 			.then(response => {
 				const { data, paging } = response.data; //TODO pagination
 
-				let ticketGroups = [];
+				const ticketGroups = [];
 
 				//TODO api data structure will eventually change
 				data.forEach(ticketGroup => {

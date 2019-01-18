@@ -219,7 +219,7 @@ class Account extends Component {
 								</Grid>
 							</Grid>
 
-							<Divider style={{ marginTop: 40, marginBottom: 40 }} />
+							<Divider style={{ marginTop: 40, marginBottom: 40 }}/>
 
 							<Grid container spacing={24}>
 								<Grid item xs={12} sm={12} md={12} lg={12}>
@@ -272,7 +272,7 @@ class Account extends Component {
 								</Grid>
 							</Grid>
 
-							<Divider style={{ marginTop: 40, marginBottom: 40 }} />
+							<Divider style={{ marginTop: 40, marginBottom: 40 }}/>
 
 							<div className={classes.actionButtons}>
 								<Button

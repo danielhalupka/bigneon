@@ -156,7 +156,7 @@ const PricePoint = props => {
 
 			<div className={classes.deleteIconContainer}>
 				<IconButton onClick={onDelete} aria-label="Delete">
-					<DeleteIcon />
+					<DeleteIcon/>
 				</IconButton>
 			</div>
 		</div>

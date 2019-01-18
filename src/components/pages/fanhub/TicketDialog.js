@@ -98,7 +98,7 @@ class TicketDialog extends React.Component {
 								justifyContent: "center"
 							}}
 						>
-							<QRCode size={300} fgColor={primaryHex} value={qrText} />
+							<QRCode size={300} fgColor={primaryHex} value={qrText}/>
 						</div>
 					) : (
 						<Typography variant="display1">Loading</Typography>

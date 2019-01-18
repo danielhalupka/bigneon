@@ -19,7 +19,7 @@ class Signup extends Component {
 	render() {
 		return (
 			<Container {...this.props} type="signup">
-				<Meta type="sign-up" />
+				<Meta type="sign-up"/>
 				<Typography variant="headline">Create your account</Typography>
 				<Link to="/login">
 					<Button variant="text">Already have an account?</Button>

@@ -107,9 +107,9 @@ class HoldDialog extends React.Component {
 			Bigneon()
 				.holds.read({ id: holdId })
 				.then(holdData => {
-					let hold = holdData.data;
+					const hold = holdData.data;
 					if (holdType === HOLD_TYPES.SPLIT) {
-						let { ...parentHold } = hold;
+						const { ...parentHold } = hold;
 						hold.quantity = 0;
 						this.setState({
 							parentHold: createHoldForInput(parentHold),
@@ -153,7 +153,7 @@ class HoldDialog extends React.Component {
 			.then(response => {
 				const { id } = response.data;
 				this.setState({ isSubmitting: false });
-				let message = `Successfully ${hold.id ? "updated" : "created"} hold`;
+				const message = `Successfully ${hold.id ? "updated" : "created"} hold`;
 				notification.show({
 					message,
 					variant: "success"
@@ -236,7 +236,7 @@ class HoldDialog extends React.Component {
 		const { hold, errors, parentHold } = this.state;
 
 		if (holdType === HOLD_TYPES.SPLIT) {
-			let totalHeld = parentHold.quantity - hold.quantity;
+			const totalHeld = parentHold.quantity - hold.quantity;
 
 			return (
 				<Grid container spacing={16}>

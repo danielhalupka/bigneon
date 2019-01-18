@@ -60,7 +60,7 @@ class FeeSchedule extends Component {
 
 				const { id, name, ranges, message } = data;
 
-				let formattedRanges = [];
+				const formattedRanges = [];
 				ranges.forEach(range => {
 					const {
 						company_fee_in_cents = 0,
@@ -68,7 +68,7 @@ class FeeSchedule extends Component {
 						min_price_in_cents = 0
 					} = range;
 
-					let formattedRange = {
+					const formattedRange = {
 						...range,
 						min_price: min_price_in_cents / 100,
 						total_fee: (company_fee_in_cents + client_fee_in_cents) / 100,
@@ -157,7 +157,7 @@ class FeeSchedule extends Component {
 			errors.name = "Missing fee schedule name.";
 		}
 
-		let rangesErrors = {};
+		const rangesErrors = {};
 		ranges.forEach(({ min_price, company_fee, client_fee }, index) => {
 			const missingMinPrice = !min_price && min_price !== 0;
 			const missingCompanyFee = !company_fee && company_fee !== 0;
@@ -274,7 +274,7 @@ class FeeSchedule extends Component {
 
 	updateFee(index, isClient, fee) {
 		this.setState(({ ranges }) => {
-			let key = isClient ? "client_fee" : "company_fee";
+			const key = isClient ? "client_fee" : "company_fee";
 			ranges[index][key] = fee;
 			return { ranges };
 		});
@@ -310,7 +310,7 @@ class FeeSchedule extends Component {
 					</Typography>
 				</div>
 				<div>
-					<br />
+					<br/>
 					<Button style={{ marginRight: 10 }} onClick={onClose}>Cancel</Button>
 					<Button
 						variant="primary"
@@ -444,7 +444,7 @@ class FeeSchedule extends Component {
 										onClick={e => this.deleteRange(index)}
 										color="inherit"
 									>
-										<DeleteIcon />
+										<DeleteIcon/>
 									</IconButton>
 								) : null}
 							</Grid>

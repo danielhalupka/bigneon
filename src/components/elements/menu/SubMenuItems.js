@@ -45,7 +45,7 @@ const SubMenuItems = props => {
 								<ListItemText
 									inset
 									disableTypography
-									primary={
+									primary={(
 										<Typography
 											className={classes.text}
 											variant="body1"
@@ -53,14 +53,14 @@ const SubMenuItems = props => {
 										>
 											{label}
 										</Typography>
-									}
+									)}
 								/>
 							</ListItem>
 						</Link>
 					);
 				})}
 			</List>
-			<Divider className={classes.divider} />
+			<Divider className={classes.divider}/>
 		</Collapse>
 	);
 };

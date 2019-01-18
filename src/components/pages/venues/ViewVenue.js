@@ -58,7 +58,7 @@ class ViewVenue extends Component {
 						.venues.events.index({ venue_id: id })
 						.then(response => {
 							const { data, paging } = response.data; //TODO paging
-							let events = [];
+							const events = [];
 							data.forEach(event => {
 								if (event.status === "Published") {
 									events.push(event);
@@ -128,7 +128,7 @@ class ViewVenue extends Component {
 
 		return (
 			<div className={classes.root}>
-				<VenueHeaderImage venue={venue} />
+				<VenueHeaderImage venue={venue}/>
 
 				<Grid
 					container

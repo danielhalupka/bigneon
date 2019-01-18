@@ -278,37 +278,37 @@ class ViewEvent extends Component {
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
 					<Typography className={classes.eventSubCardHeading}>Time and location</Typography>
-					<DateFlag date={eventStartDateMoment} />
+					<DateFlag date={eventStartDateMoment}/>
 				</div>
 				<div className={classes.eventSubCardRow2}>
 					<div className={classes.textAndIconRow}>
-						<img className={classes.eventSubCardIcon} src="/icons/events-black.svg" />
+						<img className={classes.eventSubCardIcon} src="/icons/events-black.svg"/>
 						<Typography className={classes.eventSubCardSubHeading}>Date and time</Typography>
 					</div>
 
 					<Typography className={classes.eventSubCardSubText}>
 						{displayEventStartDate}
-						<br />
+						<br/>
 						Doors {displayDoorTime} - Show {displayShowTime}
-						<br />
+						<br/>
 						{age_limit
 							? `This event is for over ${age_limit} year olds`
 							: "This event is for all ages"}
 					</Typography>
 				</div>
 
-				<Divider />
+				<Divider/>
 
 				<div className={classes.eventSubCardRow3}>
 					<div className={classes.textAndIconRow}>
-						<img className={classes.eventSubCardIcon} src="/icons/location-black.svg" />
+						<img className={classes.eventSubCardIcon} src="/icons/location-black.svg"/>
 						<Link to={`/venues/${venue.id}`}>
 							<Typography className={classes.eventSubCardSubHeading}>{venue.name}</Typography>
 						</Link>
 					</div>
 
 					<Typography className={classes.eventSubCardSubText}>
-						{venue.address}, {venue.city}.<br />
+						{venue.address}, {venue.city}.<br/>
 						{venue.postal_code}, {venue.state}, {venue.country}
 						{venue.googleMapsLink ? (
 							<a target="_blank" href={venue.googleMapsLink}>
@@ -318,13 +318,13 @@ class ViewEvent extends Component {
 					</Typography>
 				</div>
 
-				<Divider />
+				<Divider/>
 
 				<div className={classes.eventSubCardRow4}>
 					{hasAvailableTickets ? (
 						<Typography className={classes.eventSubCardSubHeading}>Tickets</Typography>
 					) : null}
-					<br />
+					<br/>
 
 					{ticket_types.map(({ id, name, status, ticket_pricing }) => {
 						let price = "";
@@ -369,10 +369,10 @@ class ViewEvent extends Component {
 
 		return (
 			<div>
-				<OrgAnalytics trackingKeys={tracking_keys} />
-				<Meta {...event} />
+				<OrgAnalytics trackingKeys={tracking_keys}/>
+				<Meta {...event}/>
 
-				<EventHeaderImage {...event} artists={artists} />
+				<EventHeaderImage {...event} artists={artists}/>
 
 				<Grid container spacing={0} direction="row" justify="center">
 					<Grid item xs={12} sm={12} md={11} lg={9}>
@@ -404,7 +404,7 @@ class ViewEvent extends Component {
 													key={index}
 													className={classes.artistContainer}
 												>
-													<ArtistSummary headliner={index === 0} {...artist} />
+													<ArtistSummary headliner={index === 0} {...artist}/>
 												</Grid>
 											))}
 										</Grid>

@@ -114,7 +114,7 @@ const CustomButton = props => {
 			{...rest}
 		>
 			{iconUrl ? (
-				<img alt={children} className={classes.leftIcon} src={iconUrl} />
+				<img alt={children} className={classes.leftIcon} src={iconUrl}/>
 			) : null}
 
 			{children}

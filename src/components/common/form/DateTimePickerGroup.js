@@ -54,12 +54,12 @@ const styles = theme => {
 	};
 };
 
-let timeFormat = "hh:mm A";
+const timeFormat = "hh:mm A";
 
 class DateTimePickerGroup extends Component {
 	constructor(props) {
 		super(props);
-		let { value } = this.props;
+		const { value } = this.props;
 
 		this.state = {
 			anchorEl: null,
@@ -73,10 +73,10 @@ class DateTimePickerGroup extends Component {
 	}
 
 	componentDidUpdate() {
-		let { value } = this.props;
-		let { isTimeValid, timeFormatted, dateFormatted } = this.state;
-		let newIsTimeValid = !value || value.isValid();
-		let newTimeFormatted = !value
+		const { value } = this.props;
+		const { isTimeValid, timeFormatted, dateFormatted } = this.state;
+		const newIsTimeValid = !value || value.isValid();
+		const newTimeFormatted = !value
 			? ""
 			: value.isValid()
 				? value.format(timeFormat)
@@ -115,15 +115,15 @@ class DateTimePickerGroup extends Component {
 	};
 
 	onTimeChanged = event => {
-		let newValue = event.target.value;
+		const newValue = event.target.value;
 		this.setState({ timeFormatted: newValue, anchorEl: null });
-		let { onChange } = this.props;
+		const { onChange } = this.props;
 
 		onChange(moment(newValue, timeFormat, true));
 	};
 
 	onTimeSelected = (event, value) => {
-		let { onChange } = this.props;
+		const { onChange } = this.props;
 		onChange(moment(value, timeFormat, true));
 		this.setState({ anchorEl: null });
 	};
@@ -146,18 +146,18 @@ class DateTimePickerGroup extends Component {
 			timeIncrement = 30
 		} = this.props;
 
-		let additionalProps = {};
-		let inputProps = {};
+		const additionalProps = {};
+		const inputProps = {};
 
-		let start = moment().set({ hour: 0, minute: 0, second: 0 });
-		let end = moment(start).add(24, "hours");
-		let times = [];
+		const start = moment().set({ hour: 0, minute: 0, second: 0 });
+		const end = moment(start).add(24, "hours");
+		const times = [];
 		while (start < end) {
 			times.push(start.format("hh:mm A"));
 			start.add(timeIncrement, "minutes");
 		}
 
-		let { anchorEl, timeFormatted, isTimeValid } = this.state;
+		const { anchorEl, timeFormatted, isTimeValid } = this.state;
 
 		return (
 			<FormControl
@@ -188,7 +188,7 @@ class DateTimePickerGroup extends Component {
 						/>
 					</div>
 				) : (
-					<div />
+					<div/>
 				)}
 
 				{type === "time" ? (
@@ -247,7 +247,7 @@ class DateTimePickerGroup extends Component {
 						</Popover>
 					</div>
 				) : (
-					<div />
+					<div/>
 				)}
 				<FormHelperText id={`${name}-error-text`}>
 					{!isTimeValid ? "Not a valid time (e.g. 9:30 PM)" : error}

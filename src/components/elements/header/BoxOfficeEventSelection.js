@@ -125,7 +125,7 @@ class BoxOfficeEventSelection extends React.Component {
 			>
 				{availableEvents.map(
 					({ id, name, promo_image_url, venue, event_start, door_time, status }) => {
-						let displayTimes = {
+						const displayTimes = {
 							event_start: moment.utc(event_start).local(),
 							door_time: moment.utc(door_time || event_start).local()
 						};
@@ -186,7 +186,7 @@ class BoxOfficeEventSelection extends React.Component {
 			status,
 			publish_date
 		} = activeEventDetails;
-		let displayTimes = {
+		const displayTimes = {
 			event_start: moment.utc(event_start).local(),
 			door_time: moment.utc(door_time || event_start).local()
 		};
@@ -195,8 +195,8 @@ class BoxOfficeEventSelection extends React.Component {
 			displayTimes.door_time = moment.utc(door_time || event_start).tz(venue.timezone);
 		}
 
-		let publishIsInFuture = moment.utc(publish_date) > moment.utc();
-		let invalidStatus = status === "Draft" ? "(Un-Published)" : publishIsInFuture ? "(Pre-Published)" : "";
+		const publishIsInFuture = moment.utc(publish_date) > moment.utc();
+		const invalidStatus = status === "Draft" ? "(Un-Published)" : publishIsInFuture ? "(Pre-Published)" : "";
 
 		return (
 			<div className={classes.root}>

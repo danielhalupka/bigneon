@@ -35,13 +35,13 @@ class Home extends Component {
 
 		return (
 			<div>
-				<Meta />
-				<Hero />
+				<Meta/>
+				<Hero/>
 				<Grid container justify="center">
 					<Grid item xs={11} sm={11} lg={10}>
-						<Results />
+						<Results/>
 					</Grid>
-					<div style={{ marginBottom: 40 }} />
+					<div style={{ marginBottom: 40 }}/>
 				</Grid>
 			</div>
 		);

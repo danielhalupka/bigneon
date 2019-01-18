@@ -102,7 +102,7 @@ const VerticalBarChart = props => {
 	const { classes, values } = props;
 
 	let maxValue = 1;
-	let xLabels = [];
+	const xLabels = [];
 
 	values.forEach(({ y, x }) => {
 		if (maxValue < y) {
@@ -115,7 +115,7 @@ const VerticalBarChart = props => {
 	//Round up to nearest 100
 	maxValue = Math.ceil(maxValue / 100) * 100;
 
-	let yLabels = [maxValue, 0];
+	const yLabels = [maxValue, 0];
 	//TODO put points in between
 
 	return (
@@ -136,10 +136,10 @@ const VerticalBarChart = props => {
 						))}
 					</div>
 					<div className={classes.chartBackground}>
-						<div className={classes.horizontalLine} />
-						<div className={classes.horizontalLine} />
-						<div className={classes.horizontalLine} />
-						<div className={classes.horizontalLine} />
+						<div className={classes.horizontalLine}/>
+						<div className={classes.horizontalLine}/>
+						<div className={classes.horizontalLine}/>
+						<div className={classes.horizontalLine}/>
 					</div>
 				</div>
 				<div className={classes.chartFooter}>

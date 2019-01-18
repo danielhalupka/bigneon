@@ -95,9 +95,9 @@ class WidgetLinkBuilder extends Component {
 
 		switch (type) {
 			case "default":
-				return <DefaultTemplate height={numberHeight} {...selectedEvent} />;
+				return <DefaultTemplate height={numberHeight} {...selectedEvent}/>;
 			default:
-				return <DefaultTemplate height={numberHeight} {...selectedEvent} />;
+				return <DefaultTemplate height={numberHeight} {...selectedEvent}/>;
 		}
 	}
 
@@ -155,7 +155,7 @@ class WidgetLinkBuilder extends Component {
 			<div>
 				<PageHeading>Widget builder</PageHeading>
 				<Typography variant="title">{event ? event.name : ""}</Typography>
-				<br />
+				<br/>
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={10}>
 						<Card className={classes.paper}>{this.renderForm()}</Card>
@@ -164,7 +164,7 @@ class WidgetLinkBuilder extends Component {
 					<Grid item xs={12} sm={12} lg={10}>
 						<Card className={classes.paper}>
 							<Typography variant="title">Copy the below code:</Typography>
-							<br />
+							<br/>
 							<Typography>
 								{`<iframe frameborder=0 height="${numberHeight}px" width="${numberWidth}px" src="http://${host}/widget/embed/${id}?type=${type}"></iframe>`}
 							</Typography>

@@ -103,7 +103,7 @@ class CancelEventDialog extends React.Component {
 						{name ? <Typography>{name}</Typography> : null}
 					</div>
 					<div>
-						<br />
+						<br/>
 						<Button
 							style={{ marginRight: 10 }}
 							onClick={onClose}

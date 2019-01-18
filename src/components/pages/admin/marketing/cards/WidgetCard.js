@@ -86,9 +86,12 @@ class InviteUserCard extends Component {
 						onChange={(e) => {}}
 					/>
 
-					<textarea defaultValue={displayCss} style={{ width: "100%", height: "300px" }} onChange={(e) => {
-						this.setState({ styleString: e.target.value });
-					}}>
+					<textarea defaultValue={displayCss}
+						style={{ width: "100%", height: "300px" }}
+						onChange={(e) => {
+							this.setState({ styleString: e.target.value });
+						}}
+					>
 					</textarea>
 				</CardContent>
 			</Card>

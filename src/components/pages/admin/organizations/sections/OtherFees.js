@@ -32,10 +32,10 @@ class OtherFees extends Component {
 				.organizations.read({ id: organizationId })
 				.then(response => {
 					const { owner_user_id, client_event_fee_in_cents, company_event_fee_in_cents } = response.data;
-					let clientEventFee = client_event_fee_in_cents
+					const clientEventFee = client_event_fee_in_cents
 						? (client_event_fee_in_cents / 100).toFixed(2)
 						: (0).toFixed(2);
-					let companyEventFee = company_event_fee_in_cents
+					const companyEventFee = company_event_fee_in_cents
 						? (company_event_fee_in_cents / 100).toFixed(2)
 						: (0).toFixed(2);
 
@@ -95,7 +95,7 @@ class OtherFees extends Component {
 		const { clientEventFee, companyEventFee } = this.state;
 		const { organizationId } = this.props;
 
-		let orgDetails = {
+		const orgDetails = {
 			client_event_fee_in_cents: Number(clientEventFee) * 100,
 			company_event_fee_in_cents: Number(companyEventFee) * 100
 		};

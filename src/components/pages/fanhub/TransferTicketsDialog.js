@@ -216,7 +216,7 @@ class TransferTicketsDialog extends Component {
 					justifyContent: "center"
 				}}
 			>
-				<QRCode size={350} fgColor={primaryHex} value={qrText} />
+				<QRCode size={350} fgColor={primaryHex} value={qrText}/>
 			</div>
 		);
 	}

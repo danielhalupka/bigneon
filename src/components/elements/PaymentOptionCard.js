@@ -82,7 +82,7 @@ const PaymentOptionCard = props => {
 			})}
 		>
 			<div className={classes.iconContainer}>
-				<img alt={type} className={classes.icon} src={iconUrl} />
+				<img alt={type} className={classes.icon} src={iconUrl}/>
 			</div>
 			<div className={classes.textContainer}>
 				<Typography

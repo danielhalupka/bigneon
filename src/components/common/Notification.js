@@ -60,10 +60,10 @@ const CustomSnackbarContent = props => {
 			className={classNames(classes[variant], className)}
 			aria-describedby="client-snackbar"
 			message={
-				<span id="client-snackbar" className={classes.message}>
-					<Icon className={classNames(classes.icon, classes.iconVariant)} />
+				(<span id="client-snackbar" className={classes.message}>
+					<Icon className={classNames(classes.icon, classes.iconVariant)}/>
 					{message}
-				</span>
+				</span>)
 			}
 			action={[
 				<IconButton
@@ -73,7 +73,7 @@ const CustomSnackbarContent = props => {
 					className={classes.close}
 					onClick={onClose}
 				>
-					<CloseIcon className={classes.icon} />
+					<CloseIcon className={classes.icon}/>
 				</IconButton>
 			]}
 			{...other}

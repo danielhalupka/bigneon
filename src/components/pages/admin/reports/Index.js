@@ -104,10 +104,10 @@ class Reports extends Component {
 			case undefined:
 			case "ticket-counts":
 				return hasTicketCountReports ? (
-					<TicketCounts organizationId={organizationId} />
+					<TicketCounts organizationId={organizationId}/>
 				) : null;
 			case "transaction-details":
-				return <Transactions organizationId={organizationId} />;
+				return <Transactions organizationId={organizationId}/>;
 			default:
 				return (
 					<Typography>
@@ -127,7 +127,7 @@ class Reports extends Component {
 				<Card>
 					<div className={classes.content}>
 						{this.renderMenu()}
-						<Divider style={{ marginBottom: 10 }} />
+						<Divider style={{ marginBottom: 10 }}/>
 
 						{this.renderContent()}
 					</div>

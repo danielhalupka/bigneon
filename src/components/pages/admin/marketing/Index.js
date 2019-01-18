@@ -42,20 +42,20 @@ class Marketing extends Component {
 					value={activeTab}
 					onChange={(event, activeTab) => this.setState({ activeTab })}
 				>
-					<Tab key={0} label="Email" />
-					<Tab key={1} label="Widget" />
-					<Tab key={2} label="Analytics" />
-					<Tab key={3} label="API" />
+					<Tab key={0} label="Email"/>
+					<Tab key={1} label="Widget"/>
+					<Tab key={2} label="Analytics"/>
+					<Tab key={3} label="API"/>
 				</Tabs>
 
 				<Grid container spacing={24}>
 					<Grid item xs={12} sm={12} lg={12}>
 						{activeTab === 0 ? (
-							<EmailCard history={history} organizationId={organizationId} />
+							<EmailCard history={history} organizationId={organizationId}/>
 						) : null}
 
 						{activeTab === 1 ? (
-							<WidgetCard history={history} organizationId={organizationId} />
+							<WidgetCard history={history} organizationId={organizationId}/>
 						) : null}
 
 						{activeTab === 2 ? (
@@ -66,7 +66,7 @@ class Marketing extends Component {
 						) : null}
 
 						{activeTab === 3 ? (
-							<ApiCard history={history} organizationId={organizationId} />
+							<ApiCard history={history} organizationId={organizationId}/>
 						) : null}
 					</Grid>
 				</Grid>

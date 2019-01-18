@@ -79,11 +79,11 @@ const NumberSelect = ({
 }) => {
 	return (
 		<div className={classes.root} style={style}>
-			<Button type="minus" classes={classes} onClick={onDecrement} />
+			<Button type="minus" classes={classes} onClick={onDecrement}/>
 			{/* <div> */}
 			<Typography className={classes.value}>{children || "0"}</Typography>
 			{/* </div> */}
-			<Button type="plus" classes={classes} onClick={onIncrement} />
+			<Button type="plus" classes={classes} onClick={onIncrement}/>
 		</div>
 	);
 };

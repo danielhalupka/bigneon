@@ -81,9 +81,9 @@ class Embedded extends Component {
 
 		switch (type) {
 			case "default":
-				return <DefaultTemplate height={height} {...selectedEvent} />;
+				return <DefaultTemplate height={height} {...selectedEvent}/>;
 			default:
-				return <DefaultTemplate height={height} {...selectedEvent} />;
+				return <DefaultTemplate height={height} {...selectedEvent}/>;
 		}
 	}
 }

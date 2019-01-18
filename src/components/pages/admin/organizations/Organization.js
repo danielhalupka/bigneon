@@ -69,11 +69,11 @@ class Organization extends Component {
 		switch (activeTab) {
 			case "details":
 				return (
-					<UpdateSection history={history} organizationId={organizationId} />
+					<UpdateSection history={history} organizationId={organizationId}/>
 				);
 			case "team":
 				return (
-					<TeamSection history={history} organizationId={organizationId} />
+					<TeamSection history={history} organizationId={organizationId}/>
 				);
 			case "fees":
 				return (
@@ -93,7 +93,7 @@ class Organization extends Component {
 				);
 			case "admin-fees-other":
 				return (
-					<OtherFeesSection history={history} organizationId={organizationId} />
+					<OtherFeesSection history={history} organizationId={organizationId}/>
 				);
 
 			default:

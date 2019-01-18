@@ -75,7 +75,7 @@ class EventsList extends Component {
 	}
 
 	componentDidUpdate() {
-		let { upcomingOrPast } = this.state;
+		const { upcomingOrPast } = this.state;
 		if (
 			upcomingOrPast !== (this.props.match.params.upcomingOrPast || "upcoming")
 		) {
@@ -114,7 +114,7 @@ class EventsList extends Component {
 		}
 
 		this.setState({ events: null }, () => {
-			let { upcomingOrPast } = this.state;
+			const { upcomingOrPast } = this.state;
 			Bigneon()
 				.organizations.events.index({
 					organization_id: user.currentOrganizationId,
@@ -218,7 +218,7 @@ class EventsList extends Component {
 								this.handleMenuClick(e);
 							}}
 						>
-							<MoreHorizIcon fontSize={"large"} nativeColor="#9da3b4" />
+							<MoreHorizIcon fontSize={"large"} nativeColor="#9da3b4"/>
 						</IconButton>
 
 						<Menu
@@ -237,9 +237,9 @@ class EventsList extends Component {
 										}}
 									>
 										<ListItemIcon>
-											<MenuOptionIcon />
+											<MenuOptionIcon/>
 										</ListItemIcon>
-										<ListItemText inset primary={text} />
+										<ListItemText inset primary={text}/>
 									</MenuItem>
 								);
 							})}

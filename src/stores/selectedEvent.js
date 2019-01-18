@@ -169,7 +169,7 @@ class SelectedEvent {
 
 		let hasTickets = false;
 		this.ticket_types.map(({ ticket_pricing }) => {
-			let price = "";
+			const price = "";
 			if (ticket_pricing) {
 				hasTickets = true;
 			}

@@ -44,7 +44,7 @@ const StatsCard = props => {
 				{label}
 			</Typography>
 			<div className={classes.row}>
-				<img alt={label} src={iconUrl} className={classes.icon} />
+				<img alt={label} src={iconUrl} className={classes.icon}/>
 				<Typography variant="title" className={classes.value}>
 					{value}
 				</Typography>

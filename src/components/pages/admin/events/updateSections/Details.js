@@ -112,7 +112,7 @@ const formatDataForSaving = (event, organizationId) => {
 
 	if (eventDate && moment(eventDate).isValid()) {
 		// Set doorTime from showTime and doorTimeHours
-		let tmpDoorTime = moment(eventDate).subtract(doorTimeHours, "h");
+		const tmpDoorTime = moment(eventDate).subtract(doorTimeHours, "h");
 		eventDetails.door_time = moment
 			.utc(tmpDoorTime)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
@@ -330,18 +330,18 @@ class Details extends Component {
 		const { override_status } = eventUpdateStore.event;
 
 		const statusOptions = [{ value: false, label: "Auto" }];
-		let eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
-		let eventOverrideStatusString = Bn.Enums
+		const eventOverrideStatusEnum = Bn.Enums ? Bn.Enums.EventOverrideStatus : {};
+		const eventOverrideStatusString = Bn.Enums
 			? Bn.Enums.EVENT_OVERRIDE_STATUS_STRING
 			: {};
-		for (let statusConst in eventOverrideStatusEnum) {
-			let serverEnum = eventOverrideStatusEnum[statusConst];
-			let displayString = eventOverrideStatusString[serverEnum];
+		for (const statusConst in eventOverrideStatusEnum) {
+			const serverEnum = eventOverrideStatusEnum[statusConst];
+			const displayString = eventOverrideStatusString[serverEnum];
 			statusOptions.push({ value: serverEnum, label: displayString });
 		}
 
-		let label = "Event status";
-		let overrideStatus = override_status || false;
+		const label = "Event status";
+		const overrideStatus = override_status || false;
 
 		return (
 			<SelectGroup
@@ -523,7 +523,7 @@ class Details extends Component {
 						name="endTime"
 						label="Event end date"
 						onChange={newEndDate => {
-							let updatedEndTime = newEndDate;
+							const updatedEndTime = newEndDate;
 
 							let adjustTime;
 

@@ -61,7 +61,7 @@ const BoxOfficeAppBar = props => {
 							onClick={handleDrawerToggle}
 							className={classes.navIconHide}
 						>
-							<MenuIcon color="action" />
+							<MenuIcon color="action"/>
 						</IconButton>
 					</Hidden>
 				) : null}
@@ -74,16 +74,16 @@ const BoxOfficeAppBar = props => {
 						/>
 					</Link>
 					<Hidden smDown>
-						<div className={classes.verticalDivider} />
+						<div className={classes.verticalDivider}/>
 					</Hidden>
 
-					<BoxOfficeEventSelection />
+					<BoxOfficeEventSelection/>
 				</div>
 				<span className={classes.rightMenuOptions}>
 					<Hidden smDown>
-						<BoxOfficeLink />
+						<BoxOfficeLink/>
 					</Hidden>
-					<RightUserMenu history={history} />
+					<RightUserMenu history={history}/>
 				</span>
 			</Toolbar>
 		</AppBar>

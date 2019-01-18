@@ -192,7 +192,7 @@ class OrganizationUpdate extends Component {
 		} = this.state;
 		const { organizationId } = this.props;
 
-		let orgDetails = {
+		const orgDetails = {
 			name,
 			phone,
 			address,

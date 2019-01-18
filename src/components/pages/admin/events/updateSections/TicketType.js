@@ -93,7 +93,7 @@ const InactiveContent = props => {
 	const { classes, onEditClick, deleteTicketType } = props;
 	return (
 		<div className={classes.inactiveContent}>
-			<TicketHeading {...props} />
+			<TicketHeading {...props}/>
 		</div>
 	);
 };
@@ -150,7 +150,7 @@ const TicketDetails = observer(props => {
 
 	return (
 		<div className={classes.activeContent}>
-			<TicketHeading {...props} />
+			<TicketHeading {...props}/>
 
 			<div className={classes.simpleInputs}>
 				<div className={classes.simpleInputContainer} style={{ flex: 2 }}>
@@ -402,11 +402,11 @@ const TicketDetails = observer(props => {
 									</FormHeading>
 									<PricePoint
 										updatePricePointDetails={pricePointDetails => {
-											let updatedPricePoint = {
+											const updatedPricePoint = {
 												...pricePoint,
 												...pricePointDetails
 											};
-											let updatedPricing = pricing;
+											const updatedPricing = pricing;
 											updatedPricing[pricePointIndex] = updatedPricePoint;
 
 											updateTicketType(index, { pricing: updatedPricing });
@@ -441,7 +441,7 @@ const TicketType = props => {
 
 	return (
 		<div className={classes.root}>
-			{active ? <TicketDetails {...props} /> : <InactiveContent {...props} />}
+			{active ? <TicketDetails {...props}/> : <InactiveContent {...props}/>}
 		</div>
 	);
 };

@@ -99,7 +99,7 @@ class CheckoutForm extends Component {
 				open={!!statusMessage}
 				title={statusMessage || ""}
 			>
-				<div />
+				<div/>
 			</Dialog>
 		);
 	}
@@ -154,8 +154,8 @@ class CheckoutForm extends Component {
 				{this.renderProcessingDialog()}
 				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={12}>
 					{this.header}
-					<br />
-					<CardElement style={stripeStyle} />
+					<br/>
+					<CardElement style={stripeStyle}/>
 				</Grid>
 
 				<Grid item xs={12} sm={12} lg={12}>

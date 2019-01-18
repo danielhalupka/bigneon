@@ -148,7 +148,7 @@ class Artist extends Component {
 
 			if (url) {
 				if (!validUrl(url)) {
-					let youtubeVideosErrors = errors.youtube_video_urls
+					const youtubeVideosErrors = errors.youtube_video_urls
 						? errors.youtube_video_urls
 						: [];
 					youtubeVideosErrors[index] = "Please enter a valid URL.";
@@ -543,7 +543,7 @@ class Artist extends Component {
 														}, this.validateFields.bind(this));
 													}}
 												>
-													<RemoveIcon />
+													<RemoveIcon/>
 												</IconButton>
 											</div>
 										</Grid>

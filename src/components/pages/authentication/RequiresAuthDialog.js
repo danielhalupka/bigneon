@@ -48,7 +48,7 @@ class RequiresAuthDialog extends Component {
 				>
 					Already have an account?
 				</Button>
-				<SignupForm onSuccess={this.onSuccess} />
+				<SignupForm onSuccess={this.onSuccess}/>
 			</div>
 		);
 	}
@@ -62,7 +62,7 @@ class RequiresAuthDialog extends Component {
 				>
 					New here? Create a free account.
 				</Button>
-				<LoginForm onSuccess={this.onSuccess} />
+				<LoginForm onSuccess={this.onSuccess}/>
 			</div>
 		);
 	}
@@ -70,7 +70,7 @@ class RequiresAuthDialog extends Component {
 	renderOptions() {
 		return (
 			<div>
-				<div style={{ marginTop: 20 }} />
+				<div style={{ marginTop: 20 }}/>
 
 				<Button
 					variant="text"
@@ -79,7 +79,7 @@ class RequiresAuthDialog extends Component {
 					Already have an account?
 				</Button>
 
-				<div style={{ marginTop: 20 }} />
+				<div style={{ marginTop: 20 }}/>
 
 				{/* <FacebookButton onSuccess={this.onSuccess} /> */}
 

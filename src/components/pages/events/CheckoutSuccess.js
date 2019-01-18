@@ -97,7 +97,7 @@ class CheckoutSuccess extends Component {
 					padding: 10
 				}}
 			>
-				<QRCode size={overlayCardWidth} fgColor={"#000000"} value={qrText} />
+				<QRCode size={overlayCardWidth} fgColor={"#000000"} value={qrText}/>
 			</Card>
 		);
 	}
@@ -134,13 +134,13 @@ class CheckoutSuccess extends Component {
 				<div className={classes.appDetails}>
 					<Typography className={classes.appHeading}>
 							Get the bigNEON app
-						<br />
+						<br/>
 							to access your tickets
 					</Typography>
 					<Typography className={classes.appDetail}>
 							The mobile app is required to use your tickets at the show
 					</Typography>
-					<br />
+					<br/>
 
 					<div className={classes.appButtonContainer}>
 						<AppButton
@@ -162,13 +162,13 @@ class CheckoutSuccess extends Component {
 						</AppButton>
 					</div>
 				</div>
-				<SMSLinkForm />
+				<SMSLinkForm/>
 			</div>
 		);
 
 		return (
 			<div>
-				<Meta type={"success"} {...event} />
+				<Meta type={"success"} {...event}/>
 
 				<EventHeaderImage
 					variant="success"

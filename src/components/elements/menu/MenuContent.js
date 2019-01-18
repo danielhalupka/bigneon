@@ -140,11 +140,11 @@ class MenuContent extends Component {
 		return (
 			<List component="nav">
 				<Hidden smDown>
-					<div style={{ height: 60 }} />
+					<div style={{ height: 60 }}/>
 				</Hidden>
 
 				{layout.adminStyleMenu ? null : (
-					<MenuUserProfile onClick={toggleDrawer} />
+					<MenuUserProfile onClick={toggleDrawer}/>
 				)}
 
 				{/* TODO Profile details go here */}

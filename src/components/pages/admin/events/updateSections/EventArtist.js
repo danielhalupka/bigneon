@@ -74,9 +74,11 @@ const EventArtist = ({
 						type="time"
 						onBlur={onBlur}
 					/>
-					<CheckBox active={importance === 0} onClick={() => {
-						onChangeImportance(importance);
-					}}>
+					<CheckBox active={importance === 0}
+						onClick={() => {
+							onChangeImportance(importance);
+						}}
+					>
 						Headline act
 					</CheckBox>
 				</div>

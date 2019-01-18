@@ -69,7 +69,7 @@ const AdminList = props => {
 				Settings
 			</MenuItem>
 
-			<Divider style={{ marginTop: 30, marginBottom: 30 }} />
+			<Divider style={{ marginTop: 30, marginBottom: 30 }}/>
 
 			<Typography
 				style={{

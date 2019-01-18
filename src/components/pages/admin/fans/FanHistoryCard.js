@@ -65,7 +65,7 @@ const FanHistoryCard = ({
 								Order #{order_id.slice(-6)}
 								</Typography>
 							</a>
-							<div className={classes.verticalDividerSmall} />
+							<div className={classes.verticalDividerSmall}/>
 							<Typography className={classes.bold}>
 								${(revenue_in_cents / 100).toFixed(2)}
 							</Typography>

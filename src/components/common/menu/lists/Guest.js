@@ -32,7 +32,7 @@ const GuestMenuList = observer(props => {
 				Help
 			</MenuItem>
 
-			<Divider className={classes.divider} />
+			<Divider className={classes.divider}/>
 
 			<div className={classes.stats}>
 				<Button

@@ -36,7 +36,7 @@ class CompList extends Component {
 	}
 
 	async loadHoldDetails() {
-		let holdDetails = (await Bigneon().holds.read({ id: this.holdId })).data;
+		const holdDetails = (await Bigneon().holds.read({ id: this.holdId })).data;
 		this.setState({ holdDetails });
 	}
 
@@ -178,8 +178,8 @@ class CompList extends Component {
 
 	renderDialog() {
 		const { ticketTypes, activeHoldId } = this.state;
-		let eventId = this.eventId;
-		let holdId = this.holdId;
+		const eventId = this.eventId;
+		const holdId = this.holdId;
 		return (
 			<CompDialog
 				open={true}
@@ -205,11 +205,11 @@ class CompList extends Component {
 
 				<div style={{ display: "flex" }}>
 					<Typography variant="title">{holdDetails.name}</Typography>
-					<span style={{ flex: 1 }} />
+					<span style={{ flex: 1 }}/>
 					<Button onClick={e => this.onAddHold()}>Assign Name To List</Button>
 				</div>
 
-				<Divider style={{ marginBottom: 40 }} />
+				<Divider style={{ marginBottom: 40 }}/>
 
 				{this.renderList()}
 			</Container>

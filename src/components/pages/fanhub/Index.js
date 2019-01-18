@@ -118,7 +118,7 @@ class FanHub extends Component {
 					{this.renderTickets()}
 				</Grid>
 
-				<AppPromoCard style={{ marginTop: 20 }} />
+				<AppPromoCard style={{ marginTop: 20 }}/>
 			</div>
 		);
 	}

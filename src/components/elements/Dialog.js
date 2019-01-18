@@ -52,7 +52,7 @@ const styles = theme => ({
 });
 
 const DialogTransition = props => {
-	return <Slide direction="up" {...props} />;
+	return <Slide direction="up" {...props}/>;
 };
 
 const CustomDialog = props => {
@@ -74,15 +74,15 @@ const CustomDialog = props => {
 				TransitionComponent={DialogTransition}
 				onClose={onClose}
 				aria-labelledby="dialog-title"
-				onEntering={() => iosScrollBackgroundHack(true) }
+				onEntering={() => iosScrollBackgroundHack(true)}
 				onExiting={() => iosScrollBackgroundHack(false)}
 				{...rest}
 			>
 				<div>
 					<div onClick={onClose} className={classes.closeDialogContainer}>
-						<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg" />
+						<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg"/>
 					</div>
-					<TopCardIcon iconUrl={iconUrl} />
+					<TopCardIcon iconUrl={iconUrl}/>
 					{title ? (
 						<Typography variant="headline" className={classes.title}>
 							{title}

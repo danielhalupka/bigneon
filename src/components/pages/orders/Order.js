@@ -121,7 +121,7 @@ class Order extends Component {
 		let eventName = "";
 		let fee_total_in_cents = 0;
 
-		let listItems = [];
+		const listItems = [];
 
 		if (items) {
 			items.forEach(
@@ -177,32 +177,32 @@ class Order extends Component {
 									</span>
 								</Typography>
 							</div>
-							<img src="/images/bn-logo.png" className={classes.logo} />
+							<img src="/images/bn-logo.png" className={classes.logo}/>
 						</div>
 
 						<Typography className={classes.eventName}>{eventName}</Typography>
 
 						<LineEntry
 							col1={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									Quantity
-								</Typography>
+								</Typography>)
 							}
 							col2={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									Ticket type
-								</Typography>
+								</Typography>)
 							}
 							col3={
 								<Typography className={classes.itemHeading}>Price</Typography>
 							}
 							col4={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									Subtotal
-								</Typography>
+								</Typography>)
 							}
 						/>
-						<Divider style={{ marginBottom: 15 }} />
+						<Divider style={{ marginBottom: 15 }}/>
 
 						{listItems.map(item => {
 							const {
@@ -216,27 +216,27 @@ class Order extends Component {
 								<div key={id}>
 									<LineEntry
 										col1={
-											<Typography className={classes.item}>
+											(<Typography className={classes.item}>
 												{quantity}
-											</Typography>
+											</Typography>)
 										}
 										col2={
-											<Typography className={classes.item}>
+											(<Typography className={classes.item}>
 												{description}
-											</Typography>
+											</Typography>)
 										}
 										col3={
-											<Typography className={classes.item}>
+											(<Typography className={classes.item}>
 												{(unit_price_in_cents / 100).toFixed(2)}
-											</Typography>
+											</Typography>)
 										}
 										col4={
-											<Typography className={classes.item}>
+											(<Typography className={classes.item}>
 												{((unit_price_in_cents / 100) * quantity).toFixed(2)}
-											</Typography>
+											</Typography>)
 										}
 									/>
-									<Divider style={{ marginBottom: 15 }} />
+									<Divider style={{ marginBottom: 15 }}/>
 								</div>
 							);
 						})}
@@ -245,35 +245,35 @@ class Order extends Component {
 							col1={null}
 							col2={null}
 							col3={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									Service fees
-								</Typography>
+								</Typography>)
 							}
 							col4={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									$ {(fee_total_in_cents / 100).toFixed(2)}
-								</Typography>
+								</Typography>)
 							}
 						/>
 
-						<div style={{ marginTop: 20 }} />
+						<div style={{ marginTop: 20 }}/>
 
 						<LineEntry
 							col1={null}
 							col2={null}
 							col3={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									Order total
-								</Typography>
+								</Typography>)
 							}
 							col4={
-								<Typography className={classes.itemHeading}>
+								(<Typography className={classes.itemHeading}>
 									$ {(total_in_cents / 100).toFixed(2)}
-								</Typography>
+								</Typography>)
 							}
 						/>
 
-						<AppPromoCard style={{ marginTop: 80 }} />
+						<AppPromoCard style={{ marginTop: 80 }}/>
 					</div>
 				</Card>
 			</div>

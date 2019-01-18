@@ -24,7 +24,7 @@ const CustomIconButton = props => {
 			}}
 			{...rest}
 		>
-			<img alt={children || ""} className={classes.icon} src={iconUrl} />
+			<img alt={children || ""} className={classes.icon} src={iconUrl}/>
 		</IconButton>
 	);
 };

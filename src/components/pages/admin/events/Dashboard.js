@@ -136,11 +136,11 @@ class EventDashboard extends Component {
 
 		switch (subheading) {
 			case undefined:
-				return <Summary event={event} last30Days={last30Days} />;
+				return <Summary event={event} last30Days={last30Days}/>;
 			case "holds":
-				return <HoldsList event={event} />;
+				return <HoldsList event={event}/>;
 			default:
-				return <ComingSoon />;
+				return <ComingSoon/>;
 		}
 	}
 
@@ -224,7 +224,7 @@ class EventDashboard extends Component {
 								</Typography>
 							</div>
 						</div>
-						<Divider style={{ marginBottom: 40 }} />
+						<Divider style={{ marginBottom: 40 }}/>
 
 						{this.renderContent()}
 					</div>

@@ -45,7 +45,7 @@ class SelectOptionDialog extends React.Component {
 										<Avatar className={classes.avatar}>{iconComponent}</Avatar>
 									</ListItemAvatar>
 								) : null}
-								<ListItemText primary={items[key]} />
+								<ListItemText primary={items[key]}/>
 							</ListItem>
 						))}
 					</List>

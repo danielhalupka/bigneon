@@ -12,7 +12,7 @@ const Meta = ({ type, id, name, additional_info, promo_image_url, ...event }) =>
 
 	const url = `${site}/events/${id}`;
 	let title;
-	let description = `${name} - Find tickets to live events and concerts on Big Neon.`; 
+	const description = `${name} - Find tickets to live events and concerts on Big Neon.`; 
 	//If they're at a later stage of the event checkout, adjust title accordingly
 	switch (type) {
 		case "selection":

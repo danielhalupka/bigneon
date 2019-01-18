@@ -40,7 +40,7 @@ const RadioButton = props => {
 
 	return (
 		<div className={classes.root} onClick={onClick}>
-			<div className={classes[active ? "activeCircle" : "circle"]} />
+			<div className={classes[active ? "activeCircle" : "circle"]}/>
 			<Typography className={classes[active ? "labelActive" : "label"]}>
 				{children}
 			</Typography>

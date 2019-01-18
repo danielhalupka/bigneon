@@ -48,8 +48,8 @@ class ApiCard extends Component {
 	componentDidMount() {
 		const { organizationId } = this.props;
 		Bigneon().organizations.venues.index({ organization_id: organizationId }).then(result => {
-			let { data } = result;
-			let { paging } = data;
+			const { data } = result;
+			const { paging } = data;
 			let venues = [];
 			let venueId = "";
 			if (paging.total) {
@@ -67,11 +67,14 @@ class ApiCard extends Component {
 		return (
 			<Card className={classes.paper}>
 				<CardContent>
-					<SelectGroup value={venueId} items={venueItems} name={"venue-id"}
+					<SelectGroup value={venueId}
+						items={venueItems}
+						name={"venue-id"}
 								 label={"Venue"}
 								 onChange={e => {
 									 this.setState({ venueId: e.target.value });
-								 }}/>
+								 }}
+					/>
 					<Tabs
 						value={activeTab}
 						onChange={(event, activeTab) => this.setState({ activeTab })}

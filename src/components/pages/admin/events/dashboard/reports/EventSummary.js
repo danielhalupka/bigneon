@@ -60,7 +60,7 @@ class EventSummary extends Component {
 	refreshData() {
 		const { eventId, organizationId } = this.props;
 
-		let queryParams = { organization_id: organizationId, event_id: eventId };
+		const queryParams = { organization_id: organizationId, event_id: eventId };
 		//TODO date filter
 		//start_utc
 		//end_utc
@@ -70,10 +70,10 @@ class EventSummary extends Component {
 			.then(response => {
 				const { sales, ticket_fees, other_fees } = response.data;
 
-				let eventSales = {};
+				const eventSales = {};
 
 				//Event summary totals
-				let salesTotals = {
+				const salesTotals = {
 					totalOnlineCount: 0,
 					totalBoxOfficeCount: 0,
 					totalSoldCount: 0,
@@ -98,7 +98,7 @@ class EventSummary extends Component {
 							}
 						};
 					} else {
-						let { totals } = eventSales[ticket_type_id];
+						const { totals } = eventSales[ticket_type_id];
 						totals.online_count += sale.online_count;
 						totals.box_office_count += sale.box_office_count;
 						totals.total_sold += sale.total_sold;
@@ -118,8 +118,8 @@ class EventSummary extends Component {
 						sale.total_gross_income_in_cents;
 				});
 
-				let revenueShare = {};
-				let revenueTotals = {
+				const revenueShare = {};
+				const revenueTotals = {
 					totalOnlineRevenue: 0,
 					//Box office will go here
 					totalRevenue: 0
@@ -142,7 +142,7 @@ class EventSummary extends Component {
 							}
 						};
 					} else {
-						let { totals } = revenueShare[ticket_type_id];
+						const { totals } = revenueShare[ticket_type_id];
 
 						totals.comp_count += fee.comp_count;
 						totals.company_fee_in_cents += fee.company_fee_in_cents;
@@ -206,7 +206,7 @@ class EventSummary extends Component {
 
 		const { eventName } = this.props;
 
-		let csvRows = [];
+		const csvRows = [];
 
 		let title = "Event summary report";
 		if (eventName) {
@@ -532,7 +532,7 @@ class EventSummary extends Component {
 					}}
 				>
 					<Typography variant="title">Event summary report</Typography>
-					<span style={{ flex: 1 }} />
+					<span style={{ flex: 1 }}/>
 					<Button
 						iconUrl="/icons/csv-active.svg"
 						variant="text"
@@ -541,12 +541,12 @@ class EventSummary extends Component {
 						Export CSV
 					</Button>
 				</div>
-				<Divider style={{ marginBottom: 40 }} />
+				<Divider style={{ marginBottom: 40 }}/>
 
 				{this.renderEventSales()}
 
-				<br />
-				<br />
+				<br/>
+				<br/>
 
 				{this.renderRevenueShare()}
 			</div>

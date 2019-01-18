@@ -19,14 +19,14 @@ class Login extends Component {
 	render() {
 		return (
 			<Container {...this.props} type="login" heading="Login to your account">
-				<Meta type="login" />
+				<Meta type="login"/>
 				<Typography variant="headline">Login to your account</Typography>
 				<Link to="/sign-up">
 					<Button variant="text">New here? Create a free account.</Button>
 				</Link>
 				<LoginForm
-					onSuccess={(href = "/") => this.props.history.push(href)} //Can optionally change where to redirect to
-			 	/>
+					onSuccess={(href = "/") => this.props.history.push(href)}
+				/>
 			</Container>
 		);
 	}

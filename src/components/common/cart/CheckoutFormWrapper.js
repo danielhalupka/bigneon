@@ -7,7 +7,7 @@ class CheckoutSection extends Component {
 		return (
 			<StripeProvider apiKey={process.env.REACT_APP_STRIPE_API_KEY}>
 				<Elements>
-					<CheckoutForm {...this.props} />
+					<CheckoutForm {...this.props}/>
 				</Elements>
 			</StripeProvider>
 		);

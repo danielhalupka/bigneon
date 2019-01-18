@@ -57,30 +57,30 @@ const CustomAppBar = observer(props => {
 								onClick={handleDrawerToggle}
 								className={classes.navIconHide}
 							>
-								<MenuIcon color="action" />
+								<MenuIcon color="action"/>
 							</IconButton>
 						) : (
-							<span />
+							<span/>
 						)}
 					</Hidden>
 				) : null}
 				<div>
 					<Link to={"/"}>
-						<AppBarLogo />
+						<AppBarLogo/>
 					</Link>
 				</div>
 
 				<Hidden smDown implementation="css">
-					<SearchToolBarInput history={history} />
+					<SearchToolBarInput history={history}/>
 				</Hidden>
 
 				<span className={classes.rightMenuOptions}>
 					<Hidden smDown>
-						<BoxOfficeLink />
-						<CurrentOrganizationMenu />
-						<CartHeaderLink />
+						<BoxOfficeLink/>
+						<CurrentOrganizationMenu/>
+						<CartHeaderLink/>
 					</Hidden>
-					<RightUserMenu history={history} />
+					<RightUserMenu history={history}/>
 				</span>
 			</Toolbar>
 		</AppBar>

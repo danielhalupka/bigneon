@@ -16,4 +16,4 @@ analytics.init({
 	segment: REACT_APP_SEGMENT_KEY
 });
 
-ReactDOM.render(<Routes />, document.querySelector("#root"));
+ReactDOM.render(<Routes/>, document.querySelector("#root"));

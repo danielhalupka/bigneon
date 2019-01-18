@@ -140,7 +140,7 @@ class EventDashboardContainer extends Component {
 			hasEventSummaryReports,
 			hasTicketCountReports
 		} = user;
-		let items = [];
+		const items = [];
 
 		if (hasEventSummaryReports) {
 			items.push(
@@ -291,7 +291,7 @@ class EventDashboardContainer extends Component {
 								)}
 							</div>
 						</div>
-						<Divider style={{ marginBottom: 10 }} />
+						<Divider style={{ marginBottom: 10 }}/>
 
 						{children}
 					</div>

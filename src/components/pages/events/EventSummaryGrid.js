@@ -38,7 +38,7 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 				</Typography>
 
 				<Typography variant="display1" component="h3">
-					<SupportingArtistsLabel artists={artists} />
+					<SupportingArtistsLabel artists={artists}/>
 				</Typography>
 
 				<Typography style={{ marginBottom: 20 }} variant="subheading">
@@ -55,7 +55,7 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 						: "This event is for all ages"}
 				</Typography>
 
-				<div style={{ marginBottom: 30 }} />
+				<div style={{ marginBottom: 30 }}/>
 
 				<div className={classes.descriptionDiv}>
 					<Typography variant="headline">Description</Typography>
@@ -71,7 +71,7 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 				/>
 			</Grid>
 
-			<Divider />
+			<Divider/>
 		</Grid>
 	);
 };

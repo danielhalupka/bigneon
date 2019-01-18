@@ -44,11 +44,11 @@ const UserList = observer(props => {
 				My orders
 			</MenuItem>
 
-			<Divider className={classes.divider} />
+			<Divider className={classes.divider}/>
 
 			<div className={classes.stats}>
 				<Typography>STATISTICS</Typography>
-				<div className={classes.spacer} />
+				<div className={classes.spacer}/>
 
 				<StatsCard
 					iconUrl="/icons/artists-active.svg"
@@ -56,7 +56,7 @@ const UserList = observer(props => {
 					value={tickets.upcomingEventCount}
 				/>
 
-				<div className={classes.spacer} />
+				<div className={classes.spacer}/>
 
 				<StatsCard
 					iconUrl="/icons/chart-active.svg"
@@ -64,7 +64,7 @@ const UserList = observer(props => {
 					value={orders.orderCount}
 				/>
 
-				<div className={classes.spacer} />
+				<div className={classes.spacer}/>
 
 				<Button
 					href={process.env.REACT_APP_DOWNLOAD_APP}

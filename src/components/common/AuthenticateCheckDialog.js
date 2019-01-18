@@ -8,7 +8,7 @@ class AuthenticateCheckDialog extends React.Component {
 				open={true}
 				title={"Loading..."}
 			>
-				<div />
+				<div/>
 			</Dialog>
 		);
 	}

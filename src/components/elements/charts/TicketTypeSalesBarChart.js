@@ -114,10 +114,10 @@ const TicketTypeSalesBarChart = props => {
 					>{`$${(totalRevenueInCents / 100).toFixed(2)}`}</Typography>
 				</div>
 				<div className={classes.chartBackground}>
-					<div className={classes.horizontalLine} />
-					<div className={classes.horizontalLine} />
-					<div className={classes.horizontalLine} />
-					<div className={classes.horizontalLine} />
+					<div className={classes.horizontalLine}/>
+					<div className={classes.horizontalLine}/>
+					<div className={classes.horizontalLine}/>
+					<div className={classes.horizontalLine}/>
 				</div>
 				<div className={classes.chartOverlay}>
 					<div className={classes.barsContainer}>

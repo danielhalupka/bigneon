@@ -197,7 +197,7 @@ class Fan extends Component {
 					</Typography>
 					<Typography className={classes.email}>{email}</Typography>
 					<div className={classes.facebookContainer}>
-						<SocialIconLink icon="facebook" color="black" />
+						<SocialIconLink icon="facebook" color="black"/>
 						<Typography className={classes.facebook}>
 							{facebook_linked
 								? "Facebook connected"
@@ -228,7 +228,7 @@ class Fan extends Component {
 					</Grid>
 
 					<Grid item xs={1} sm={1} lg={1}>
-						<div className={classes.verticalDividerSmall} />
+						<div className={classes.verticalDividerSmall}/>
 					</Grid>
 
 					<Grid item xs={3} sm={3} lg={3}>
@@ -253,7 +253,7 @@ class Fan extends Component {
 			return <Typography>Loading history...</Typography>;
 		}
 		return history.map((item, index) => {
-			return <FanHistoryCard key={index} {...item} />;
+			return <FanHistoryCard key={index} {...item}/>;
 		});
 	}
 
@@ -306,7 +306,7 @@ class Fan extends Component {
 									</Grid>
 
 									<Grid item xs={1} sm={1} lg={1}>
-										<div className={classes.verticalDivider} />
+										<div className={classes.verticalDivider}/>
 									</Grid>
 
 									<Grid item xs={3} sm={3} lg={3}>
@@ -319,7 +319,7 @@ class Fan extends Component {
 									</Grid>
 
 									<Grid item xs={1} sm={1} lg={1}>
-										<div className={classes.verticalDivider} />
+										<div className={classes.verticalDivider}/>
 									</Grid>
 
 									<Grid item xs={3} sm={3} lg={3}>
@@ -334,7 +334,7 @@ class Fan extends Component {
 							</Grid>
 
 							<Grid item xs={12}>
-								<Divider />
+								<Divider/>
 								<Typography className={classes.historyHeading}>
 									History
 								</Typography>

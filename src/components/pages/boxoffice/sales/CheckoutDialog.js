@@ -224,7 +224,7 @@ class CheckoutDialog extends React.Component {
 								</Typography>
 								<Typography>${subTotal}</Typography>
 							</ItemRow>
-							<Divider />
+							<Divider/>
 						</div>
 					);
 				})}
@@ -419,7 +419,7 @@ class CheckoutDialog extends React.Component {
 			<Dialog open={ticketCount > 0 && open} onClose={onClose}>
 				<div className={classes.content}>
 					{this.renderPurchaseSummary()}
-					<Divider style={dividerStyle} />
+					<Divider style={dividerStyle}/>
 
 					{showPaymentOptions ? (
 						<div>
@@ -440,7 +440,7 @@ class CheckoutDialog extends React.Component {
 
 							{paymentOption === "cash" ? this.renderChangeCalculator() : null}
 
-							<Divider style={dividerStyle} />
+							<Divider style={dividerStyle}/>
 						</div>
 					) : null}
 

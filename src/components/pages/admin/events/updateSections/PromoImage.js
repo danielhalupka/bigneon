@@ -103,7 +103,7 @@ const CustomCardMedia = props => {
 		return (
 			<div>
 				<MaintainAspectRatio heightRatio={0.5}>
-					<CardMedia className={classes.media} image={src} title={alt} />
+					<CardMedia className={classes.media} image={src} title={alt}/>
 				</MaintainAspectRatio>
 
 				<div className={classes.iconDiv}>

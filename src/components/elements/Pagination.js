@@ -104,7 +104,7 @@ const PaginationBlock = props => {
 	const { page, limit, total } = paging;
 
 	const totalPages = Math.ceil(total / limit);
-	let numberBlocks = [];
+	const numberBlocks = [];
 	for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
 		const active = page === pageIndex;
 		numberBlocks.push(
@@ -127,7 +127,7 @@ const PaginationBlock = props => {
 	return (
 		<div className={classes.root}>
 			<div className={classes.endPointActionContainer} onClick={onPrevious}>
-				<img className={classnames({ [classes.endPointActionIcon]: true, [classes.endPointActionIconDisabled]: !onPrevious })} alt="Previous page" src="/icons/left-active.svg" />
+				<img className={classnames({ [classes.endPointActionIcon]: true, [classes.endPointActionIconDisabled]: !onPrevious })} alt="Previous page" src="/icons/left-active.svg"/>
 				<Typography className={classnames({ [classes.endPointActionText]: true, [classes.endPointActionTextDisabled]: !onPrevious })}>
 					Previous
 				</Typography>
@@ -139,7 +139,7 @@ const PaginationBlock = props => {
 
 			<div className={classes.endPointActionContainer}  onClick={onNext}>
 				<Typography className={classnames({ [classes.endPointActionText]: true, [classes.endPointActionTextDisabled]: !onNext })}>Next</Typography>
-				<img className={classnames({ [classes.endPointActionIcon]: true, [classes.endPointActionIconDisabled]: !onNext })} alt="Next page" src="/icons/right-active.svg" />
+				<img className={classnames({ [classes.endPointActionIcon]: true, [classes.endPointActionIconDisabled]: !onNext })} alt="Next page" src="/icons/right-active.svg"/>
 			</div>
 		</div>
 	);

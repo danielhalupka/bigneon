@@ -50,8 +50,8 @@ class AddressBlock extends Component {
 	}
 
 	getGoogleObject() {
-		let latitude = this.state.latitude;
-		let longitude = this.state.longitude;
+		const latitude = this.state.latitude;
+		const longitude = this.state.longitude;
 		const googleObject = {
 			address_components: [
 				{

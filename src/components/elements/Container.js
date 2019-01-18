@@ -93,13 +93,13 @@ class Container extends React.Component {
 			return (
 				<div>
 					{children}
-					<Notification />
+					<Notification/>
 				</div>
 			);
 		}
 
 		const drawer = (
-			<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)} />
+			<MenuContent toggleDrawer={this.handleDrawerToggle.bind(this)}/>
 		);
 
 		const drawStyle = {};
@@ -168,7 +168,7 @@ class Container extends React.Component {
 							[classes.paddedContent]: includeContainerPadding
 						})}
 					>
-						<div className={classes.toolbar} />
+						<div className={classes.toolbar}/>
 
 						<Grid
 							container
@@ -196,16 +196,16 @@ class Container extends React.Component {
 							open={user.showRequiresAuthDialog}
 							onClose={() => user.hideAuthRequiredDialog()}
 						/>
-						<Notification />
+						<Notification/>
 
 						{layout.showFooter ? (
-							<Footer />
+							<Footer/>
 						) : (
-							<div className={classes.footerPlaceholder} />
+							<div className={classes.footerPlaceholder}/>
 						)}
 					</main>
 				</div>
-				<CartMobileBottomBar />
+				<CartMobileBottomBar/>
 			</div>
 		);
 	}

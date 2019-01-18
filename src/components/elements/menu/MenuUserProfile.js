@@ -53,7 +53,7 @@ const MenuUserProfile = observer(props => {
 				<Typography variant="title">{fullName}</Typography>
 				<Typography variant="caption">{email}</Typography>
 			</Link>
-			<Divider className={classes.divider} />
+			<Divider className={classes.divider}/>
 		</div>
 	);
 });

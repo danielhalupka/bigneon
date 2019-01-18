@@ -31,7 +31,7 @@ class BoxOffice {
 
 	@action
 	refreshEvents() {
-		let organization_id = user.currentOrganizationId;
+		const organization_id = user.currentOrganizationId;
 		if (!organization_id) {
 			this.timeout = setTimeout(() => this.refreshEvents(), 500);
 			return;
@@ -73,7 +73,7 @@ class BoxOffice {
 			.then(response => {
 				const { ticket_types } = response.data;
 
-				let ticketTypes = {};
+				const ticketTypes = {};
 				ticket_types.forEach(({ id, ...ticket_type }) => {
 					ticketTypes[id] = ticket_type;
 				});
@@ -100,7 +100,7 @@ class BoxOffice {
 			.then(response => {
 				const { data } = response.data;
 
-				let holds = {};
+				const holds = {};
 				data.forEach(({ id, ...hold }) => {
 					holds[id] = hold;
 				});
@@ -126,7 +126,7 @@ class BoxOffice {
 			.events.guests.index({ event_id: this.activeEventId, query: "" })
 			.then(response => {
 				const { data, paging } = response.data; //@TODO Implement pagination
-				let guests = {};
+				const guests = {};
 
 				data.forEach(
 					({
@@ -168,7 +168,7 @@ class BoxOffice {
 
 	@action
 	loadCachedCurrentEvent() {
-		let cachedActiveEventId = localStorage.getItem("boxOfficeActiveEventId");
+		const cachedActiveEventId = localStorage.getItem("boxOfficeActiveEventId");
 		const activeEvent = getEventFromId(
 			this.availableEvents,
 			cachedActiveEventId

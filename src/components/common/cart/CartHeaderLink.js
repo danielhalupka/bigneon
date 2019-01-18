@@ -34,19 +34,19 @@ const CartHeaderLink = observer(({ classes }) => {
 	}
 
 	//Only if we have an event id can we link to the right checkout page
-	let LinkContainer = latestEventId
-		? props => <Link {...props} />
-		: props => <div {...props} />;
+	const LinkContainer = latestEventId
+		? props => <Link {...props}/>
+		: props => <div {...props}/>;
 
 	return (
 		<LinkContainer to={`/events/${latestEventId}/tickets/confirmation`}>
 			<Button className={classes.menuButton}>
-				<ShoppingCartIcon className={classes.rightIcon} />
+				<ShoppingCartIcon className={classes.rightIcon}/>
 				{ticketCount}
 
-				<span className={classes.spacer} />
+				<span className={classes.spacer}/>
 
-				<TimerIcon className={classes.rightIcon} />
+				<TimerIcon className={classes.rightIcon}/>
 				<span className={classes.expiryTimeSpan}>{formattedExpiryTime}</span>
 			</Button>
 		</LinkContainer>

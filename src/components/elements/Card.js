@@ -79,13 +79,13 @@ const CustomCard = props => {
 	let topIconSpan;
 	let topIconSpacer;
 	if (iconUrl) {
-		topIconSpacer = <div className={classes.iconSpacer} />;
-		topIconSpan = <TopCardIcon iconUrl={iconUrl} />;
+		topIconSpacer = <div className={classes.iconSpacer}/>;
+		topIconSpan = <TopCardIcon iconUrl={iconUrl}/>;
 	}
 
 	let topBorder;
 	if (topBorderHighlight) {
-		topBorder = <div className={classes.topBorderHighlight} />;
+		topBorder = <div className={classes.topBorderHighlight}/>;
 	}
 
 	if (borderLess) {

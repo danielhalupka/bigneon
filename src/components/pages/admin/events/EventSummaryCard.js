@@ -155,7 +155,7 @@ const EventSummaryCard = props => {
 			<div className={classes.root}>
 				<div className={classes.simpleViewContent}>
 					<div className={classes.media} style={mediaStyle}>
-						{eventDate ? <DateFlag date={eventDate} size="medium" /> : null}
+						{eventDate ? <DateFlag date={eventDate} size="medium"/> : null}
 					</div>
 
 					<div className={classes.details}>
@@ -201,34 +201,34 @@ const EventSummaryCard = props => {
 										Sold
 									</Total>
 
-									<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
 										Open
 									</Total>
 
-									<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
 										Held
 									</Total>
 
-									<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalCapacity}>
 										Capacity
 									</Total>
 
-									<div className={classes.totalsDivider} />
+									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={`$${(totalSalesInCents / 100).toFixed(2)}`}>
 										Sales
 									</Total>
 								</div>
 							) : 
-								<div className={classes.totalsContainer}>
+								(<div className={classes.totalsContainer}>
 									<Typography variant="caption">Externally Ticketed</Typography>
-								</div>
+								</div>)
 							}
 						</div>
 						{!isExternal ? (
@@ -250,7 +250,7 @@ const EventSummaryCard = props => {
 									className={classes.expandIconRow}
 									onClick={() => onExpandClick(id)}
 								>
-									<img src={"/icons/down-active.svg"} />
+									<img src={"/icons/down-active.svg"}/>
 								</div>
 							) : (
 								<div className={classes.expandIconRowPlaceholder}>&nbsp;</div>
@@ -284,7 +284,7 @@ const EventSummaryCard = props => {
 							className={classes.expandIconRow}
 							onClick={() => onExpandClick(null)}
 						>
-							<img src={"/icons/up-active.svg"} />
+							<img src={"/icons/up-active.svg"}/>
 						</div>
 					</div>
 				</Collapse>

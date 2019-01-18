@@ -60,7 +60,7 @@ const PageHeading = props => {
 		<div style={style}>
 			<div className={classes.mainContent}>
 				{iconUrl ? (
-					<img alt={children} src={iconUrl} className={classes.icon} />
+					<img alt={children} src={iconUrl} className={classes.icon}/>
 				) : null}
 				<Typography
 					className={classnames({

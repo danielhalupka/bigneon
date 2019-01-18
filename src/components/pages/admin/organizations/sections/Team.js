@@ -356,19 +356,20 @@ class Team extends Component {
 		if (userId && updatedUserRoles.hasOwnProperty(userId)) {
 			selectRoles = updatedUserRoles[userId];
 		}
-		let roleArray = [];
-		for (let role in roles) {
+		const roleArray = [];
+		for (const role in roles) {
 			roleArray.push({ role: role, name: roles[role] });
 		}
-		let disabledRoles = [Bn.Enums.UserRole.ORG_ADMIN, Bn.Enums.UserRole.ORG_OWNER];
-		let singleRole = selectRoles.length ? selectRoles[0] : "";
+		const disabledRoles = [Bn.Enums.UserRole.ORG_ADMIN, Bn.Enums.UserRole.ORG_OWNER];
+		const singleRole = selectRoles.length ? selectRoles[0] : "";
 		return (
 			<div>
 				{
 					allowMultiple ? (
 						<FormControl className={classes.formControl}>
 							<InputLabel
-								htmlFor={userId || "invite-input"}>{userId ? ("User Roles") : ("New User Roles")}</InputLabel>
+								htmlFor={userId || "invite-input"}
+							>{userId ? ("User Roles") : ("New User Roles")}</InputLabel>
 							<Select
 								multiple
 								value={selectRoles}
@@ -391,8 +392,10 @@ class Team extends Component {
 								MenuProps={MenuProps}
 							>
 								{roleArray.map(role => (
-									<MenuItem key={role.role} value={role.role}
-											  disabled={user.isOrgAdmin && (disabledRoles.indexOf(role.role) > -1)}>
+									<MenuItem key={role.role}
+										value={role.role}
+											  disabled={user.isOrgAdmin && (disabledRoles.indexOf(role.role) > -1)}
+									>
 										<Checkbox checked={selectRoles.indexOf(role.role) > -1}/>
 										<ListItemText primary={role.name}/>
 									</MenuItem>
@@ -497,12 +500,12 @@ class Team extends Component {
 							invite_or_member
 						} = member;
 						const isInvite = invite_or_member === "invite";
-						let enumRoles = [].concat(roles);
+						const enumRoles = [].concat(roles);
 						const displayRoles = enumRoles.map(role => {
 							role = role.replace(" (Invited)", "");
 							return Bn.Enums.USER_ROLES_STRING[role];
 						});
-						let canRemove =
+						const canRemove =
 							(
 								(
 									!isInvite
@@ -558,7 +561,9 @@ class Team extends Component {
 									{!isDeleting ? (
 										<IconButton onClick={() => {
 											this.showRemoveDialog(isInvite, isInvite ? invite_id : user_id);
-										}} iconUrl="/icons/delete-gray.svg">
+										}}
+										iconUrl="/icons/delete-gray.svg"
+										>
 											Delete
 										</IconButton>
 									) : (<span style={{ display: "block", width: "36px" }}>&nbsp;</span>)}

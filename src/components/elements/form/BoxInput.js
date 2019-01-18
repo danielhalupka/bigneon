@@ -35,7 +35,7 @@ const BoxInput = props => {
 	return (
 		<div className={classes.root} style={style}>
 			<div className={classes.inputContainer}>
-				<input className={classes.input} {...props} />
+				<input className={classes.input} {...props}/>
 			</div>
 		</div>
 	);

@@ -9,7 +9,7 @@ const borderRadius = 3;
 const dialogBackgroundColor = "rgba(112, 124, 237, 0.7)";
 const callToActionBackground = "linear-gradient(to left, #e53d96, #5491cc)";
 
-let shadows = ["none"];
+const shadows = ["none"];
 let baseShadow = 0.4;
 const increaseBy = 0.01;
 for (let index = 0; index < 24; index++) {

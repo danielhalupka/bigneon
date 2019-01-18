@@ -83,7 +83,7 @@ class EventQR extends Component {
 						<Typography variant="subheading">
 							{displayEventStartDate}
 						</Typography>
-						<br />
+						<br/>
 					</Grid>
 
 					<Grid item xs={12} sm={12} lg={12}>
@@ -99,10 +99,10 @@ class EventQR extends Component {
 					</Grid>
 
 					<Grid item xs={12} sm={6} lg={6}>
-						<QRCode size={400} fgColor={primaryHex} value={qrText} />
+						<QRCode size={400} fgColor={primaryHex} value={qrText}/>
 					</Grid>
 					<Grid item xs={12} sm={6} lg={6}>
-						<div style={{ marginBottom: 30 }} />
+						<div style={{ marginBottom: 30 }}/>
 
 						<Typography style={{ marginBottom: 10 }} variant="subheading">
 							Date and time
@@ -118,7 +118,7 @@ class EventQR extends Component {
 								: "This event is for all ages"}
 						</Typography>
 
-						<div style={{ marginBottom: 30 }} />
+						<div style={{ marginBottom: 30 }}/>
 
 						<Typography style={{ marginBottom: 10 }} variant="subheading">
 							Location

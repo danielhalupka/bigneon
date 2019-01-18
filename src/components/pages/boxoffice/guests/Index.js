@@ -78,10 +78,10 @@ class GuestList extends Component {
 		const { searchQuery } = this.state;
 
 		//Filtering required
-		let filteredGuests = {};
+		const filteredGuests = {};
 		Object.keys(guests).forEach(user_id => {
 			const { first_name, last_name, tickets } = guests[user_id];
-			let ticketIds = [];
+			const ticketIds = [];
 			tickets.forEach(({ id }) => {
 				ticketIds.push(id);
 			});
@@ -192,7 +192,7 @@ class GuestList extends Component {
 			});
 		}
 
-		let totalNumberSelected = Object.keys(selectedTickets).length;
+		const totalNumberSelected = Object.keys(selectedTickets).length;
 
 		Object.keys(selectedTickets).forEach(id => {});
 
@@ -223,7 +223,7 @@ class GuestList extends Component {
 
 	render() {
 		if (!layout.allowedBoxOffice) {
-			return <NotFound />;
+			return <NotFound/>;
 		}
 
 		if (!boxOffice.availableEvents || boxOffice.availableEvents < 1) {
