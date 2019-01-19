@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { Typography, withStyles } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -6,11 +7,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-import PropTypes from "prop-types";
 import Bigneon from "../../../../../../helpers/bigneon";
 import notifications from "../../../../../../stores/notifications";
 import CheckBox from "../../../../../elements/form/CheckBox";
-import { fontFamilyDemiBold } from "../../../../../styles/theme";
+import { fontFamilyBold, fontFamilyDemiBold } from "../../../../../styles/theme";
 
 const styles = theme => ({
 	root: {
@@ -26,10 +26,11 @@ const styles = theme => ({
 	},
 	eventName: {
 		fontSize: theme.typography.fontSize * 2,
-		fontFamily: fontFamilyDemiBold
+		fontFamily: fontFamilyBold
 	},
-	venueName: {
-		fontSize: theme.typography.fontSize * 1.5
+	subTitle: {
+		fontSize: theme.typography.fontSize * 1.5,
+		fontFamily: fontFamilyDemiBold
 	}
 });
 
@@ -37,7 +38,7 @@ class Export extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { guests: null };
+		this.state = { guests: null, holds: null, event: null };
 	}
 
 	componentDidMount() {
@@ -45,6 +46,7 @@ class Export extends Component {
 
 		this.refreshEventDetails(eventId);
 		this.refreshGuests(eventId);
+		this.refreshHolds(eventId);
 	}
 
 	refreshEventDetails(id) {
@@ -124,6 +126,29 @@ class Export extends Component {
 			});
 	}
 
+	refreshHolds(event_id) {
+		Bigneon()
+			.events.holds.index({ event_id })
+			.then(response => {
+				const { data } = response.data;
+
+				const holds = {};
+				data.forEach(({ id, ...hold }) => {
+					holds[id] = hold;
+				});
+
+				console.log(holds);
+				this.setState({ holds });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading ticket holds failed."
+				});
+			});
+	}
+
 	renderTitle() {
 		const { event } = this.state;
 		const { classes } = this.props;
@@ -137,7 +162,7 @@ class Export extends Component {
 		return (
 			<div className={classes.titleContainer}>
 				<Typography className={classes.eventName}>{name}</Typography>
-				<Typography className={classes.venueName}>{venue.name}</Typography>
+				<Typography className={classes.subTitle}>{venue.name}</Typography>
 			</div>
 		);
 	}
@@ -147,7 +172,7 @@ class Export extends Component {
 		const { classes } = this.props;
 
 		if (guests === null) {
-			return <Typography>Loading...</Typography>;
+			return <Typography>Loading guests...</Typography>;
 		}
 
 		return (
@@ -186,6 +211,50 @@ class Export extends Component {
 		);
 	}
 
+	renderHolds() {
+		const { holds } = this.state;
+		const { classes } = this.props;
+
+		if (holds === null) {
+			return <Typography>Loading holds...</Typography>;
+		}
+
+		return (
+			<Table>
+				<TableHead>
+					<TableRow>
+						<TableCell>&nbsp;</TableCell>
+						<TableCell align="right">Name</TableCell>
+						<TableCell align="right">Type</TableCell>
+						<TableCell align="right">Qty available</TableCell>
+						<TableCell align="right">Qty used</TableCell>
+						{/*<TableCell align="right">Ticket type</TableCell>*/}
+						<TableCell align="right">Discount</TableCell>
+						<TableCell align="right">Redemption code</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{Object.keys(holds).map(id => {
+						const { name, hold_type, quantity, available, ticket_type_id, discount_in_cents, redemption_code } = holds[id];
+
+						return (
+							<TableRow key={id} className={classes.row}>
+								<TableCell><CheckBox active={false}/></TableCell>
+								<TableCell>{name || "-"}</TableCell>
+								<TableCell>{hold_type}</TableCell>
+								<TableCell>{available}</TableCell>
+								<TableCell>{quantity - available}</TableCell>
+								{/*<TableCell>{ticket_type_id.slice(4)}</TableCell>*/}
+								<TableCell>{discount_in_cents ? `$${(discount_in_cents / 100).toFixed(2)}` : "Free"}</TableCell>
+								<TableCell>{redemption_code}</TableCell>
+							</TableRow>
+						);
+					})}
+				</TableBody>
+			</Table>
+		);
+	}
+
 	render() {
 		const { guests } = this.state;
 		const { classes } = this.props;
@@ -194,6 +263,11 @@ class Export extends Component {
 			<div className={classes.root}>
 				{this.renderTitle()}
 				{this.renderGuests()}
+				<br/><br/><br/>
+				<div className={classes.titleContainer}>
+					<Typography className={classes.subTitle}>Holds</Typography>
+				</div>
+				{this.renderHolds()}
 			</div>
 		);
 	}
