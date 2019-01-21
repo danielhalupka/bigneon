@@ -69,7 +69,7 @@ const GuestRow = props => {
 		classes
 	} = props;
 
-	let displayName = `Guest`;
+	let displayName = `Guest (No Details Provided))`;
 	if (first_name && last_name) {
 		displayName = `${last_name}, ${first_name}`;
 	} else if (first_name) {
