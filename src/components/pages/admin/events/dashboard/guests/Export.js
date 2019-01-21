@@ -137,7 +137,6 @@ class Export extends Component {
 					holds[id] = hold;
 				});
 
-				console.log(holds);
 				this.setState({ holds });
 			})
 			.catch(error => {

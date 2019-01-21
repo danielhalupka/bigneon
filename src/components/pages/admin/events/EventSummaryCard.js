@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Collapse from "@material-ui/core/Collapse";
 import moment from "moment-timezone";
+import { Link } from "react-router-dom";
 
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import CheckBox from "../../../elements/form/CheckBox";
@@ -26,8 +27,10 @@ const styles = theme => {
 			paddingRight: theme.spacing.unit * 3,
 			paddingLeft: theme.spacing.unit * 3
 		},
+		mediaLink: {
+			flex: 1
+		},
 		media: {
-			flex: 1,
 			height: "100%",
 			width: "100%",
 			backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)",
@@ -151,21 +154,25 @@ const EventSummaryCard = props => {
 	const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
 		"dddd, MMMM Do YYYY h:mm A"
 	);
-	
+
 	return (
 		<Card variant="block">
 			<div className={classes.root}>
 				<div className={classes.simpleViewContent}>
-					<div className={classes.media} style={mediaStyle}>
-						{eventDate ? <DateFlag date={eventDate} size="medium"/> : null}
-					</div>
+					<Link className={classes.mediaLink} to={`/admin/events/${id}/dashboard`}>
+						<div className={classes.media} style={mediaStyle}>
+							{eventDate ? <DateFlag date={eventDate} size="medium"/> : null}
+						</div>
+					</Link>
 
 					<div className={classes.details}>
 						<div className={classes.row1}>
 							<div>
-								<Typography className={classes.eventName} variant="title">
-									{name}
-								</Typography>
+								<Link to={`/admin/events/${id}/dashboard`}>
+									<Typography className={classes.eventName} variant="title">
+										{name}
+									</Typography>
+								</Link>
 								<Typography className={classes.venueName} variant="subheading">
 									{venueName}
 								</Typography>
@@ -200,34 +207,34 @@ const EventSummaryCard = props => {
 							{!isExternal ? (
 								<div className={classes.totalsContainer}>
 									<Total classes={classes} value={totalSold} color={"#707ced"}>
-										Sold
+											Sold
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
-										Open
+											Open
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
-										Held
+											Held
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalCapacity}>
-										Capacity
+											Capacity
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={`$${(totalSalesInCents / 100).toFixed(2)}`}>
-										Sales
+											Sales
 									</Total>
 								</div>
-							) : 
+							) :
 								(<div className={classes.totalsContainer}>
 									<Typography variant="caption">Externally Ticketed</Typography>
 								</div>)
@@ -245,8 +252,8 @@ const EventSummaryCard = props => {
 								/>
 							</div>
 						) : null}
-						{isExternal ? 
-							<div className={classes.expandIconRowPlaceholder}>&nbsp;</div> : 
+						{isExternal ?
+							<div className={classes.expandIconRowPlaceholder}>&nbsp;</div> :
 							(!isExpanded ? (
 								<div
 									className={classes.expandIconRow}
