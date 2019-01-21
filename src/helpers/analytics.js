@@ -40,23 +40,21 @@ const facebook = {
 	keys: [],
 	name: "facebook",
 	enabled: false,
-	fbq: null,
+	loaded: false,
 
 	load() {
-		if (this.fbq) {
-			// Already loaded
-			return;
-		}
-
-		// Facebook snippet - called with `this` instead of window to get the `fbq` function
+		// Facebook snippet
 		/* eslint-disable */
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
 		n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(this,
+		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 		document,'script','https://connect.facebook.net/en_US/fbevents.js');
 		/* eslint-enable */
 
+		// Script creates an array queue which will resolve calls once the script is loaded
+		// so this can be marked as loaded synchronously
+		this.loaded = true;
 	},
 
 	addTrackingKey(key) {
@@ -65,7 +63,7 @@ const facebook = {
 		}
 
 		// Support for multiple pixel ids: https://developers.facebook.com/docs/facebook-pixel/advanced/#multipixels
-		this.fbq("init", key);
+		window.fbq("init", key);
 		this.keys.push(key);
 
 		this.enabled = true;
@@ -80,19 +78,19 @@ const facebook = {
 
 	pageView() {
 		this.keys.forEach(k => {
-			this.fbq.track("trackSingle", k, "PageView");
+			window.fbq("trackSingle", k, "PageView");
 		});
 	},
 
 	track(type, data) {
 		this.keys.forEach(k => {
-			this.fbq.track("trackSingle", k, type, data);
+			window.fbq("trackSingle", k, type, data);
 		});
 	},
 
 	identify(user) {
 		this.keys.forEach(k => {
-			this.fbq("setUserProperties", k, user);
+			window.fbq("setUserProperties", k, user);
 		});
 	}
 };

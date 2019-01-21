@@ -29,6 +29,7 @@ class OrgAnalytics extends React.Component {
 				analytics.addTrackingKey("facebook", keys.facebook_pixel_key);
 				this.initialized = true;
 			}
+			analytics.page();
 		}
 	}
 
