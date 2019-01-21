@@ -241,9 +241,11 @@ class ArtistDetails extends Component {
 				{...props.innerProps}
 			>
 				{icon ?
-					(<ListItemIcon>
-						{icon}
-					</ListItemIcon>)
+					(
+						<ListItemIcon>
+							{icon}
+						</ListItemIcon>
+					)
 					: null}
 				<ListItemText inset primary={props.children}/>
 			</MenuItem>

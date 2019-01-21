@@ -183,24 +183,24 @@ class Order extends Component {
 						<Typography className={classes.eventName}>{eventName}</Typography>
 
 						<LineEntry
-							col1={
-								(<Typography className={classes.itemHeading}>
+							col1={(
+								<Typography className={classes.itemHeading}>
 									Quantity
-								</Typography>)
-							}
-							col2={
-								(<Typography className={classes.itemHeading}>
+								</Typography>
+							)}
+							col2={(
+								<Typography className={classes.itemHeading}>
 									Ticket type
-								</Typography>)
-							}
+								</Typography>
+							)}
 							col3={
 								<Typography className={classes.itemHeading}>Price</Typography>
 							}
-							col4={
-								(<Typography className={classes.itemHeading}>
+							col4={(
+								<Typography className={classes.itemHeading}>
 									Subtotal
-								</Typography>)
-							}
+								</Typography>
+							)}
 						/>
 						<Divider style={{ marginBottom: 15 }}/>
 
@@ -216,24 +216,32 @@ class Order extends Component {
 								<div key={id}>
 									<LineEntry
 										col1={
-											(<Typography className={classes.item}>
-												{quantity}
-											</Typography>)
+											(
+												<Typography className={classes.item}>
+													{quantity}
+												</Typography>
+											)
 										}
 										col2={
-											(<Typography className={classes.item}>
-												{description}
-											</Typography>)
+											(
+												<Typography className={classes.item}>
+													{description}
+												</Typography>
+											)
 										}
 										col3={
-											(<Typography className={classes.item}>
-												{(unit_price_in_cents / 100).toFixed(2)}
-											</Typography>)
+											(
+												<Typography className={classes.item}>
+													{(unit_price_in_cents / 100).toFixed(2)}
+												</Typography>
+											)
 										}
 										col4={
-											(<Typography className={classes.item}>
-												{((unit_price_in_cents / 100) * quantity).toFixed(2)}
-											</Typography>)
+											(
+												<Typography className={classes.item}>
+													{((unit_price_in_cents / 100) * quantity).toFixed(2)}
+												</Typography>
+											)
 										}
 									/>
 									<Divider style={{ marginBottom: 15 }}/>
@@ -245,14 +253,18 @@ class Order extends Component {
 							col1={null}
 							col2={null}
 							col3={
-								(<Typography className={classes.itemHeading}>
+								(
+									<Typography className={classes.itemHeading}>
 									Service fees
-								</Typography>)
+									</Typography>
+								)
 							}
 							col4={
-								(<Typography className={classes.itemHeading}>
+								(
+									<Typography className={classes.itemHeading}>
 									$ {(fee_total_in_cents / 100).toFixed(2)}
-								</Typography>)
+									</Typography>
+								)
 							}
 						/>
 
@@ -262,14 +274,18 @@ class Order extends Component {
 							col1={null}
 							col2={null}
 							col3={
-								(<Typography className={classes.itemHeading}>
+								(
+									<Typography className={classes.itemHeading}>
 									Order total
-								</Typography>)
+									</Typography>
+								)
 							}
 							col4={
-								(<Typography className={classes.itemHeading}>
+								(
+									<Typography className={classes.itemHeading}>
 									$ {(total_in_cents / 100).toFixed(2)}
-								</Typography>)
+									</Typography>
+								)
 							}
 						/>
 

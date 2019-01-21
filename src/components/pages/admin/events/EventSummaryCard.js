@@ -235,9 +235,11 @@ const EventSummaryCard = props => {
 									</Total>
 								</div>
 							) :
-								(<div className={classes.totalsContainer}>
-									<Typography variant="caption">Externally Ticketed</Typography>
-								</div>)
+								(
+									<div className={classes.totalsContainer}>
+										<Typography variant="caption">Externally Ticketed</Typography>
+									</div>
+								)
 							}
 						</div>
 						{!isExternal ? (

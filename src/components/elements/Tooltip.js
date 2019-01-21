@@ -111,8 +111,8 @@ class CustomTooltip extends Component {
 		return (
 			<Tooltip
 				TransitionComponent={Zoom}
-				title={
-					(<React.Fragment>
+				title={(
+					<React.Fragment>
 						{title ? (
 							<Typography className={classes.title}>{title}</Typography>
 						) : null}
@@ -120,8 +120,8 @@ class CustomTooltip extends Component {
 							<Typography className={classes.text}>{text}</Typography>
 						) : null}
 						<span className={classes.arrowArrow} ref={this.handleArrowRef}/>
-					</React.Fragment>)
-				}
+					</React.Fragment>
+				)}
 				classes={{ popper: classes.arrowPopper, tooltip: classes.background }}
 				placement={placement}
 				PopperProps={{

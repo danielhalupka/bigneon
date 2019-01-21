@@ -304,11 +304,11 @@ class CheckoutConfirmation extends Component {
 		return (
 			<div>
 				<TicketLineTotal
-					col1={
-						(<Link to={`/events/${id}/tickets`}>
+					col1={(
+						<Link to={`/events/${id}/tickets`}>
 							<span className={classes.backLink}>Change tickets</span>
-						</Link>)
-					}
+						</Link>
+					)}
 					col2={<span className={classes.subTotal}>Service fees:</span>}
 					col3={`$${(serviceFeesInCents / 100).toFixed(2)}`}
 					classes={classes}

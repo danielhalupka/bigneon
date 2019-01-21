@@ -55,12 +55,12 @@
 	"react/jsx-closing-bracket-location": ["error", { "nonEmpty": "tag-aligned", "selfClosing": "tag-aligned" }],
 	"react/jsx-wrap-multilines": ["error", {
 	  "declaration": "parens-new-line",
-	  "assignment": "parens",
-	  "return": "parens",
-	  "arrow": "parens",
-	  "condition": "parens",
-	  "logical": "parens",
-	  "prop": "parens"
+	  "assignment": "parens-new-line",
+	  "return": "parens-new-line",
+	  "arrow": "parens-new-line",
+	  "condition": "parens-new-line",
+	  "logical": "parens-new-line",
+	  "prop": "parens-new-line"
 	}],
 	"react/jsx-max-props-per-line": ["error", { "maximum": 1, "when": "multiline" }]
   },
