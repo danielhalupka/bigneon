@@ -59,7 +59,7 @@ class ReceiveTransfer extends Component {
 				});
 
 				localStorage.removeItem("transferAuth");
-				this.props.history.push(`/hub`);
+				this.props.history.push(`/my-events`);
 			})
 			.catch(error => {
 				console.error(error);

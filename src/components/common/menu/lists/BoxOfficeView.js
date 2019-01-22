@@ -29,7 +29,7 @@ const BoxOfficeList = observer(props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="fan-hub"
+				iconName="my-events"
 				to="/box-office/guests"
 			>
 				Guests

@@ -25,7 +25,7 @@ const OrgOwnerList = props => {
 			<MenuItem
 				onClick={toggleDrawer}
 				shortLayout
-				iconName="fan-hub"
+				iconName="my-events"
 				to="/admin/fans"
 			>
 				Fans

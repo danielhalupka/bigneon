@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import layout from "../../stores/layout";
 import analytics from "../../helpers/analytics";
 
-const showSideMenuRoutes = ["/admin", "/hub", "/orders", "/account"];
+const showSideMenuRoutes = ["/admin", "/my-events", "/orders", "/account"];
 const showStudioLogoRoutes = ["/admin", "/box-office"];
 const showFooterRoutes = ["/events"];
 const removePaddingRoutes = ["/events", "/venues"];

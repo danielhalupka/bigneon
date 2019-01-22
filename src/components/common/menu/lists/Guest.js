@@ -28,7 +28,7 @@ const GuestMenuList = observer(props => {
 
 	return (
 		<div>
-			<MenuItem to="/help" iconName="fan-hub" onClick={toggleDrawer}>
+			<MenuItem to="/help" iconName="my-events" onClick={toggleDrawer}>
 				Help
 			</MenuItem>
 

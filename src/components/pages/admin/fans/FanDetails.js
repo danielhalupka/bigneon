@@ -275,7 +275,7 @@ class Fan extends Component {
 		return (
 			<div>
 				<PageHeading
-					iconUrl="/icons/fan-hub-active.svg"
+					iconUrl="/icons/my-events-active.svg"
 					// subheading={<Link to="/admin/fans">Go back</Link>}
 				>
 					Fan Profile

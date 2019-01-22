@@ -16,7 +16,7 @@ import NotFound from "../common/NotFound";
 import Account from "../pages/account/Index";
 import OrderList from "../pages/orders/List";
 import Order from "../pages/orders/Order";
-import FanHub from "../pages/fanhub/Index";
+import MyEvents from "../pages/myevents/Index";
 import Signup from "../pages/authentication/Signup";
 import Login from "../pages/authentication/Login";
 import PasswordReset from "../pages/authentication/PasswordReset";
@@ -66,7 +66,7 @@ import EmbeddedWidget from "../widgets/Embedded";
 import user from "../../stores/user";
 import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
-import ReceiveTransfer from "../pages/fanhub/ReceiveTransfer";
+import ReceiveTransfer from "../pages/myevents/ReceiveTransfer";
 import GuestList from "../pages/boxoffice/guests/Index";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
@@ -158,8 +158,8 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/hub/:eventId?"
-									component={FanHub}
+									path="/my-events/:eventId?"
+									component={MyEvents}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute

@@ -316,7 +316,7 @@ class TicketSales extends Component {
 		return (
 			<div>
 				<div className={classes.topRow}>
-					<PageHeading iconUrl="/icons/fan-hub-active.svg">
+					<PageHeading iconUrl="/icons/my-events-active.svg">
 						General public
 					</PageHeading>
 

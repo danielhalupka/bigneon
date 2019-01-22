@@ -411,7 +411,7 @@ class EventTicketsCard extends Component {
 							<div>
 								{!expanded ? (
 									<Typography>
-										<StyledLink to={`/hub/${id}`} underlined>
+										<StyledLink to={`/my-events/${id}`} underlined>
 											View my tickets
 										</StyledLink>
 									</Typography>
@@ -426,7 +426,7 @@ class EventTicketsCard extends Component {
 					<div className={classes.closeButtonRow}>
 						{expanded ? (
 							<Typography>
-								<StyledLink to={`/hub`} underlined>
+								<StyledLink to={`/my-events`} underlined>
 									Close
 								</StyledLink>
 							</Typography>

@@ -14,7 +14,7 @@ import tickets from "../../../stores/tickets";
 const styles = theme => ({});
 
 @observer
-class FanHub extends Component {
+class MyEvents extends Component {
 	constructor(props) {
 		super(props);
 
@@ -99,7 +99,7 @@ class FanHub extends Component {
 
 		return (
 			<div>
-				<PageHeading iconUrl="/icons/fan-hub-multi.svg">
+				<PageHeading iconUrl="/icons/my-events-multi.svg">
 					Upcoming events
 				</PageHeading>
 				<TicketDialog
@@ -124,4 +124,4 @@ class FanHub extends Component {
 	}
 }
 
-export default withStyles(styles)(FanHub);
+export default withStyles(styles)(MyEvents);

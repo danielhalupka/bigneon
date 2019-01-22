@@ -288,7 +288,7 @@ class FanList extends Component {
 
 				<div className={classes.header}>
 					<PageHeading
-						iconUrl="/icons/fan-hub-multi.svg"
+						iconUrl="/icons/my-events-multi.svg"
 						subheading={users ? `${users.length} total fans` : null}
 					>
 					Fans

@@ -32,8 +32,8 @@ const UserList = observer(props => {
 
 	return (
 		<div>
-			<MenuItem to="/hub" iconName="fan-hub" onClick={toggleDrawer}>
-				Fan hub
+			<MenuItem to="/my-events" iconName="my-events" onClick={toggleDrawer}>
+				My events
 			</MenuItem>
 
 			<MenuItem to="/account" iconName="account" onClick={toggleDrawer}>

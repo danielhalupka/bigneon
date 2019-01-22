@@ -30,7 +30,7 @@ const styles = theme => {
 			alignItems: "center"
 		},
 		icon: { width: 28, height: 28 },
-		text: { paddingTop: 3 },
+		text: { paddingTop: 3, textTransform: "capitalize" },
 		textSmall: {
 			fontSize: theme.typography.fontSize * 0.7
 		},
@@ -98,7 +98,6 @@ const MenuItem = props => {
 					primary={(
 						<Typography
 							className={classes.text}
-							variant="body1"
 							color={active ? "secondary" : "textSecondary"}
 						>
 							{children}

@@ -127,8 +127,8 @@ class RightHeaderMenu extends React.Component {
 							<MenuItem onClick={this.handleClose.bind(this)}>Admin</MenuItem>
 						</Link>
 					) : null}
-				<Link to="/hub">
-					<MenuItem onClick={this.handleClose.bind(this)}>Fan hub</MenuItem>
+				<Link to="/my-events">
+					<MenuItem onClick={this.handleClose.bind(this)}>My events</MenuItem>
 				</Link>
 
 				<Link to="/orders">
