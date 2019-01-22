@@ -131,6 +131,11 @@ class EventDashboardContainer extends Component {
 						Export guest list
 					</MenuItem>
 				</a>
+				<Link to={`/admin/events/${event.id}/refunds`}>
+					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+						Refunds
+					</MenuItem>
+				</Link>
 			</Menu>
 		);
 	}
