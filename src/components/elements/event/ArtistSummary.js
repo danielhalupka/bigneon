@@ -62,6 +62,7 @@ const ArtistSummary = props => {
 		instagram_username,
 		snapchat_username,
 		soundcloud_username,
+		spotify_id,
 		website_url,
 		youtube_video_urls
 	} = props;
@@ -130,6 +131,15 @@ const ArtistSummary = props => {
 								style={{ marginLeft: 6 }}
 								icon={"website"}
 								href={website_url}
+								size={30}
+							/>
+						) : null}
+
+						{spotify_id ? (
+							<SocialIconLink
+								style={{ marginLeft: 6 }}
+								icon={"spotify"}
+								userName={spotify_id}
 								size={30}
 							/>
 						) : null}

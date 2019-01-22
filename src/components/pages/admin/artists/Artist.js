@@ -72,6 +72,7 @@ class Artist extends Component {
 						soundcloud_username,
 						bandcamp_username,
 						youtube_video_urls,
+						spotify_id,
 						image_url
 					} = response.data;
 
@@ -84,6 +85,7 @@ class Artist extends Component {
 						snapchat_username: snapchat_username || "",
 						soundcloud_username: soundcloud_username || "",
 						bandcamp_username: bandcamp_username || "",
+						spotify_id,
 						youtube_video_urls: youtube_video_urls || [""],
 						imageUrl: image_url || ""
 					});
