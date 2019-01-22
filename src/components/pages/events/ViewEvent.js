@@ -308,8 +308,9 @@ class ViewEvent extends Component {
 					</div>
 
 					<Typography className={classes.eventSubCardSubText}>
-						{venue.address}, {venue.city}.<br/>
-						{venue.postal_code}, {venue.state}, {venue.country}
+						{venue.address},<br/>
+						{venue.city}, {venue.state}<br/>
+						{venue.country}
 						{venue.googleMapsLink ? (
 							<a target="_blank" href={venue.googleMapsLink}>
 								<span className={classes.eventSubCardSubLink}>&nbsp;-&nbsp;view map</span>
