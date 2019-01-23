@@ -85,15 +85,18 @@ class EventSummary extends Component {
 				sales.forEach(sale => {
 					const { ticket_type_id } = sale;
 
+					const total_face_value_in_cents = sale.price_in_cents * sale.total_sold; //TODO confirm this value is correct
+
 					if (!eventSales[ticket_type_id]) {
 						eventSales[ticket_type_id] = {
 							name: sale.ticket_name,
-							pricePoints: [sale],
+							pricePoints: [{ ...sale, total_face_value_in_cents }],
 							totals: {
 								online_count: sale.online_count,
 								box_office_count: sale.box_office_count,
 								comp_count: sale.comp_count,
 								total_gross_income_in_cents: sale.total_gross_income_in_cents,
+								total_face_value_in_cents,
 								total_sold: sale.total_sold
 							}
 						};
@@ -105,6 +108,7 @@ class EventSummary extends Component {
 						totals.comp_count += sale.comp_count;
 						totals.total_gross_income_in_cents +=
 							sale.total_gross_income_in_cents;
+						totals.total_face_value_in_cents += total_face_value_in_cents;
 
 						eventSales[ticket_type_id].pricePoints.push(sale);
 						eventSales[ticket_type_id].totals = totals;
@@ -114,8 +118,7 @@ class EventSummary extends Component {
 					salesTotals.totalBoxOfficeCount += sale.box_office_count;
 					salesTotals.totalSoldCount += sale.total_sold;
 					salesTotals.totalCompCount += sale.comp_count;
-					salesTotals.totalSalesValueInCents +=
-						sale.total_gross_income_in_cents;
+					salesTotals.totalSalesValueInCents += total_face_value_in_cents;
 				});
 
 				const revenueShare = {};
@@ -228,7 +231,7 @@ class EventSummary extends Component {
 				box_office_count,
 				comp_count,
 				total_sold,
-				total_gross_income_in_cents
+				total_face_value_in_cents
 			} = totals;
 
 			csvRows.push([
@@ -236,9 +239,9 @@ class EventSummary extends Component {
 				" ",
 				online_count,
 				box_office_count,
-				comp_count,
 				total_sold,
-				dollars(total_gross_income_in_cents)
+				comp_count,
+				dollars(total_face_value_in_cents)
 			]);
 
 			pricePoints.forEach(pricePoint => {
@@ -247,9 +250,9 @@ class EventSummary extends Component {
 					dollars(pricePoint.price_in_cents),
 					pricePoint.online_count,
 					pricePoint.box_office_count,
-					pricePoint.comp_count,
 					pricePoint.total_sold,
-					dollars(pricePoint.total_gross_income_in_cents)
+					pricePoint.comp_count,
+					dollars(pricePoint.total_face_value_in_cents)
 				]);
 			});
 		});
@@ -293,7 +296,7 @@ class EventSummary extends Component {
 			csvRows.push([
 				name,
 				" ",
-				total_client_fee_in_cents,
+				dollars(total_client_fee_in_cents),
 				online_count,
 				" ",
 				" ",
@@ -304,7 +307,7 @@ class EventSummary extends Component {
 				csvRows.push([
 					pricePoint.pricing_name,
 					dollars(pricePoint.price_in_cents),
-					pricePoint.total_client_fee_in_cents,
+					dollars(pricePoint.total_client_fee_in_cents),
 					pricePoint.online_count,
 					" ",
 					" ",
@@ -379,8 +382,9 @@ class EventSummary extends Component {
 						box_office_count,
 						comp_count,
 						total_sold,
-						total_gross_income_in_cents
+						total_face_value_in_cents
 					} = totals;
+
 					return (
 						<div key={ticketId}>
 							<EventSummaryRow ticketTypeRow gray={true}>
@@ -391,7 +395,7 @@ class EventSummary extends Component {
 									box_office_count,
 									total_sold,
 									comp_count,
-									dollars(total_gross_income_in_cents)
+									dollars(total_face_value_in_cents)
 								]}
 							</EventSummaryRow>
 
@@ -404,7 +408,7 @@ class EventSummary extends Component {
 										pricePoint.box_office_count,
 										pricePoint.total_sold,
 										pricePoint.comp_count,
-										dollars(pricePoint.total_gross_income_in_cents)
+										dollars(pricePoint.total_face_value_in_cents)
 									]}
 								</EventSummaryRow>
 							))}
