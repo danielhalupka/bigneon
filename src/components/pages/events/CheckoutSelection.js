@@ -228,7 +228,6 @@ class CheckoutSelection extends Component {
 	renderTicketPricing() {
 		const { ticket_types } = selectedEvent;
 		const { ticketSelection, errors } = this.state;
-
 		if (!ticket_types) {
 			//TODO use a loader
 			return null; //Still loading this
@@ -244,7 +243,8 @@ class CheckoutSelection extends Component {
 					limit_per_person,
 					start_date,
 					end_date,
-					redemption_code
+					redemption_code,
+					available
 				}) => {
 					const nowIsValidTime = moment
 						.utc()
@@ -256,9 +256,11 @@ class CheckoutSelection extends Component {
 					// console.log("limit_per_person: ", limit_per_person);
 					let description = "";
 					let price = 0;
+					let ticketsAvailable = false;
 					if (ticket_pricing) {
 						price = ticket_pricing.price_in_cents / 100;
 						description = ticket_pricing.name;
+						ticketsAvailable = available > 0;
 					} else {
 						description = "(Tickets currently unavailable)";
 					}
@@ -268,7 +270,7 @@ class CheckoutSelection extends Component {
 							key={id}
 							name={name}
 							description={description}
-							available={!!ticket_pricing}
+							available={ticketsAvailable}
 							price={price}
 							error={errors[id]}
 							amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}

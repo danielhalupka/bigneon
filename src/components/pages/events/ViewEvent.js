@@ -327,10 +327,15 @@ class ViewEvent extends Component {
 					) : null}
 					<br/>
 
-					{ticket_types.map(({ id, name, status, ticket_pricing }) => {
+					{ticket_types.map(({ id, name, status, ticket_pricing, available }) => {
 						let price = "";
 						if (ticket_pricing) {
-							price = `$${(ticket_pricing.price_in_cents / 100).toFixed(2)}`;
+							if (available > 0) {
+
+								price = `$${(ticket_pricing.price_in_cents / 100).toFixed(2)}`;
+							} else {
+								price = "Sold Out";
+							}
 							//description = ticket_pricing.name;
 						}
 
