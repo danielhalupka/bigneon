@@ -38,47 +38,24 @@ const Detail = ({ label, children, classes }) => (
 class TransactionDialog extends React.Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			user: null
-		};
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		//Check if the userID changed, if it did pull the details into state
-		const { userId } = this.props;
-
-		if (userId && prevProps.userId !== userId) {
-			this.setState({ user: null }, () => {
-				Bigneon()
-					.users.read({ id: userId })
-					.then(response => {
-						this.setState({ user: response.data });
-					})
-					.catch(error => {
-						notifications.showFromErrorResponse({
-							error,
-							defaultMessage: "Loading user details failed."
-						});
-					});
-			});
-		}
+		this.state = {};
 	}
 
 	renderUserDetails() {
-		const { user } = this.state;
-		if (!user) {
+		const { classes, item } = this.props;
+		if (!item) {
 			return null;
 		}
-
-		const { first_name, last_name, email } = user;
-		const { classes } = this.props;
+		const {
+			user_name,
+			email
+		} = item;
 
 		return (
 			<div>
 				<Typography className={classes.title}>User:</Typography>
 				<Typography>
-					{first_name} {last_name}
+					{user_name}
 				</Typography>
 				<Typography>{email}</Typography>
 			</div>
@@ -92,25 +69,18 @@ class TransactionDialog extends React.Component {
 		}
 
 		const {
-			client_fee_in_cents,
-			company_fee_in_cents,
-			event_fee_gross_in_cents,
-			event_fee_company_in_cents,
-			event_fee_client_in_cents,
-			event_id,
-			event_name,
+			gross_fee_in_cents_total,
+			event_fee_gross_in_cents_total,
 			gross,
 			order_id,
 			order_type,
 			payment_method,
 			quantity,
 			redemption_code,
-			ticket_name,
 			transaction_date,
-			unit_price_in_cents,
-			user_id
+			unit_price_in_cents
 		} = item;
-		
+
 		return (
 			<div>
 				<Detail label={"Quantity"} classes={classes}>
@@ -126,9 +96,9 @@ class TransactionDialog extends React.Component {
 				</Detail>
 
 				<Detail label={"Service fee"} classes={classes}>
-					{dollars(event_fee_gross_in_cents + event_fee_company_in_cents + event_fee_client_in_cents + company_fee_in_cents + client_fee_in_cents)}
+					{dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total)}
 				</Detail>
-				
+
 				<Detail label={"Gross"} classes={classes}>
 					{dollars(gross)}
 				</Detail>

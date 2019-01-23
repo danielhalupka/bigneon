@@ -71,7 +71,9 @@ class Transactions extends Component {
 			"Unit price",
 			"Face value",
 			"Service fees",
-			"Gross"
+			"Gross",
+			"User Name",
+			"Email"
 		]);
 
 		items.forEach(item => {
@@ -92,7 +94,11 @@ class Transactions extends Component {
 				ticket_name,
 				transaction_date,
 				unit_price_in_cents,
-				user_id
+				user_id,
+				gross_fee_in_cents_total,
+				event_fee_gross_in_cents_total,
+				user_name,
+				email
 			} = item;
 
 			csvRows.push([
@@ -109,8 +115,10 @@ class Transactions extends Component {
 				quantity,
 				dollars(unit_price_in_cents),
 				dollars(quantity * unit_price_in_cents), //Face value
-				dollars(event_fee_gross_in_cents + event_fee_company_in_cents + event_fee_client_in_cents + company_fee_in_cents + client_fee_in_cents),
-				dollars(gross)
+				dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
+				dollars(gross),
+				user_name,
+				email
 			]);
 		});
 
@@ -135,33 +143,12 @@ class Transactions extends Component {
 			.then(response => {
 				const items = [];
 				const eventFees = {};
-
 				response.data.forEach(item => {
 					const transaction_date = moment
 						.utc(item.transaction_date)
 						.local()
 						.format("MM/DD/YYYY h:mm:A");
-
-					if (item.ticket_name === "Per Event Fees") {
-						eventFees[item.order_id] = item;
-					} else {
-						items.push({ ...item, transaction_date });
-					}
-				});
-
-				items.forEach(row => {
-					let eventFeeGrossInCents = 0;
-					let eventFeeCompanyInCents = 0;
-					let eventFeeClientInCents = 0;
-					if (eventFees.hasOwnProperty(row.order_id)) {
-						eventFeeGrossInCents = eventFees[row.order_id].gross;
-						eventFeeCompanyInCents =
-							eventFees[row.order_id].company_fee_in_cents;
-						eventFeeClientInCents = eventFees[row.order_id].client_fee_in_cents;
-					}
-					row.event_fee_gross_in_cents = eventFeeGrossInCents;
-					row.event_fee_company_in_cents = eventFeeCompanyInCents;
-					row.event_fee_client_in_cents = eventFeeClientInCents;
+					items.push({ ...item, transaction_date });
 				});
 
 				this.setState({ items });
@@ -244,23 +231,17 @@ class Transactions extends Component {
 
 				{items.map((item, index) => {
 					const {
-						client_fee_in_cents,
-						company_fee_in_cents,
-						event_fee_gross_in_cents,
-						event_fee_company_in_cents,
-						event_fee_client_in_cents,
-						event_id,
 						event_name,
 						gross,
-						order_id,
 						order_type,
-						payment_method,
 						quantity,
-						redemption_code,
 						ticket_name,
 						transaction_date,
 						unit_price_in_cents,
-						user_id
+						gross_fee_in_cents_total,
+						event_fee_gross_in_cents_total,
+						user_name,
+						email
 					} = item;
 
 					const tds = [
@@ -270,7 +251,7 @@ class Transactions extends Component {
 						quantity,
 						dollars(unit_price_in_cents),
 						dollars(quantity * unit_price_in_cents),
-						dollars(event_fee_gross_in_cents + event_fee_company_in_cents + event_fee_client_in_cents + company_fee_in_cents + client_fee_in_cents),
+						dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
 						dollars(gross)
 					];
 
