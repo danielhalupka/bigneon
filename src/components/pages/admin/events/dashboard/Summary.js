@@ -193,7 +193,7 @@ class Summary extends Component {
 				>
 					<NumberCard
 						active={activeNumbersCard === "revenue"}
-						label="Revenue"
+						label="Gross sales"
 						value={"$" + (event.sales_total_in_cents / 100).toFixed(2)}
 						iconName="chart"
 						classes={classes}
