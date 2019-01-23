@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
 import classNames from "classnames";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import TicketTypeSalesBarChart from "../../../../elements/charts/TicketTypeSalesBarChart";
 import Card from "../../../../elements/Card";
@@ -101,21 +101,24 @@ class Summary extends Component {
 			event: null,
 			activeNumbersCard: null,
 			chartValues: [],
-			dayStats: []
+			dayStats: [],
+			venueTimeZone: ""
 		};
 	}
 
 	componentDidMount() {
 		//TODO make bn-api issue for date required
 
-		this.loadEventDetails(this.props.match.params.id);
+		const id = this.props.match.params.id;
+		this.loadEventDetails(id);
+		this.loadTimeZone(id);
 	}
 
-	loadEventDetails(eventId) {
+	loadEventDetails(id) {
 		Bigneon()
-			.events.dashboard({ id: eventId })
+			.events.dashboard({ id })
 			.then(response => {
-				const { day_stats, event } = response.data;
+				const { day_stats, event, venue } = response.data;
 
 				this.setState({
 					event,
@@ -125,29 +128,41 @@ class Summary extends Component {
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({ isSubmitting: false });
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event details failed.",
+					error
+				});
+			});
+	}
 
-				let message = "Loading event details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
+	loadTimeZone(id) {
+		Bigneon()
+			.events.read({ id })
+			.then(response => {
+				const { venue } = response.data;
+				if (venue.timezone) {
+					this.setState(({ venueTimeZone: venue.timezone }));
 				}
-
-				notifications.show({
-					message,
-					variant: "error"
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading time zone for event failed.",
+					error
 				});
 			});
 	}
 
 	getDailyBreakdownValues(dayStats) {
+		const venueTimezone = this.state.venueTimeZone || "America/Los_Angeles";
+
 		const result = [];
 		for (let index = 0; index < dayStats.length; index++) {
+
+			const dayOfMonth = moment.utc(dayStats[index].date).tz(venueTimezone).format("D");
+
 			result.push({
-				x: Number(moment(dayStats[index].date).format("D")),
+				x: Number(dayOfMonth),
 				y: dayStats[index].revenue_in_cents / 100,
 				tooltipTitle: `$${(dayStats[index].revenue_in_cents / 100).toFixed(2)}`,
 				tooltipText: `${dayStats[index].ticket_sales} Tickets`

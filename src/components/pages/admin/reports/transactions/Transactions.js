@@ -59,7 +59,6 @@ class Transactions extends Component {
 		csvRows.push([
 			"Event",
 			"Ticket type",
-			"Quantity",
 			"Order type",
 			"Payment method",
 			"Transaction date",
@@ -68,12 +67,10 @@ class Transactions extends Component {
 			"Order type",
 			"Payment method",
 
+			"Quantity",
 			"Unit price",
-			"Event fee client",
-			"Event fee company",
-			"Event fee gross",
-			"Company fee",
-			"Client fee",
+			"Face value",
+			"Service fees",
 			"Gross"
 		]);
 
@@ -101,7 +98,6 @@ class Transactions extends Component {
 			csvRows.push([
 				event_name,
 				ticket_name,
-				quantity,
 				order_type,
 				payment_method,
 				transaction_date,
@@ -110,12 +106,10 @@ class Transactions extends Component {
 				order_type,
 				payment_method,
 
+				quantity,
 				dollars(unit_price_in_cents),
-				dollars(event_fee_client_in_cents),
-				dollars(event_fee_company_in_cents),
-				dollars(event_fee_gross_in_cents),
-				dollars(company_fee_in_cents),
-				dollars(client_fee_in_cents),
+				dollars(quantity * unit_price_in_cents), //Face value
+				dollars(event_fee_gross_in_cents + event_fee_company_in_cents + event_fee_client_in_cents + company_fee_in_cents + client_fee_in_cents),
 				dollars(gross)
 			]);
 		});
@@ -230,17 +224,18 @@ class Transactions extends Component {
 		const includeEventName = !this.props.eventId;
 
 		const ths = [
-			"Quantity",
 			"Ticket name",
 			"Order type",
 			"Time",
+			"Quantity",
 			"Unit price",
-			"Gross",
-			"Fee"
+			"Total face value",
+			"Service fees",
+			"Gross"
 		];
 
 		if (includeEventName) {
-			ths.splice(1, 0, "Event");
+			ths.splice(0, 0, "Event");
 		}
 
 		return (
@@ -269,17 +264,18 @@ class Transactions extends Component {
 					} = item;
 
 					const tds = [
-						quantity,
 						ticket_name,
 						order_type,
 						transaction_date,
+						quantity,
 						dollars(unit_price_in_cents),
-						dollars(gross),
-						dollars(company_fee_in_cents + client_fee_in_cents)
+						dollars(quantity * unit_price_in_cents),
+						dollars(event_fee_gross_in_cents + event_fee_company_in_cents + event_fee_client_in_cents + company_fee_in_cents + client_fee_in_cents),
+						dollars(gross)
 					];
 
 					if (includeEventName) {
-						tds.splice(1, 0, event_name);
+						tds.splice(0, 0, event_name);
 					}
 
 					return (

@@ -388,7 +388,7 @@ class User {
 
 	@computed
 	get hasTransactionReports() {
-		if (this.isOrgAdmin || this.isAdmin) {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
 			return true;
 		}
 
@@ -397,7 +397,7 @@ class User {
 
 	@computed
 	get hasEventSummaryReports() {
-		if (this.isOrgAdmin || this.isAdmin) {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
 			return true;
 		}
 
@@ -406,7 +406,7 @@ class User {
 
 	@computed
 	get hasTicketCountReports() {
-		if (this.isOrgAdmin || this.isAdmin) {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
 			return true;
 		}
 

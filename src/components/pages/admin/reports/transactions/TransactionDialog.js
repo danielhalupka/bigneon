@@ -110,7 +110,7 @@ class TransactionDialog extends React.Component {
 			unit_price_in_cents,
 			user_id
 		} = item;
-
+		
 		return (
 			<div>
 				<Detail label={"Quantity"} classes={classes}>
@@ -121,28 +121,16 @@ class TransactionDialog extends React.Component {
 					{dollars(unit_price_in_cents)}
 				</Detail>
 
+				<Detail label={"Total face value"} classes={classes}>
+					{dollars(quantity * unit_price_in_cents)}
+				</Detail>
+
+				<Detail label={"Service fee"} classes={classes}>
+					{dollars(event_fee_gross_in_cents + event_fee_company_in_cents + event_fee_client_in_cents + company_fee_in_cents + client_fee_in_cents)}
+				</Detail>
+				
 				<Detail label={"Gross"} classes={classes}>
 					{dollars(gross)}
-				</Detail>
-
-				<Detail label={"Client fee"} classes={classes}>
-					{dollars(client_fee_in_cents)}
-				</Detail>
-
-				<Detail label={"Company fee"} classes={classes}>
-					{dollars(company_fee_in_cents)}
-				</Detail>
-
-				<Detail label={"Total event fee"} classes={classes}>
-					{dollars(event_fee_gross_in_cents)}
-				</Detail>
-
-				<Detail label={"Total company event fee"} classes={classes}>
-					{dollars(event_fee_company_in_cents)}
-				</Detail>
-
-				<Detail label={"Total client event fee"} classes={classes}>
-					{dollars(event_fee_client_in_cents)}
 				</Detail>
 
 				<Detail label={"Payment method"} classes={classes}>
