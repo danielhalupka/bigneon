@@ -264,6 +264,7 @@ class CheckoutSelection extends Component {
 					} else {
 						description = "(Tickets currently unavailable)";
 					}
+					const limitPerPerson = Math.min(available, limit_per_person);
 
 					return (
 						<TicketSelection
@@ -275,7 +276,7 @@ class CheckoutSelection extends Component {
 							error={errors[id]}
 							amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}
 							increment={increment}
-							limitPerPerson={limit_per_person}
+							limitPerPerson={limitPerPerson}
 							onNumberChange={amount =>
 								this.setState(({ ticketSelection }) => {
 									ticketSelection[id] = {
