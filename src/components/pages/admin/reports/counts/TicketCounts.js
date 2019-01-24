@@ -104,16 +104,16 @@ class TicketCounts extends Component {
 			} = totals;
 
 			const {
-				box_office_count = 0,
-				online_count = 0,
+				box_office_actual_count = 0,
+				online_actual_count = 0,
 				online_sales_in_cents = 0,
 				box_office_sales_in_cents = 0
 			} = sales || {};
 
 			totalAllocation += allocation_count;
-			totalSoldOnlineCount += online_count;
-			totalBoxOfficeCount += box_office_count;
-			totalSoldCount += online_count + box_office_count;
+			totalSoldOnlineCount += online_actual_count;
+			totalBoxOfficeCount += box_office_actual_count;
+			totalSoldCount += online_actual_count + box_office_actual_count;
 			totalCompsCount += comp_count;
 			totalHoldsCount += hold_count;
 			totalOpenCount += available_count;
@@ -122,9 +122,9 @@ class TicketCounts extends Component {
 			csvRows.push([
 				ticket_name,
 				allocation_count,
-				online_count,
-				box_office_count,
-				online_count + box_office_count,
+				online_actual_count,
+				box_office_actual_count,
+				online_actual_count + box_office_actual_count,
 				comp_count,
 				hold_count,
 				available_count,
