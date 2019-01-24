@@ -78,7 +78,8 @@ class TransactionDialog extends React.Component {
 			quantity,
 			redemption_code,
 			transaction_date,
-			unit_price_in_cents
+			unit_price_in_cents,
+			refunded_quantity
 		} = item;
 
 		return (
@@ -87,12 +88,16 @@ class TransactionDialog extends React.Component {
 					{quantity}
 				</Detail>
 
+				<Detail label={"Refunded Quantity"} classes={classes}>
+					{refunded_quantity}
+				</Detail>
+
 				<Detail label={"Unit price"} classes={classes}>
 					{dollars(unit_price_in_cents)}
 				</Detail>
 
 				<Detail label={"Total face value"} classes={classes}>
-					{dollars(quantity * unit_price_in_cents)}
+					{dollars((quantity - refunded_quantity) * unit_price_in_cents)}
 				</Detail>
 
 				<Detail label={"Service fee"} classes={classes}>

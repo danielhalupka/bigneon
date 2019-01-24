@@ -67,7 +67,9 @@ class Transactions extends Component {
 			"Order type",
 			"Payment method",
 
-			"Quantity",
+			"Quantity Sold",
+			"Quantity Refunded",
+			"Actual Quantity",
 			"Unit price",
 			"Face value",
 			"Service fees",
@@ -90,6 +92,7 @@ class Transactions extends Component {
 				order_type,
 				payment_method,
 				quantity,
+				refunded_quantity,
 				redemption_code,
 				ticket_name,
 				transaction_date,
@@ -113,8 +116,10 @@ class Transactions extends Component {
 				payment_method,
 
 				quantity,
+				refunded_quantity,
+				quantity - refunded_quantity,
 				dollars(unit_price_in_cents),
-				dollars(quantity * unit_price_in_cents), //Face value
+				dollars((quantity - refunded_quantity) * unit_price_in_cents), //Face value
 				dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
 				dollars(gross),
 				user_name,
@@ -241,16 +246,17 @@ class Transactions extends Component {
 						gross_fee_in_cents_total,
 						event_fee_gross_in_cents_total,
 						user_name,
-						email
+						email,
+						refunded_quantity
 					} = item;
 
 					const tds = [
 						ticket_name,
 						order_type,
 						transaction_date,
-						quantity,
+						quantity - refunded_quantity,
 						dollars(unit_price_in_cents),
-						dollars(quantity * unit_price_in_cents),
+						dollars((quantity - refunded_quantity) * unit_price_in_cents),
 						dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
 						dollars(gross)
 					];
