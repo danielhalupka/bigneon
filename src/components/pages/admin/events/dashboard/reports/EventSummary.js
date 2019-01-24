@@ -85,7 +85,10 @@ class EventSummary extends Component {
 				sales.forEach(sale => {
 					const { ticket_type_id } = sale;
 
-					const total_face_value_in_cents = sale.price_in_cents * sale.total_sold; //TODO confirm this value is correct
+					const total_face_value_in_cents =
+						sale.total_gross_income_in_cents -
+						sale.total_client_fee_in_cents -
+						sale.total_company_fee_in_cents;
 
 					if (!eventSales[ticket_type_id]) {
 						eventSales[ticket_type_id] = {
@@ -110,7 +113,10 @@ class EventSummary extends Component {
 							sale.total_gross_income_in_cents;
 						totals.total_face_value_in_cents += total_face_value_in_cents;
 
-						eventSales[ticket_type_id].pricePoints.push(sale);
+						eventSales[ticket_type_id].pricePoints.push({
+							...sale,
+							total_face_value_in_cents
+						});
 						eventSales[ticket_type_id].totals = totals;
 					}
 
