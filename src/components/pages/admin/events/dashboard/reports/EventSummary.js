@@ -179,8 +179,8 @@ class EventSummary extends Component {
 				}
 
 				this.setState({
-					eventSales,
-					revenueShare,
+					eventSales: this.groupPricePointsByNameAndPrice(eventSales),
+					revenueShare: this.groupPricePointsByNameAndPrice(revenueShare),
 					salesTotals,
 					revenueTotals,
 					otherFees
@@ -195,6 +195,43 @@ class EventSummary extends Component {
 					defaultMessage: "Loading event transaction report failed."
 				});
 			});
+	}
+	
+	//Temp solution to group price points if they have the same name and price
+	//If the API performs this function in the future, this code can be removed
+	//Iterates through price points and merges number values for price points that have the same pricing_name and price_in_cents
+	groupPricePointsByNameAndPrice(data) {
+		Object.keys(data).forEach(ticket_type_id => {
+			const ticketType = data[ticket_type_id];
+			const { pricePoints } = ticketType;
+			const mergedPricePoints = [];
+
+			pricePoints.forEach(pricePoint => {
+				let existingIndex = -1;
+				mergedPricePoints.forEach((mergedPoint, index) => {
+					if (mergedPoint.pricing_name === pricePoint.pricing_name && mergedPoint.price_in_cents === pricePoint.price_in_cents) {
+						existingIndex = index;
+					}
+				});
+
+				if (existingIndex < 0) {
+					mergedPricePoints.push(pricePoint);
+				} else {
+					//Merge results
+					Object.keys(pricePoint).forEach(pricePointKey => {
+						const pricePointValue = pricePoint[pricePointKey];
+						if (pricePointKey !== "price_in_cents" && !isNaN(pricePointValue)) {
+							//Add it up
+							mergedPricePoints[existingIndex][pricePointKey] = mergedPricePoints[existingIndex][pricePointKey] + pricePointValue;
+						}
+					});
+				}
+			});
+
+			data[ticket_type_id].pricePoints = mergedPricePoints;
+		});
+
+		return data;
 	}
 
 	exportCSV() {
