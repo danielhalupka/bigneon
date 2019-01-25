@@ -87,7 +87,7 @@ class Export extends Component {
 						const key = `${user_id}_${order_id}_${ticket_type}`; //Filter by user and ticket type
 
 						if (!guests[key]) {
-							guests[user_id] = {
+							guests[key] = {
 								email,
 								first_name,
 								last_name,
@@ -99,13 +99,9 @@ class Export extends Component {
 								tickets: [ticketDetails]
 							};
 						} else {
-							guests[key].tickets = [
-								...guests[user_id].tickets,
-								status,
-								order_id,
-								ticket_type,
+							guests[key].tickets.push({
 								ticketDetails
-							];
+							});
 
 							if (status === "Redeemed") {
 								guests[key].qtyRedeemed = guests[key].qtyRedeemed + 1;
