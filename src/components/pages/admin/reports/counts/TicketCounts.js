@@ -40,6 +40,95 @@ const styles = theme => ({
 	}
 });
 
+export const ticketCountData = (queryParams, onSuccess, onError) => {
+	Bigneon()
+		.reports.ticketCount(queryParams)
+		.then(response => {
+			onSuccess(response.data);
+		})
+		.catch(error => {
+			onError(error);
+		});
+};
+
+export const ticketCountCSVRows = (ticketCounts) => {
+	const  csvRows = [];
+	let totalAllocation = 0;
+	let totalSoldOnlineCount = 0;
+	let totalBoxOfficeCount = 0;
+	let totalSoldCount = 0;
+	let totalCompsCount = 0;
+	let totalHoldsCount = 0;
+	let totalOpenCount = 0;
+	let totalGross = 0;
+
+	csvRows.push([
+		"Ticket",
+		"Allocation",
+		"QTY Sold Online",
+		"QTY Sold BO",
+		"Total sold",
+		"Comps",
+		"Holds",
+		"Open",
+		"Gross"
+	]);
+
+	Object.keys(ticketCounts).forEach((ticketId, index) => {
+		const { sales, totals } = ticketCounts[ticketId];
+
+		const {
+			ticket_name,
+			allocation_count,
+			available_count,
+			comp_count,
+			hold_count
+		} = totals;
+
+		const {
+			box_office_actual_count = 0,
+			online_actual_count = 0,
+			online_sales_in_cents = 0,
+			box_office_sales_in_cents = 0
+		} = sales || {};
+
+		totalAllocation += allocation_count;
+		totalSoldOnlineCount += online_actual_count;
+		totalBoxOfficeCount += box_office_actual_count;
+		totalSoldCount += online_actual_count + box_office_actual_count;
+		totalCompsCount += comp_count;
+		totalHoldsCount += hold_count;
+		totalOpenCount += available_count;
+		totalGross += online_sales_in_cents + box_office_sales_in_cents;
+
+		csvRows.push([
+			ticket_name,
+			allocation_count,
+			online_actual_count,
+			box_office_actual_count,
+			online_actual_count + box_office_actual_count,
+			comp_count,
+			hold_count,
+			available_count,
+			dollars(online_sales_in_cents + box_office_sales_in_cents)
+		]);
+	});
+
+	csvRows.push([
+		"Totals",
+		totalAllocation,
+		totalSoldOnlineCount,
+		totalBoxOfficeCount,
+		totalSoldCount,
+		totalCompsCount,
+		totalHoldsCount,
+		totalOpenCount,
+		dollars(totalGross)
+	]);
+
+	return csvRows;
+};
+
 class TicketCounts extends Component {
 	constructor(props) {
 		super(props);
@@ -60,89 +149,17 @@ class TicketCounts extends Component {
 			});
 		}
 		const ticketCounts = eventCounts[eventId];
+		
+		const eventName = ticketCounts[Object.keys(ticketCounts)[0]].totals.event_name;
 
-		const ticketIds = Object.keys(ticketCounts);
-
-		const eventName = ticketCounts[ticketIds[0]].totals.event_name;
-
-		const csvRows = [];
+		let csvRows = [];
 
 		csvRows.push(["Ticket counts report"]);
 		csvRows.push([eventName]);
 		csvRows.push([""]);
 
-		let totalAllocation = 0;
-		let totalSoldOnlineCount = 0;
-		let totalBoxOfficeCount = 0;
-		let totalSoldCount = 0;
-		let totalCompsCount = 0;
-		let totalHoldsCount = 0;
-		let totalOpenCount = 0;
-		let totalGross = 0;
-
-		csvRows.push([
-			"Ticket",
-			"Allocation",
-			"QTY Sold Online",
-			"QTY Sold BO",
-			"Total sold",
-			"Comps",
-			"Holds",
-			"Open",
-			"Gross"
-		]);
-
-		ticketIds.forEach((ticketId, index) => {
-			const { sales, totals } = ticketCounts[ticketId];
-
-			const {
-				ticket_name,
-				allocation_count,
-				available_count,
-				comp_count,
-				hold_count
-			} = totals;
-
-			const {
-				box_office_actual_count = 0,
-				online_actual_count = 0,
-				online_sales_in_cents = 0,
-				box_office_sales_in_cents = 0
-			} = sales || {};
-
-			totalAllocation += allocation_count;
-			totalSoldOnlineCount += online_actual_count;
-			totalBoxOfficeCount += box_office_actual_count;
-			totalSoldCount += online_actual_count + box_office_actual_count;
-			totalCompsCount += comp_count;
-			totalHoldsCount += hold_count;
-			totalOpenCount += available_count;
-			totalGross += online_sales_in_cents + box_office_sales_in_cents;
-
-			csvRows.push([
-				ticket_name,
-				allocation_count,
-				online_actual_count,
-				box_office_actual_count,
-				online_actual_count + box_office_actual_count,
-				comp_count,
-				hold_count,
-				available_count,
-				dollars(online_sales_in_cents + box_office_sales_in_cents)
-			]);
-		});
-
-		csvRows.push([
-			"Totals",
-			totalAllocation,
-			totalSoldOnlineCount,
-			totalBoxOfficeCount,
-			totalSoldCount,
-			totalCompsCount,
-			totalHoldsCount,
-			totalOpenCount,
-			dollars(totalGross)
-		]);
+		const ticketCountRows = ticketCountCSVRows(ticketCounts);
+		csvRows = [...csvRows, ...ticketCountRows];
 
 		downloadCSV(csvRows, "ticket-counts-report");
 	}
@@ -160,14 +177,12 @@ class TicketCounts extends Component {
 			queryParams = { ...queryParams, event_id: eventId };
 		}
 
-		Bigneon()
-			.reports.ticketCount(queryParams)
-			.then(response => {
-				const eventCounts = response.data[organizationId] || {};
-
+		ticketCountData(
+			queryParams,
+			(data) => {
+				const eventCounts = data[organizationId] || {};
 				this.setState({ eventCounts });
-			})
-			.catch(error => {
+			}, error => {
 				console.error(error);
 				this.setState({ eventCounts: false });
 

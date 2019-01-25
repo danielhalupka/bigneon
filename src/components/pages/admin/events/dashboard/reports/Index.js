@@ -7,8 +7,9 @@ import Bigneon from "../../../../../../helpers/bigneon";
 import user from "../../../../../../stores/user";
 import Container from "../Container";
 import TransactionsList from "../../../reports/transactions/Transactions";
-import EventSummary from "./EventSummary";
+import { EventSummaryReport } from "../../../reports/eventSummary/EventSummary";
 import TicketCounts from "../../../reports/counts/TicketCounts";
+import EventAudit from "../../../reports/eventAudit/Audit";
 
 const styles = theme => ({
 	root: {}
@@ -62,7 +63,7 @@ class Report extends Component {
 
 			case "summary":
 				content = (
-					<EventSummary
+					<EventSummaryReport
 						eventName={eventName}
 						organizationId={organizationId}
 						eventId={eventId}
@@ -73,6 +74,16 @@ class Report extends Component {
 			case "ticket-counts":
 				content = (
 					<TicketCounts
+						eventName={eventName}
+						organizationId={organizationId}
+						eventId={eventId}
+					/>
+				);
+				break;
+
+			case "audit":
+				content = (
+					<EventAudit
 						eventName={eventName}
 						organizationId={organizationId}
 						eventId={eventId}

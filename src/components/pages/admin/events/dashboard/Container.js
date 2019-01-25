@@ -148,7 +148,8 @@ class EventDashboardContainer extends Component {
 		const {
 			hasTransactionReports,
 			hasEventSummaryReports,
-			hasTicketCountReports
+			hasTicketCountReports,
+			hasEventAuditReports
 		} = user;
 		const items = [];
 
@@ -178,7 +179,7 @@ class EventDashboardContainer extends Component {
 						selected={isActiveReportMenu("transactions")}
 						onClick={this.handleReportsMenuClose.bind(this)}
 					>
-						Transaction details
+						Transaction detail report
 					</MenuItem>
 				</Link>
 			);
@@ -193,7 +194,22 @@ class EventDashboardContainer extends Component {
 					<MenuItem selected={isActiveReportMenu("ticket-counts")}
 							  onClick={this.handleReportsMenuClose.bind(this)}
 					>
-						Ticket counts
+						Ticket counts report
+					</MenuItem>
+				</Link>
+			);
+		}
+
+		if (hasEventAuditReports) {
+			items.push(
+				<Link
+					key="audit"
+					to={`/admin/events/${event.id}/dashboard/reports/audit`}
+				>
+					<MenuItem selected={isActiveReportMenu("audit")}
+							  onClick={this.handleReportsMenuClose.bind(this)}
+					>
+						Event audit report
 					</MenuItem>
 				</Link>
 			);
