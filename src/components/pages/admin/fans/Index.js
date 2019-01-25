@@ -103,6 +103,7 @@ class FanList extends Component {
 				const { data } = response.data;
 
 				if (!data ||  data.length === 0) {
+					this.setState({ isExporting: false });
 					return notifications.show({
 						message: "No fans to export."
 					});
@@ -280,7 +281,7 @@ class FanList extends Component {
 	}
 
 	render() {
-		const { users, isExporting } = this.state;
+		const { paging, isExporting } = this.state;
 		const { classes } = this.props;
 
 		return (
@@ -289,7 +290,7 @@ class FanList extends Component {
 				<div className={classes.header}>
 					<PageHeading
 						iconUrl="/icons/my-events-multi.svg"
-						subheading={users ? `${users.length} total fans` : null}
+						subheading={paging ? `${paging.total} total fans` : null}
 					>
 					Fans
 					</PageHeading>
