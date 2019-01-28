@@ -401,7 +401,7 @@ class ViewEvent extends Component {
 											{nl2br(additional_info)}
 										</Typography>
 										<Grid container direction="row" justify="flex-start" alignItems="flex-start">
-											{artists.map(({ artist }, index) => (
+											{artists.map(({ artist, importance }, index) => (
 												<Grid
 													item
 													xs={12}
@@ -410,7 +410,7 @@ class ViewEvent extends Component {
 													key={index}
 													className={classes.artistContainer}
 												>
-													<ArtistSummary headliner={index === 0} {...artist}/>
+													<ArtistSummary headliner={importance === 0} {...artist}/>
 												</Grid>
 											))}
 										</Grid>
