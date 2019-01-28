@@ -464,6 +464,12 @@ class EventTickets extends Component {
 	}
 
 	openDeleteDialog(index) {
+		const { ticketTypes } = eventUpdateStore;
+		const { id } = ticketTypes[index];
+		if (!id) {
+			this.deleteTicketType(index);
+			return null;
+		}
 		this.setState({
 			deleteIndex: index,
 			areYouSureDeleteTicketDialogOpen: true
@@ -472,7 +478,7 @@ class EventTickets extends Component {
 
 	deleteTicketType(index) {
 		eventUpdateStore.cancelTicketType(index).then(result => {
-			console.log(result);
+			// console.log(result);
 		});
 		this.onDialogClose();
 	}
@@ -486,7 +492,6 @@ class EventTickets extends Component {
 
 	renderAreYouSureDeleteDialog() {
 		const { areYouSureDeleteTicketDialogOpen, deleteIndex } = this.state;
-
 		const onClose = this.onDialogClose.bind(this);
 
 		return (

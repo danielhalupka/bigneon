@@ -427,17 +427,27 @@ class EventUpdate {
 		return new Promise((resolve) => {
 			const ticketTypes = this.ticketTypes;
 			const ticketType = ticketTypes[index];
-			Bigneon().events.ticketTypes.cancel({ event_id: this.id, ticket_type_id: ticketType.id }).then(result => {
-				deleteTicketType(index);
-				resolve({ result: result.data, error: false });
-			}).catch(error => {
-				console.error(error);
-				notifications.show({
-					message: "Update event failed.",
-					variant: "error"
+			if (ticketType.id) {
+				Bigneon().events.ticketTypes.cancel({
+					event_id: this.id,
+					ticket_type_id: ticketType.id
+				}).then(result => {
+					deleteTicketType(index);
+					resolve({ result: result.data, error: false });
+				}).catch(error => {
+					console.error(error);
+					notifications.show({
+						message: "Update event failed.",
+						variant: "error"
+					});
+					resolve({ result: false, error });
 				});
-				resolve({ result: false, error });
-			});
+			} else {
+				//It hasn't been saved yet
+				deleteTicketType(index);
+				resolve({ result: {}, error: false });
+			}
+
 		});
 	}
 
