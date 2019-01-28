@@ -30,7 +30,8 @@ const validateFields = event => {
 		topLineInfo,
 		videoUrl,
 		isExternal,
-		externalTicketsUrl
+		externalTicketsUrl,
+		eventType
 	} = event;
 
 	if (!name) {
@@ -49,6 +50,10 @@ const validateFields = event => {
 		if (topLineInfo.length > 100) {
 			errors.topLineInfo = "Top line info is limited to 100 characters.";
 		}
+	}
+
+	if (!eventType) {
+		errors.eventType = "Invalid Event Type";
 	}
 
 	//TODO validate all fields
@@ -77,7 +82,8 @@ const formatDataForSaving = (event, organizationId) => {
 		externalTicketsUrl,
 		override_status,
 		videoUrl,
-		endTime
+		endTime,
+		eventType = "Music"
 	} = event;
 
 	const eventDetails = {
@@ -89,7 +95,8 @@ const formatDataForSaving = (event, organizationId) => {
 		is_external: isExternal,
 		external_url: externalTicketsUrl,
 		override_status,
-		video_url: videoUrl
+		video_url: videoUrl,
+		event_type: eventType
 	};
 
 	if (
@@ -170,7 +177,8 @@ const formatDataForInputs = event => {
 		redeem_date,
 		event_end,
 		override_status = "",
-		status = "Draft"
+		status = "Draft",
+		event_type = "Music"
 	} = event;
 
 	const tomorrow = new Date();
@@ -222,7 +230,8 @@ const formatDataForInputs = event => {
 		promoImageUrl: promo_image_url,
 		isExternal: is_external,
 		externalTicketsUrl: is_external && external_url ? external_url : null,
-		status
+		status,
+		eventType: event_type
 	};
 
 	return eventDetails;
@@ -385,6 +394,32 @@ class Details extends Component {
 		);
 	}
 
+	renderEventTypes() {
+		const { errors = {}, validateFields } = this.props;
+		let { eventType } = eventUpdateStore.event;
+		eventType = eventType || "Music";
+
+		const eventTypes = [
+			{ value: "Music", label: "Music" },
+			{ value: "Conference", label: "Conference" }
+		];
+
+		return (
+			<SelectGroup
+				value={eventType}
+				items={eventTypes}
+				error={errors.eventType}
+				name={"event-types"}
+				label={"Event Type"}
+				onChange={e => {
+					const eventType = e.target.value;
+					this.changeDetails({ eventType });
+				}}
+				onBlur={validateFields}
+			/>
+		);
+	}
+
 	handleDoorTimeChange(e) {
 		const doorTimeHours = e.target.value;
 		this.changeDetails({ doorTimeHours });
@@ -402,7 +437,8 @@ class Details extends Component {
 			topLineInfo,
 			videoUrl,
 			showTopLineInfo,
-			doorTimeHours = "1"
+			doorTimeHours = "1",
+			eventType
 		} = eventUpdateStore.event;
 
 		return (
@@ -434,6 +470,16 @@ class Details extends Component {
 					lg={6}
 				>
 					{this.renderVenues()}
+				</Grid>
+
+				<Grid
+					style={{ paddingBottom: 0, marginBottom: 0 }}
+					item
+					xs={12}
+					sm={12}
+					lg={6}
+				>
+					{this.renderEventTypes()}
 				</Grid>
 
 				<Grid
