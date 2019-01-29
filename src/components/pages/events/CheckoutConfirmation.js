@@ -203,19 +203,32 @@ class CheckoutConfirmation extends Component {
 			});
 	}
 
-	onCheckout(stripeToken, onError) {
+	onCheckout(paymentMethod, provider, stripeToken, onError) {
+		let method = {
+			type: paymentMethod,
+			provider: provider
+		};
+
+		if (provider === "stripe") {
+			method = {
+				...method,
+				token: stripeToken.id,
+				save_payment_method: false,
+				set_default: false
+			};
+		}
+
 		Bigneon()
 			.cart.checkout({
 				amount: cart.total_in_cents, //TODO remove this amount, we shouldn't be specifying it on the frontend
-				method: {
-					type: "Card",
-					provider: "stripe",
-					token: stripeToken.id,
-					save_payment_method: false,
-					set_default: false
-				}
+				method: method
 			})
-			.then(() => {
+			.then(response => {
+				const { data } = response;
+				if (data.checkout_url) {
+					window.location = data.checkout_url;
+					return;
+				}
 				cart.refreshCart();
 				orders.refreshOrders();
 				tickets.refreshTickets();
@@ -360,12 +373,20 @@ class CheckoutConfirmation extends Component {
 
 				{user.isAuthenticated && cartSummary ? (
 					<div>
-						{cartSummary.orderTotalInCents > 0 ?
-							(<CheckoutForm onToken={this.onCheckout.bind(this)}/>)
-							: (
-								<Button variant="callToAction" style={{ width: "100%" }} onClick={this.onFreeCheckout.bind(this)}>Complete</Button>
-							)
-						}
+						{cartSummary.orderTotalInCents > 0 ? (
+							<CheckoutForm
+								onSubmit={this.onCheckout.bind(this)}
+								allowedPaymentMethods={cart.allowed_payment_methods}
+							/>
+						) : (
+							<Button
+								variant="callToAction"
+								style={{ width: "100%" }}
+								onClick={this.onFreeCheckout.bind(this)}
+							>
+								Complete
+							</Button>
+						)}
 						{formattedExpiryTime ? (
 							<Typography className={classes.cartExpiry} variant="body1">
 								Cart expires in {formattedExpiryTime}

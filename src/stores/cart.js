@@ -30,6 +30,9 @@ class Cart {
 	total_in_cents = 0;
 
 	@observable
+	allowed_payment_methods = [];
+
+	@observable
 	seconds_until_expiry = null;
 
 	@observable
@@ -98,10 +101,17 @@ class Cart {
 	}
 
 	replaceCartData(data, callback) {
-		const { id, items, total_in_cents, seconds_until_expiry } = data;
+		const {
+			id,
+			items,
+			total_in_cents,
+			seconds_until_expiry,
+			allowed_payment_methods
+		} = data;
 		this.id = id;
 		this.items = items;
 		this.total_in_cents = total_in_cents;
+		this.allowed_payment_methods = allowed_payment_methods;
 
 		if (seconds_until_expiry) {
 			this.seconds_until_expiry = seconds_until_expiry;

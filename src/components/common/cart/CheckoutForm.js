@@ -4,7 +4,13 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 
 import notification from "../../../stores/notifications";
-import { Grid, Typography } from "@material-ui/core";
+import {
+	Grid,
+	Typography,
+	RadioGroup,
+	FormControlLabel,
+	Radio
+} from "@material-ui/core";
 import Button from "../../elements/Button";
 import user from "../../../stores/user";
 import { fontFamilyDemiBold } from "../../styles/theme";
@@ -45,7 +51,8 @@ class CheckoutForm extends Component {
 		this.state = {
 			isSubmitting: false,
 			name: "",
-			statusMessage: null
+			statusMessage: null,
+			paymentMethod: null
 		};
 	}
 
@@ -57,48 +64,54 @@ class CheckoutForm extends Component {
 		);
 	}
 
+	onPaymentMethodChanged(event) {
+		this.setState({ paymentMethod: event.target.value });
+	}
+
 	async onSubmit(ev) {
-		const { name } = this.state;
+		const { name, paymentMethod } = this.state;
 
-		this.setState({ isSubmitting: true, statusMessage: "Authorizing..." });
+		let stripeToken = null;
+		if (paymentMethod === "Card|stripe") {
+			this.setState({ isSubmitting: true, statusMessage: "Authorizing..." });
+			const { error, token } = await this.props.stripe.createToken({ name });
 
-		const { error, token } = await this.props.stripe.createToken({ name });
+			if (error) {
+				const { message, type } = error;
 
-		if (error) {
-			const { message, type } = error;
+				console.error(error);
 
-			console.error(error);
+				if (this.props.mobile) {
+					// If an error is returned on a mobile app auth attempt, bypass the notification and send it back
+					this.props.onMobileError(message, type);
 
-			if (this.props.mobile) {
-				// If an error is returned on a mobile app auth attempt, bypass the notification and send it back
-				this.props.onMobileError(message, type);
+					this.setState({ isSubmitting: false, statusMessage: null });
+				} else {
+					notification.show({
+						message,
+						variant: type === "validation_error" ? "warning" : "error"
+					});
 
-				this.setState({ isSubmitting: false, statusMessage: null });
-			} else {
-				notification.show({
-					message,
-					variant: type === "validation_error" ? "warning" : "error"
-				});
-
-				this.setState({ isSubmitting: false, statusMessage: null });
+					this.setState({ isSubmitting: false, statusMessage: null });
+				}
+				return;
 			}
-		} else {
-			const { onToken } = this.props;
-			this.setState({ statusMessage: "Processing payment..." });
-			onToken(token, () =>
-				this.setState({ isSubmitting: false, statusMessage: null })
-			); //extra callback for if the charge fails
+			stripeToken = token;
 		}
+		const { onSubmit } = this.props;
+		this.setState({ statusMessage: "Processing payment..." });
+		const methodSplit = paymentMethod.split("|");
+		onSubmit(methodSplit[0], methodSplit[1], stripeToken, () =>
+			this.setState({ isSubmitting: false, statusMessage: null })
+		); //extra callback for if the charge fails
+		ev.preventDefault();
 	}
 
 	renderProcessingDialog() {
 		const { statusMessage } = this.state;
 
 		return (
-			<Dialog
-				open={!!statusMessage}
-				title={statusMessage || ""}
-			>
+			<Dialog open={!!statusMessage} title={statusMessage || ""}>
 				<div/>
 			</Dialog>
 		);
@@ -125,7 +138,7 @@ class CheckoutForm extends Component {
 
 	render() {
 		const { classes, theme } = this.props;
-		const { isSubmitting } = this.state;
+		const { isSubmitting, paymentMethod } = this.state;
 
 		const placeholderColor = theme.palette.text.hint;
 		const color = theme.palette.text.primary;
@@ -155,9 +168,29 @@ class CheckoutForm extends Component {
 				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={12}>
 					{this.header}
 					<br/>
-					<CardElement style={stripeStyle}/>
+					<RadioGroup
+						value={paymentMethod}
+						onChange={this.onPaymentMethodChanged.bind(this)}
+					>
+						{this.props.allowedPaymentMethods.map((method, index) => {
+							return (
+								<FormControlLabel
+									key={method.method + "|" + method.provider}
+									value={method.method + "|" + method.provider}
+									label={method.display_name}
+									control={<Radio/>}
+								/>
+							);
+						})}
+					</RadioGroup>
 				</Grid>
-
+				{paymentMethod === "Card|stripe" ? (
+					<Grid item xs={12} sm={12} lg={12}>
+						<CardElement style={stripeStyle}/>
+					</Grid>
+				) : (
+					<div/>
+				)}
 				<Grid item xs={12} sm={12} lg={12}>
 					<div className={classes.buttonsContainer}>
 						<Button
@@ -178,10 +211,11 @@ class CheckoutForm extends Component {
 }
 
 CheckoutForm.propTypes = {
-	onToken: PropTypes.func.isRequired,
+	onSubmit: PropTypes.func.isRequired,
 	onMobileError: PropTypes.func,
 	classes: PropTypes.object.isRequired,
-	mobile: PropTypes.bool
+	mobile: PropTypes.bool,
+	allowedPaymentMethods: PropTypes.array.isRequired
 };
 
 export default withStyles(styles, { withTheme: true })(
