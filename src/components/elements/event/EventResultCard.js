@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import Card from "../Card";
 import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
 import MaintainAspectRatio from "../MaintainAspectRatio";
+import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
 
 const styles = theme => ({
 	card: {
@@ -101,7 +102,7 @@ const EventResultCard = ({
 }) => {
 	const style = {};
 	if (promo_image_url) {
-		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${promo_image_url})`;
+		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${optimizedImageUrl(promo_image_url)})`;
 	}
 	venueTimezone = venueTimezone || "America/Los_Angeles";
 	const eventStartDateMoment = moment.utc(event_start);
