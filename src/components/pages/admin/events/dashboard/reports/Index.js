@@ -10,6 +10,7 @@ import TransactionsList from "../../../reports/transactions/Transactions";
 import { EventSummaryReport } from "../../../reports/eventSummary/EventSummary";
 import TicketCounts from "../../../reports/counts/TicketCounts";
 import EventAudit from "../../../reports/eventAudit/Audit";
+import EventSummaryAudit from "../../../reports/eventSummaryAudit/SummaryAudit";
 
 const styles = theme => ({
 	root: {}
@@ -84,6 +85,15 @@ class Report extends Component {
 			case "audit":
 				content = (
 					<EventAudit
+						eventName={eventName}
+						organizationId={organizationId}
+						eventId={eventId}
+					/>
+				);
+				break;
+			case "summary-audit":
+				content = (
+					<EventSummaryAudit
 						eventName={eventName}
 						organizationId={organizationId}
 						eventId={eventId}

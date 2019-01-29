@@ -37,7 +37,7 @@ const styles = theme => ({
 });
 
 const isActiveReportMenu = type =>
-	(window.location.pathname || "").endsWith(type);
+	(window.location.pathname || "").endsWith(`/${type}`);
 
 @observer
 class EventDashboardContainer extends Component {
@@ -149,7 +149,8 @@ class EventDashboardContainer extends Component {
 			hasTransactionReports,
 			hasEventSummaryReports,
 			hasTicketCountReports,
-			hasEventAuditReports
+			hasEventAuditReports,
+			hasEventSummaryAuditReports
 		} = user;
 		const items = [];
 
@@ -210,6 +211,21 @@ class EventDashboardContainer extends Component {
 							  onClick={this.handleReportsMenuClose.bind(this)}
 					>
 						Event audit report
+					</MenuItem>
+				</Link>
+			);
+		}
+
+		if (hasEventSummaryAuditReports) {
+			items.push(
+				<Link
+					key="summary-audit"
+					to={`/admin/events/${event.id}/dashboard/reports/summary-audit`}
+				>
+					<MenuItem selected={isActiveReportMenu("summary-audit")}
+							  onClick={this.handleReportsMenuClose.bind(this)}
+					>
+						Event summary audit report
 					</MenuItem>
 				</Link>
 			);

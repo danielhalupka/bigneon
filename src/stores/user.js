@@ -421,6 +421,15 @@ class User {
 
 		return false;
 	}
+
+	@computed
+	get hasEventSummaryAuditReports() {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
 }
 
 const user = new User();
