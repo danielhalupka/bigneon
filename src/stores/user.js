@@ -430,6 +430,33 @@ class User {
 
 		return false;
 	}
+
+	@computed
+	get hasOrgBoxOfficeSalesReport() {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@computed
+	get hasOrgReconciliationReport() {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@computed
+	get hasOrgWeeklyEventSettlementReport() {
+		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
+			return true;
+		}
+
+		return false;
+	}
 }
 
 const user = new User();

@@ -35,7 +35,7 @@ class Reports extends Component {
 		const { classes } = this.props;
 
 		const report = this.props.match.params.report;
-		const { hasTransactionReports, hasTicketCountReports } = user;
+		const { hasTransactionReports, hasTicketCountReports, hasOrgBoxOfficeSalesReport, hasOrgReconciliationReport, hasOrgWeeklyEventSettlementReport } = user;
 
 		return (
 			<div className={classes.menuContainer}>
@@ -61,30 +61,38 @@ class Reports extends Component {
 					</Typography>
 				) : null}
 
-				<Typography className={classes.menuText}>
-					<StyledLink
-						underlined={report === "box-office"}
-						to={`/admin/reports/box-office`}
-					>
+				{hasOrgBoxOfficeSalesReport ? (
+					<Typography className={classes.menuText}>
+						<StyledLink
+							underlined={report === "box-office"}
+							to={`/admin/reports/box-office`}
+						>
 						Box Office Sales
-					</StyledLink>
-				</Typography>
-				<Typography className={classes.menuText}>
-					<StyledLink
-						underlined={report === "reconciliation"}
-						to={`/admin/reports/reconciliation`}
-					>
+						</StyledLink>
+					</Typography>
+				) : null}
+
+				{hasOrgReconciliationReport ? (
+					<Typography className={classes.menuText}>
+						<StyledLink
+							underlined={report === "reconciliation"}
+							to={`/admin/reports/reconciliation`}
+						>
 						Reconciliation
-					</StyledLink>
-				</Typography>
-				<Typography className={classes.menuText}>
-					<StyledLink
-						underlined={report === "weekly-event-settlement"}
-						to={`/admin/reports/weekly-event-settlement`}
-					>
+						</StyledLink>
+					</Typography>
+				) : null }
+
+				{hasOrgWeeklyEventSettlementReport ? (
+					<Typography className={classes.menuText}>
+						<StyledLink
+							underlined={report === "weekly-event-settlement"}
+							to={`/admin/reports/weekly-event-settlement`}
+						>
 						Weekly Event Settlement
-					</StyledLink>
-				</Typography>
+						</StyledLink>
+					</Typography>
+				) : null}
 			</div>
 		);
 	}
@@ -98,7 +106,7 @@ class Reports extends Component {
 		}
 
 		const { hasTransactionReports, hasTicketCountReports } = user;
-
+		
 		//Add report components here as needed
 		switch (report) {
 			case undefined:
