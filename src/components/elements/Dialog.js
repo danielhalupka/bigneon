@@ -82,7 +82,7 @@ const CustomDialog = props => {
 					<div onClick={onClose} className={classes.closeDialogContainer}>
 						<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg"/>
 					</div>
-					<TopCardIcon iconUrl={iconUrl}/>
+					{iconUrl ? <TopCardIcon iconUrl={iconUrl}/> : null}
 					{title ? (
 						<Typography variant="headline" className={classes.title}>
 							{title}

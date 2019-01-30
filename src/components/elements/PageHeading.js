@@ -7,23 +7,40 @@ import { fontFamilyDemiBold, secondaryHex } from "../styles/theme";
 
 const styles = theme => {
 	return {
+		root: {
+			display: "flex",
+			[theme.breakpoints.down("xs")]: {
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "flex-start",
+				paddingTop: "10%"
+			}
+		},
 		mainContent: {
 			display: "flex",
 			marginBottom: theme.spacing.unit * 2,
-			alignItems: "flex-end",
-			height: 45
+			alignItems: "flex-start",
+			height: 45,
+			[theme.breakpoints.down("xs")]: {
+				height: 30
+			}
 		},
 		heading: {
 			color: theme.typography.headline.color,
 			textTransform: "capitalize",
 			fontFamily: fontFamilyDemiBold,
 			fontSize: theme.typography.fontSize * 2.5,
-			lineHeight: 0.5
+			[theme.breakpoints.down("xs")]: {
+				fontSize: theme.typography.fontSize * 1.6
+			}
 		},
 		longHeading: {
 			alignContent: "center",
 			lineHeight: "75%",
-			fontSize: theme.typography.fontSize * 1.57
+			fontSize: theme.typography.fontSize * 1.57,
+			[theme.breakpoints.down("xs")]: {
+				fontSize: theme.typography.fontSize * 1
+			}
 		},
 		subheading: {
 			color: secondaryHex,
@@ -57,7 +74,7 @@ const PageHeading = props => {
 	const headingIsLong = totalChars > 21; //Adjust this if needed
 
 	return (
-		<div style={style}>
+		<div style={style} className={classes.root}>
 			<div className={classes.mainContent}>
 				{iconUrl ? (
 					<img alt={children} src={iconUrl} className={classes.icon}/>

@@ -14,10 +14,7 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import EditIcon from "@material-ui/icons/Edit";
 import ViewIcon from "@material-ui/icons/Link";
-import GuestListIcon from "@material-ui/icons/People";
 import CancelIcon from "@material-ui/icons/Cancel";
-import CreateWidgetIcon from "@material-ui/icons/Code";
-import TicketHoldsIcon from "@material-ui/icons/List";
 import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
@@ -295,7 +292,7 @@ class EventsList extends Component {
 					}
 				/>
 
-				<Grid container spacing={16}>
+				<Grid container spacing={0} alignItems="center">
 					<Grid item xs={6} sm={6} lg={6}>
 						<PageHeading iconUrl="/icons/events-multi.svg">
 							Dashboard
@@ -318,6 +315,9 @@ class EventsList extends Component {
 						</div>
 					</Grid>
 
+				</Grid>
+
+				<Grid container spacing={16}>
 					<Grid item xs={12} sm={12} lg={12}>
 						<Card style={{ borderRadius: "6px 6px 0 0" }}>
 							<div className={classes.innerCard}>

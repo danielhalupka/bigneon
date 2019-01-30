@@ -8,7 +8,7 @@ import moment from "moment-timezone";
 import { Link } from "react-router-dom";
 
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
-import CheckBox from "../../../elements/form/CheckBox";
+import ColorTag from "../../../elements/ColorTag";
 import Card from "../../../elements/Card";
 import HorizontalBreakdownBar from "../../../elements/charts/HorizontalBreakdownBar";
 import TicketTypeSalesBarChart from "../../../elements/charts/TicketTypeSalesBarChart";
@@ -16,21 +16,8 @@ import DateFlag from "../../../elements/event/DateFlag";
 
 const styles = theme => {
 	return {
-		root: {},
-		simpleViewContent: {
-			flex: 1,
-			height: 250,
-			display: "flex"
-		},
-		expandedViewContent: {
-			paddingTop: theme.spacing.unit * 2,
-			paddingRight: theme.spacing.unit * 3,
-			paddingLeft: theme.spacing.unit * 3
-		},
-		mediaLink: {
-			flex: 1
-		},
 		media: {
+			minHeight: 250,
 			height: "100%",
 			width: "100%",
 			backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)",
@@ -39,58 +26,29 @@ const styles = theme => {
 			backgroundPosition: "center",
 			paddingLeft: theme.spacing.unit * 2
 		},
-		details: {
-			flex: 2,
-			padding: theme.spacing.unit * 3,
-			paddingBottom: 0,
+		eventDetailsContainer: {
+			paddingTop: theme.spacing.unit * 2,
+			// paddingBottom: theme.spacing.unit * 2,
+			paddingLeft: theme.spacing.unit * 2,
 			display: "flex",
 			flexDirection: "column",
 			justifyContent: "space-between"
 		},
-		row1: {
-			display: "flex",
-			alignItems: "flex-start",
-			justifyContent: "space-between"
-		},
-		row2: {
-			display: "flex",
-			justifyContent: "space-between"
-		},
-		row3: {
-			display: "flex"
-		},
-		expandIconRow: {
-			display: "flex",
-			justifyContent: "center",
-			cursor: "pointer",
-			paddingBottom: theme.spacing.unit * 2,
-			paddingTop: theme.spacing.unit * 2
-		},
-		expandIconRowPlaceholder: {
-			display: "flex",
-			justifyContent: "center",
-			paddingBottom: theme.spacing.unit * 2,
-			paddingTop: theme.spacing.unit * 2
-		},
 		eventName: {
-			color: theme.typography.headline.color,
 			textTransform: "capitalize",
-			fontFamily: fontFamilyDemiBold
+			fontFamily: fontFamilyDemiBold,
+			fontSize: theme.typography.fontSize * 1.6
 		},
 		venueName: {
-			color: theme.typography.headline.color,
 			textTransform: "uppercase",
 			fontFamily: fontFamilyDemiBold
 		},
-		statuses: {
-			display: "flex",
-			justifyContent: "flex-start",
-			flex: 2
+		eventDate: {
+			color: "#9DA3B4"
 		},
 		totalsContainer: {
-			flex: 3,
 			display: "flex",
-			justifyContent: "flex-end"
+			justifyContent: "flex-start"
 		},
 		totalsDivider: {
 			borderLeft: "1px solid",
@@ -105,10 +63,33 @@ const styles = theme => {
 		totalValue: {
 			fontSize: theme.typography.fontSize
 		},
-		cancelled: {
-			fontSize: theme.typography.fontSize * 2,
-			fontFamily: fontFamilyDemiBold,
-			color: secondaryHex
+		statusContainer: {
+			display: "flex"
+		},
+		bottomPadding: {
+			paddingBottom: theme.spacing.unit * 2
+		},
+		progressBarContainer: {
+			display: "flex",
+			paddingRight: theme.spacing.unit * 2
+		},
+		expandIconRow: {
+			display: "flex",
+			justifyContent: "center",
+			cursor: "pointer",
+			paddingBottom: theme.spacing.unit * 2,
+			paddingTop: theme.spacing.unit * 2
+		},
+		expandIconRowPlaceholder: {
+			display: "flex",
+			justifyContent: "center",
+			paddingBottom: theme.spacing.unit * 2,
+			paddingTop: theme.spacing.unit * 2
+		},
+		expandedViewContent: {
+			paddingTop: theme.spacing.unit * 2,
+			paddingRight: theme.spacing.unit * 3,
+			paddingLeft: theme.spacing.unit * 3
 		}
 	};
 };
@@ -157,81 +138,73 @@ const EventSummaryCard = props => {
 
 	return (
 		<Card variant="block">
-			<div className={classes.root}>
-				<div className={classes.simpleViewContent}>
-					<Link className={classes.mediaLink} to={`/admin/events/${id}/dashboard`}>
+			<Grid container spacing={0}>
+				<Grid item xs={12} sm={5} lg={4}>
+					<Link to={`/admin/events/${id}/dashboard`}>
 						<div className={classes.media} style={mediaStyle}>
 							{eventDate ? <DateFlag date={eventDate} size="medium"/> : null}
 						</div>
 					</Link>
+				</Grid>
 
-					<div className={classes.details}>
-						<div className={classes.row1}>
-							<div>
-								<Link to={`/admin/events/${id}/dashboard`}>
-									<Typography className={classes.eventName} variant="title">
-										{name}
-									</Typography>
-								</Link>
-								<Typography className={classes.venueName} variant="subheading">
-									{venueName}
-								</Typography>
-								<Typography variant="caption">
-									{displayEventStartDate}
-								</Typography>
-							</div>
-							<div>{menuButton}</div>
-						</div>
-						<div className={classes.row2}>
-							<div className={classes.statuses}>
-								{cancelled ? (
-									<Typography className={classes.cancelled}>
-										Cancelled
-									</Typography>
-								) : (
-									<Grid container spacing={0}>
-										<Grid item xs={12} sm={12} md={6} lg={6}>
-											<CheckBox style={{ cursor: "text" }} active={isPublished}>
-												Published
-											</CheckBox>
-										</Grid>
+				<Grid item xs={12} sm={7} lg={8} className={classes.eventDetailsContainer}>
+					<div className={classes.bottomPadding}>
+						<Link to={`/admin/events/${id}/dashboard`}>
+							<Typography className={classes.eventName}>
+								{name}
+							</Typography>
+						</Link>
+						<Typography className={classes.venueName}>
+							{venueName}
+						</Typography>
+						<Typography className={classes.eventDate}>
+							{displayEventStartDate}
+						</Typography>
+					</div>
 
-										<Grid item xs={12} sm={12} md={6} lg={6}>
-											<CheckBox style={{ cursor: "text" }} active={isOnSale || isExternal}>
-												On&nbsp;sale
-											</CheckBox>
-										</Grid>
-									</Grid>
-								)}
-							</div>
+					<Grid  container spacing={0} alignItems="center">
+						<Grid item xs={12} sm={12} md={5} lg={5} className={classes.bottomPadding}>
+							{cancelled ? (
+								<Typography className={classes.cancelled}>
+									Cancelled
+								</Typography>
+							) : (
+								<div className={classes.statusContainer}>
+									<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>Published</ColorTag>
+									<ColorTag variant={isOnSale || isExternal ? "green" : "disabled"}>On sale</ColorTag>
+								</div>
+							)}
+						</Grid>
+
+						<Grid item xs={12} sm={12} md={7} lg={7} className={classes.bottomPadding}>
 							{!isExternal ? (
 								<div className={classes.totalsContainer}>
 									<Total classes={classes} value={totalSold} color={"#707ced"}>
-											Sold
+										Sold
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
-											Open
+										Open
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
-											Held
+										Held
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={totalCapacity}>
-											Capacity
+										Capacity
 									</Total>
 
 									<div className={classes.totalsDivider}/>
 
 									<Total classes={classes} value={`$${(totalSalesInCents / 100).toFixed(2)}`}>
-											Sales
+										Sales
 									</Total>
 								</div>
 							) :
@@ -241,9 +214,12 @@ const EventSummaryCard = props => {
 									</div>
 								)
 							}
-						</div>
+						</Grid>
+						
+					</Grid>
+					<div>
 						{!isExternal ? (
-							<div className={classes.row3}>
+							<div className={classes.progressBarContainer}>
 								<HorizontalBreakdownBar
 									title="Ticket progress"
 									values={[
@@ -269,37 +245,39 @@ const EventSummaryCard = props => {
 							)
 						}
 					</div>
-				</div>
+				</Grid>
 
-				<Collapse in={isExpanded}>
-					<div className={classes.expandedViewContent}>
-						<Grid container spacing={32}>
-							{ticketTypes.map((ticketType, index) => (
-								<Grid key={index} item xs={12} sm={6} lg={4}>
-									<TicketTypeSalesBarChart
-										name={ticketType.name}
-										totalRevenueInCents={ticketType.sales_total_in_cents}
-										values={[
-											{
-												label: "Sold",
-												value: ticketType.sold_held + ticketType.sold_unreserved
-											},
-											{ label: "Open", value: ticketType.open },
-											{ label: "Held", value: ticketType.held }
-										]}
-									/>
-								</Grid>
-							))}
-						</Grid>
-						<div
-							className={classes.expandIconRow}
-							onClick={() => onExpandClick(null)}
-						>
-							<img src={"/icons/up-active.svg"}/>
+				<Grid item xs={12} sm={12} lg={12}>
+					<Collapse in={isExpanded}>
+						<div className={classes.expandedViewContent}>
+							<Grid container spacing={32}>
+								{ticketTypes.map((ticketType, index) => (
+									<Grid key={index} item xs={12} sm={12} md={6} lg={4}>
+										<TicketTypeSalesBarChart
+											name={ticketType.name}
+											totalRevenueInCents={ticketType.sales_total_in_cents}
+											values={[
+												{
+													label: "Sold",
+													value: ticketType.sold_held + ticketType.sold_unreserved
+												},
+												{ label: "Open", value: ticketType.open },
+												{ label: "Held", value: ticketType.held }
+											]}
+										/>
+									</Grid>
+								))}
+							</Grid>
+							<div
+								className={classes.expandIconRow}
+								onClick={() => onExpandClick(null)}
+							>
+								<img src={"/icons/up-active.svg"}/>
+							</div>
 						</div>
-					</div>
-				</Collapse>
-			</div>
+					</Collapse>
+				</Grid>
+			</Grid>
 		</Card>
 	);
 };

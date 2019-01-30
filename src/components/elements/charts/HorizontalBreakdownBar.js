@@ -6,8 +6,6 @@ import Typography from "@material-ui/core/Typography";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Tooltip from "../Tooltip";
 
-const height = 14;
-
 const styles = {
 	root: {
 		flex: 1
@@ -17,18 +15,13 @@ const styles = {
 	},
 	bar: {
 		flex: 1,
-		display: "flex"
+		display: "flex",
+		borderRadius: 10,
+		height: 14,
+		overflow: "auto"
 	},
 	section: {
-		height
-	},
-	leftSection: {
-		height,
-		borderRadius: "10px 0px 0px 10px"
-	},
-	rightSection: {
-		height,
-		borderRadius: "0px 10px 10px 0px"
+		height: "100%"
 	}
 };
 
@@ -42,17 +35,10 @@ const HorizontalBreakdownBar = props => {
 			<Typography className={classes.title}>{title}</Typography>
 			<div className={classes.bar}>
 				{values.map(({ label, value }, index) => {
-					let sectionClassName = "section";
-					if (index === 0) {
-						sectionClassName = "leftSection";
-					} else if (index === values.length - 1) {
-						sectionClassName = "rightSection";
-					}
-
 					return (
 						<Tooltip key={index} title={`${value}`} text={label}>
 							<div
-								className={classes[sectionClassName]}
+								className={classes.section}
 								style={{
 									flex: value,
 									backgroundColor: colors[index]
