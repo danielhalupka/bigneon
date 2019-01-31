@@ -27,14 +27,18 @@ const styles = theme => {
 			paddingLeft: theme.spacing.unit * 2
 		},
 		eventDetailsContainer: {
-			paddingTop: theme.spacing.unit * 2,
-			// paddingBottom: theme.spacing.unit * 2,
 			paddingLeft: theme.spacing.unit * 2,
 			display: "flex",
 			flexDirection: "column",
 			justifyContent: "space-between"
 		},
+		topRow: {
+			display: "flex",
+			justifyContent: "space-between",
+			paddingRight: theme.spacing.unit
+		},
 		eventName: {
+			paddingTop: theme.spacing.unit * 2,
 			textTransform: "capitalize",
 			fontFamily: fontFamilyDemiBold,
 			fontSize: theme.typography.fontSize * 1.6
@@ -148,20 +152,22 @@ const EventSummaryCard = props => {
 				</Grid>
 
 				<Grid item xs={12} sm={7} lg={8} className={classes.eventDetailsContainer}>
-					<div className={classes.bottomPadding}>
-						<Link to={`/admin/events/${id}/dashboard`}>
-							<Typography className={classes.eventName}>
-								{name}
+					<div className={classes.topRow}>
+						<div className={classes.bottomPadding}>
+							<Link to={`/admin/events/${id}/dashboard`}>
+								<Typography className={classes.eventName}>
+									{name}
+								</Typography>
+							</Link>
+							<Typography className={classes.venueName}>
+								{venueName}
 							</Typography>
-						</Link>
-						<Typography className={classes.venueName}>
-							{venueName}
-						</Typography>
-						<Typography className={classes.eventDate}>
-							{displayEventStartDate}
-						</Typography>
+							<Typography className={classes.eventDate}>
+								{displayEventStartDate}
+							</Typography>
+						</div>
+						<div>{menuButton}</div>
 					</div>
-
 					<Grid  container spacing={0} alignItems="center">
 						<Grid item xs={12} sm={12} md={5} lg={5} className={classes.bottomPadding}>
 							{cancelled ? (

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import Grow from "@material-ui/core/Grow";
 
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Card from "../Card";
@@ -82,15 +83,17 @@ const Bar = ({ classes, value, maxValue, index }) => {
 	const height = Math.round((value / maxValue) * chartHeight);
 	const topSpace = chartHeight - height - 1;
 	return (
-		<div
-			className={classes.bar}
-			style={{
-				position: "relative",
-				top: topSpace,
-				height,
-				backgroundColor: colors[index]
-			}}
-		/>
+		<Grow in={true} timeout={index * 500}>
+			<div
+				className={classes.bar}
+				style={{
+					position: "relative",
+					top: topSpace,
+					height,
+					backgroundColor: colors[index]
+				}}
+			/>
+		</Grow>
 	);
 };
 

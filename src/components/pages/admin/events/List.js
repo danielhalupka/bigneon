@@ -44,13 +44,9 @@ const styles = theme => ({
 		justifyContent: "flex-end",
 		alignContent: "center"
 	},
-	innerCard: {
-		padding: theme.spacing.unit * 2.5
-	},
-	headerContainer: {},
 	menuContainer: {
 		display: "flex",
-		padding: theme.spacing.unit
+		padding: theme.spacing.unit * 2.5
 	},
 	menuText: {
 		marginRight: theme.spacing.unit * 4
@@ -319,29 +315,25 @@ class EventsList extends Component {
 
 				<Grid container spacing={16}>
 					<Grid item xs={12} sm={12} lg={12}>
-						<Card style={{ borderRadius: "6px 6px 0 0" }}>
-							<div className={classes.innerCard}>
-								<div className={classes.headerContainer}>
-									<div className={classes.menuContainer}>
-										<Typography className={classes.menuText}>
-											<StyledLink
-												underlined={upcomingOrPast === "upcoming"}
-												to={`/admin/events/upcoming`}
-											>
+						<Card variant="block" style={{ borderRadius: "6px 6px 0 0" }}>
+							<div className={classes.menuContainer}>
+								<Typography className={classes.menuText}>
+									<StyledLink
+										underlined={upcomingOrPast === "upcoming"}
+										to={`/admin/events/upcoming`}
+									>
 												Upcoming
-											</StyledLink>
-										</Typography>
+									</StyledLink>
+								</Typography>
 
-										<Typography className={classes.menuText}>
-											<StyledLink
-												underlined={upcomingOrPast === "past"}
-												to={`/admin/events/past`}
-											>
+								<Typography className={classes.menuText}>
+									<StyledLink
+										underlined={upcomingOrPast === "past"}
+										to={`/admin/events/past`}
+									>
 												Past
-											</StyledLink>
-										</Typography>
-									</div>
-								</div>
+									</StyledLink>
+								</Typography>
 							</div>
 						</Card>
 					</Grid>

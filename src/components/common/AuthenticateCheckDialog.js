@@ -1,14 +1,15 @@
 import React from "react";
-import Dialog from "../elements/Dialog";
+import { Dialog, Typography } from "@material-ui/core";
 
 class AuthenticateCheckDialog extends React.Component {
 	render() {
 		return (
 			<Dialog
 				open={true}
-				title={"Loading..."}
 			>
-				<div/>
+				<div style={{ padding: 20 }}>
+					<Typography>Loading...</Typography>
+				</div>
 			</Dialog>
 		);
 	}

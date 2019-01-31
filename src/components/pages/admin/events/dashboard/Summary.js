@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
@@ -163,7 +162,7 @@ class Summary extends Component {
 
 			result.push({
 				x: Number(dayOfMonth),
-				y: dayStats[index].revenue_in_cents / 100,
+				y: dayStats[index].revenue_in_cents / 100,//  + Math.random() * 100,
 				tooltipTitle: `$${(dayStats[index].revenue_in_cents / 100).toFixed(2)}`,
 				tooltipText: `${dayStats[index].ticket_sales} Tickets`
 			});
@@ -213,7 +212,7 @@ class Summary extends Component {
 						value={event.sold_held + event.sold_unreserved}
 						iconName="ticket"
 						classes={classes}
-					/>{" "}
+					/>
 				</Grid>
 				<Grid
 					item

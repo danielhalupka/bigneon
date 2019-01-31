@@ -2,107 +2,130 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import Grow from "@material-ui/core/Grow";
+
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Tooltip from "../Tooltip";
+import getScreenWidth from "../../../helpers/getScreenWidth";
 
 const chartHeight = 200;
 
-const yLabelSpace = 60;
+const yLabelSpace = 20;
+const barWidth = 10;
 
-const styles = theme => ({
-	root: {
-		//borderStyle: "solid",
-		//borderWidth: 0.1,
-		flex: 1,
-		padding: theme.spacing.unit * 2,
-		height: chartHeight + 60
-	},
-	chartContainer: {
-		display: "flex",
-		flexDirection: "column"
-	},
-	yLabelAndBars: {
-		display: "flex"
-	},
-	chartFooter: {
-		// borderStyle: "solid",
-		// borderColor: "green",
-		display: "flex",
-		paddingTop: theme.spacing.unit * 2
-		// position: "relative",
-		// top: -chartHeight
-	},
-	xLabels: {
-		flex: 1,
-		marginLeft: yLabelSpace,
-		display: "flex",
-		justifyContent: "space-around"
-	},
-	yLabels: {
-		width: yLabelSpace,
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "space-between"
-	},
-	labelText: {
-		fontFamily: fontFamilyDemiBold,
-		color: "#9da3b4",
-		fontSize: theme.typography.fontSize * 0.85
-	},
-	chartBackground: {
-		flex: 1,
-		height: chartHeight,
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "space-between"
-	},
-	horizontalLine: {
-		borderTop: "1px dashed",
-		borderColor: "#9da3b4",
-		opacity: 0.2,
-		marginLeft: theme.spacing.unit * 2,
-		marginRight: theme.spacing.unit * 2
-	},
-	chartOverlay: {
-		position: "relative",
-		top: -chartHeight - 35
-	},
-	barsContainer: {
-		marginLeft: yLabelSpace,
-		display: "flex",
-		justifyContent: "space-around"
-	},
-	bar: {
-		width: 10,
-		borderRadius: 10,
-		cursor: "pointer"
-	}
-});
+const styles = theme => {
+	return ({
+		root: {
+			flex: 1,
+			padding: theme.spacing.unit * 2,
+			height: chartHeight + 60,
 
-const Bar = ({ classes, value, maxValue, tooltipTitle, tooltipText }) => {
+			[theme.breakpoints.down("sm")]: {
+				padding: 0
+			}
+		},
+		chartContainer: {
+			display: "flex",
+			flexDirection: "column"
+		},
+		yLabelAndBars: {
+			display: "flex"
+		},
+		chartFooter: {
+			display: "flex",
+			paddingTop: theme.spacing.unit * 2
+		},
+		xLabels: {
+			flex: 1,
+			marginLeft: yLabelSpace,
+			display: "flex",
+			justifyContent: "space-around"
+		},
+		yLabels: {
+			display: "flex",
+			flexDirection: "column",
+			justifyContent: "space-between"
+		},
+		yLabelText: {
+			fontFamily: fontFamilyDemiBold,
+			color: "#9da3b4",
+			fontSize: theme.typography.fontSize * 0.85
+		},
+		xLabelText: {
+			width: barWidth * 2,
+			textAlign: "center",
+			fontFamily: fontFamilyDemiBold,
+			color: "#9da3b4",
+			fontSize: theme.typography.fontSize * 0.85
+		},
+		chartBackground: {
+			flex: 1,
+			height: chartHeight,
+			display: "flex",
+			flexDirection: "column",
+			justifyContent: "space-between"
+		},
+		horizontalLine: {
+			borderTop: "1px dashed",
+			borderColor: "#9da3b4",
+			opacity: 0.2,
+			marginLeft: theme.spacing.unit * 2,
+			marginRight: theme.spacing.unit * 2
+		},
+		chartOverlay: {
+			position: "relative",
+			top: -chartHeight - 35
+		},
+		barsContainer: {
+			display: "flex",
+			justifyContent: "space-around",
+			marginLeft: yLabelSpace,
+			[theme.breakpoints.down("sm")]: {
+				//marginLeft: yLabelSpace
+			}
+		},
+		bar: {
+			width: barWidth,
+			borderRadius: 10,
+			cursor: "pointer",
+			backgroundImage: "linear-gradient(to bottom, #e53d96, #5491cc)"
+		}
+	});
+};
+
+const Bar = ({ classes, value, maxValue, tooltipTitle, tooltipText, index }) => {
 	const height = Math.round((value / maxValue) * chartHeight);
 	const topSpace = chartHeight - height - 1;
 
 	return (
 		<Tooltip title={tooltipTitle} text={tooltipText}>
-			<div
-				className={classes.bar}
-				style={{
-					position: "relative",
-					top: topSpace,
-					height: height,
-					backgroundImage: "linear-gradient(to bottom, #e53d96, #5491cc)"
-				}}
-			/>
+			<Grow in={true} timeout={index * 100}>
+				<div
+					className={classes.bar}
+					style={{
+						position: "relative",
+						top: topSpace,
+						height: height
+					}}
+				/>
+			</Grow>
 		</Tooltip>
 	);
 };
 
 const VerticalBarChart = props => {
-	const { classes, values } = props;
+	const { classes } = props;
 
 	let maxValue = 1;
 	const xLabels = [];
+
+	const xValueLength = props.values.length;
+	let values = [...props.values];
+
+	//If screen width is too small, only show last 10 values
+	if (xValueLength > 10 && getScreenWidth() < 600) {
+		values = values.splice(xValueLength - 10, xValueLength);
+	}
 
 	values.forEach(({ y, x }) => {
 		if (maxValue < y) {
@@ -131,7 +154,7 @@ const VerticalBarChart = props => {
 						{yLabels.map(label => (
 							<Typography
 								key={label}
-								className={classes.labelText}
+								className={classes.yLabelText}
 							>{`$${label}`}</Typography>
 						))}
 					</div>
@@ -145,7 +168,7 @@ const VerticalBarChart = props => {
 				<div className={classes.chartFooter}>
 					<div className={classes.xLabels}>
 						{xLabels.map(label => (
-							<Typography key={label} className={classes.labelText}>
+							<Typography key={label} className={classes.xLabelText}>
 								{label}
 							</Typography>
 						))}

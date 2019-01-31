@@ -12,8 +12,7 @@ const styles = theme => {
 			[theme.breakpoints.down("xs")]: {
 				display: "flex",
 				alignItems: "center",
-				justifyContent: "flex-start",
-				paddingTop: "10%"
+				justifyContent: "flex-start"
 			}
 		},
 		mainContent: {

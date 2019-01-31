@@ -11,6 +11,9 @@ import Card from "./Card";
 import { fontFamilyBold } from "../styles/theme";
 import TopCardIcon from "./TopCardIcon";
 import iosScrollBackgroundHack from "../../helpers/iosScrollBackgroundHack";
+import getScreenWidth from "../../helpers/getScreenWidth";
+
+const screenWidth = getScreenWidth();
 
 const styles = theme => ({
 	root: {
@@ -57,14 +60,6 @@ const DialogTransition = props => {
 
 const CustomDialog = props => {
 	const { children, onClose, iconUrl, title, classes, ...rest } = props;
-
-	const screenWidth = Math.max(
-		document.body.scrollWidth,
-		document.documentElement.scrollWidth,
-		document.body.offsetWidth,
-		document.documentElement.offsetWidth,
-		document.documentElement.clientWidth
-	);
 
 	//Mobile full screen dialog
 	if (screenWidth < 500) {

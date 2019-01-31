@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import MenuIcon from "@material-ui/icons/Menu";
 
-import { toolBarHeight } from "../../styles/theme";
+import { secondaryHex, toolBarHeight } from "../../styles/theme";
 import RightUserMenu from "./RightUserMenu";
 import SearchToolBarInput from "./SearchToolBarInput";
 import CartHeaderLink from "../../common/cart/CartHeaderLink";
@@ -38,6 +38,9 @@ const styles = theme => {
 		rightMenuOptions: {
 			alignItems: "center",
 			display: "flex"
+		},
+		menuIcon: {
+			color: secondaryHex
 		}
 	};
 };
@@ -57,7 +60,7 @@ const CustomAppBar = observer(props => {
 								onClick={handleDrawerToggle}
 								className={classes.navIconHide}
 							>
-								<MenuIcon color="action"/>
+								<MenuIcon className={classes.menuIcon}/>
 							</IconButton>
 						) : (
 							<span/>

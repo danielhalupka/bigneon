@@ -13,26 +13,38 @@ import Bigneon from "../../../../../helpers/bigneon";
 import PageHeading from "../../../../elements/PageHeading";
 import Card from "../../../../elements/Card";
 import Button from "../../../../elements/Button";
-import CheckBox from "../../../../elements/form/CheckBox";
 import StyledLink from "../../../../elements/StyledLink";
-import Divider from "../../../../common/Divider";
 import user from "../../../../../stores/user";
+import ColorTag from "../../../../elements/ColorTag";
+import VisitEventPage from "../../../../elements/VisitEventPage";
 
 const styles = theme => ({
 	rightHeaderOptions: {
 		display: "flex",
 		justifyContent: "flex-end",
-		alignContent: "center"
+		alignContent: "center",
+		alignItems: "center",
+		[theme.breakpoints.down("md")]: {
+			justifyContent: "space-between",
+			marginBottom: theme.spacing.unit * 2
+		}
 	},
 	innerCard: {
-		padding: theme.spacing.unit * 5
+		padding: theme.spacing.unit * 5,
+		[theme.breakpoints.down("md")]: {
+			padding: theme.spacing.unit * 2
+		}
 	},
-	headerContainer: { marginBottom: theme.spacing.unit * 4 },
 	menuContainer: {
+		padding: theme.spacing.unit * 2.5,
 		display: "flex"
 	},
 	menuText: {
 		marginRight: theme.spacing.unit * 4
+	},
+	tagsContainer: {
+		display: "flex",
+		justifyContent: "flex-start"
 	}
 });
 
@@ -273,25 +285,25 @@ class EventDashboardContainer extends Component {
 		return (
 			<div>
 				<Grid container>
-					<Grid item xs={12} sm={12} lg={6}>
+					<Grid item xs={12} sm={12} lg={8}>
 						<PageHeading iconUrl="/icons/events-multi.svg">
 							{event.name}
 						</PageHeading>
 					</Grid>
 					<Grid
 						item
-						xs={6}
-						sm={6}
-						lg={6}
+						xs={12}
+						sm={12}
+						lg={4}
 						className={classes.rightHeaderOptions}
 					>
-						<div>
-							<CheckBox style={{ cursor: "text" }} active={isPublished}>
-								Published
-							</CheckBox>
-							<CheckBox style={{ cursor: "text" }} active={isOnSale}>
-								On sale
-							</CheckBox>
+						<div className={classes.tagsContainer}>
+							<div>
+								<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>Published</ColorTag>
+							</div>
+							<div>
+								<ColorTag style={{ marginRight: 10 }} variant={isOnSale ? "green" : "disabled"}>On sale</ColorTag>
+							</div>
 						</div>
 						<Link to={`/admin/events/${event.id}/edit`}>
 							<Button variant="callToAction">Edit event</Button>
@@ -299,45 +311,46 @@ class EventDashboardContainer extends Component {
 					</Grid>
 				</Grid>
 
-				<Card>
-					<div className={classes.innerCard}>
-						<div className={classes.headerContainer}>
-							<div className={classes.menuContainer}>
-								<Typography className={classes.menuText}>
-									<StyledLink
-										underlined={subheading === "summary"}
-										to={`/admin/events/${event.id}/dashboard`}
-									>
-										Dashboard
-									</StyledLink>
-								</Typography>
-								{event.is_external ? null : (
-									<Typography className={classes.menuText}>
-										{this.renderToolsMenu()}
-										<StyledLink
-											underlined={subheading === "tools"}
-											onClick={this.handleToolsMenu.bind(this)}
-										>
-											Tools
-										</StyledLink>
-									</Typography>
-								)}
-								{event.is_external ? null : (
-									<Typography className={classes.menuText}>
-										{this.renderReportsMenu()}
-										<StyledLink
-											underlined={subheading === "reports"}
-											onClick={this.handleReportsMenu.bind(this)}
-										>
-											Reports
-										</StyledLink>
-									</Typography>
-								)}
-							</div>
-						</div>
-						<Divider style={{ marginBottom: 10 }}/>
+				<Card variant="block" style={{ borderRadius: "6px 6px 0 0", marginBottom: 10 }}>
+					<div className={classes.menuContainer}>
+						<Typography className={classes.menuText}>
+							<StyledLink
+								underlined={subheading === "summary"}
+								to={`/admin/events/${event.id}/dashboard`}
+							>
+									Dashboard
+							</StyledLink>
+						</Typography>
+						{event.is_external ? null : (
+							<Typography className={classes.menuText}>
+								{this.renderToolsMenu()}
+								<StyledLink
+									underlined={subheading === "tools"}
+									onClick={this.handleToolsMenu.bind(this)}
+								>
+										Tools
+								</StyledLink>
+							</Typography>
+						)}
+						{event.is_external ? null : (
+							<Typography className={classes.menuText}>
+								{this.renderReportsMenu()}
+								<StyledLink
+									underlined={subheading === "reports"}
+									onClick={this.handleReportsMenu.bind(this)}
+								>
+										Reports
+								</StyledLink>
+							</Typography>
+						)}
+					</div>
+				</Card>
 
+				<Card variant="block">
+					<div className={classes.innerCard}>
 						{children}
+
+						{event ? <VisitEventPage id={event.id} style={{ marginTop: 40, marginBottom: 20 }}/> : null}
 					</div>
 				</Card>
 			</div>
