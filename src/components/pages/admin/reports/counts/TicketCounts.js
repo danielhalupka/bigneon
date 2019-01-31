@@ -52,15 +52,18 @@ export const ticketCountData = (queryParams, onSuccess, onError) => {
 };
 
 export const ticketCountCSVRows = (ticketCounts) => {
-	const  csvRows = [];
-	let totalAllocation = 0;
-	let totalSoldOnlineCount = 0;
-	let totalBoxOfficeCount = 0;
-	let totalSoldCount = 0;
-	let totalCompsCount = 0;
-	let totalHoldsCount = 0;
-	let totalOpenCount = 0;
-	let totalGross = 0;
+	const csvRows = [];
+	const {
+		totalAllocation = 0,
+		totalSoldOnlineCount = 0,
+		totalBoxOfficeCount = 0,
+		totalSoldCount = 0,
+		totalCompsCount = 0,
+		totalHoldsCount = 0,
+		totalOpenCount = 0,
+		totalReservedCount,
+		totalGross = 0
+	} = ticketCounts.totals || {};
 
 	csvRows.push([
 		"Ticket",
@@ -70,47 +73,36 @@ export const ticketCountCSVRows = (ticketCounts) => {
 		"Total sold",
 		"Comps",
 		"Holds",
+		"In Cart",
 		"Open",
 		"Gross"
 	]);
 
-	Object.keys(ticketCounts).forEach((ticketId, index) => {
-		const { sales, totals } = ticketCounts[ticketId];
-
+	ticketCounts.rows.forEach((row, index) => {
 		const {
 			ticket_name,
 			allocation_count,
-			available_count,
-			comp_count,
-			hold_count
-		} = totals;
-
-		const {
-			box_office_actual_count = 0,
-			online_actual_count = 0,
-			online_sales_in_cents = 0,
-			box_office_sales_in_cents = 0
-		} = sales || {};
-
-		totalAllocation += allocation_count;
-		totalSoldOnlineCount += online_actual_count;
-		totalBoxOfficeCount += box_office_actual_count;
-		totalSoldCount += online_actual_count + box_office_actual_count;
-		totalCompsCount += comp_count;
-		totalHoldsCount += hold_count;
-		totalOpenCount += available_count;
-		totalGross += online_sales_in_cents + box_office_sales_in_cents;
+			unallocated_count,
+			box_office_sale_count,
+			online_sale_count,
+			comp_sale_count,
+			reserved_count,
+			total_held_tickets,
+			total_sold_in_cents,
+			total_sold_count
+		} = row;
 
 		csvRows.push([
 			ticket_name,
 			allocation_count,
-			online_actual_count,
-			box_office_actual_count,
-			online_actual_count + box_office_actual_count,
-			comp_count,
-			hold_count,
-			available_count,
-			dollars(online_sales_in_cents + box_office_sales_in_cents)
+			online_sale_count,
+			box_office_sale_count,
+			total_sold_count,
+			comp_sale_count,
+			total_held_tickets,
+			reserved_count,
+			unallocated_count,
+			dollars(total_sold_in_cents)
 		]);
 	});
 
@@ -122,6 +114,7 @@ export const ticketCountCSVRows = (ticketCounts) => {
 		totalSoldCount,
 		totalCompsCount,
 		totalHoldsCount,
+		totalReservedCount,
 		totalOpenCount,
 		dollars(totalGross)
 	]);
@@ -148,9 +141,9 @@ class TicketCounts extends Component {
 				message: "No data to export."
 			});
 		}
-		const ticketCounts = eventCounts[eventId];
-		
-		const eventName = ticketCounts[Object.keys(ticketCounts)[0]].totals.event_name;
+		const reportData = this.reportDataByEvent();
+		const ticketCounts = this.buildRowAndTotalData(reportData[eventId]);
+		const eventName = (ticketCounts.rows.length && ticketCounts.rows[0].event_name) || "Unknown Event";
 
 		let csvRows = [];
 
@@ -180,7 +173,7 @@ class TicketCounts extends Component {
 		ticketCountData(
 			queryParams,
 			(data) => {
-				const eventCounts = data[organizationId] || {};
+				const eventCounts = data.filter(row => row.organization_id === organizationId);
 				this.setState({ eventCounts });
 			}, error => {
 				console.error(error);
@@ -191,6 +184,87 @@ class TicketCounts extends Component {
 					defaultMessage: "Loading event ticket count report failed."
 				});
 			});
+	}
+
+	reportDataByEvent() {
+		const { eventCounts } = this.state;
+		const result = {};
+		eventCounts.forEach(row => {
+			if (!result.hasOwnProperty(row.event_id)) {
+				result[row.event_id] = [];
+			}
+			result[row.event_id].push(row);
+		});
+		return result;
+	}
+
+	buildRowAndTotalData(eventData) {
+		const result = {
+			rows: [],
+			totals: {
+				totalAllocation: 0,
+				totalSoldOnlineCount: 0,
+				totalBoxOfficeCount: 0,
+				totalSoldCount: 0,
+				totalCompsCount: 0,
+				totalHoldsCount: 0,
+				totalOpenCount: 0,
+				totalReservedCount: 0,
+				totalGross: 0
+			}
+		};
+
+		eventData.forEach(dataRow => {
+			const {
+				ticket_type_id,
+				ticket_name,
+				allocation_count,
+				unallocated_count,
+				reserved_count,
+				comp_available_count,
+				hold_available_count,
+				box_office_sale_count,
+				online_sale_count,
+				comp_sale_count,
+				online_sales_in_cents = 0,
+				box_office_sales_in_cents = 0
+			} = dataRow;
+			const total_held_tickets = comp_available_count + hold_available_count;
+			const total_sold_count = online_sale_count + box_office_sale_count;
+			const total_sold_in_cents = online_sales_in_cents + box_office_sales_in_cents;
+
+			result.totals.totalAllocation += allocation_count;
+			result.totals.totalSoldOnlineCount += online_sale_count;
+			result.totals.totalBoxOfficeCount += box_office_sale_count;
+			result.totals.totalSoldCount += total_sold_count;
+			result.totals.totalCompsCount += comp_sale_count;
+			result.totals.totalHoldsCount += total_held_tickets;
+			result.totals.totalOpenCount += unallocated_count;
+			result.totals.totalReservedCount += reserved_count;
+			result.totals.totalGross += total_sold_in_cents;
+
+			const row = {
+				ticket_type_id,
+				ticket_name,
+				allocation_count,
+				reserved_count,
+				unallocated_count,
+				comp_available_count,
+				hold_available_count,
+				box_office_sale_count,
+				online_sale_count,
+				comp_sale_count,
+				online_sales_in_cents,
+				box_office_sales_in_cents,
+				total_held_tickets,
+				total_sold_count,
+				total_sold_in_cents
+			};
+
+			result.rows.push(row);
+		});
+
+		return result;
 	}
 
 	renderList() {
@@ -206,7 +280,9 @@ class TicketCounts extends Component {
 			return <Typography>Loading...</Typography>;
 		}
 
-		const reportEventIds = Object.keys(eventCounts);
+		const reportData = this.reportDataByEvent();
+
+		const reportEventIds = Object.keys(reportData);
 
 		if (reportEventIds.length === 0) {
 			return <Typography>No events found.</Typography>;
@@ -214,7 +290,7 @@ class TicketCounts extends Component {
 
 		//If we're showing a report for a specific event, only display the one result
 		if (eventId) {
-			const ticketCounts = eventCounts[eventId];
+			const ticketCounts = this.buildRowAndTotalData(reportData[eventId]);
 			return (
 				<div>
 					<EventTicketCountTable ticketCounts={ticketCounts}/>
@@ -224,10 +300,10 @@ class TicketCounts extends Component {
 
 		return (
 			<div>
-				{Object.keys(eventCounts).map((reportEventId, index) => {
-					const ticketCounts = eventCounts[reportEventId];
-					const ticketIds = Object.keys(ticketCounts);
-					const eventName = ticketCounts[ticketIds[0]].totals.event_name;
+				{Object.keys(reportData).map((reportEventId, index) => {
+					const ticketCounts = this.buildRowAndTotalData(reportData[reportEventId]);
+
+					const eventName = (ticketCounts.rows.length && ticketCounts.rows[0].event_name) || "No Data";
 
 					return (
 						<div key={reportEventId} className={classes.multiEventContainer}>

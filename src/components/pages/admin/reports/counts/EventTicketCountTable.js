@@ -14,16 +14,17 @@ const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 const EventTicketCountTable = props => {
 	const { ticketCounts, classes } = props;
 
-	const ticketIds = Object.keys(ticketCounts);
-
-	let totalAllocation = 0;
-	let totalSoldOnlineCount = 0;
-	let totalBoxOfficeCount = 0;
-	let totalSoldCount = 0;
-	let totalCompsCount = 0;
-	let totalHoldsCount = 0;
-	let totalOpenCount = 0;
-	let totalGross = 0;
+	const {
+		totalAllocation = 0,
+		totalSoldOnlineCount = 0,
+		totalBoxOfficeCount = 0,
+		totalSoldCount = 0,
+		totalCompsCount = 0,
+		totalHoldsCount = 0,
+		totalOpenCount = 0,
+		totalReservedCount,
+		totalGross = 0
+	} = ticketCounts.totals || {};
 
 	return (
 		<div className={classes.root}>
@@ -36,50 +37,41 @@ const EventTicketCountTable = props => {
 					"Total sold",
 					"Comps",
 					"Holds",
+					"In Cart",
 					"Open",
 					"Gross"
 				]}
 			</TicketCountRow>
 
-			{ticketIds.map((ticketId, index) => {
-				const { sales, totals } = ticketCounts[ticketId];
+			{ticketCounts.rows.map((row, index) => {
+				const ticketId = row.ticket_type_id;
 
 				const {
 					ticket_name,
 					allocation_count,
-					available_count,
-					comp_count,
-					hold_count
-				} = totals;
-
-				const {
-					box_office_actual_count = 0,
-					online_actual_count = 0,
-					online_sales_in_cents = 0,
-					box_office_sales_in_cents = 0
-				} = sales || {};
-
-				totalAllocation += allocation_count;
-				totalSoldOnlineCount += online_actual_count;
-				totalBoxOfficeCount += box_office_actual_count;
-				totalSoldCount += online_actual_count + box_office_actual_count;
-				totalCompsCount += comp_count;
-				totalHoldsCount += hold_count;
-				totalOpenCount += available_count;
-				totalGross += online_sales_in_cents + box_office_sales_in_cents;
+					unallocated_count,
+					box_office_sale_count,
+					online_sale_count,
+					comp_sale_count,
+					reserved_count,
+					total_held_tickets,
+					total_sold_in_cents,
+					total_sold_count
+				} = row;
 
 				return (
 					<TicketCountRow key={ticketId} gray={!(index % 2)}>
 						{[
 							ticket_name,
 							allocation_count,
-							online_actual_count,
-							box_office_actual_count,
-							online_actual_count + box_office_actual_count,
-							comp_count,
-							hold_count,
-							available_count,
-							dollars(online_sales_in_cents + box_office_sales_in_cents)
+							online_sale_count,
+							box_office_sale_count,
+							total_sold_count,
+							comp_sale_count,
+							total_held_tickets,
+							reserved_count,
+							unallocated_count,
+							dollars(total_sold_in_cents)
 						]}
 					</TicketCountRow>
 				);
@@ -94,6 +86,7 @@ const EventTicketCountTable = props => {
 					totalSoldCount,
 					totalCompsCount,
 					totalHoldsCount,
+					totalReservedCount,
 					totalOpenCount,
 					dollars(totalGross)
 				]}
