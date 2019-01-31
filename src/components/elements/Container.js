@@ -50,7 +50,10 @@ const styles = theme => ({
 		paddingBottom: theme.spacing.unit * 10
 	},
 	paddedContent: {
-		padding: theme.spacing.unit * 3
+		padding: theme.spacing.unit * 3,
+		[theme.breakpoints.down("xs")]: {
+			padding: theme.spacing.unit
+		}
 	},
 	boxOfficePaddedContainer: {
 		padding: theme.spacing.unit * 3,

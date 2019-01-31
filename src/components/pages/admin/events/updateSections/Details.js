@@ -441,6 +441,18 @@ class Details extends Component {
 			eventType
 		} = eventUpdateStore.event;
 
+		//If a user hasn't adjusted the event start time yet
+		//display the event end time to what will be assumed on saving the event
+		let displayEndTime = null;
+		if (endTime) {
+			displayEndTime = endTime;
+		} else if (showTime) {
+			displayEndTime = moment(showTime).add(
+				DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
+				"hours"
+			);
+		}
+
 		return (
 			<Grid container spacing={8}>
 				<Grid
@@ -565,7 +577,7 @@ class Details extends Component {
 					<DateTimePickerGroup
 						type="date"
 						error={errors.endTime}
-						value={endTime}
+						value={displayEndTime}
 						name="endTime"
 						label="Event end date"
 						onChange={newEndDate => {
@@ -600,7 +612,7 @@ class Details extends Component {
 					<DateTimePickerGroup
 						type="time"
 						error={errors.endTime}
-						value={endTime}
+						value={displayEndTime}
 						name="endTime"
 						label="Event end time"
 						onChange={newEndTime => {
@@ -608,8 +620,11 @@ class Details extends Component {
 
 							if (endTime) {
 								updatedEndTime = moment(endTime);
-							} else if (eventDate) {
-								updatedEndTime = moment(eventDate);
+							} else if (showTime) {
+								updatedEndTime = moment(showTime).add(
+									DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
+									"hours"
+								);
 							}
 
 							updatedEndTime.set({
