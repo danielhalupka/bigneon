@@ -144,13 +144,6 @@ class Order extends Component {
 					}
 				}
 			);
-
-			listItems.push({
-				id: "service-fees",
-				quantity: 1,
-				unit_price_in_cents: fee_total_in_cents,
-				description: "Service fees"
-			});
 		}
 
 		const orderNumber = id.slice(-8); //TODO eventually this will also come in the API
