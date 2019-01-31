@@ -13,6 +13,8 @@ import AutoCompleteGroup from "../../../../../common/form/AutoCompleteGroup";
 import Button from "../../../../../elements/Button";
 import RadioButton from "../../../../../elements/form/RadioButton";
 import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
+import eventUpdateStore from "../../../../../../stores/eventUpdate";
+import SelectGroup from "../../../../../common/form/SelectGroup";
 
 const formatHoldForSaving = values => {
 	const {
@@ -66,21 +68,35 @@ const createHoldForInput = (values = {}) => {
 			? (discount_in_cents / 100).toFixed(2)
 			: "",
 		endAt: null,
-		maxPerOrder: max_per_order,
+		maxPerOrder: max_per_order || "",
 		...values
 	};
-};
-
-const styles = {
-	radioGroup: {
-		display: "flex"
-	}
 };
 
 export const HOLD_TYPES = {
 	EDIT: "edit",
 	NEW: "new",
 	SPLIT: "split"
+};
+
+const releaseTimeOptions = [
+	{
+		value: "never",
+		label: "Never",
+		getReleaseDate: (event) => {
+			//TODO use event date to return release_date
+		} },
+	{ value: "event_start_time", label: "Event start time" },
+	{ value: "event_door_time", label: "Event Door time" },
+	{ value: "day_of_event", label: "Day of the Event (8am)" },
+	{ value: "one_day_before", label: "1 Day Before the Event (8am)" },
+	{ value: "custom", label: "Custom" }
+];
+
+const styles = {
+	radioGroup: {
+		display: "flex"
+	}
 };
 
 class HoldDialog extends React.Component {
@@ -176,7 +192,7 @@ class HoldDialog extends React.Component {
 
 		if (holdType === HOLD_TYPES.SPLIT) {
 			return (
-				<Grid item xs={12}>
+				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
 						error={errors.maxPerOrder}
 						value={hold.maxPerOrder}
@@ -240,7 +256,7 @@ class HoldDialog extends React.Component {
 
 			return (
 				<Grid container spacing={16}>
-					<Grid item xs={6}>
+					<Grid item xs={12} md={6} lg={6}>
 						<InputGroup
 							value={totalHeld}
 							name="total_held"
@@ -251,7 +267,7 @@ class HoldDialog extends React.Component {
 							onChange={e => {}}
 						/>
 					</Grid>
-					<Grid item xs={6}>
+					<Grid item xs={12} md={6} lg={6}>
 						<InputGroup
 							error={errors.quantity}
 							value={hold.quantity}
@@ -271,7 +287,7 @@ class HoldDialog extends React.Component {
 
 		return (
 			<Grid container spacing={16}>
-				<Grid item xs={6}>
+				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
 						error={errors.quantity}
 						value={hold.quantity}
@@ -286,7 +302,7 @@ class HoldDialog extends React.Component {
 						// onBlur={this.validateFields.bind(this)}
 					/>
 				</Grid>
-				<Grid item xs={6}>
+				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
 						error={errors.maxPerOrder}
 						value={hold.maxPerOrder}
@@ -303,6 +319,49 @@ class HoldDialog extends React.Component {
 			</Grid>
 		);
 	}
+
+	renderReleaseTimeOptions() {
+		const { hold } = this.state;
+
+		return (
+			<SelectGroup
+				value={hold.releaseTimeKey || "never"}
+				items={releaseTimeOptions}
+				name={"releaseTimeOptions"}
+				label={"Release time"}
+				onChange={e => {
+					const releaseTimeKey = e.target.value;
+				}}
+			/>
+		);
+	}
+
+	// renderCustomReleaseDates() {
+	// 	const { hold, errors } = this.state;
+	//
+	// 	if (!hold.releaseTimeKey || hold.releaseTimeKey !== "custom") {
+	// 		return null;
+	// 	}
+	// 	//TODO only display if custom date
+	//
+	// 	return (
+	// 		<Grid container spacing={16}>
+	// 			<DateTimePickerGroup
+	// 				type={"date"}
+	// 				error={errors.endAt}
+	// 				value={hold.endAt}
+	// 				name="endAt"
+	// 				placeholder="Never"
+	// 				label="Auto Release Date"
+	// 				onChange={endAt => {
+	// 					hold.endAt = endAt;
+	// 					this.setState({ hold });
+	// 				}}
+	// 				// onBlur={this.validateFields.bind(this)}
+	// 			/>
+	// 		</Grid>
+	// 	);
+	// }
 
 	render() {
 		const {
@@ -377,7 +436,7 @@ class HoldDialog extends React.Component {
 
 					{this.renderTicketTypesOrMaxPerOrder()}
 					<Grid container spacing={16}>
-						<Grid item xs={12}>
+						<Grid item xs={12} md={12} lg={12}>
 							<div className={classes.radioGroup}>
 								<RadioButton
 									active={hold.hold_type === "Discount"}
@@ -410,7 +469,7 @@ class HoldDialog extends React.Component {
 								</RadioButton>
 							</div>
 						</Grid>
-						<Grid item xs={6}>
+						<Grid item xs={12} md={6} lg={6}>
 							<InputGroup
 								InputProps={{
 									startAdornment: (
@@ -431,20 +490,9 @@ class HoldDialog extends React.Component {
 								// onBlur={this.validateFields.bind(this)}
 							/>
 						</Grid>
-						<Grid item xs={6}>
-							<DateTimePickerGroup
-								error={errors.endAt}
-								value={hold.endAt}
-								name="endAt"
-								placeholder="Never"
-								label="Auto Release Date"
-								onChange={endAt => {
-									hold.endAt = endAt;
-									this.setState({ hold });
-								}}
-								// onBlur={this.validateFields.bind(this)}
-							/>
-						</Grid>
+						{/*<Grid item xs={12} md={6} lg={6}>*/}
+						{/*{this.renderReleaseTimeOptions()}*/}
+						{/*</Grid>*/}
 					</Grid>
 					{this.renderQuantities()}
 

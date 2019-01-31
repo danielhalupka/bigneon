@@ -279,8 +279,8 @@ class EventDashboardContainer extends Component {
 			return <Typography>Loading...</Typography>;
 		}
 
-		const isPublished = moment(event.publish_date) < moment();
-		const isOnSale = moment(event.on_sale) < moment();
+		const isPublished = moment.utc(event.publish_date) < moment.utc();
+		const isOnSale = isPublished && moment.utc(event.on_sale) < moment.utc();
 
 		return (
 			<div>
@@ -299,10 +299,10 @@ class EventDashboardContainer extends Component {
 					>
 						<div className={classes.tagsContainer}>
 							<div>
-								<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>Published</ColorTag>
+								<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
 							</div>
 							<div>
-								<ColorTag style={{ marginRight: 10 }} variant={isOnSale ? "green" : "disabled"}>On sale</ColorTag>
+								<ColorTag style={{ marginRight: 10 }} variant={isOnSale ? "green" : "disabled"}>{isOnSale ? "On sale" : "Off sale"}</ColorTag>
 							</div>
 						</div>
 						<Link to={`/admin/events/${event.id}/edit`}>

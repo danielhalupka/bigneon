@@ -176,8 +176,8 @@ const EventSummaryCard = props => {
 								</Typography>
 							) : (
 								<div className={classes.statusContainer}>
-									<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>Published</ColorTag>
-									<ColorTag variant={isOnSale || isExternal ? "green" : "disabled"}>On sale</ColorTag>
+									<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
+									<ColorTag variant={isOnSale || isExternal ? "green" : "disabled"}>{isOnSale ? "On sale" : isExternal ? "External" : "Off sale"}</ColorTag>
 								</div>
 							)}
 						</Grid>
