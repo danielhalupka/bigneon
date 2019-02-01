@@ -137,8 +137,9 @@ class CheckoutForm extends Component {
 	}
 
 	render() {
-		const { classes, theme } = this.props;
-		const { isSubmitting, paymentMethod } = this.state;
+		const { classes, theme, allowedPaymentMethods } = this.props;
+		const { isSubmitting } = this.state;
+		let { paymentMethod } = this.state;
 
 		const placeholderColor = theme.palette.text.hint;
 		const color = theme.palette.text.primary;
@@ -161,6 +162,11 @@ class CheckoutForm extends Component {
 				}
 			}
 		};
+
+		if (allowedPaymentMethods.length === 1) {
+			const { method, provider } = allowedPaymentMethods[0];
+			paymentMethod = `${method}|${provider}`;
+		}
 
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
