@@ -66,7 +66,7 @@ class TicketSales extends Component {
 	async onAddItemsToCart(items) {
 		return new Promise(function(resolve, reject) {
 			Bigneon()
-				.cart.replace({ items })
+				.cart.replace({ items, box_office_pricing: true })
 				.then(response => {
 					const { data } = response;
 					resolve({ result: data });
