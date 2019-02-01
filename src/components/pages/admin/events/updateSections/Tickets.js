@@ -259,7 +259,6 @@ const validateFields = ticketTypes => {
 	const errors = {};
 
 	ticketTypes.forEach((ticket, index) => {
-
 		const {
 			id,
 			eventId,
@@ -267,9 +266,14 @@ const validateFields = ticketTypes => {
 			saleEndTimeOption, endTime,
 			capacity,
 			increment, pricing,
-			priceForDisplay
+			priceForDisplay,
+			status
 		} = ticket;
 
+		if (status === "Cancelled") {
+			return;
+		}
+		
 		let {
 			startDate,
 			endDate
