@@ -13,15 +13,14 @@ import AutoCompleteGroup from "../../../../../common/form/AutoCompleteGroup";
 import Button from "../../../../../elements/Button";
 import RadioButton from "../../../../../elements/form/RadioButton";
 import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
-import eventUpdateStore from "../../../../../../stores/eventUpdate";
 import SelectGroup from "../../../../../common/form/SelectGroup";
+import notifications from "../../../../../../stores/notifications";
 
 const formatHoldForSaving = values => {
 	const {
 		quantity,
 		discount_in_cents,
 		discountInDollars,
-		endAt,
 		maxPerOrder,
 		event_id,
 		hold_type,
@@ -30,6 +29,7 @@ const formatHoldForSaving = values => {
 		ticket_type_id,
 		name,
 		parent_hold_id,
+		end_at,
 		...rest
 	} = values;
 
@@ -40,9 +40,7 @@ const formatHoldForSaving = values => {
 		discount_in_cents: discountInDollars
 			? Number(discountInDollars) * 100
 			: discount_in_cents,
-		end_at: endAt
-			? moment.utc(endAt).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			: undefined,
+		end_at,
 		max_per_order: Number(maxPerOrder),
 		event_id,
 		redemption_code,
@@ -55,7 +53,7 @@ const formatHoldForSaving = values => {
 };
 
 const createHoldForInput = (values = {}) => {
-	const { discount_in_cents, max_per_order } = values;
+	const { discount_in_cents, max_per_order, end_at } = values;
 	return {
 		id: "",
 		event_id: "",
@@ -67,8 +65,9 @@ const createHoldForInput = (values = {}) => {
 		discountInDollars: discount_in_cents
 			? (discount_in_cents / 100).toFixed(2)
 			: "",
-		endAt: null,
 		maxPerOrder: max_per_order || "",
+		endAtTimeKey: end_at ? "custom" : "never", //TODO get the correct value based on the current event's dates
+		endAt: end_at ? moment.utc(end_at, moment.HTML5_FMT.DATETIME_LOCAL_MS).local() : null,
 		...values
 	};
 };
@@ -79,18 +78,85 @@ export const HOLD_TYPES = {
 	SPLIT: "split"
 };
 
-const releaseTimeOptions = [
+const endAtTimeOptions = [
 	{
 		value: "never",
 		label: "Never",
-		getReleaseDate: (event) => {
-			//TODO use event date to return release_date
-		} },
-	{ value: "event_start_time", label: "Event start time" },
-	{ value: "event_door_time", label: "Event Door time" },
-	{ value: "day_of_event", label: "Day of the Event (8am)" },
-	{ value: "one_day_before", label: "1 Day Before the Event (8am)" },
-	{ value: "custom", label: "Custom" }
+		endAtDateString: (event, endAt) => {
+			return null;
+		}
+	},
+	{
+		value: "event_start_time",
+		label: "Event start time",
+		endAtDateString: ({ event_start }, endAt) => {
+			return event_start;
+		}
+	},
+	{
+		value: "event_door_time",
+		label: "Event Door time",
+		endAtDateString: ({ door_time }, endAt) => {
+			return door_time;
+		}
+	},
+	{
+		value: "day_of_event",
+		label: "Day of the Event (8am)",
+		endAtDateString: ({ event_start }, endAt) => {
+			if (!event_start) {
+				return null;
+			}
+
+			const eventDate = moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local();
+
+			eventDate.set({
+				hour: 8,
+				minute: 0,
+				second: 0
+			});
+
+			return moment
+				.utc(eventDate)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+		}
+	},
+	{
+		value: "one_day_before",
+		label: "1 Day Before the Event (8am)",
+		endAtDateString: ({ event_start }, endAt) => {
+			if (!event_start) {
+				return null;
+			}
+
+			const eventDate = moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local();
+
+			eventDate
+				.subtract(1, "d")
+				.set({
+					hour: 8,
+					minute: 0,
+					second: 0
+				});
+
+			return moment
+				.utc(eventDate)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+		}
+	},
+	{
+		value: "custom",
+		label: "Custom",
+		endAtDateString: (event, endAt) => {
+			if (!endAt) {
+				return null;
+			}
+			
+			return moment
+				.utc(endAt)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+		}
+	}
 ];
 
 const styles = {
@@ -139,7 +205,7 @@ class HoldDialog extends React.Component {
 			this.setState({
 				hold: createHoldForInput({
 					event_id: eventId,
-					endAt: moment().add(1, "year")
+					endAt: null//moment().add(1, "year")
 				})
 			});
 		}
@@ -147,7 +213,7 @@ class HoldDialog extends React.Component {
 
 	onSubmit() {
 		const { hold } = this.state;
-		const { holdType, onSuccess } = this.props;
+		const { holdType, onSuccess, eventId } = this.props;
 
 		this.setState({ isSubmitting: true });
 		let storeFunction;
@@ -163,27 +229,46 @@ class HoldDialog extends React.Component {
 				break;
 		}
 
-		const formattedHold = formatHoldForSaving(hold);
-
-		storeFunction(formattedHold)
+		//Get the calculated end_date using the event dates
+		const { endAtTimeKey, endAt } = hold;
+		const endAtOption = endAtTimeOptions.find(option => option.value === endAtTimeKey);
+		Bigneon()
+			.events.read({ id: eventId })
 			.then(response => {
-				const { id } = response.data;
-				this.setState({ isSubmitting: false });
-				const message = `Successfully ${hold.id ? "updated" : "created"} hold`;
-				notification.show({
-					message,
-					variant: "success"
-				});
-				onSuccess(id);
+				const event = response.data;
+				const end_at = endAtOption.endAtDateString(event, endAt);
+				console.log(end_at);
+
+				const formattedHold = formatHoldForSaving({ ...hold, end_at });
+
+				storeFunction(formattedHold)
+					.then(response => {
+						const { id } = response.data;
+						this.setState({ isSubmitting: false });
+						const message = `Successfully ${hold.id ? "updated" : "created"} hold`;
+						notification.show({
+							message,
+							variant: "success"
+						});
+						onSuccess(id);
+					})
+					.catch(error => {
+						this.setState({ isSubmitting: false });
+						console.error(error);
+						notification.showFromErrorResponse({
+							error,
+							defaultMessage: `${hold.id ? "Update" : "Create"} hold failed.`
+						});
+					});
 			})
 			.catch(error => {
-				this.setState({ isSubmitting: false });
 				console.error(error);
-				notification.showFromErrorResponse({
-					error,
-					defaultMessage: `${hold.id ? "Update" : "Create"} hold failed.`
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event details failed.",
+					error
 				});
 			});
+
 	}
 
 	renderTicketTypesOrMaxPerOrder() {
@@ -320,48 +405,90 @@ class HoldDialog extends React.Component {
 		);
 	}
 
-	renderReleaseTimeOptions() {
+	renderEndAtTimeOptions() {
 		const { hold } = this.state;
 
 		return (
 			<SelectGroup
-				value={hold.releaseTimeKey || "never"}
-				items={releaseTimeOptions}
-				name={"releaseTimeOptions"}
+				value={hold.endAtTimeKey || "never"}
+				items={endAtTimeOptions}
+				name={"endAtTimeOptions"}
 				label={"Release time"}
 				onChange={e => {
-					const releaseTimeKey = e.target.value;
+					hold.endAtTimeKey = e.target.value;
+					this.setState({ hold });
 				}}
 			/>
 		);
 	}
 
-	// renderCustomReleaseDates() {
-	// 	const { hold, errors } = this.state;
-	//
-	// 	if (!hold.releaseTimeKey || hold.releaseTimeKey !== "custom") {
-	// 		return null;
-	// 	}
-	// 	//TODO only display if custom date
-	//
-	// 	return (
-	// 		<Grid container spacing={16}>
-	// 			<DateTimePickerGroup
-	// 				type={"date"}
-	// 				error={errors.endAt}
-	// 				value={hold.endAt}
-	// 				name="endAt"
-	// 				placeholder="Never"
-	// 				label="Auto Release Date"
-	// 				onChange={endAt => {
-	// 					hold.endAt = endAt;
-	// 					this.setState({ hold });
-	// 				}}
-	// 				// onBlur={this.validateFields.bind(this)}
-	// 			/>
-	// 		</Grid>
-	// 	);
-	// }
+	renderCustomEndAtDates() {
+		const { hold, errors } = this.state;
+
+		if (!hold.endAtTimeKey || hold.endAtTimeKey !== "custom") {
+			return null;
+		}
+		
+		const { endAt } = hold;
+
+		return (
+			<Grid container spacing={16}>
+				<Grid item xs={12} md={6} lg={6}>
+					<DateTimePickerGroup
+						type={"date"}
+						error={errors.endAt}
+						value={hold.endAt}
+						name="endAtDate"
+						label="Auto release date"
+						onChange={newEndAtDate => {
+							if (endAt) {
+								//Take the time from current date
+								newEndAtDate.set({
+									hour: endAt.get("hour"),
+									minute: endAt.get("minute"),
+									second: endAt.get("second")
+								});
+							} else {
+								newEndAtDate.set({
+									hour: 12,
+									minute: 0,
+									second: 0
+								});
+							}
+
+							hold.endAt = newEndAtDate;
+
+							this.setState({ hold });
+						}}
+					/>
+				</Grid>
+				<Grid item xs={12} md={6} lg={6}>
+					<DateTimePickerGroup
+						type={"time"}
+						error={errors.endAt}
+						value={hold.endAt}
+						name="endAtTime"
+						label="Auto release time"
+						onChange={newEndAtTime => {
+							if (endAt) {
+								endAt.set({
+									hour: newEndAtTime.get("hour"),
+									minute: newEndAtTime.get("minute"),
+									second: newEndAtTime.get("second")
+								});
+
+								hold.endAt = endAt;
+							} else {
+								hold.endAt = newEndAtTime;
+							}
+
+							this.setState({ hold });
+						}}
+					/>
+				</Grid>
+			</Grid>
+		);
+	}
 
 	render() {
 		const {
@@ -490,10 +617,12 @@ class HoldDialog extends React.Component {
 								// onBlur={this.validateFields.bind(this)}
 							/>
 						</Grid>
-						{/*<Grid item xs={12} md={6} lg={6}>*/}
-						{/*{this.renderReleaseTimeOptions()}*/}
-						{/*</Grid>*/}
+						<Grid item xs={12} md={6} lg={6}>
+							{this.renderEndAtTimeOptions()}
+						</Grid>
 					</Grid>
+					{this.renderCustomEndAtDates()}
+
 					{this.renderQuantities()}
 
 					<div style={{ display: "flex" }}>
@@ -527,7 +656,7 @@ HoldDialog.propTypes = {
 	classes: PropTypes.object.isRequired,
 	holdType: PropTypes.string,
 	holdId: PropTypes.string,
-	eventId: PropTypes.string,
+	eventId: PropTypes.string.isRequired,
 	ticketTypes: PropTypes.array,
 	onClose: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired

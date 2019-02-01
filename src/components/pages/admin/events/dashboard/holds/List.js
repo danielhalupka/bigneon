@@ -9,6 +9,7 @@ import StyledLink from "../../../../../elements/StyledLink";
 import HoldRow from "./HoldRow";
 import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
 import Container from "../Container";
+import Dialog from "../../../../../elements/Dialog";
 
 const styles = theme => ({
 	root: {}
@@ -25,7 +26,8 @@ class TicketHoldList extends Component {
 			activeHoldId: null,
 			showHoldDialog: null,
 			ticketTypes: [],
-			holds: []
+			holds: [],
+			deleteId: null
 		};
 	}
 
@@ -124,7 +126,7 @@ class TicketHoldList extends Component {
 				}
 
 				if (action === "Delete") {
-					return this.deleteHold(id);
+					return this.setState({ deleteId: id });
 				}
 			};
 
@@ -221,6 +223,37 @@ class TicketHoldList extends Component {
 		);
 	}
 
+	renderDeleteDialog() {
+		const { deleteId } = this.state;
+
+		const onClose = () => this.setState({ deleteId: null });
+
+		return (
+			<Dialog
+				title={"Delete hold?"}
+				open={!!deleteId}
+				onClose={onClose}
+			>
+				<div>
+					<Typography>Are you sure you want to delete this hold?</Typography>
+
+					<br/><br/>
+					<div style={{ display: "flex" }}>
+						<Button style={{ flex: 1, marginRight: 5 }} onClick={onClose}>Cancel</Button>
+						<Button style={{ flex: 1, marginLeft: 5 }}
+							onClick={() => {
+								this.deleteHold(deleteId);
+								onClose();
+							}}
+						>
+					Delete
+						</Button>
+					</div>
+				</div>
+			</Dialog>
+		);
+	}
+
 	render() {
 		const { showHoldDialog } = this.state;
 		const { classes } = this.props;
@@ -228,6 +261,7 @@ class TicketHoldList extends Component {
 		return (
 			<Container eventId={this.eventId} subheading={"tools"}>
 				{showHoldDialog && this.renderDialog()}
+				{this.renderDeleteDialog()}
 				<div style={{ display: "flex" }}>
 					<Typography variant="title">Manage Ticket Holds</Typography>
 					<span style={{ flex: 1 }}/>
