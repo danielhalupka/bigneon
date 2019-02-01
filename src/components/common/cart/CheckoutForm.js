@@ -52,7 +52,8 @@ class CheckoutForm extends Component {
 			isSubmitting: false,
 			name: "",
 			statusMessage: null,
-			paymentMethod: null
+			paymentMethod: null,
+			allowedPaymentMethods: []
 		};
 	}
 
@@ -62,6 +63,19 @@ class CheckoutForm extends Component {
 				name: `${firstName} ${lastName}`
 			})
 		);
+	}
+
+	componentWillReceiveProps(nextProps, nextContext) {
+		// You don't have to do this check first, but it can help prevent an unneeded render
+		if (nextProps.allowedPaymentMethods !== this.props.allowedPaymentMethods) {
+			const { paymentMethod } = this.state;
+			const { allowedPaymentMethods } = nextProps;
+			if (allowedPaymentMethods.length === 1 && paymentMethod === null) {
+				const { method, provider } = allowedPaymentMethods[0];
+				const tmpPaymentMethod = `${method}|${provider}`;
+				this.onPaymentMethodChanged({ target: { value: tmpPaymentMethod } });
+			}
+		}
 	}
 
 	onPaymentMethodChanged(event) {
@@ -138,8 +152,7 @@ class CheckoutForm extends Component {
 
 	render() {
 		const { classes, theme, allowedPaymentMethods } = this.props;
-		const { isSubmitting } = this.state;
-		let { paymentMethod } = this.state;
+		const { isSubmitting, paymentMethod } = this.state;
 
 		const placeholderColor = theme.palette.text.hint;
 		const color = theme.palette.text.primary;
@@ -163,11 +176,6 @@ class CheckoutForm extends Component {
 			}
 		};
 
-		if (allowedPaymentMethods.length === 1) {
-			const { method, provider } = allowedPaymentMethods[0];
-			paymentMethod = `${method}|${provider}`;
-		}
-
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				{this.renderProcessingDialog()}
@@ -178,7 +186,7 @@ class CheckoutForm extends Component {
 						value={paymentMethod}
 						onChange={this.onPaymentMethodChanged.bind(this)}
 					>
-						{this.props.allowedPaymentMethods.map((method, index) => {
+						{allowedPaymentMethods.map((method, index) => {
 							return (
 								<FormControlLabel
 									key={method.method + "|" + method.provider}
