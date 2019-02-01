@@ -107,6 +107,39 @@ class Order extends Component {
 		}
 	}
 
+	renderStatus() {
+		const { classes } = this.props;
+		const { order } = this.state;
+		const { paid_at, status } = order;
+
+		if (!order) {
+			return null;
+		}
+
+		if (paid_at) {
+			return (
+				<Typography className={classes.purchasedOn}>
+					Purchased on:{" "}
+					<span className={classes.date}>
+						{moment
+							.utc(paid_at, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+							.format("ddd MM/DD/YY, h:mm A z")}
+					</span>
+				</Typography>
+			);
+		}
+
+		//Options are: Paid, Draft, PendingPayment, Cancelled
+		return (
+			<Typography className={classes.purchasedOn}>
+				Status:{" "}
+				<span className={classes.date}>
+					{status === "PendingPayment" ? "Pending payment" : status}
+				</span>
+			</Typography>
+		);
+	}
+
 	render() {
 		const { classes } = this.props;
 		const { order } = this.state;
@@ -115,7 +148,7 @@ class Order extends Component {
 			return <Typography>Loading...</Typography>; //TODO add a loader
 		}
 
-		const { id, date, total_in_cents, items } = order;
+		const { id, paid_at, status, total_in_cents, items } = order;
 
 		//We can only get the event name from fields in the items array. Append a list if there's more than one.
 		let eventName = "";
@@ -161,14 +194,7 @@ class Order extends Component {
 								<Typography className={classes.orderNumber}>
 									Order #{orderNumber}
 								</Typography>
-								<Typography className={classes.purchasedOn}>
-									Purchased on:{" "}
-									<span className={classes.date}>
-										{moment
-											.utc(date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-											.format("ddd MM/DD/YY, h:mm A z")}
-									</span>
-								</Typography>
+								{this.renderStatus()}
 							</div>
 							<img src="/images/bn-logo.png" className={classes.logo}/>
 						</div>
