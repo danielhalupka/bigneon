@@ -8,7 +8,7 @@ import { fontFamilyDemiBold } from "../../../../styles/theme";
 import notifications from "../../../../../stores/notifications";
 import { EventSalesTable, EVENT_SALES_HEADINGS } from "../eventSummary/EventSalesTable";
 import { eventSalesCSVRows, eventSummaryData } from "../eventSummary/EventSummary";
-import { ticketCountCSVRows, ticketCountData } from "../counts/TicketCounts";
+import { ticketCountCSVRows, ticketCountData, reportDataByEvent, buildRowAndTotalData } from "../counts/TicketCounts";
 import EventTicketCountTable from "../counts/EventTicketCountTable";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 
@@ -67,7 +67,7 @@ class Audit extends Component {
 		ticketCountData(
 			countQueryParams,
 			(data) => {
-				const eventCounts = data[organizationId] || {};
+				const eventCounts = data.filter(row => row.organization_id === organizationId) || [];
 				this.setState({ eventCounts });
 
 			}, error => {
@@ -87,7 +87,7 @@ class Audit extends Component {
 			salesTotals,
 			eventCounts
 		} = this.state;
-		const { eventId }  = this.props;
+		const { eventId } = this.props;
 
 		if (!eventSales) {
 			return notifications.show({
@@ -112,15 +112,15 @@ class Audit extends Component {
 
 		csvRows.push(["All event sales"]);
 
-		const eventSalesRows  = eventSalesCSVRows(eventSales, salesTotals);
+		const eventSalesRows = eventSalesCSVRows(eventSales, salesTotals);
 		csvRows = [...csvRows, ...eventSalesRows];
 
 		csvRows.push([""]);
 		csvRows.push([""]);
 
 		csvRows.push(["Ticket counts"]);
-
-		const ticketCounts = eventCounts[eventId];
+		const eventCountsByEvent = reportDataByEvent(eventCounts);
+		const ticketCounts = buildRowAndTotalData(eventCountsByEvent[eventId]);
 		const ticketCountRows = ticketCountCSVRows(ticketCounts);
 		csvRows = [...csvRows, ...ticketCountRows];
 
@@ -156,13 +156,14 @@ class Audit extends Component {
 
 	renderTicketCounts() {
 		const { eventCounts } = this.state;
-		const { eventId, classes }  = this.props;
+		const { eventId, classes } = this.props;
 
 		if (!eventCounts) {
 			return <Typography>No counts...</Typography>;
 		}
 
-		const ticketCounts = eventCounts[eventId];
+		const eventCountsByEvent = reportDataByEvent(eventCounts);
+		const ticketCounts = buildRowAndTotalData(eventCountsByEvent[eventId] || []);
 		return (
 			<div>
 				<Typography className={classes.subHeading}>Ticket counts</Typography>
