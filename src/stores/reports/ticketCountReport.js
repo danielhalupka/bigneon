@@ -37,7 +37,7 @@ const combineTotals = (counts, sales) => {
 	counts.forEach(row => {
 		const {
 			allocation_count,
-			unallocated_count,
+			available_for_purchase_count,
 			reserved_count,
 			comp_available_count,
 			hold_available_count
@@ -46,7 +46,7 @@ const combineTotals = (counts, sales) => {
 		const total_held_tickets = comp_available_count + hold_available_count;
 		totals.totalAllocation += allocation_count;
 		totals.totalHoldsCount += total_held_tickets;
-		totals.totalOpenCount += unallocated_count;
+		totals.totalOpenCount += available_for_purchase_count;
 		totals.totalReservedCount += reserved_count;
 	});
 
