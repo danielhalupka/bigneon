@@ -301,8 +301,7 @@ class TicketCounts extends Component {
 			<div>
 				{Object.keys(reportData).map((reportEventId, index) => {
 					const ticketCounts = buildRowAndTotalData(reportData[reportEventId]);
-
-					const eventName = (ticketCounts.rows.length && ticketCounts.rows[0].event_name) || "No Data";
+					const eventName = (reportData[reportEventId] && reportData[reportEventId][0].event_name) || "No Data";
 
 					return (
 						<div key={reportEventId} className={classes.multiEventContainer}>

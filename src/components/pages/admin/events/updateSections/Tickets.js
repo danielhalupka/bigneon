@@ -273,7 +273,7 @@ const validateFields = ticketTypes => {
 		if (status === "Cancelled") {
 			return;
 		}
-		
+
 		let {
 			startDate,
 			endDate
