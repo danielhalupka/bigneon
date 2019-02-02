@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
-
 import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
 import notifications from "../../../../../stores/notifications";
 import { EventSalesTable, EVENT_SALES_HEADINGS } from "../eventSummary/EventSalesTable";
 import { eventSalesCSVRows, eventSummaryData } from "../eventSummary/EventSummary";
-import { ticketCountCSVRows, ticketCountData, reportDataByEvent, buildRowAndTotalData } from "../counts/TicketCounts";
 import EventTicketCountTable from "../counts/EventTicketCountTable";
 import downloadCSV from "../../../../../helpers/downloadCSV";
-
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
+import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
+import { observer } from "mobx-react";
 
 const styles = theme => ({
 	root: {},
@@ -22,6 +20,7 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class Audit extends Component {
 	constructor(props) {
 		super(props);
@@ -64,31 +63,17 @@ class Audit extends Component {
 			});
 
 		//Refresh ticket counts
-		ticketCountData(
-			countQueryParams,
-			(data) => {
-				const eventCounts = data.filter(row => row.organization_id === organizationId) || [];
-				this.setState({ eventCounts });
-
-			}, error => {
-				console.error(error);
-				this.setState({ eventCounts: false });
-
-				notifications.showFromErrorResponse({
-					error,
-					defaultMessage: "Loading event ticket count report failed."
-				});
-			});
+		ticketCountReport.fetchCountAndSalesData(countQueryParams);
 	}
 
 	exportCSV() {
 		const {
 			eventSales,
-			salesTotals,
-			eventCounts
+			salesTotals
 		} = this.state;
 		const { eventId } = this.props;
 
+		const { countsAndSalesByEventId } = ticketCountReport;
 		if (!eventSales) {
 			return notifications.show({
 				message: "No rows to export.",
@@ -118,10 +103,8 @@ class Audit extends Component {
 		csvRows.push([""]);
 		csvRows.push([""]);
 
-		csvRows.push(["Ticket counts"]);
-		const eventCountsByEvent = reportDataByEvent(eventCounts);
-		const ticketCounts = buildRowAndTotalData(eventCountsByEvent[eventId]);
-		const ticketCountRows = ticketCountCSVRows(ticketCounts);
+		const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[eventId]);
+		const ticketCountRows = ticketCountReport.csv(ticketCounts);
 		csvRows = [...csvRows, ...ticketCountRows];
 
 		downloadCSV(csvRows, "event-audit-report");
@@ -155,15 +138,13 @@ class Audit extends Component {
 	}
 
 	renderTicketCounts() {
-		const { eventCounts } = this.state;
 		const { eventId, classes } = this.props;
 
-		if (!eventCounts) {
+		const { countsAndSalesByEventId } = ticketCountReport;
+		if (!countsAndSalesByEventId) {
 			return <Typography>No counts...</Typography>;
 		}
-
-		const eventCountsByEvent = reportDataByEvent(eventCounts);
-		const ticketCounts = buildRowAndTotalData(eventCountsByEvent[eventId] || []);
+		const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[eventId] || {});
 		return (
 			<div>
 				<Typography className={classes.subHeading}>Ticket counts</Typography>

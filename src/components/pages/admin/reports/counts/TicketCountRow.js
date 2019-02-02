@@ -24,6 +24,10 @@ const styles = theme => {
 			borderTopLeftRadius: 8,
 			borderTopRightRadius: 8
 		},
+		subHeading: {
+			backgroundColor: "#f5f7fa",
+			fontWeight: "bold"
+		},
 		headingText: {
 			fontSize: theme.typography.fontSize * 0.8,
 			color: "#FFFFFF"
@@ -47,7 +51,7 @@ const styles = theme => {
 };
 
 const TicketCountRow = props => {
-	const { heading, gray, children, onClick, classes, total, ...rest } = props;
+	const { heading, subHeading, gray, children, onClick, classes, total, ...rest } = props;
 
 	const columnStyles = [
 		{ flex: 3, textAlign: "left" },
@@ -72,6 +76,7 @@ const TicketCountRow = props => {
 				noWrap
 				className={classNames({
 					[classes.headingText]: heading,
+					[classes.subHeading]: subHeading,
 					[classes.text]: !heading,
 					[classes.totalText]: total
 				})}
@@ -90,7 +95,8 @@ const TicketCountRow = props => {
 				[classes.gray]: gray,
 				[classes.pointer]: !!onClick,
 				[classes.total]: total,
-				[classes.heading]: heading
+				[classes.heading]: heading,
+				[classes.subHeading]: subHeading
 			})}
 			onClick={onClick}
 			{...rest}
@@ -106,6 +112,7 @@ TicketCountRow.propTypes = {
 	gray: PropTypes.bool,
 	total: PropTypes.bool,
 	heading: PropTypes.bool,
+	subHeading: PropTypes.bool,
 	onClick: PropTypes.func,
 	onMouseEnter: PropTypes.func,
 	onMouseLeave: PropTypes.func
