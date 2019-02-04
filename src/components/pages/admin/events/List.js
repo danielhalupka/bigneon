@@ -147,8 +147,8 @@ class EventsList extends Component {
 	}
 
 	renderEvents() {
-		const { events, expandedCardId } = this.state;
-		const { classes } = this.props;
+		const { events, expandedCardId, upcomingOrPast } = this.state;
+		const eventEnded = upcomingOrPast === "past";
 
 		const { optionsAnchorEl } = this.state;
 
@@ -175,6 +175,7 @@ class EventsList extends Component {
 					},
 					{
 						text: "Edit event",
+						disabled: eventEnded,
 						onClick: () =>
 							this.props.history.push(
 								`/admin/events/${this.eventMenuSelected}/edit`
@@ -187,14 +188,6 @@ class EventsList extends Component {
 							this.props.history.push(`/events/${this.eventMenuSelected}`),
 						MenuOptionIcon: ViewIcon
 					},
-					// {
-					// 	text: "Guest list",
-					// 	onClick: () =>
-					// 		this.props.history.push(
-					// 			`/admin/events/${this.eventMenuSelected}/guests`
-					// 		),
-					// 	MenuOptionIcon: GuestListIcon
-					// },
 					{
 						text: "Cancel event",
 						onClick: () =>
@@ -220,7 +213,7 @@ class EventsList extends Component {
 							open={Boolean(optionsAnchorEl)}
 							onClose={this.handleOptionsClose}
 						>
-							{eventOptions.map(({ text, onClick, MenuOptionIcon }) => {
+							{eventOptions.map(({ text, onClick, MenuOptionIcon, disabled }) => {
 								return (
 									<MenuItem
 										key={text}
@@ -228,6 +221,7 @@ class EventsList extends Component {
 											this.handleOptionsClose();
 											onClick();
 										}}
+										disabled={disabled}
 									>
 										<ListItemIcon>
 											<MenuOptionIcon/>
@@ -264,6 +258,7 @@ class EventsList extends Component {
 							onExpandClick={this.expandCardDetails}
 							ticketTypes={event.ticket_types}
 							venueTimezone={timezone}
+							eventEnded={eventEnded}
 						/>
 					</Grid>
 				);

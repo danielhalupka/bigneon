@@ -88,7 +88,7 @@ class EventDashboardContainer extends Component {
 			.events.dashboard({ id: eventId })
 			.then(response => {
 				const { last_30_days, event } = response.data;
-
+				
 				this.setState({
 					event
 				});
@@ -97,18 +97,9 @@ class EventDashboardContainer extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Loading event details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event details failed.",
+					error
 				});
 			});
 	}
@@ -279,8 +270,18 @@ class EventDashboardContainer extends Component {
 			return <Typography>Loading...</Typography>;
 		}
 
-		const isPublished = moment.utc(event.publish_date) < moment.utc();
-		const isOnSale = isPublished && moment.utc(event.on_sale) < moment.utc();
+		const { publish_date, on_sale, localized_times } = event;
+		const isPublished = moment.utc(publish_date) < moment.utc();
+		const isOnSale = isPublished && moment.utc(on_sale) < moment.utc();
+
+		let eventEnded = false;
+		if (localized_times && localized_times.event_end) {
+			const endDate = moment.utc(localized_times.event_end);
+			const now = moment.utc();
+			if (endDate.diff(now) < 0) {
+				eventEnded = true;
+			}
+		}
 
 		return (
 			<div>
@@ -302,12 +303,18 @@ class EventDashboardContainer extends Component {
 								<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
 							</div>
 							<div>
-								<ColorTag style={{ marginRight: 10 }} variant={isOnSale ? "green" : "disabled"}>{isOnSale ? "On sale" : "Off sale"}</ColorTag>
+								{eventEnded ?
+									<ColorTag style={{ marginRight: 10 }} variant="disabled">{"Event ended"}</ColorTag> :
+									<ColorTag style={{ marginRight: 10 }} variant={isOnSale ? "green" : "disabled"}>{isOnSale ? "On sale" : "Off sale"}</ColorTag>
+								}
 							</div>
 						</div>
-						<Link to={`/admin/events/${event.id}/edit`}>
-							<Button variant="callToAction">Edit event</Button>
-						</Link>
+						{!eventEnded ? (
+							<Link to={`/admin/events/${event.id}/edit`}>
+								<Button variant="callToAction">Edit event</Button>
+							</Link>
+						) : null}
+
 					</Grid>
 				</Grid>
 

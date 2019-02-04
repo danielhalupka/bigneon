@@ -127,7 +127,8 @@ const EventSummaryCard = props => {
 		isExpanded,
 		onExpandClick,
 		ticketTypes,
-		cancelled
+		cancelled,
+		eventEnded
 	} = props;
 
 	let { venueTimezone } = props;
@@ -139,6 +140,38 @@ const EventSummaryCard = props => {
 	const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
 		"dddd, MMMM Do YYYY h:mm A"
 	);
+
+	let tags = null;
+	if (cancelled) {
+		tags = (
+			<Typography className={classes.cancelled}>
+				Cancelled
+			</Typography>
+		);
+	} else {
+		let onSaleTag = null;
+
+		if (eventEnded) {
+			onSaleTag = (
+				<ColorTag variant="disabled">Event ended</ColorTag>
+			);
+		} else if (isOnSale) {
+			onSaleTag = (
+				<ColorTag variant="green">On sale</ColorTag>
+			);
+		} else if (isExternal) {
+			onSaleTag = (
+				<ColorTag variant="green">External</ColorTag>
+			);
+		}
+
+		tags = (
+			<div className={classes.statusContainer}>
+				<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
+				{onSaleTag}
+			</div>
+		);
+	}
 
 	return (
 		<Card variant="block">
@@ -170,16 +203,7 @@ const EventSummaryCard = props => {
 					</div>
 					<Grid  container spacing={0} alignItems="center">
 						<Grid item xs={12} sm={12} md={5} lg={5} className={classes.bottomPadding}>
-							{cancelled ? (
-								<Typography className={classes.cancelled}>
-									Cancelled
-								</Typography>
-							) : (
-								<div className={classes.statusContainer}>
-									<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
-									<ColorTag variant={isOnSale || isExternal ? "green" : "disabled"}>{isOnSale ? "On sale" : isExternal ? "External" : "Off sale"}</ColorTag>
-								</div>
-							)}
+							{tags}
 						</Grid>
 
 						<Grid item xs={12} sm={12} md={7} lg={7} className={classes.bottomPadding}>
@@ -307,6 +331,7 @@ EventSummaryCard.propTypes = {
 	onExpandClick: PropTypes.func.isRequired,
 	ticketTypes: PropTypes.array.isRequired,
 	cancelled: PropTypes.bool,
+	eventEnded: PropTypes.bool,
 	venueTimezone: PropTypes.string
 };
 
