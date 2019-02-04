@@ -15,6 +15,7 @@ import Button from "../../elements/Button";
 import user from "../../../stores/user";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Dialog from "../../elements/Dialog";
+import RadioButton from "../../elements/form/RadioButton";
 
 const styles = theme => ({
 	paymentContainer: {
@@ -29,7 +30,7 @@ const styles = theme => ({
 		outline: "none",
 		borderStyle: "none",
 		fontSize: cardFontSize,
-		marginBottom: theme.spacing.unit
+		marginBottom: theme.spacing.unit * 3
 	},
 	buttonsContainer: {
 		justifyContent: "flex-start",
@@ -47,6 +48,8 @@ const cardFontSize = "18px";
 class CheckoutForm extends Component {
 	constructor(props) {
 		super(props);
+
+		this.onPaymentMethodChanged.bind(this);
 
 		this.state = {
 			isSubmitting: false,
@@ -73,13 +76,16 @@ class CheckoutForm extends Component {
 			if (allowedPaymentMethods.length === 1 && paymentMethod === null) {
 				const { method, provider } = allowedPaymentMethods[0];
 				const tmpPaymentMethod = `${method}|${provider}`;
-				this.onPaymentMethodChanged({ target: { value: tmpPaymentMethod } });
+				this.onPaymentMethodChanged(tmpPaymentMethod);
 			}
 		}
 	}
 
-	onPaymentMethodChanged(event) {
-		this.setState({ paymentMethod: event.target.value });
+	onPaymentMethodChanged(newPaymentMethod) {
+		const { paymentMethod } = this.state;
+		if (paymentMethod !== newPaymentMethod) {
+			this.setState({ paymentMethod: newPaymentMethod });
+		}
 	}
 
 	async onSubmit(ev) {
@@ -150,61 +156,95 @@ class CheckoutForm extends Component {
 		return <Typography className={classes.heading}>Payment details</Typography>;
 	}
 
+	renderPaymentSpecificDetails(newPaymentMethod) {
+		const { paymentMethod } = this.state;
+
+		if (newPaymentMethod === "Card|stripe" && paymentMethod === "Card|stripe") {
+			const { classes, theme } = this.props;
+
+			const placeholderColor = theme.palette.text.hint;
+			const color = theme.palette.text.primary;
+
+			const stripeStyle = {
+				base: {
+					color: color,
+					fontSize: cardFontSize,
+					"::placeholder": {
+						color: placeholderColor
+					},
+					":-webkit-autofill": {
+						color: placeholderColor
+					}
+				},
+				invalid: {
+					color: "#E25950",
+
+					"::placeholder": {
+						color: "#FFCCA5"
+					}
+				}
+			};
+			return (
+				<Grid item xs={12} sm={12} lg={12} className={classes.cardInput}>
+					<CardElement style={stripeStyle}/>
+				</Grid>
+			);
+		}
+		return <div/>;
+	}
+
 	render() {
-		const { classes, theme, allowedPaymentMethods } = this.props;
+		const { classes, allowedPaymentMethods } = this.props;
 		const { isSubmitting, paymentMethod } = this.state;
 
-		const placeholderColor = theme.palette.text.hint;
-		const color = theme.palette.text.primary;
-		const stripeStyle = {
-			base: {
-				color: color,
-				fontSize: cardFontSize,
-				"::placeholder": {
-					color: placeholderColor
-				},
-				":-webkit-autofill": {
-					color: placeholderColor
-				}
-			},
-			invalid: {
-				color: "#E25950",
-
-				"::placeholder": {
-					color: "#FFCCA5"
-				}
-			}
+		const iconSrc = {
+			stripe: ["credit-card-gray.svg"],
+			globee: [
+				"crypto/BTC.png",
+				"crypto/DCR.png",
+				"crypto/LNBT.png",
+				"crypto/LTC.png",
+				"crypto/XMR.png"
+			]
 		};
-
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				{this.renderProcessingDialog()}
 				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={12}>
 					{this.header}
 					<br/>
-					<RadioGroup
-						value={paymentMethod}
-						onChange={this.onPaymentMethodChanged.bind(this)}
-					>
-						{allowedPaymentMethods.map((method, index) => {
-							return (
-								<FormControlLabel
-									key={method.method + "|" + method.provider}
-									value={method.method + "|" + method.provider}
-									label={method.display_name}
-									control={<Radio/>}
-								/>
-							);
-						})}
-					</RadioGroup>
+					{allowedPaymentMethods.map((method, index) => {
+						return (
+							<div key={method.method + "|" + method.provider}>
+								<RadioButton
+									active={
+										paymentMethod === method.method + "|" + method.provider
+									}
+									onClick={() =>
+										this.onPaymentMethodChanged(
+											method.method + "|" + method.provider
+										)
+									}
+								>
+									{iconSrc[method.provider].map(icon => {
+										return (
+											<img
+												width="30"
+												height="30"
+												src={"/icons/" + icon}
+												key={icon}
+											/>
+										);
+									})}
+								</RadioButton>
+								{this.renderPaymentSpecificDetails(
+									method.method + "|" + method.provider
+								)}
+							</div>
+						);
+					})}
 				</Grid>
-				{paymentMethod === "Card|stripe" ? (
-					<Grid item xs={12} sm={12} lg={12}>
-						<CardElement style={stripeStyle}/>
-					</Grid>
-				) : (
-					<div/>
-				)}
+
 				<Grid item xs={12} sm={12} lg={12}>
 					<div className={classes.buttonsContainer}>
 						<Button
