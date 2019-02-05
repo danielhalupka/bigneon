@@ -226,13 +226,11 @@ class EventTicketsCard extends Component {
 
 					return (
 						<EventTicketRow key={id} item>
-							{/*TODO uncomment and remove span when adding back transfers*/}
-							{/*<CheckBox*/}
-							{/*disabled={disabled}*/}
-							{/*active={checkedTicketsIds.indexOf(id) !== -1}*/}
-							{/*onClick={() => this.toggleTicketCheckbox(id)}*/}
-							{/*/>*/}
-							<span/>
+							<CheckBox
+								disabled={disabled}
+								active={checkedTicketsIds.indexOf(id) !== -1}
+								onClick={() => this.toggleTicketCheckbox(id)}
+							/>
 							<Typography className={classes.ticketDetailsText}>{`#${id.slice(
 								-8
 							)}`}</Typography>
@@ -255,11 +253,10 @@ class EventTicketsCard extends Component {
 								<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
 									show qr
 								</StyledLink>
-								{/*TODO uncomment when adding back transfers*/}
-								{/* <span style={{ marginRight: 10 }} />
+								<span style={{ marginRight: 10 }}/>
 								<StyledLink underlined onClick={() => onShowTransferQR([id])}>
-									transfer
-								</StyledLink> */}
+								 	transfer
+								 </StyledLink>
 							</Typography>
 						</EventTicketRow>
 					);
