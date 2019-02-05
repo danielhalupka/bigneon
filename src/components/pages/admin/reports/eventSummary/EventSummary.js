@@ -10,6 +10,7 @@ import downloadCSV from "../../../../../helpers/downloadCSV";
 import EventSummaryRow from "./EventSummaryRow";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
 import { EventSalesTable, EVENT_SALES_HEADINGS } from "./EventSalesTable";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -404,7 +405,7 @@ class EventSummary extends Component {
 		}
 
 		if (eventSales === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (eventSales.length === 0) {

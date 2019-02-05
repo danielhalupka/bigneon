@@ -10,6 +10,7 @@ import HoldRow from "./HoldRow";
 import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
 import Container from "../Container";
 import Dialog from "../../../../../elements/Dialog";
+import Loader from "../../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {}
@@ -96,7 +97,7 @@ class TicketHoldList extends Component {
 		const { holds, activeHoldId, showHoldDialog } = this.state;
 
 		if (holds === null) {
-			return <Typography variant="body1">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (holds && holds.length > 0) {

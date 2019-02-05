@@ -17,6 +17,7 @@ import StyledLink from "../../../../elements/StyledLink";
 import user from "../../../../../stores/user";
 import ColorTag from "../../../../elements/ColorTag";
 import VisitEventPage from "../../../../elements/VisitEventPage";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	rightHeaderOptions: {
@@ -267,7 +268,7 @@ class EventDashboardContainer extends Component {
 		const { classes, children, subheading } = this.props;
 
 		if (!event) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		const { publish_date, on_sale, localized_times } = event;

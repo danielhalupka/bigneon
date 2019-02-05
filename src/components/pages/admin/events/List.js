@@ -26,6 +26,7 @@ import PageHeading from "../../../elements/PageHeading";
 import EventSummaryCard from "./EventSummaryCard";
 import user from "../../../../stores/user";
 import Card from "../../../elements/Card";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	paper: {
@@ -125,18 +126,9 @@ class EventsList extends Component {
 				.catch(error => {
 					console.error(error);
 
-					let message = "Loading events failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
+					notifications.showFromErrorResponse({
+						defaultMessage: "Loading events failed.",
+						error
 					});
 				});
 		});
@@ -153,11 +145,7 @@ class EventsList extends Component {
 		const { optionsAnchorEl } = this.state;
 
 		if (events === null) {
-			return (
-				<Grid item xs={12} sm={12} lg={12}>
-					<Typography variant="body1">Loading...</Typography>
-				</Grid>
-			);
+			return <Loader/>;
 		}
 
 		if (events && events.length > 0) {

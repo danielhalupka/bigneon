@@ -7,6 +7,7 @@ import OrderRow from "./OrderRow";
 import StyledLink from "../../elements/StyledLink";
 import PageHeading from "../../elements/PageHeading";
 import orders from "../../../stores/orders";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => ({});
 
@@ -24,7 +25,7 @@ class OrderList extends Component {
 		const { items, orderCount } = orders;
 
 		if (items === null) {
-			return <Typography variant="body1">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (orderCount > 0) {

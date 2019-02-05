@@ -13,6 +13,7 @@ import PlacesAutocomplete, {
 import AddressBlock from "../../common/form/AddressBlock";
 import { primaryHex } from "../../styles/theme";
 import Button from "../../elements/Button";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => {
 	return {
@@ -134,7 +135,7 @@ class LocationInputGroup extends React.Component {
 							<div className="autocomplete-dropdown-container">
 								{loading && (
 									<div style={{ marginTop: 5, marginBottom: 5 }}>
-										<Typography variant="caption">Loading...</Typography>
+										<Loader/>
 									</div>
 								)}
 								{suggestions.map(suggestion => {

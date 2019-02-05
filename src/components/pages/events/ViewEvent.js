@@ -22,6 +22,7 @@ import DateFlag from "../../elements/event/DateFlag";
 import SocialIconLink from "../../elements/social/SocialIconLink";
 import nl2br from "../../../helpers/nl2br";
 import Meta from "./Meta";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -252,7 +253,7 @@ class ViewEvent extends Component {
 		} = selectedEvent;
 
 		if (event === null) {
-			return <Typography variant="subheading">Loading...</Typography>;
+			return <Loader style={{ height: 400 }}/>;
 		}
 
 		if (event === false) {

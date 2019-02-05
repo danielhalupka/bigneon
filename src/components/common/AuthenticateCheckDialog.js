@@ -1,5 +1,6 @@
 import React from "react";
 import { Dialog, Typography } from "@material-ui/core";
+import Loader from "../elements/loaders/Loader";
 
 class AuthenticateCheckDialog extends React.Component {
 	render() {
@@ -8,7 +9,7 @@ class AuthenticateCheckDialog extends React.Component {
 				open={true}
 			>
 				<div style={{ padding: 20 }}>
-					<Typography>Loading...</Typography>
+					<Loader/>
 				</div>
 			</Dialog>
 		);

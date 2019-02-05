@@ -18,6 +18,7 @@ import InputGroup from "../../common/form/InputGroup";
 import user from "../../../stores/user";
 import SMSLinkForm from "../../elements/SMSLinkForm";
 import Meta from "./Meta";
+import Loader from "../../elements/loaders/Loader";
 
 const overlayCardWidth = 350;
 
@@ -108,7 +109,7 @@ class CheckoutSuccess extends Component {
 		const { event, artists } = selectedEvent;
 
 		if (event === null) {
-			return <Typography variant="subheading">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (event === false) {

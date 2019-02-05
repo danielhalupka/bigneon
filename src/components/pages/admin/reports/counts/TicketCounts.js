@@ -10,6 +10,7 @@ import EventTicketCountTable from "./EventTicketCountTable";
 import { fontFamilyDemiBold, secondaryHex } from "../../../../styles/theme";
 import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
 import { observer } from "mobx-react";
+import Loader from "../../../../elements/loaders/Loader";
 
 const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
@@ -83,7 +84,7 @@ class TicketCounts extends Component {
 		const { countsAndSalesByEventId } = ticketCountReport;
 
 		if (countsAndSalesByEventId === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		const reportEventIds = Object.keys(countsAndSalesByEventId);

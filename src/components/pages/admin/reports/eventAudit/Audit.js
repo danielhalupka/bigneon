@@ -11,6 +11,7 @@ import EventTicketCountTable from "../counts/EventTicketCountTable";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
 import { observer } from "mobx-react";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -119,7 +120,7 @@ class Audit extends Component {
 		}
 
 		if (eventSales === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (eventSales.length === 0) {

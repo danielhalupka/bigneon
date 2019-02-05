@@ -10,6 +10,7 @@ import TicketDialog from "./TicketDialog";
 import PageHeading from "../../elements/PageHeading";
 import AppPromoCard from "../../elements/AppPromoCard";
 import tickets from "../../../stores/tickets";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => ({});
 
@@ -55,7 +56,7 @@ class MyEvents extends Component {
 		if (groups === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
-					<Typography variant="body1">Loading...</Typography>
+					<Loader/>
 				</Grid>
 			);
 		}

@@ -10,6 +10,7 @@ import Card from "../../elements/Card";
 import { fontFamilyDemiBold, fontFamily } from "../../styles/theme";
 import AppPromoCard from "../../elements/AppPromoCard";
 import Divider from "../../common/Divider";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -145,7 +146,7 @@ class Order extends Component {
 		const { order } = this.state;
 
 		if (!order) {
-			return <Typography>Loading...</Typography>; //TODO add a loader
+			return <Loader/>;
 		}
 
 		const { id, paid_at, status, total_in_cents, items } = order;

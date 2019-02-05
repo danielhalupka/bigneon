@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 
 import selectedEvent from "../../stores/selectedEvent";
 import DefaultTemplate from "./templates/Default";
+import Loader from "../elements/loaders/Loader";
 
 const BlankContainer = ({ children }) => (
 	<div
@@ -66,7 +67,7 @@ class Embedded extends Component {
 		if (event === null) {
 			return (
 				<BlankContainer>
-					<Typography variant="subheading">Loading...</Typography>
+					<Loader/>
 				</BlankContainer>
 			);
 		}

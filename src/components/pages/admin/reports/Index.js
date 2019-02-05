@@ -9,6 +9,7 @@ import StyledLink from "../../../elements/StyledLink";
 import Divider from "../../../common/Divider";
 import Transactions from "./transactions/Transactions";
 import TicketCounts from "./counts/TicketCounts";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	content: {
@@ -102,7 +103,7 @@ class Reports extends Component {
 		const organizationId = user.currentOrganizationId;
 
 		if (!organizationId) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		const { hasTransactionReports, hasTicketCountReports } = user;

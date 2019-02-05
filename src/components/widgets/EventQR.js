@@ -9,6 +9,7 @@ import QRCode from "qrcode.react";
 import notifications from "../../stores/notifications";
 import selectedEvent from "../../stores/selectedEvent";
 import { primaryHex } from "../styles/theme";
+import Loader from "../elements/loaders/Loader";
 
 const styles = theme => ({
 	card: {
@@ -55,7 +56,7 @@ class EventQR extends Component {
 		const { event, venue, artists, organization, id } = selectedEvent;
 
 		if (event === null) {
-			return <Typography variant="subheading">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (event === false) {

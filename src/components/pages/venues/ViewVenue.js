@@ -10,6 +10,7 @@ import Bigneon from "../../../helpers/bigneon";
 import VenueHeaderImage from "../../elements/venue/VenueHeaderImage";
 import EventResultCard from "../../elements/event/EventResultCard";
 import StyledLink from "../../elements/StyledLink";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -119,7 +120,7 @@ class ViewVenue extends Component {
 		const { venue } = this.state;
 
 		if (venue === null) {
-			return <Typography variant="subheading">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (venue === false) {

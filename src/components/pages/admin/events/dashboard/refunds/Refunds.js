@@ -9,6 +9,7 @@ import BoxInput from "../../../../../elements/form/BoxInput";
 import BottomRefundBar from "./BottomRefundBar";
 import ConfirmRefundDialog from "./ConfirmRefundDialog";
 import PageHeading from "../../../../../elements/PageHeading";
+import Loader from "../../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -270,7 +271,7 @@ class Refunds extends Component {
 		const filteredGuests = this.filteredGuests();
 
 		if (filteredGuests === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		return (

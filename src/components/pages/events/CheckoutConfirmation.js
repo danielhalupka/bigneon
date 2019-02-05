@@ -26,6 +26,7 @@ import Divider from "../../common/Divider";
 import orders from "../../../stores/orders";
 import tickets from "../../../stores/tickets";
 import Meta from "./Meta";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {
@@ -347,7 +348,7 @@ class CheckoutConfirmation extends Component {
 		const { event, artists, id } = selectedEvent;
 
 		if (event === null) {
-			return <Typography variant="subheading">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (event === false) {

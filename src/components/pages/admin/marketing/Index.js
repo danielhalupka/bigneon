@@ -11,6 +11,7 @@ import ApiCard from "./cards/ApiCard";
 import EmailCard from "./cards/EmailCard";
 import PageHeading from "../../../elements/PageHeading";
 import user from "../../../../stores/user";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	paper: {
@@ -84,7 +85,7 @@ class Marketing extends Component {
 				{organizationId ? (
 					this.renderContent()
 				) : (
-					<Typography>Loading...</Typography>
+					<Loader/>
 				)}
 			</div>
 		);

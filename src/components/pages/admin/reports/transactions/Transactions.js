@@ -10,6 +10,7 @@ import TransactionDialog from "./TransactionDialog";
 import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -205,7 +206,7 @@ class Transactions extends Component {
 		}
 
 		if (items === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (items.length === 0) {

@@ -8,6 +8,7 @@ import Divider from "../../../../../common/Divider";
 import HoldRow from "./CompRow";
 import CompDialog from "./CompDialog";
 import Container from "../Container";
+import Loader from "../../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {}
@@ -89,7 +90,7 @@ class CompList extends Component {
 		const { classes } = this.props;
 
 		if (comps === null) {
-			return <Typography variant="body1">Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (comps && comps.length > 0) {

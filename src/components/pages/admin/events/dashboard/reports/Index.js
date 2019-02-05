@@ -11,6 +11,7 @@ import { EventSummaryReport } from "../../../reports/eventSummary/EventSummary";
 import TicketCounts from "../../../reports/counts/TicketCounts";
 import EventAudit from "../../../reports/eventAudit/Audit";
 import EventSummaryAudit from "../../../reports/eventSummaryAudit/SummaryAudit";
+import Loader from "../../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {}
@@ -44,7 +45,7 @@ class Report extends Component {
 		const organizationId = user.currentOrganizationId;
 
 		if (!organizationId) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		const { eventName } = this.state;

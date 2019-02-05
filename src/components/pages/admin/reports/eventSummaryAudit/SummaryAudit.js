@@ -10,6 +10,7 @@ import { eventSummaryData } from "../eventSummary/EventSummary";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import ReportsDate from "../ReportDate";
 import { SummaryAuditTable, SUMMARY_AUDIT_HEADINGS } from "./SummaryAuditTable";
+import Loader from "../../../../elements/loaders/Loader";
 
 const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
@@ -207,7 +208,7 @@ class SummaryAudit extends Component {
 		}
 
 		if (todayEventSales === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (todayEventSales.length === 0) {
@@ -233,7 +234,7 @@ class SummaryAudit extends Component {
 		}
 
 		if (eventSales === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		if (eventSales.length === 0) {

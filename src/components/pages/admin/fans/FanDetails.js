@@ -11,6 +11,7 @@ import Card from "../../../elements/Card";
 import { fontFamilyDemiBold } from "../../../styles/theme";
 import SocialIconLink from "../../../elements/social/SocialIconLink";
 import StyledLink from "../../../elements/StyledLink";
+import Loader from "../../../elements/loaders/Loader";
 
 const imageSize = 100;
 
@@ -250,7 +251,7 @@ class Fan extends Component {
 		const { history } = this.state;
 
 		if (history === null) {
-			return <Typography>Loading history...</Typography>;
+			return <Loader>Loading history...</Loader>;
 		}
 		return history.map((item, index) => {
 			return <FanHistoryCard key={index} {...item}/>;
@@ -265,7 +266,7 @@ class Fan extends Component {
 		const { profile, activeHeading } = this.state;
 
 		if (profile === null) {
-			return <Typography>Loading fan details...</Typography>;
+			return <Loader>Loading fan details...</Loader>;
 		}
 
 		const { event_count, revenue_in_cents, ticket_sales } = profile;

@@ -13,6 +13,7 @@ import VerticalBarChart from "../../../../elements/charts/VerticalBarChart";
 import Container from "./Container";
 import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => {
 	return {
@@ -276,8 +277,9 @@ class Summary extends Component {
 		const { event } = this.state;
 
 		if (!event) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
+
 		if (event.is_external){
 			return (
 				<Container eventId={event.id} subheading={"summary"}>

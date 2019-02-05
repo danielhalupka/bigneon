@@ -11,6 +11,7 @@ import PageHeading from "../../../elements/PageHeading";
 import user from "../../../../stores/user";
 import Card from "../../../elements/Card";
 import StyledLink from "../../../elements/StyledLink";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -109,7 +110,7 @@ class Organization extends Component {
 			organizationId = user.currentOrganizationId;
 
 			if (organizationId === null) {
-				return <Typography>Loading...</Typography>;
+				return <Loader/>;
 			}
 		}
 

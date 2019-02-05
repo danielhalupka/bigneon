@@ -13,6 +13,7 @@ import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
 import layout from "../../../../stores/layout";
 import BlankSlate from "../common/BlankSlate";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -245,7 +246,7 @@ class GuestList extends Component {
 		const filteredGuests = this.filteredGuests();
 
 		if (filteredGuests === null) {
-			return <Typography>Loading...</Typography>;
+			return <Loader/>;
 		}
 
 		return (

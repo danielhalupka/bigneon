@@ -10,6 +10,7 @@ import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	paper: {},
@@ -62,7 +63,7 @@ class OrganizationsList extends Component {
 		if (organizations === null) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
-					<Typography variant="body1">Loading...</Typography>
+					<Loader/>
 				</Grid>
 			);
 		}
