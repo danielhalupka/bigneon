@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Hidden, Typography, withStyles } from "@material-ui/core";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -15,12 +15,18 @@ import EventArtist from "./EventArtist";
 import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import user from "../../../../../stores/user";
+import IconButton from "./PricePoint";
 
 const styles = theme => ({
 	paddedContent: {
 		paddingRight: theme.spacing.unit * 12,
 		paddingLeft: theme.spacing.unit * 12,
-		marginTop: theme.spacing.unit * 4
+		marginTop: theme.spacing.unit * 4,
+
+		[theme.breakpoints.down("sm")]: {
+			paddingRight: theme.spacing.unit,
+			paddingLeft: theme.spacing.unit
+		}
 	}
 });
 
@@ -305,6 +311,36 @@ class ArtistDetails extends Component {
 		);
 	}
 
+	renderAddArtistButton() {
+		const { showArtistSelect } = this.state;
+		const { artists } = eventUpdateStore;
+
+		const props = {
+			onClick: () => this.setState({ showArtistSelect: true }),
+			variant: "additional"
+		};
+		const label = "Add supporting artist";
+
+		if (artists.length > 0 && !showArtistSelect) {
+			return (
+				<div>
+					<Hidden mdUp>
+						<Button style={{ width: "100%" }} {...props}>
+							{label}
+						</Button>
+					</Hidden>
+					<Hidden smDown>
+						<Button {...props}>
+							{label}
+						</Button>
+					</Hidden>
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const { classes, errors } = this.props;
 		const { availableArtists, showArtistSelect } = this.state;
@@ -372,14 +408,7 @@ class ArtistDetails extends Component {
 						? this.renderAddNewArtist()
 						: null}
 
-					{artists.length > 0 && !showArtistSelect ? (
-						<Button
-							variant="additional"
-							onClick={() => this.setState({ showArtistSelect: true })}
-						>
-							Add supporting artist
-						</Button>
-					) : null}
+					{this.renderAddArtistButton()}
 				</div>
 			</div>
 		);

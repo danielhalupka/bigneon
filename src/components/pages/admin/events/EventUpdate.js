@@ -26,7 +26,11 @@ const styles = theme => ({
 	},
 	paddedContent: {
 		paddingRight: theme.spacing.unit * 12,
-		paddingLeft: theme.spacing.unit * 12
+		paddingLeft: theme.spacing.unit * 12,
+		[theme.breakpoints.down("sm")]: {
+			paddingRight: theme.spacing.unit * 2,
+			paddingLeft: theme.spacing.unit * 2
+		}
 	},
 	spacer: {
 		marginBottom: theme.spacing.unit * 10

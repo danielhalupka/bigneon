@@ -221,7 +221,12 @@ const formatForInput = (ticket_types, event) => {
 const styles = theme => ({
 	root: {
 		paddingLeft: theme.spacing.unit * 12,
-		paddingRight: theme.spacing.unit * 2
+		paddingRight: theme.spacing.unit * 2,
+
+		[theme.breakpoints.down("sm")]: {
+			paddingRight: theme.spacing.unit,
+			paddingLeft: theme.spacing.unit
+		}
 	},
 	addTicketType: {
 		marginRight: theme.spacing.unit * 8,
@@ -234,15 +239,27 @@ const styles = theme => ({
 		alignItems: "center",
 		paddingTop: theme.spacing.unit * 4,
 		paddingBottom: theme.spacing.unit * 4,
-		cursor: "pointer"
+		cursor: "pointer",
+
+		[theme.breakpoints.down("sm")]: {
+			marginRight: theme.spacing.unit * 2,
+			marginLeft: theme.spacing.unit * 2,
+			paddingTop: theme.spacing.unit * 3,
+			paddingBottom: theme.spacing.unit * 3
+		}
 	},
 	addIcon: {
 		width: 32,
 		height: 32,
-		marginRight: theme.spacing.unit
+		marginRight: theme.spacing.unit,
+		marginBottom: 4
 	},
 	addText: {
-		fontSize: 22
+		fontSize: theme.typography.fontSize * 1.3,
+
+		[theme.breakpoints.down("sm")]: {
+			fontSize: theme.typography.fontSize * 1.2
+		}
 	},
 	title: {
 		textTransform: "uppercase",

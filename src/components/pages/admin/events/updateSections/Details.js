@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
-import { withStyles, Grid, Collapse } from "@material-ui/core";
+import { withStyles, Grid, Collapse, Hidden } from "@material-ui/core";
 import moment from "moment";
 
 import Button from "../../../../elements/Button";
@@ -460,6 +460,7 @@ class Details extends Component {
 					item
 					xs={12}
 					sm={12}
+					md={6}
 					lg={6}
 				>
 					<InputGroup
@@ -479,6 +480,7 @@ class Details extends Component {
 					item
 					xs={12}
 					sm={12}
+					md={6}
 					lg={6}
 				>
 					{this.renderVenues()}
@@ -489,6 +491,7 @@ class Details extends Component {
 					item
 					xs={12}
 					sm={12}
+					md={6}
 					lg={6}
 				>
 					{this.renderEventTypes()}
@@ -499,16 +502,28 @@ class Details extends Component {
 					item
 					xs={12}
 					sm={12}
+					md={12}
 					lg={12}
 				>
 					<Collapse in={!showTopLineInfo}>
-						<Button
-							style={{ marginBottom: 20 }}
-							variant="additional"
-							onClick={() => this.changeDetails({ showTopLineInfo: true })}
-						>
-							Add additional top line info
-						</Button>
+						<Hidden mdUp>
+							<Button
+								style={{ marginBottom: 20, width: "100%" }}
+								variant="additional"
+								onClick={() => this.changeDetails({ showTopLineInfo: true })}
+							>
+								Add additional top line info
+							</Button>
+						</Hidden>
+						<Hidden smDown>
+							<Button
+								style={{ marginBottom: 20 }}
+								variant="additional"
+								onClick={() => this.changeDetails({ showTopLineInfo: true })}
+							>
+								Add additional top line info
+							</Button>
+						</Hidden>
 					</Collapse>
 					<Collapse in={showTopLineInfo}>
 						<InputGroup
@@ -526,7 +541,7 @@ class Details extends Component {
 					</Collapse>
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={6}>
+				<Grid item xs={12} sm={12} md={6} lg={6}>
 					<DateTimePickerGroup
 						type="date"
 						error={errors.eventDate}
@@ -548,7 +563,7 @@ class Details extends Component {
 					/>
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={3}>
+				<Grid item xs={12} sm={12} md={3} lg={3}>
 					<DateTimePickerGroup
 						error={errors.showTime}
 						value={showTime}
@@ -561,7 +576,7 @@ class Details extends Component {
 					/>
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={3}>
+				<Grid item xs={12} sm={12} md={3} lg={3}>
 					<SelectGroup
 						value={doorTimeHours}
 						items={Details.doorHoursOptions}
@@ -573,7 +588,7 @@ class Details extends Component {
 					/>
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={6}>
+				<Grid item xs={12} sm={12} md={6} lg={6}>
 					<DateTimePickerGroup
 						type="date"
 						error={errors.endTime}
@@ -608,7 +623,7 @@ class Details extends Component {
 						onBlur={validateFields}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={12} lg={6}>
+				<Grid item xs={12} sm={12} md={6} lg={6}>
 					<DateTimePickerGroup
 						type="time"
 						error={errors.endTime}
@@ -639,15 +654,15 @@ class Details extends Component {
 					/>
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={6}>
+				<Grid item xs={12} sm={12} md={6} lg={6}>
 					{this.renderAgeLimits()}
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={6}>
+				<Grid item xs={12} sm={12} md={6} lg={6}>
 					{this.renderStatus()}
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={12}>
+				<Grid item xs={12} sm={12} md={12} lg={12}>
 					<InputGroup
 						error={errors.additionalInfo}
 						value={additionalInfo}
@@ -663,7 +678,7 @@ class Details extends Component {
 					/>
 				</Grid>
 
-				<Grid item xs={12} sm={12} lg={12}>
+				<Grid item xs={12} sm={12} md={12} lg={12}>
 					<InputGroup
 						error={errors.videoUrl}
 						value={videoUrl}

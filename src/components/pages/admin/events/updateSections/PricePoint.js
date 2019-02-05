@@ -1,16 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
-import { withStyles, InputAdornment } from "@material-ui/core";
+import { withStyles, InputAdornment, Hidden } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
+import Grid from "@material-ui/core/Grid";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
+import Button from "../../../../elements/Button";
 
 const styles = theme => {
 	return {
-		root: { display: "flex" },
+		root: {},
 		inputContainer: {
 			paddingRight: theme.spacing.unit,
 			display: "flex",
@@ -44,8 +46,15 @@ const PricePoint = props => {
 	} = props;
 
 	return (
-		<div className={classes.root}>
-			<div className={classes.inputContainer} style={{ flex: 2 }}>
+		<Grid container spacing={8}>
+			<Grid
+				className={classes.inputContainer}
+				item
+				xs={12}
+				sm={12}
+				md={2}
+				lg={2}
+			>
 				<InputGroup
 					error={errors.name}
 					value={name}
@@ -58,14 +67,18 @@ const PricePoint = props => {
 					}}
 					onBlur={validateFields}
 				/>
-			</div>
+			</Grid>
 
-			<div
+			<Grid
 				className={classnames({
 					[classes.inputContainer]: true,
 					[classes.dateInputContainer]: true
 				})}
-				style={{ flex: 2 }}
+				item
+				xs={6}
+				sm={6}
+				md={2}
+				lg={2}
 			>
 				<DateTimePickerGroup
 					error={errors.startDate}
@@ -77,14 +90,18 @@ const PricePoint = props => {
 					onBlur={validateFields}
 					minDate={false}
 				/>
-			</div>
+			</Grid>
 
-			<div
+			<Grid
 				className={classnames({
 					[classes.inputContainer]: true,
 					[classes.dateInputContainer]: true
 				})}
-				style={{ flex: 2 }}
+				  item
+				xs={6}
+				sm={6}
+				md={2}
+				lg={2}
 			>
 				<DateTimePickerGroup
 					error={errors.startTime}
@@ -96,14 +113,18 @@ const PricePoint = props => {
 					onBlur={validateFields}
 					minDate={false}
 				/>
-			</div>
+			</Grid>
 
-			<div
+			<Grid
 				className={classnames({
 					[classes.inputContainer]: true,
 					[classes.dateInputContainer]: true
 				})}
-				style={{ flex: 2 }}
+				item
+				xs={6}
+				sm={6}
+				md={2}
+				lg={2}
 			>
 				<DateTimePickerGroup
 					error={errors.endDate}
@@ -115,14 +136,18 @@ const PricePoint = props => {
 					onBlur={validateFields}
 					minDate={false}
 				/>
-			</div>
+			</Grid>
 
-			<div
+			<Grid
 				className={classnames({
 					[classes.inputContainer]: true,
 					[classes.dateInputContainer]: true
 				})}
-				style={{ flex: 2 }}
+				item
+				xs={6}
+				sm={6}
+				md={2}
+				lg={2}
 			>
 				<DateTimePickerGroup
 					error={errors.endTime}
@@ -134,9 +159,16 @@ const PricePoint = props => {
 					onBlur={validateFields}
 					minDate={false}
 				/>
-			</div>
+			</Grid>
 
-			<div className={classes.inputContainer} style={{ flex: 1 }}>
+			<Grid
+				className={classes.inputContainer}
+				item
+				xs={12}
+				sm={12}
+				md={1}
+				lg={1}
+			>
 				<InputGroup
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>
@@ -152,14 +184,32 @@ const PricePoint = props => {
 					}}
 					onBlur={validateFields}
 				/>
-			</div>
+			</Grid>
 
-			<div className={classes.deleteIconContainer}>
-				<IconButton onClick={onDelete} aria-label="Delete">
-					<DeleteIcon/>
-				</IconButton>
-			</div>
-		</div>
+			<Grid
+				className={classes.inputContainer}
+				item
+				xs={12}
+				sm={12}
+				md={1}
+				lg={1}
+			>
+				<Hidden mdUp>
+					<Button
+						onClick={onDelete}
+						style={{ marginBottom: 20 }}
+					>
+						Delete price schedule
+					</Button>
+				</Hidden>
+
+				<Hidden smDown>
+					<IconButton onClick={onDelete} aria-label="Delete">
+						<DeleteIcon/>
+					</IconButton>
+				</Hidden>
+			</Grid>
+		</Grid>
 	);
 };
 

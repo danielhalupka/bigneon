@@ -5,7 +5,7 @@ import {
 	withStyles,
 	Typography,
 	InputAdornment,
-	Collapse
+	Collapse, Hidden
 } from "@material-ui/core";
 
 import InputGroup from "../../../../common/form/InputGroup";
@@ -20,7 +20,12 @@ const styles = theme => {
 	return {
 		root: {
 			paddingLeft: theme.spacing.unit * 12,
-			paddingRight: theme.spacing.unit * 2
+			paddingRight: theme.spacing.unit * 2,
+
+			[theme.breakpoints.down("sm")]: {
+				paddingRight: theme.spacing.unit,
+				paddingLeft: theme.spacing.unit
+			}
 		},
 		ticketHeader: {
 			display: "flex",
@@ -43,14 +48,22 @@ const styles = theme => {
 		},
 		simpleInputContainer: {
 			flex: 1,
-			paddingRight: theme.spacing.unit * 4
+			paddingRight: theme.spacing.unit * 4,
+
+			[theme.breakpoints.down("sm")]: {
+				paddingRight: theme.spacing.unit
+			}
 		},
 		additionalInputsRow: {
 			display: "flex"
 		},
 		additionalInputContainer: {
 			flex: 1,
-			paddingRight: theme.spacing.unit * 4
+			paddingRight: theme.spacing.unit * 4,
+
+			[theme.breakpoints.down("sm")]: {
+				paddingRight: theme.spacing.unit
+			}
 		}
 	};
 };
@@ -148,6 +161,8 @@ const TicketDetails = observer(props => {
 		}
 	}
 
+	const onShowAdditionalOptions = () => updateTicketType(index, { showAdditionalOptions: true });
+
 	return (
 		<div className={classes.activeContent}>
 			<TicketHeading {...props}/>
@@ -205,14 +220,26 @@ const TicketDetails = observer(props => {
 			</div>
 
 			{!showAdditionalOptions ? (
-				<Button
-					variant="additional"
-					onClick={() =>
-						updateTicketType(index, { showAdditionalOptions: true })
-					}
-				>
-					Additional options
-				</Button>
+				<div>
+					<Hidden mdUp>
+						<Button
+							style={{ width: "100%" }}
+							variant="additional"
+							onClick={onShowAdditionalOptions}
+						>
+							Additional options
+						</Button>
+					</Hidden>
+					<Hidden smDown>
+						<Button
+							variant="additional"
+							onClick={onShowAdditionalOptions}
+						>
+							Additional options
+						</Button>
+					</Hidden>
+				</div>
+
 			) : null}
 
 			<Collapse in={!!showAdditionalOptions}>

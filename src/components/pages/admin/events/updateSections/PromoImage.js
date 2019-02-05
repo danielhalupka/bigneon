@@ -20,7 +20,12 @@ const styles = theme => ({
 		height: height * 0.6,
 		backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)",
 		padding: theme.spacing.unit * 5,
-		marginBottom: theme.spacing.unit * 5
+		marginBottom: theme.spacing.unit * 5,
+
+		[theme.breakpoints.down("xs")]: {
+			height: height * 0.3,
+			padding: theme.spacing.unit * 2
+		}
 	},
 	noMediaContent: {
 		height: "100%",
@@ -60,7 +65,11 @@ const styles = theme => ({
 	noMediaIcon: {
 		width: 28,
 		height: 28,
-		marginBottom: theme.spacing.unit * 2
+		marginBottom: theme.spacing.unit * 2,
+
+		[theme.breakpoints.down("xs")]: {
+			marginBottom: 0
+		}
 	},
 	noMediaText: {
 		color: "#FFF"

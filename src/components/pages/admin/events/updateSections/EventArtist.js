@@ -4,31 +4,37 @@ import { Typography, withStyles } from "@material-ui/core";
 import CardMedia from "@material-ui/core/CardMedia";
 
 import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
-import Button from "../../../../elements/Button";
 import FormatInputLabel from "../../../../elements/form/FormatInputLabel";
-import SocialIconLink from "../../../../elements/social/SocialIconLink";
 import IconButton from "../../../../elements/IconButton";
 import CheckBox from "../../../../elements/form/CheckBox";
 
 const styles = theme => ({
 	root: {
 		display: "flex",
-		height: 160
+		height: 180
 	},
 	image: {
 		flex: 1,
 		width: "100%",
 		height: "100%",
-		borderRadius: 0
+		borderRadius: 0,
+
+		[theme.breakpoints.down("sm")]: {
+			flex: 2
+		}
 	},
 	content: {
 		paddingLeft: theme.spacing.unit * 2,
 		//paddingRight: theme.spacing.unit * 2,
+		paddingBottom: theme.spacing.unit,
 		display: "flex",
 		flex: 2
 	},
 	leftColumn: {
-		flex: 1
+		flex: 1,
+		[theme.breakpoints.down("sm")]: {
+			flex: 4
+		}
 	},
 	rightColumn: {
 		flex: 1,
@@ -39,20 +45,22 @@ const styles = theme => ({
 	}
 });
 
-const EventArtist = ({
-						 classes,
-						 imgUrl,
-						 title,
-						 typeHeading,
-						 setTime,
-						 onChangeSetTime,
-						 onDelete,
-						 error,
-						 onBlur,
-						 socialAccounts,
-						 importance,
-						 onChangeImportance
-					 }) => {
+const EventArtist = (props) => {
+	const {
+		classes,
+		imgUrl,
+		title,
+		typeHeading,
+		setTime,
+		onChangeSetTime,
+		onDelete,
+		error,
+		onBlur,
+		socialAccounts,
+		importance,
+		onChangeImportance
+	} = props;
+
 	return (
 		<div className={classes.root}>
 			<CardMedia className={classes.image} image={imgUrl} title={"Artist"}/>
@@ -74,7 +82,8 @@ const EventArtist = ({
 						type="time"
 						onBlur={onBlur}
 					/>
-					<CheckBox active={importance === 0}
+					<CheckBox
+						active={importance === 0}
 						onClick={() => {
 							onChangeImportance(importance);
 						}}

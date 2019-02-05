@@ -10,7 +10,11 @@ const styles = theme => ({
 		borderRadius: "0px 5px 5px 0px",
 		boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.13)",
 		marginBottom: theme.spacing.unit * 0.8,
-		marginRight: theme.spacing.unit * 5
+		marginRight: theme.spacing.unit * 5,
+
+		[theme.breakpoints.down("sm")]: {
+			marginRight: theme.spacing.unit
+		}
 	},
 	inactive: {
 		borderLeft: "solid",
