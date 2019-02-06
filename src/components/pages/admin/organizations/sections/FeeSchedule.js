@@ -8,6 +8,7 @@ import {
 	Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AddIcon from "@material-ui/icons/Add";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
@@ -16,6 +17,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import FeeRow from "./FeeRow";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
 import Dialog from "../../../../elements/Dialog";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	dollarValue: {},
@@ -25,6 +27,13 @@ const styles = theme => ({
 	subHeading: {
 		marginTop: theme.spacing.unit * 6,
 		paddingLeft: theme.spacing.unit * 2
+	},
+	actionButtonContainer: {
+		display: "flex",
+		justifyContent: "space-between",
+		paddingLeft: 10,
+		paddingRight: 10,
+		color: "gray"
 	}
 });
 
@@ -39,7 +48,7 @@ class FeeSchedule extends Component {
 		this.state = {
 			id: "",
 			name: "",
-			ranges: [],
+			ranges: null,
 			areYouSureDialogOpen: false,
 			errors: {},
 			isSubmitting: false
@@ -79,7 +88,7 @@ class FeeSchedule extends Component {
 				});
 
 				if (id) {
-					this.setState({ id, name, ranges: formattedRanges });
+					this.setState({ id, name, ranges: formattedRanges }, this.addZeroFeeRange.bind(this));
 				} else {
 					this.addNewRange();
 				}
@@ -110,6 +119,20 @@ class FeeSchedule extends Component {
 			});
 	}
 
+	addZeroFeeRange() {
+		const { ranges } = this.state;
+
+		const firstRange = ranges[0];
+
+		if (firstRange && firstRange.min_price_in_cents !== 0) {
+			this.addNewRange(0, {
+				min_price: "0",
+				company_fee: "0",
+				client_fee: "0"
+			});
+		}
+	}
+
 	refreshPerOrderFees() {
 		const { organizationId } = this.props;
 
@@ -132,14 +155,27 @@ class FeeSchedule extends Component {
 			});
 	}
 
-	addNewRange() {
-		const { ranges } = this.state;
-		ranges.push({
+	addNewRange(index, defaultValues = {}) {
+		let { ranges } = this.state;
+		if (ranges === null) {
+			ranges = [];
+		}
+
+		let insertAtIndex = 0;
+		if (isNaN(index)) {
+			insertAtIndex = ranges.length;
+		} else if (index <= ranges.length) {
+			insertAtIndex = index;
+		}
+
+		ranges.splice(insertAtIndex, 0, {
 			min_price: "",
 			fee: "",
 			company_fee: "",
-			client_fee: ""
+			client_fee: "",
+			...defaultValues
 		});
+
 		this.setState({ ranges });
 	}
 
@@ -178,12 +214,14 @@ class FeeSchedule extends Component {
 					rangesErrors[index].client_fee = "Missing fee.";
 				}
 			}
-			if (index > 0 && min_price <= ranges[index - 1].min_price) {
-				rangesErrors[
-					index
-				].min_price = `Minimum price must be more than ${ranges[
-					index - 1
-				].min_price.toFixed(2)}`;
+
+			const previousMinPrice = ranges[index - 1] ? Number(ranges[index - 1].min_price) : 0;
+			if (index > 0 && min_price <= previousMinPrice) {
+				if (!rangesErrors[index]) {
+					rangesErrors[index] = {};
+				}
+
+				rangesErrors[index].min_price = `Minimum price must be more than $${previousMinPrice}.`;
 			}
 		});
 
@@ -309,11 +347,16 @@ class FeeSchedule extends Component {
 						time the event was created.
 					</Typography>
 				</div>
-				<div>
-					<br/>
-					<Button style={{ marginRight: 10 }} onClick={onClose}>Cancel</Button>
+				<div style={{ display: "flex", paddingTop: 20 }}>
 					<Button
-						variant="primary"
+						style={{ marginRight: 5, flex: 1 }}
+						onClick={onClose}
+					>
+						Cancel
+					</Button>
+					<Button
+						style={{ marginLeft: 5, flex: 1 }}
+						variant="callToAction"
 						onClick={this.saveNewFeeSchedule.bind(this)}
 						autoFocus
 					>
@@ -326,6 +369,7 @@ class FeeSchedule extends Component {
 
 	renderForm() {
 		const { name, ranges, errors, isSubmitting } = this.state;
+		const { classes } = this.props;
 
 		return (
 			<div>
@@ -343,7 +387,7 @@ class FeeSchedule extends Component {
 
 					{ranges.map(({ min_price, client_fee, company_fee }, index) => (
 						<Grid key={index} spacing={24} container alignItems={"center"}>
-							<Grid item xs={12} sm={3} md={3} lg={3}>
+							<Grid item xs={12} sm={2} md={2} lg={2}>
 								<InputGroup
 									InputProps={{
 										startAdornment: (
@@ -355,6 +399,7 @@ class FeeSchedule extends Component {
 										errors.ranges[index] &&
 										errors.ranges[index].min_price
 									}
+									disabled={index === 0}
 									value={min_price}
 									name="min_price"
 									label="Minimum price"
@@ -373,7 +418,7 @@ class FeeSchedule extends Component {
 									disabled={true}
 									value={
 										ranges.length - 1 >= index + 1
-											? ranges[index + 1].min_price - 0.01
+											? (ranges[index + 1].min_price < 0.01 ? 0 : ranges[index + 1].min_price - 0.01).toFixed(2)
 											: "and up"
 									}
 									onChange={() => {}}
@@ -438,7 +483,7 @@ class FeeSchedule extends Component {
 								/>
 							</Grid>
 
-							<Grid item xs={1}>
+							<Grid item xs={12} sm={2} md={2} lg={2} className={classes.actionButtonContainer}>
 								{index > 0 ? (
 									<IconButton
 										onClick={e => this.deleteRange(index)}
@@ -446,17 +491,18 @@ class FeeSchedule extends Component {
 									>
 										<DeleteIcon/>
 									</IconButton>
-								) : null}
+								) : <span/>}
+
+								<IconButton
+									onClick={e => this.addNewRange(index + 1)}
+									color="inherit"
+								>
+									<AddIcon/>
+								</IconButton>
 							</Grid>
 						</Grid>
 					))}
 
-					<Button
-						style={{ marginRight: 10 }}
-						onClick={this.addNewRange.bind(this)}
-					>
-						Add new range
-					</Button>
 					<Button disabled={isSubmitting} type="submit" variant="callToAction">
 						{isSubmitting ? "Updating..." : "Update Fee Schedule"}
 					</Button>
@@ -485,13 +531,16 @@ class FeeSchedule extends Component {
 				</FeeRow>
 				{ranges.map((range, index) => {
 					const {
+						id,
 						client_fee_in_cents,
 						company_fee_in_cents,
-						fee_in_cents,
-						min_price_in_cents,
-
-						...rest
+						min_price_in_cents
 					} = range;
+
+					if (!id) {
+						//Don't display the ranges not saved
+						return null;
+					}
 
 					const totalCents = company_fee_in_cents + client_fee_in_cents;
 
@@ -538,16 +587,23 @@ class FeeSchedule extends Component {
 
 	render() {
 		const { type } = this.props;
+		const { ranges } = this.state;
+
+		if (ranges === null) {
+			return <Loader/>;
+		}
 
 		if (type === "read-write") {
 			return this.renderForm();
 		}
 
 		return this.renderDisplay();
+		
 	}
 }
 
 FeeSchedule.propTypes = {
+	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	type: PropTypes.oneOf(["read-write", "read"]).isRequired
 };
