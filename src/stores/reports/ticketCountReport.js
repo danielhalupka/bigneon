@@ -80,7 +80,7 @@ class TicketCountReport {
 	};
 
 	@action
-	fetchCountAndSalesData(queryParams) {
+	fetchCountAndSalesData(queryParams, includeZeroCountTicketPricings = false) {
 		if (!user.isAuthenticated) {
 			this.resetCountAndSalesData();
 			return;
@@ -90,7 +90,8 @@ class TicketCountReport {
 				...queryParams
 			})
 			.then(response => {
-				this.setCountAndSalesData(response.data.counts, response.data.sales);
+				const sales = response.data.sales.filter(item => includeZeroCountTicketPricings || (item.online_sale_count + item.box_office_sale_count + item.comp_sale_count) > 0 );
+				this.setCountAndSalesData(response.data.counts, sales);
 			})
 			.catch(error => {
 				notifications.showFromErrorResponse({
