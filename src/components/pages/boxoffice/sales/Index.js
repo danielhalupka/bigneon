@@ -17,6 +17,7 @@ import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
 import layout from "../../../../stores/layout";
 import BlankSlate from "../common/BlankSlate";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {},
@@ -125,7 +126,7 @@ class TicketSales extends Component {
 		const { ticketTypes } = boxOffice;
 
 		if (ticketTypes === null) {
-			return <Typography>Loading tickets...</Typography>;
+			return <Loader>Loading tickets...</Loader>;
 		}
 
 		const ticketTypeIds = Object.keys(ticketTypes);
@@ -174,7 +175,7 @@ class TicketSales extends Component {
 		}
 
 		if (holds === null) {
-			return <Typography>Loading holds...</Typography>;
+			return <Loader>Loading holds...</Loader>;
 		}
 
 		const holdIds = Object.keys(holds);

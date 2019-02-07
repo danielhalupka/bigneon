@@ -16,6 +16,7 @@ import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import user from "../../../../../stores/user";
 import IconButton from "./PricePoint";
+import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	paddedContent: {
@@ -266,7 +267,7 @@ class ArtistDetails extends Component {
 			isSearching
 		} = this.state;
 		if (availableArtists === null) {
-			return <Typography variant="body1">Loading artists...</Typography>;
+			return <Loader>Loading artists...</Loader>;
 		}
 
 		const artistsObj = {};

@@ -8,6 +8,7 @@ import { primaryHex } from "../../styles/theme";
 import Bigneon from "../../../helpers/bigneon";
 import notification from "../../../stores/notifications";
 import Dialog from "../../elements/Dialog";
+import Loader from "../../elements/loaders/Loader";
 
 const styles = {
 	content: {
@@ -101,7 +102,7 @@ class TicketDialog extends React.Component {
 							<QRCode size={300} fgColor={primaryHex} value={qrText}/>
 						</div>
 					) : (
-						<Typography variant="display1">Loading</Typography>
+						<Loader/>
 					)}
 				</div>
 			</Dialog>

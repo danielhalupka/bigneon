@@ -14,6 +14,7 @@ import user from "../../../../stores/user";
 import Button from "../../../elements/Button";
 import downloadCSV from "../../../../helpers/downloadCSV";
 import { Pagination, urlPageParam } from "../../../elements/Pagination";
+import Loader from "../../../elements/loaders/Loader";
 
 const imageSize = 40;
 
@@ -197,7 +198,7 @@ class FanList extends Component {
 		const { classes } = this.props;
 
 		if (users === null) {
-			return <Typography>Loading fans...</Typography>;
+			return <Loader/>;
 		}
 
 		if (users.length === 0) {

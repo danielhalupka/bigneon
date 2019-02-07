@@ -11,6 +11,7 @@ import Bigneon from "../../../../../../helpers/bigneon";
 import notifications from "../../../../../../stores/notifications";
 import CheckBox from "../../../../../elements/form/CheckBox";
 import { fontFamilyBold, fontFamilyDemiBold } from "../../../../../styles/theme";
+import Loader from "../../../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	root: {
@@ -167,7 +168,7 @@ class Export extends Component {
 		const { classes } = this.props;
 
 		if (guests === null) {
-			return <Typography>Loading guests...</Typography>;
+			return <Loader>Loading guests...</Loader>;
 		}
 
 		return (
@@ -211,7 +212,7 @@ class Export extends Component {
 		const { classes } = this.props;
 
 		if (holds === null) {
-			return <Typography>Loading holds...</Typography>;
+			return <Loader>Loading holds...</Loader>;
 		}
 
 		return (
