@@ -36,67 +36,24 @@
     ></script>
 
     <script src="https://js.stripe.com/v3/"></script>
-    <!-- Start of Async Drift Code -->
-    <script>
-      "use strict";
-      function init() {
 
-		  !(function() {
-			  var t = (window.driftt = window.drift = window.driftt || []);
-			  if (!t.init) {
-				  if (t.invoked)
-					  return void (
-						  window.console &&
-						  console.error &&
-						  console.error("Drift snippet included twice.")
-					  );
-				  (t.invoked = !0),
-					  (t.methods = [
-						  "identify",
-						  "config",
-						  "track",
-						  "reset",
-						  "debug",
-						  "show",
-						  "ping",
-						  "page",
-						  "hide",
-						  "off",
-						  "on"
-					  ]),
-					  (t.factory = function(e) {
-						  return function() {
-							  var n = Array.prototype.slice.call(arguments);
-							  return n.unshift(e), t.push(n), t;
-						  };
-					  }),
-					  t.methods.forEach(function(e) {
-						  t[e] = t.factory(e);
-					  }),
-					  (t.load = function(t) {
-						  var e = 3e5,
-							  n = Math.ceil(new Date() / e) * e,
-							  o = document.createElement("script");
-						  (o.type = "text/javascript"),
-							  (o.async = !0),
-							  (o.crossorigin = "anonymous"),
-							  (o.src =
-								  "https://js.driftt.com/include/" + n + "/" + t + ".js");
-						  var i = document.getElementsByTagName("script")[0];
-						  i.parentNode.insertBefore(o, i);
-					  });
+	<!-- Start of bigneonsupport Zendesk Widget script -->
+	<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=f704f3e8-f61d-421e-a833-60cba6e2c51b"> </script>
+	<script type="text/javascript">
+	  window.zESettings = {
+		  webWidget: {
+			  offset: {
+				  horizontal: '0px',
+				  vertical: '50px',
+				  mobile: {
+					  horizontal: '0px',
+					  vertical: '30px'
+				  }
 			  }
-		  })();
-		  drift.SNIPPET_VERSION = "0.3.1";
-		  drift.load("53weur4xbb57");
-      }
-      // if (window.location)
-      if(window.location.hostname !== "localhost") {
-          init();
-      }
-
-    </script>
-    <!-- End of Async Drift Code -->
+		  }
+	  };
+	</script>
+	<!-- End of bigneonsupport Zendesk Widget script -->
   </head>
 
   <body>
