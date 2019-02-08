@@ -170,7 +170,8 @@ export class TicketCountReport {
 
 	@computed
 	get dataByPrice() {
-		const allEventData = { ...this.dataByTicketPricing };
+		//Need to break the link from the dataByTicketPricing Observable
+		const allEventData = JSON.parse(JSON.stringify(this.dataByTicketPricing));
 		const groupByPriceTallyKeys = [
 			"box_office_sales_in_cents",
 			"online_sales_in_cents",
@@ -184,7 +185,9 @@ export class TicketCountReport {
 			"company_box_office_fees_in_cents",
 			"client_box_office_fees_in_cents",
 			"company_online_fees_in_cents",
-			"client_online_fees_in_cents"
+			"client_online_fees_in_cents",
+			"total_sold_count",
+			"total_sold_in_cents"
 		];
 		for (const eventId in allEventData) {
 			const { tickets } = allEventData[eventId];
