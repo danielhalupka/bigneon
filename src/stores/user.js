@@ -450,8 +450,8 @@ class User {
 	}
 
 	@computed
-	get hasOrgWeeklyEventSettlementReport() {
-		if (this.isOrgAdmin || this.isOrgOwner || this.isAdmin) {
+	get hasOrgEventSettlementReport() {
+		if (this.isAdmin) {
 			return true;
 		}
 

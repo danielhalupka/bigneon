@@ -7,6 +7,7 @@ import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import { fontFamilyDemiBold } from "../../../styles/theme";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import PropTypes from "prop-types";
+import Button from "../../../elements/Button";
 
 const styles = theme => ({
 	root: {
@@ -53,57 +54,88 @@ class ReportsDate extends Component {
 
 		if (fromString) {
 			startDate =  moment(fromString, URL_DATE_FORMAT);
-			if (startDate.isValid()) {
-				this.setState({ startDate });
+			if (!startDate.isValid()) {
+				startDate = null;
 			}
 		}
 
 		if (toString) {
 			endDate =  moment(toString, URL_DATE_FORMAT);
-			if (endDate.isValid()) {
-				this.setState({ endDate });
+			if (!endDate.isValid()) {
+				endDate = null;
 			}
 		}
 
-		this.setState({ startDate, endDate }, this.onChange.bind(this));
+		if (startDate === null && endDate === null) {
+			const { defaultStartDaysBack } = this.props;
+			//Used for weekly settlement reports to default dates to be for the past week
+			if (defaultStartDaysBack) {
+				startDate = moment().subtract(7, "d");
+				endDate = moment();
+			}
+		}
+
+		this.setState({ startDate, endDate }, this.onDateChange.bind(this));
 	}
 
-	onChange() {
-		const { onChange } = this.props;
-		if (onChange) {
-			const { startDate, endDate } = this.state;
-			if (startDate && endDate) {
-				if (endDate.isBefore(startDate)) {
-					return this.setState({ errors: { startDate: "From date needs to be before to date." } });
-				}
-
-				changeUrlParam("start", startDate.format(URL_DATE_FORMAT));
-				changeUrlParam("end", endDate.format(URL_DATE_FORMAT));
-
-				//Inclusive of whole days
-				const startOfStartDate = startDate.startOf("day");
-				const endOfEndDate = endDate.endOf("day");
-
-				onChange({
-					startDate: startOfStartDate,
-					endDate: endOfEndDate,
-					start_utc: moment
-						.utc(startOfStartDate)
-						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-					end_utc: moment
-						.utc(endOfEndDate)
-						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
-				}
-				);
-			} else if (!startDate && !endDate) {
-				onChange();
+	onChange(callBack = () => {}) {
+		const { startDate, endDate } = this.state;
+		if (startDate && endDate) {
+			if (endDate.isBefore(startDate)) {
+				return this.setState({ errors: { startDate: "From date needs to be before to date." } });
 			}
+
+			changeUrlParam("start", startDate.format(URL_DATE_FORMAT));
+			changeUrlParam("end", endDate.format(URL_DATE_FORMAT));
+
+			//Inclusive of whole days
+			const startOfStartDate = startDate.startOf("day");
+			const endOfEndDate = endDate.endOf("day");
+
+			callBack({
+				startDate: startOfStartDate,
+				endDate: endOfEndDate,
+				start_utc: moment
+					.utc(startOfStartDate)
+					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_utc: moment
+					.utc(endOfEndDate)
+					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			}
+			);
+		} else if (!startDate && !endDate) {
+			callBack();
+		}
+		
+	}
+
+	onDateChange() {
+		const { onChange, onChangeButton } = this.props;
+		if (!onChangeButton) {
+			this.onChange(onChange);
+		} else {
+			this.onChange();
 		}
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, onChangeButton } = this.props;
 		const { startDate, endDate, errors } = this.state;
+
+		let columnSizes = [
+			{ xs: 12, sm: 4, lg: 6 },
+			{ xs: 12, sm: 4, lg: 3 },
+			{ xs: 12, sm: 4, lg: 3 }
+		];
+
+		if (onChangeButton) {
+			columnSizes = [
+				{ xs: 12, sm: 4, lg: 3 },
+				{ xs: 12, sm: 4, lg: 3 },
+				{ xs: 12, sm: 4, lg: 3 },
+				{ xs: 12, sm: 4, lg: 3 }
+			];
+		}
 
 		return (
 			<div className={classes.root}>
@@ -117,10 +149,8 @@ class ReportsDate extends Component {
 				>
 					<Grid
 						item
-						xs={12}
-						sm={4}
-						lg={6}
 						className={classes.titleContainer}
+						{...columnSizes[0]}
 					>
 						<img alt={"Report date"} src="/icons/events-active.svg" className={classes.icon}/>
 						<Typography className={classes.title}>
@@ -129,9 +159,7 @@ class ReportsDate extends Component {
 					</Grid>
 					<Grid
 						item
-						xs={12}
-						sm={4}
-						lg={3}
+						{...columnSizes[1]}
 					>
 						<DateTimePickerGroup
 							error={errors.startDate}
@@ -140,15 +168,13 @@ class ReportsDate extends Component {
 							name="startDate"
 							label="From"
 							onChange={startDate => {
-								this.setState({ startDate }, this.onChange.bind(this));
+								this.setState({ startDate }, this.onDateChange.bind(this));
 							}}
 						/>
 					</Grid>
 					<Grid
 						item
-						xs={12}
-						sm={4}
-						lg={3}
+						{...columnSizes[2]}
 					>
 						<DateTimePickerGroup
 							error={errors.endDate}
@@ -157,10 +183,27 @@ class ReportsDate extends Component {
 							name="endDate"
 							label="To"
 							onChange={endDate => {
-								this.setState({ endDate }, this.onChange.bind(this));
+								this.setState({ endDate }, this.onDateChange.bind(this));
 							}}
 						/>
 					</Grid>
+
+					{onChangeButton ? (
+						<Grid
+							item
+							{...columnSizes[3]}
+						>
+							<Button
+								onClick={() => {
+									this.onChange(this.props.onChange);
+								}}
+								variant="callToAction"
+							>
+								Generate report
+							</Button>
+						</Grid>
+					) : null
+					}
 				</Grid>
 				<Divider/>
 			</div>
@@ -170,7 +213,9 @@ class ReportsDate extends Component {
 
 ReportsDate.propTypes = {
 	classes: PropTypes.object.isRequired,
-	onChange: PropTypes.func.isRequired
+	onChange: PropTypes.func.isRequired,
+	defaultStartDaysBack: PropTypes.number, //Pass this through for reports like weekly settlements that needs to be the past week by default
+	onChangeButton: PropTypes.bool //Pass this through if you want onChange to be called here and not automatically when the date is changed
 };
 
 export default withStyles(styles)(ReportsDate);

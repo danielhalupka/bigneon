@@ -10,6 +10,7 @@ import Divider from "../../../common/Divider";
 import Transactions from "./transactions/Transactions";
 import TicketCounts from "./counts/TicketCounts";
 import Loader from "../../../elements/loaders/Loader";
+import Settlements from "./settlement/Settlements";
 
 const styles = theme => ({
 	content: {
@@ -36,7 +37,7 @@ class Reports extends Component {
 		const { classes } = this.props;
 
 		const report = this.props.match.params.report;
-		const { hasTransactionReports, hasTicketCountReports, hasOrgBoxOfficeSalesReport, hasOrgReconciliationReport, hasOrgWeeklyEventSettlementReport } = user;
+		const { hasTransactionReports, hasTicketCountReports, hasOrgBoxOfficeSalesReport, hasOrgReconciliationReport, hasOrgEventSettlementReport } = user;
 
 		return (
 			<div className={classes.menuContainer}>
@@ -84,13 +85,13 @@ class Reports extends Component {
 					</Typography>
 				) : null }
 
-				{hasOrgWeeklyEventSettlementReport ? (
+				{hasOrgEventSettlementReport ? (
 					<Typography className={classes.menuText}>
 						<StyledLink
-							underlined={report === "weekly-event-settlement"}
-							to={`/admin/reports/weekly-event-settlement`}
+							underlined={report === "settlements"}
+							to={`/admin/reports/settlements`}
 						>
-						Weekly Event Settlement
+						Settlement reports
 						</StyledLink>
 					</Typography>
 				) : null}
@@ -117,6 +118,8 @@ class Reports extends Component {
 				) : null;
 			case "transaction-details":
 				return <Transactions organizationId={organizationId}/>;
+			case "settlements":
+				return <Settlements organizationId={organizationId}/>;
 			default:
 				return (
 					<Typography>

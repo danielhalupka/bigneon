@@ -17,16 +17,15 @@ const styles = theme => {
 		},
 		default: {},
 		gray: {
-			backgroundColor: "#f5f7fa"
+			backgroundColor: "#E1E6EE"
+		},
+		darkGray: {
+			backgroundColor: "#AFC6D4"
 		},
 		heading: {
 			backgroundColor: "#000000",
 			borderTopLeftRadius: 8,
 			borderTopRightRadius: 8
-		},
-		subHeading: {
-			backgroundColor: "#f5f7fa",
-			fontWeight: "bold"
 		},
 		headingText: {
 			fontSize: theme.typography.fontSize * 0.8,
@@ -39,33 +38,25 @@ const styles = theme => {
 		},
 		totalText: {
 			color: "#FFFFFF",
-			borderRadius: 4
+			borderRadius: 4,
+			textTransform: "uppercase",
+			fontFamily: fontFamilyDemiBold
 		},
 		text: {
-			fontSize: theme.typography.fontSize * 0.9
+			fontSize: theme.typography.fontSize * 0.9,
+			fontFamily: fontFamilyDemiBold,
+			textTransform: "capitalize"
 		}
 	};
 };
 
-const TicketCountRow = props => {
-	const { heading, subHeading, gray, children, classes, total, ...rest } = props;
+const TotalsRow = props => {
+	const { heading, gray, darkGray, children, onClick, classes, total, ...rest } = props;
 
 	const columnStyles = [
-		{ flex: 3, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" }
+		{ flex: 4, textAlign: "left" },
+		{ flex: 2, textAlign: "right" }
 	];
-
-	//If they're adding the event name, make the second column sider
-	if (children.length === 8) {
-		columnStyles.splice(1, 0, { flex: 3, textAlign: "left" });
-	}
 
 	const columns = children.map((text, index) => {
 		return (
@@ -73,7 +64,6 @@ const TicketCountRow = props => {
 				noWrap
 				className={classNames({
 					[classes.headingText]: heading,
-					[classes.subHeading]: subHeading,
 					[classes.text]: !heading,
 					[classes.totalText]: total
 				})}
@@ -91,9 +81,9 @@ const TicketCountRow = props => {
 				[classes.root]: true,
 				[classes.gray]: gray,
 				[classes.total]: total,
-				[classes.heading]: heading,
-				[classes.subHeading]: subHeading
+				[classes.heading]: heading
 			})}
+			onClick={onClick}
 			{...rest}
 		>
 			{columns}
@@ -101,13 +91,13 @@ const TicketCountRow = props => {
 	);
 };
 
-TicketCountRow.propTypes = {
+TotalsRow.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.array.isRequired,
 	gray: PropTypes.bool,
+	darkGray: PropTypes.bool,
 	total: PropTypes.bool,
-	heading: PropTypes.bool,
-	subHeading: PropTypes.bool
+	heading: PropTypes.bool
 };
 
-export default withStyles(styles)(TicketCountRow);
+export default withStyles(styles)(TotalsRow);
