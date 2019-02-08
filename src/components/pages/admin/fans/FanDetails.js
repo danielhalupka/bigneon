@@ -214,37 +214,39 @@ class Fan extends Component {
 		const { classes } = this.props;
 		const { activeHeading } = this.state;
 
-		return (
-			<Grid item xs={12} sm={6} md={4} lg={3}>
-				<Grid container spacing={24}>
-					<Grid item xs={3} sm={3} lg={3}>
-						<Typography className={classes.menuText}>
-							<StyledLink
-								underlined={activeHeading === "sales"}
-								onClick={() => this.setState({ activeHeading: "sales" })}
-							>
-								Sales
-							</StyledLink>
-						</Typography>
-					</Grid>
-
-					<Grid item xs={1} sm={1} lg={1}>
-						<div className={classes.verticalDividerSmall}/>
-					</Grid>
-
-					<Grid item xs={3} sm={3} lg={3}>
-						<Typography className={classes.menuText}>
-							<StyledLink
-								underlined={activeHeading === "attendance"}
-								onClick={() => this.setState({ activeHeading: "attendance" })}
-							>
-								Attendance
-							</StyledLink>
-						</Typography>
-					</Grid>
-				</Grid>
-			</Grid>
-		);
+		return null;
+		//TODO add back when displaying attendance
+		// return (
+		// 	<Grid item xs={12} sm={6} md={4} lg={3}>
+		// 		<Grid container spacing={24}>
+		// 			<Grid item xs={3} sm={3} lg={3}>
+		// 				<Typography className={classes.menuText}>
+		// 					<StyledLink
+		// 						underlined={activeHeading === "sales"}
+		// 						onClick={() => this.setState({ activeHeading: "sales" })}
+		// 					>
+		// 						Sales
+		// 					</StyledLink>
+		// 				</Typography>
+		// 			</Grid>
+		//
+		// 			<Grid item xs={1} sm={1} lg={1}>
+		// 				<div className={classes.verticalDividerSmall}/>
+		// 			</Grid>
+		//
+		// 			<Grid item xs={3} sm={3} lg={3}>
+		// 				<Typography className={classes.menuText}>
+		// 					<StyledLink
+		// 						underlined={activeHeading === "attendance"}
+		// 						onClick={() => this.setState({ activeHeading: "attendance" })}
+		// 					>
+		// 						Attendance
+		// 					</StyledLink>
+		// 				</Typography>
+		// 			</Grid>
+		// 		</Grid>
+		// 	</Grid>
+		// );
 	}
 
 	renderSales() {
