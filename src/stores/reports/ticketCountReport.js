@@ -32,7 +32,8 @@ const combineTotals = (counts, sales) => {
 		totalOpenCount: 0,
 		totalReservedCount: 0,
 		totalGross: 0,
-		totalOnlineClientFeesInCents: 0
+		totalOnlineClientFeesInCents: 0,
+		totalRedeemedCount: 0
 	};
 	counts.forEach(row => {
 		const {
@@ -40,7 +41,8 @@ const combineTotals = (counts, sales) => {
 			available_for_purchase_count,
 			reserved_count,
 			comp_available_count,
-			hold_available_count
+			hold_available_count,
+			redeemed_count
 		} = row;
 
 		const total_held_tickets = comp_available_count + hold_available_count;
@@ -48,6 +50,7 @@ const combineTotals = (counts, sales) => {
 		totals.totalHoldsCount += total_held_tickets;
 		totals.totalOpenCount += available_for_purchase_count;
 		totals.totalReservedCount += reserved_count;
+		totals.totalRedeemedCount += redeemed_count;
 	});
 
 	sales.forEach(row => {

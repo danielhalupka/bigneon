@@ -13,7 +13,10 @@ import VerticalBarChart from "../../../../elements/charts/VerticalBarChart";
 import Container from "./Container";
 import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
+import user from "../../../../../stores/user";
 import Loader from "../../../../elements/loaders/Loader";
+import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
+import { observer } from "mobx-react";
 
 const styles = theme => {
 	return {
@@ -93,6 +96,7 @@ const NumberCard = ({ classes, label, active, value, iconName }) => {
 	);
 };
 
+@observer
 class Summary extends Component {
 	constructor(props) {
 		super(props);
@@ -112,6 +116,7 @@ class Summary extends Component {
 		const id = this.props.match.params.id;
 		this.loadEventDetails(id);
 		this.loadTimeZone(id);
+		this.loadCounts(id);
 	}
 
 	loadEventDetails(id) {
@@ -125,6 +130,7 @@ class Summary extends Component {
 					dayStats: day_stats,
 					chartValues: this.getDailyBreakdownValues(day_stats)
 				});
+				this.loadCounts(id, event.organization_id);
 			})
 			.catch(error => {
 				console.error(error);
@@ -133,6 +139,16 @@ class Summary extends Component {
 					error
 				});
 			});
+
+	}
+
+	loadCounts(id, organizationId) {
+		if (organizationId) {
+			ticketCountReport.fetchCountAndSalesData({
+				organization_id: organizationId,
+				event_id: id
+			});
+		}
 	}
 
 	loadTimeZone(id) {
@@ -172,6 +188,18 @@ class Summary extends Component {
 		return result;
 	}
 
+	getRedeemedCount() {
+		const { event } = this.state;
+		if (!event) {
+			return 0;
+		}
+		const eventData = ticketCountReport.dataByPrice[event.id];
+		if (!eventData) {
+			return 0;
+		}
+		return eventData.totals.totalRedeemedCount;
+	}
+
 	renderBarChart() {
 		const { chartValues } = this.state;
 		return <VerticalBarChart values={chartValues}/>;
@@ -180,9 +208,10 @@ class Summary extends Component {
 	renderNumbers() {
 		const { activeNumbersCard, event } = this.state;
 		const { classes } = this.props;
-
+		const redeemedCount = this.getRedeemedCount();
 		return (
 			<Grid container spacing={32}>
+
 				<Grid
 					item
 					xs={12}
@@ -236,13 +265,29 @@ class Summary extends Component {
 					xs={12}
 					sm={6}
 					lg={3}
+					onMouseEnter={() => this.setState({ activeNumbersCard: "attendance" })}
+					onMouseLeave={() => this.setState({ activeNumbersCard: null })}
+				>
+					<NumberCard
+						active={activeNumbersCard === "attendance"}
+						label="Attendance"
+						value={redeemedCount}
+						iconName="tickets"
+						classes={classes}
+					/>
+				</Grid>
+				<Grid
+					item
+					xs={12}
+					sm={6}
+					lg={3}
 					onMouseEnter={() => this.setState({ activeNumbersCard: "daysLeft" })}
 					onMouseLeave={() => this.setState({ activeNumbersCard: null })}
 				>
 					<NumberCard
 						active={activeNumbersCard === "daysLeft"}
 						label="Days left"
-						value={moment(event.event_start).diff(moment(), "days")}
+						value={Math.max(0, moment(event.event_start).diff(moment(), "days"))}
 						iconName="events"
 						classes={classes}
 					/>
@@ -280,7 +325,7 @@ class Summary extends Component {
 			return <Loader/>;
 		}
 
-		if (event.is_external){
+		if (event.is_external) {
 			return (
 				<Container eventId={event.id} subheading={"summary"}>
 					<Grid
@@ -289,7 +334,7 @@ class Summary extends Component {
 						justify="center"
 						alignItems="center"
 					>
-						<img src="/images/no_sales_data_illustration.png" style={{ margin: 50,width: 200 }}/>
+						<img src="/images/no_sales_data_illustration.png" style={{ margin: 50, width: 200 }}/>
 						<Typography variant="title">This event is externally hosted.</Typography>
 					</Grid>
 				</Container>
