@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold, textColorPrimary } from "../../styles/theme";
 import classNames from "classnames";
 
 const styles = theme => {
@@ -12,9 +12,10 @@ const styles = theme => {
 			marginRight: theme.spacing.unit * 2,
 			display: "flex"
 		},
-		label: { color: "#868f9b" },
+		label: { color: "#868f9b", paddingTop: 2 },
 		labelActive: {
-			fontFamily: fontFamilyDemiBold
+			fontFamily: fontFamilyDemiBold,
+			color: textColorPrimary
 		},
 		square: {
 			marginRight: theme.spacing.unit,
@@ -57,7 +58,8 @@ const CheckBox = ({
 	onClick,
 	classes,
 	disabled,
-	style = {}
+	style = {},
+	labelClass
 }) => {
 	return (
 		<div
@@ -81,7 +83,7 @@ const CheckBox = ({
 				<div className={classes.square}/>
 			)}
 			{children ? (
-				<Typography className={classes[active ? "labelActive" : "label"]}>
+				<Typography className={classNames({ [classes.label]: true, [classes.labelActive]: !!active, [labelClass]: !!labelClass })}>
 					{children}
 				</Typography>
 			) : null}
@@ -92,6 +94,7 @@ const CheckBox = ({
 CheckBox.propTypes = {
 	active: PropTypes.bool.isRequired,
 	children: PropTypes.string,
+	labelClass: PropTypes.string,
 	classes: PropTypes.object.isRequired,
 	onClick: PropTypes.func,
 	disabled: PropTypes.bool,

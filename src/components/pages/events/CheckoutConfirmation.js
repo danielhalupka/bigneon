@@ -210,7 +210,7 @@ class CheckoutConfirmation extends Component {
 			provider: provider
 		};
 
-		if (provider === "stripe") {
+		if (provider === "Stripe") {
 			method = {
 				...method,
 				token: stripeToken.id,

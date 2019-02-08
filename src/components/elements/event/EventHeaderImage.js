@@ -14,25 +14,29 @@ import AppButton from "../AppButton";
 import nl2br from "../../../helpers/nl2br";
 
 const styles = theme => ({
-	blurContainer: {
+	coverImageContainer: {
 		width: "100%",
 		overflow: "hidden",
 		position: "relative"
 	},
-	blurryImage: {
+	coverImage: {
 		width: "110%",
 		backgroundColor: "linear-gradient(to top, #000000, rgba(0, 0, 0, 0))",
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "cover",
 		backgroundPosition: "center",
-
-		position: "absolute",
+		position: "absolute"
+	},
+	blurryImage: {
 		WebkitFilter: "blur(5.5px)",
 		filter: "blur(5.5px)",
 		left: -15,
 		right: -15,
 		top: -15,
 		bottom: -15
+	},
+	noCoverImage: {
+		backgroundImage: "linear-gradient(255deg, #e53d96, #5491cc)"
 	},
 	content: {
 		position: "absolute",
@@ -79,18 +83,18 @@ const styles = theme => ({
 		lineHeight: 0.9
 	},
 	withArtists: {
-		color: "#9da3b4",
+		color: "#FFFFFF",
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 2,
 		lineHeight: 0.9
 	},
 	withArtistsDetailed: {
-		color: "#9da3b4",
+		color: "#FFFFFF",
 		fontSize: theme.typography.fontSize * 1.6,
 		lineHeight: 1
 	},
 	withArtistsMobile: {
-		color: "#9da3b4",
+		color: "#FFFFFF",
 		fontFamily: fontFamilyDemiBold,
 		lineHeight: 1,
 		fontSize: theme.typography.fontSize * 1.5
@@ -121,7 +125,7 @@ const EventHeaderImage = props => {
 	const {
 		classes,
 		variant,
-		promo_image_url,
+		cover_image_url,
 		displayEventStartDate,
 		displayDoorTime,
 		displayShowTime,
@@ -151,20 +155,35 @@ const EventHeaderImage = props => {
 	const eventNameIsLongDesktop = name.length > 65;
 	const eventNameIsLongMobile = name.length > 30;
 
+	let coverImageDiv;
+	if (cover_image_url) {
+		coverImageDiv = (
+			<div
+				className={classNames({ [classes.coverImage]: true, [classes.blurryImage]: true })}
+				style={{
+					backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)),url(${cover_image_url})`,
+					height: height * 1.1
+				}}
+			/>
+		);
+	} else {
+		coverImageDiv = (
+			<div
+				className={classNames({ [classes.coverImage]: true, [classes.noCoverImage]: true })}
+				style={{
+					height: height * 1.1
+				}}
+			/>
+		);
+	}
+
 	return (
 		<div>
 			{/* DESKTOP */}
 			<Hidden smDown implementation="css">
-				<div className={classes.blurContainer} style={{ height }}>
-					<div
-						className={classes.blurryImage}
-						style={{
-							backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)),url(${promo_image_url})`,
-							height: height * 1.1
-						}}
-					/>
+				<div className={classes.coverImageContainer} style={{ height }}>
+					{coverImageDiv}
 				</div>
-
 				<Grid
 					className={classNames(classes.content, classes.desktopContent)}
 					style={{
@@ -286,14 +305,8 @@ const EventHeaderImage = props => {
 
 			{/* Mobile */}
 			<Hidden mdUp>
-				<div className={classes.blurContainer} style={{ height }}>
-					<div
-						className={classes.blurryImage}
-						style={{
-							backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${promo_image_url})`,
-							height: height * 1.1
-						}}
-					/>
+				<div className={classes.coverImageContainer} style={{ height }}>
+					{coverImageDiv}
 				</div>
 
 				<div
@@ -441,7 +454,7 @@ EventHeaderImage.defaultProps = {
 EventHeaderImage.propTypes = {
 	classes: PropTypes.object.isRequired,
 	variant: PropTypes.oneOf(["simple", "detailed", "success"]),
-	promo_image_url: PropTypes.string.isRequired,
+	cover_image_url: PropTypes.string,
 	name: PropTypes.string.isRequired,
 	top_line_info: PropTypes.string,
 	artists: PropTypes.array.isRequired,

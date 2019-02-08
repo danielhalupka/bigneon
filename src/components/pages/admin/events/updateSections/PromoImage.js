@@ -8,10 +8,16 @@ import CardMedia from "@material-ui/core/CardMedia";
 import notifications from "../../../../../stores/notifications";
 import cloudinaryWidget from "../../../../../helpers/cloudinaryWidget";
 import MaintainAspectRatio from "../../../../elements/MaintainAspectRatio";
+import CheckBox from "../../../../elements/form/CheckBox";
+import { fontFamily } from "../../../../styles/theme";
+import { Hidden } from "@material-ui/core";
 
 const height = 480;
 
 const styles = theme => ({
+	root: {
+		paddingBottom: theme.spacing.unit * 2
+	},
 	media: {
 		height: "100%"
 	},
@@ -31,16 +37,21 @@ const styles = theme => ({
 		height: "100%",
 		border: "dashed 0.7px #ffffff",
 		borderRadius: 4,
-
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center"
 	},
-	caption: {
+	captionContainer: {
 		textAlign: "right",
 		paddingTop: theme.spacing.unit * 2,
-		paddingRight: theme.spacing.unit * 2
+		paddingRight: theme.spacing.unit * 2,
+		paddingLeft: theme.spacing.unit
+	},
+	caption: {
+		fontSize: theme.typography.fontSize * 0.85,
+		color: "#9DA3B4",
+		fontFamily: fontFamily
 	},
 	iconDiv: {
 		display: "flex",
@@ -73,6 +84,27 @@ const styles = theme => ({
 	},
 	noMediaText: {
 		color: "#FFF"
+	},
+	bottomRowContainer: {
+		display: "flex",
+		justifyContent: "space-between",
+
+		[theme.breakpoints.down("sm")]: {
+			justifyContent: "flex-end"
+		}
+	},
+	checkboxContainer: {
+		display: "flex",
+		justifyContent: "flex-start",
+		paddingTop: theme.spacing.unit * 2 - 2,
+		paddingLeft: theme.spacing.unit * 2,
+
+		[theme.breakpoints.down("sm")]: {
+			justifyContent: "flex-end",
+			paddingTop: 0,
+			paddingBottom: theme.spacing.unit * 4,
+			paddingLeft: theme.spacing.unit
+		}
 	}
 });
 
@@ -102,32 +134,50 @@ const uploadWidget = onSuccess => {
 };
 
 const CustomCardMedia = props => {
-	const { classes, src, alt, caption, onUrlUpdate, noMediaTitle } = props;
+	const { classes, src, alt, caption, onUrlUpdate, noMediaTitle, showCoverImage, onChangeCoverImage } = props;
 
 	const onUploadClick = () => {
 		uploadWidget(url => onUrlUpdate(url));
 	};
 
 	if (src) {
+		const coverImageCheckbox = (
+			<div className={classes.checkboxContainer}>
+				<CheckBox labelClass={classes.caption} active={showCoverImage} onClick={onChangeCoverImage}>
+					Use frosted event image as event cover image on the web
+				</CheckBox>
+			</div>
+		);
+
 		return (
-			<div>
+			<div className={classes.root}>
 				<MaintainAspectRatio heightRatio={0.5}>
 					<CardMedia className={classes.media} image={src} title={alt}/>
 				</MaintainAspectRatio>
 
-				<div className={classes.iconDiv}>
-					<div className={classes.caption}>
-						<Typography variant="caption">{caption}</Typography>
-					</div>
+				<div className={classes.bottomRowContainer}>
+					<Hidden smDown>
+						{coverImageCheckbox}
+					</Hidden>
 
-					<Avatar className={classes.iconOuter} onClick={onUploadClick}>
-						<img
-							alt="Card"
-							src={"/icons/camera-white.svg"}
-							className={classes.icon}
-						/>
-					</Avatar>
+					<div className={classes.iconDiv}>
+						<div className={classes.captionContainer}>
+							<Typography className={classes.caption}>{caption}</Typography>
+						</div>
+
+						<Avatar className={classes.iconOuter} onClick={onUploadClick}>
+							<img
+								alt="Card"
+								src={"/icons/camera-white.svg"}
+								className={classes.icon}
+							/>
+						</Avatar>
+					</div>
 				</div>
+
+				<Hidden mdUp>
+					{coverImageCheckbox}
+				</Hidden>
 			</div>
 		);
 	}
@@ -140,7 +190,6 @@ const CustomCardMedia = props => {
 					src={"/icons/camera-white.svg"}
 					className={classes.noMediaIcon}
 				/>
-
 				<Typography variant="title" className={classes.noMediaText}>
 					{noMediaTitle}
 				</Typography>
@@ -158,7 +207,9 @@ CustomCardMedia.propTypes = {
 	caption: PropTypes.string,
 	onUrlUpdate: PropTypes.func.isRequired,
 	alt: PropTypes.string.isRequired,
-	noMediaTitle: PropTypes.string.isRequired
+	noMediaTitle: PropTypes.string.isRequired,
+	showCoverImage: PropTypes.bool.isRequired,
+	onChangeCoverImage: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(CustomCardMedia);

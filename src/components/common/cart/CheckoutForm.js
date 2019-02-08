@@ -92,7 +92,7 @@ class CheckoutForm extends Component {
 		const { name, paymentMethod } = this.state;
 
 		let stripeToken = null;
-		if (paymentMethod === "Card|stripe") {
+		if (paymentMethod === "Card|Stripe") {
 			this.setState({ isSubmitting: true, statusMessage: "Authorizing..." });
 			const { error, token } = await this.props.stripe.createToken({ name });
 
@@ -159,7 +159,7 @@ class CheckoutForm extends Component {
 	renderPaymentSpecificDetails(newPaymentMethod) {
 		const { paymentMethod } = this.state;
 
-		if (newPaymentMethod === "Card|stripe" && paymentMethod === "Card|stripe") {
+		if (newPaymentMethod === "Card|Stripe" && paymentMethod === "Card|Stripe") {
 			const { classes, theme } = this.props;
 
 			const placeholderColor = theme.palette.text.hint;
@@ -198,8 +198,8 @@ class CheckoutForm extends Component {
 		const { isSubmitting, paymentMethod } = this.state;
 
 		const iconSrc = {
-			stripe: ["credit-card-gray.svg"],
-			globee: [
+			Stripe: ["credit-card-gray.svg"],
+			Globee: [
 				"crypto/BTC.png",
 				"crypto/DCR.png",
 				"crypto/LNBT.png",

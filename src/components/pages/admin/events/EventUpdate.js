@@ -443,7 +443,7 @@ class Event extends Component {
 		const { errors, isSubmitting, ticketTimesDirty } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { status, isExternal, externalTicketsUrl, showTime } = event;
+		const { status, isExternal, externalTicketsUrl, showTime, showCoverImage } = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
@@ -464,6 +464,8 @@ class Event extends Component {
 						onUrlUpdate={promoImageUrl => {
 							eventUpdateStore.updateEvent({ promoImageUrl });
 						}}
+						showCoverImage={showCoverImage}
+						onChangeCoverImage={() => eventUpdateStore.updateEvent({ showCoverImage: !showCoverImage })}
 						noMediaTitle="Upload event image"
 					/>
 

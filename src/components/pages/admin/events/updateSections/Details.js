@@ -83,7 +83,8 @@ const formatDataForSaving = (event, organizationId) => {
 		override_status,
 		videoUrl,
 		endTime,
-		eventType = "Music"
+		eventType = "Music",
+		showCoverImage
 	} = event;
 
 	const eventDetails = {
@@ -150,6 +151,12 @@ const formatDataForSaving = (event, organizationId) => {
 
 	if (promoImageUrl) {
 		eventDetails.promo_image_url = promoImageUrl;
+
+		if (showCoverImage) {
+			eventDetails.cover_image_url = promoImageUrl;
+		} else {
+			eventDetails.cover_image_url = "";
+		}
 	}
 
 	if (venueId) {
@@ -178,7 +185,8 @@ const formatDataForInputs = event => {
 		event_end,
 		override_status = "",
 		status = "Draft",
-		event_type = "Music"
+		event_type = "Music",
+		cover_image_url
 	} = event;
 
 	const tomorrow = new Date();
@@ -231,7 +239,8 @@ const formatDataForInputs = event => {
 		isExternal: is_external,
 		externalTicketsUrl: is_external && external_url ? external_url : null,
 		status,
-		eventType: event_type
+		eventType: event_type,
+		showCoverImage: !!cover_image_url
 	};
 
 	return eventDetails;

@@ -98,18 +98,9 @@ class EventUpdate {
 			.catch(error => {
 				console.error(error);
 
-				let message = "Loading event ticket types failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event ticket types failed.",
+					error
 				});
 			});
 	}
