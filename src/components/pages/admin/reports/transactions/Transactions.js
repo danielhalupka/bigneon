@@ -74,7 +74,8 @@ class Transactions extends Component {
 			"Face value",
 			"Service fees",
 			"Gross",
-			"User Name",
+			"First Name",
+			"Last Name",
 			"Email"
 		]);
 
@@ -100,7 +101,8 @@ class Transactions extends Component {
 				user_id,
 				gross_fee_in_cents_total,
 				event_fee_gross_in_cents_total,
-				user_name,
+				first_name,
+				last_name,
 				email
 			} = item;
 
@@ -122,7 +124,8 @@ class Transactions extends Component {
 				dollars((quantity - refunded_quantity) * unit_price_in_cents), //Face value
 				dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
 				dollars(gross),
-				user_name,
+				first_name,
+				last_name,
 				email
 			]);
 		});
@@ -216,6 +219,7 @@ class Transactions extends Component {
 		const includeEventName = !this.props.eventId;
 
 		const ths = [
+			"Name",
 			"Ticket name",
 			"Order type",
 			"Time",
@@ -245,12 +249,14 @@ class Transactions extends Component {
 						unit_price_in_cents,
 						gross_fee_in_cents_total,
 						event_fee_gross_in_cents_total,
-						user_name,
+						first_name,
+						last_name,
 						email,
 						refunded_quantity
 					} = item;
 
 					const tds = [
+						`${first_name} ${last_name}`,
 						ticket_name,
 						order_type,
 						transaction_date,
