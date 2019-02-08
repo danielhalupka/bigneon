@@ -1,10 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, Typography } from "@material-ui/core";
-
+import { dollars } from "../../../../../helpers/money";
 import SummaryAuditRow from "./SummaryAuditRow";
-
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
 export const SUMMARY_AUDIT_HEADINGS = [
 	"Ticket",

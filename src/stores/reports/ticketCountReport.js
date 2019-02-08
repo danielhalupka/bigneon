@@ -1,9 +1,8 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, extendObservable } from "mobx";
 import notifications from "../notifications";
 import Bigneon from "../../helpers/bigneon";
 import user from "../user";
-
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
+import { dollars } from "../../helpers/money";
 
 const salesRows = (sales) => {
 	sales.forEach(row => {
@@ -32,7 +31,8 @@ const combineTotals = (counts, sales) => {
 		totalHoldsCount: 0,
 		totalOpenCount: 0,
 		totalReservedCount: 0,
-		totalGross: 0
+		totalGross: 0,
+		totalOnlineClientFeesInCents: 0
 	};
 	counts.forEach(row => {
 		const {
@@ -56,8 +56,10 @@ const combineTotals = (counts, sales) => {
 			box_office_sale_count,
 			online_sales_in_cents,
 			box_office_sales_in_cents,
-			comp_sale_count
+			comp_sale_count,
+			client_online_fees_in_cents
 		} = row;
+
 		const total_sold_count = online_sale_count + box_office_sale_count;
 		const total_sold_in_cents = online_sales_in_cents + box_office_sales_in_cents;
 
@@ -67,11 +69,12 @@ const combineTotals = (counts, sales) => {
 
 		totals.totalSoldOnlineCount += online_sale_count;
 		totals.totalGross += total_sold_in_cents;
+		totals.totalOnlineClientFeesInCents += client_online_fees_in_cents;
 	});
 	return totals;
 };
 
-class TicketCountReport {
+export class TicketCountReport {
 	@observable
 	countAndSalesData = {
 		name: "Loading",
@@ -82,7 +85,7 @@ class TicketCountReport {
 	@action
 	fetchCountAndSalesData(queryParams, includeZeroCountTicketPricings = false) {
 		if (!user.isAuthenticated) {
-			this.resetCountAndSalesData();
+			this.setCountAndSalesData();
 			return;
 		}
 		return Bigneon()
@@ -90,7 +93,7 @@ class TicketCountReport {
 				...queryParams
 			})
 			.then(response => {
-				const sales = response.data.sales.filter(item => includeZeroCountTicketPricings || (item.online_sale_count + item.box_office_sale_count + item.comp_sale_count) > 0 );
+				const sales = response.data.sales.filter(item => includeZeroCountTicketPricings || (item.online_sale_count + item.box_office_sale_count + item.comp_sale_count) > 0);
 				this.setCountAndSalesData(response.data.counts, sales);
 			})
 			.catch(error => {
@@ -102,23 +105,6 @@ class TicketCountReport {
 
 	}
 
-	@computed
-	get countsAndSalesByEventId() {
-		const result = {};
-		const eventIds = (this.countAndSalesData.counts || []).concat(this.countAndSalesData.sales || []).map(item => item.event_id).sort();
-		eventIds.forEach(eventId => {
-			if (!result.hasOwnProperty(eventId)) {
-				result[eventId] = {
-					name: "No Data",
-					counts: this.countAndSalesData.counts.filter(row => row.event_id === eventId),
-					sales: this.countAndSalesData.sales.filter(row => row.event_id === eventId)
-				};
-				result[eventId].name = (result[eventId].counts.length && result[eventId].counts[0].event_name) || "No Data";
-			}
-		});
-		return result;
-	}
-
 	setCountAndSalesData(counts = [], sales = []) {
 		this.countAndSalesData = {
 			name: "Loading",
@@ -127,33 +113,102 @@ class TicketCountReport {
 		};
 	}
 
-	countsAndSalesByTicketPricing(eventData) {
-		if (!eventData) {
-			return false;
-		}
-		const { name, counts = [], sales = [] } = eventData;
-
-		const result = {
-			eventName: name,
-			tickets: {},
-			totals: combineTotals(counts, sales)
-		};
-
-		const ticketTypeIds = counts.concat(sales).map(item => item.ticket_type_id);
-		ticketTypeIds.forEach(ticketTypeId => {
-			if (!result.tickets.hasOwnProperty(ticketTypeId)) {
-				const ticketTypeCounts = counts.filter(item => item.ticket_type_id === ticketTypeId);
-				const ticketTypeSales = sales.filter(item => item.ticket_type_id === ticketTypeId);
-				const name = (ticketTypeCounts.length && ticketTypeCounts[0].ticket_name) || "No Data";
-				result.tickets[ticketTypeId] = {
-					name,
-					counts: ticketTypeCounts,
-					sales: ticketTypeSales,
-					totals: combineTotals(ticketTypeCounts, ticketTypeSales)
+	/**
+	 * {eventId: {name: "", counts: [], sales: []}}
+	 */
+	@computed
+	get countsAndSalesByEventId() {
+		const results = {};
+		const { counts, sales } = this.countAndSalesData;
+		const eventIds = (counts || []).concat(sales || []).map(item => item.event_id).sort();
+		eventIds.forEach(eventId => {
+			if (!results.hasOwnProperty(eventId)) {
+				results[eventId] = {
+					name: "No Data",
+					counts: this.countAndSalesData.counts.filter(row => row.event_id === eventId),
+					sales: this.countAndSalesData.sales.filter(row => row.event_id === eventId)
 				};
+				results[eventId].name = (results[eventId].counts.length && results[eventId].counts[0].event_name) || "No Data";
 			}
 		});
-		return result;
+		return results;
+	}
+
+	@computed
+	get dataByTicketPricing() {
+		const allEventData = this.countsAndSalesByEventId;
+		const results = {};
+		for (const eventId in allEventData) {
+			const eventData = allEventData[eventId];
+			const { name, counts = [], sales = [] } = eventData;
+
+			const eventResult = {
+				eventName: name,
+				tickets: {},
+				totals: combineTotals(counts, sales)
+			};
+
+			const ticketTypeIds = counts.concat(sales).map(item => item.ticket_type_id);
+			ticketTypeIds.forEach(ticketTypeId => {
+				if (!eventResult.tickets.hasOwnProperty(ticketTypeId)) {
+					const ticketTypeCounts = counts.filter(item => item.ticket_type_id === ticketTypeId);
+					const ticketTypeSales = sales.filter(item => item.ticket_type_id === ticketTypeId);
+					const name = (ticketTypeCounts.length && ticketTypeCounts[0].ticket_name) || "No Data";
+					eventResult.tickets[ticketTypeId] = {
+						name,
+						counts: ticketTypeCounts,
+						sales: ticketTypeSales,
+						totals: combineTotals(ticketTypeCounts, ticketTypeSales)
+					};
+				}
+			});
+			results[eventId] = eventResult;
+		}
+
+		return results;
+	}
+
+	@computed
+	get dataByPrice() {
+		const allEventData = { ...this.dataByTicketPricing };
+		const groupByPriceTallyKeys = [
+			"box_office_sales_in_cents",
+			"online_sales_in_cents",
+			"box_office_refunded_count",
+			"online_refunded_count",
+			"box_office_sale_count",
+			"online_sale_count",
+			"comp_sale_count",
+			"total_box_office_fees_in_cents",
+			"total_online_fees_in_cents",
+			"company_box_office_fees_in_cents",
+			"client_box_office_fees_in_cents",
+			"company_online_fees_in_cents",
+			"client_online_fees_in_cents"
+		];
+		for (const eventId in allEventData) {
+			const { tickets } = allEventData[eventId];
+			for (const ticketTypeId in tickets) {
+				const ticketSalesPricing = tickets[ticketTypeId].sales;
+				const tmpGroupByPrice = {};
+				ticketSalesPricing.forEach(row => {
+					const ticketPricingPriceInCents = row.ticket_pricing_price_in_cents;
+					if (!tmpGroupByPrice.hasOwnProperty(ticketPricingPriceInCents)) {
+						tmpGroupByPrice[ticketPricingPriceInCents] = row;
+					} else {
+						groupByPriceTallyKeys.forEach(key => {
+							tmpGroupByPrice[ticketPricingPriceInCents][key] += row[key];
+						});
+					}
+				});
+				tickets[ticketTypeId].sales = [];
+				Object.keys(tmpGroupByPrice).forEach(key => {
+					tickets[ticketTypeId].sales.push(tmpGroupByPrice[key]);
+				});
+			}
+		}
+
+		return allEventData;
 	}
 
 	csv(ticketCounts) {

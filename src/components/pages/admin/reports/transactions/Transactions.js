@@ -11,6 +11,7 @@ import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import Loader from "../../../../elements/loaders/Loader";
+import { dollars } from "../../../../../helpers/money";
 
 const styles = theme => ({
 	root: {},
@@ -21,8 +22,6 @@ const styles = theme => ({
 		//borderStyle: "solid"
 	}
 });
-
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
 class Transactions extends Component {
 	constructor(props) {

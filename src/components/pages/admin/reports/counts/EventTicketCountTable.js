@@ -2,14 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
 import TicketCountRow from "./TicketCountRow";
+import { dollars } from "../../../../../helpers/money";
 
 const styles = theme => {
 	return {
 		root: {}
 	};
 };
-
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
 const EventTicketCountTable = props => {
 	const { ticketCounts, classes } = props;

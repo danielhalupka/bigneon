@@ -8,6 +8,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import Dialog from "../../../../elements/Dialog";
 import { fontFamilyDemiBold, fontFamilyBold } from "../../../../styles/theme";
 import StyledLink from "../../../../elements/StyledLink";
+import { dollars } from "../../../../../helpers/money";
 
 const styles = theme => ({
 	title: {
@@ -25,8 +26,6 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit * 2
 	}
 });
-
-const dollars = cents => `$ ${(cents / 100).toFixed(2)}`;
 
 const Detail = ({ label, children, classes }) => (
 	<Typography>

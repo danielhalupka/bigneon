@@ -5,11 +5,11 @@ import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
 import notifications from "../../../../../stores/notifications";
-import { EventSalesTable, EVENT_SALES_HEADINGS } from "../eventSummary/EventSalesTable";
-import { eventSalesCSVRows, eventSummaryData } from "../eventSummary/EventSummary";
+import { EventSalesTable } from "../eventSummary/EventSalesTable";
 import EventTicketCountTable from "../counts/EventTicketCountTable";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
+import summaryReport from "../../../../../stores/reports/summaryReport";
 import { observer } from "mobx-react";
 import Loader from "../../../../elements/loaders/Loader";
 
@@ -26,11 +26,7 @@ class Audit extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			eventSales: null,
-			salesTotals: null,
-			eventCounts: null
-		};
+		this.state = {};
 	}
 
 	componentDidMount() {
@@ -40,42 +36,21 @@ class Audit extends Component {
 	refreshData() {
 		const { eventId, organizationId } = this.props;
 
-		const summaryQueryParams = { organization_id: organizationId, event_id: eventId };
-		const countQueryParams = { ...summaryQueryParams }; //Cloning this because bn-api-node removes organization_id after user
+		const queryParams = { organization_id: organizationId, event_id: eventId };
 
 		//TODO date filter
 		//start_utc
 		//end_utc
 
-		//Refresh event summary
-		eventSummaryData(
-			summaryQueryParams,
-			({ eventSales, salesTotals }) => {
-				this.setState({ eventSales, salesTotals });
-			},
-			(error) => {
-				console.error(error);
-				this.setState({ eventSales: false });
-
-				notifications.showFromErrorResponse({
-					error,
-					defaultMessage: "Loading event transaction report failed."
-				});
-			});
-
 		//Refresh ticket counts
-		ticketCountReport.fetchCountAndSalesData(countQueryParams);
+		ticketCountReport.fetchCountAndSalesData(queryParams);
 	}
 
 	exportCSV() {
-		const {
-			eventSales,
-			salesTotals
-		} = this.state;
 		const { eventId } = this.props;
 
-		const { countsAndSalesByEventId } = ticketCountReport;
-		if (!eventSales) {
+		const { tickets = {} } = ticketCountReport.dataByTicketPricing[eventId];
+		if (!Object.keys(tickets).length) {
 			return notifications.show({
 				message: "No rows to export.",
 				variant: "warning"
@@ -98,32 +73,32 @@ class Audit extends Component {
 
 		csvRows.push(["All event sales"]);
 
-		const eventSalesRows = eventSalesCSVRows(eventSales, salesTotals);
+		const eventSalesRows = summaryReport.salesCsvData(ticketCountReport.dataByPrice[eventId]);
 		csvRows = [...csvRows, ...eventSalesRows];
 
 		csvRows.push([""]);
 		csvRows.push([""]);
 
-		const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[eventId]);
-		const ticketCountRows = ticketCountReport.csv(ticketCounts);
+		const ticketCountRows = ticketCountReport.csv(ticketCountReport.dataByTicketPricing[eventId]);
 		csvRows = [...csvRows, ...ticketCountRows];
 
 		downloadCSV(csvRows, "event-audit-report");
 	}
 
 	renderEventSales() {
-		const { eventSales, salesTotals } = this.state;
+		const { eventId } = this.props;
+		const eventSales = ticketCountReport.dataByPrice[eventId];
 
 		if (eventSales === false) {
 			//Query failed
 			return null;
 		}
 
-		if (eventSales === null) {
+		if (eventSales === null || eventSales === undefined) {
 			return <Loader/>;
 		}
 
-		if (eventSales.length === 0) {
+		if (Object.keys(eventSales.tickets).length === 0) {
 			return <Typography>No event summary available.</Typography>;
 		}
 
@@ -132,7 +107,7 @@ class Audit extends Component {
 		return (
 			<div>
 				<Typography className={classes.subHeading}>All event sales</Typography>
-				<EventSalesTable eventSales={eventSales} salesTotals={salesTotals}/>
+				<EventSalesTable eventSales={eventSales.tickets} salesTotals={eventSales.totals}/>
 			</div>
 		);
 
@@ -141,15 +116,15 @@ class Audit extends Component {
 	renderTicketCounts() {
 		const { eventId, classes } = this.props;
 
-		const { countsAndSalesByEventId } = ticketCountReport;
-		if (!countsAndSalesByEventId) {
+		const eventData = ticketCountReport.dataByTicketPricing[eventId];
+		if (!eventData) {
 			return <Typography>No counts...</Typography>;
 		}
-		const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[eventId] || {});
+
 		return (
 			<div>
 				<Typography className={classes.subHeading}>Ticket counts</Typography>
-				<EventTicketCountTable ticketCounts={ticketCounts}/>
+				<EventTicketCountTable ticketCounts={eventData}/>
 			</div>
 		);
 	}

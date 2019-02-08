@@ -1,10 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, Typography } from "@material-ui/core";
-
+import { dollars } from "../../../../../helpers/money";
 import EventSummaryRow from "./EventSummaryRow";
-
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
 
 export const EVENT_SALES_HEADINGS = [
 	"Ticket",
@@ -18,8 +16,7 @@ export const EVENT_SALES_HEADINGS = [
 
 const styles = theme => {
 	return {
-		root: {
-		}
+		root: {}
 	};
 };
 
@@ -31,11 +28,11 @@ const EventSalesTableView = props => {
 	} = props;
 
 	const {
-		totalOnlineCount,
+		totalSoldOnlineCount,
 		totalBoxOfficeCount,
 		totalSoldCount,
-		totalCompCount,
-		totalSalesValueInCents
+		totalCompsCount,
+		totalGross = 0
 	} = salesTotals;
 
 	return (
@@ -44,14 +41,14 @@ const EventSalesTableView = props => {
 
 			{Object.keys(eventSales).map((ticketId, index) => {
 				const ticketSale = eventSales[ticketId];
-				const { name, pricePoints, totals } = ticketSale;
+				const { totals, sales, name } = ticketSale;
 
 				const {
-					online_count,
-					box_office_count,
-					comp_count,
-					total_sold,
-					total_face_value_in_cents
+					totalSoldOnlineCount,
+					totalBoxOfficeCount,
+					totalCompsCount,
+					totalSoldCount,
+					totalGross
 				} = totals;
 
 				return (
@@ -60,24 +57,24 @@ const EventSalesTableView = props => {
 							{[
 								name,
 								" ",
-								online_count,
-								box_office_count,
-								total_sold,
-								comp_count,
-								dollars(total_face_value_in_cents)
+								totalSoldOnlineCount,
+								totalBoxOfficeCount,
+								totalSoldCount,
+								totalCompsCount,
+								dollars(totalGross)
 							]}
 						</EventSummaryRow>
 
-						{pricePoints.map((pricePoint, priceIndex) => (
+						{sales.map((pricePoint, priceIndex) => (
 							<EventSummaryRow key={priceIndex}>
 								{[
-									pricePoint.pricing_name,
-									dollars(pricePoint.price_in_cents),
-									pricePoint.online_count,
-									pricePoint.box_office_count,
-									pricePoint.total_sold,
-									pricePoint.comp_count,
-									dollars(pricePoint.total_face_value_in_cents)
+									pricePoint.ticket_pricing_name,
+									dollars(pricePoint.ticket_pricing_price_in_cents),
+									pricePoint.online_sale_count,
+									pricePoint.box_office_sale_count,
+									pricePoint.total_sold_count,
+									pricePoint.comp_sale_count,
+									dollars(pricePoint.total_sold_in_cents)
 								]}
 							</EventSummaryRow>
 						))}
@@ -89,11 +86,11 @@ const EventSalesTableView = props => {
 				{[
 					"Total sales",
 					" ",
-					totalOnlineCount,
+					totalSoldOnlineCount,
 					totalBoxOfficeCount,
 					totalSoldCount,
-					totalCompCount,
-					dollars(totalSalesValueInCents)
+					totalCompsCount,
+					dollars(totalGross)
 				]}
 			</EventSummaryRow>
 		</div>

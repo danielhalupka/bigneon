@@ -12,8 +12,6 @@ import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
 import { observer } from "mobx-react";
 import Loader from "../../../../elements/loaders/Loader";
 
-const dollars = cents => `$${(cents / 100).toFixed(2)}`;
-
 const styles = theme => ({
 	root: {},
 	header: {
@@ -53,14 +51,13 @@ class TicketCounts extends Component {
 	}
 
 	exportCSV(eventId) {
-		const { countsAndSalesByEventId } = ticketCountReport;
-		if (!countsAndSalesByEventId) {
+		const eventData = ticketCountReport.dataByTicketPricing[eventId];
+		if (!eventData) {
 			return notifications.show({
 				message: "No data to export."
 			});
 		}
-		const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[eventId]);
-		downloadCSV(ticketCountReport.csv(ticketCounts), "ticket-counts-report");
+		downloadCSV(ticketCountReport.csv(eventData), "ticket-counts-report");
 	}
 
 	refreshData() {
@@ -81,13 +78,12 @@ class TicketCounts extends Component {
 
 	renderList() {
 		const { eventId, classes } = this.props;
-		const { countsAndSalesByEventId } = ticketCountReport;
-
-		if (countsAndSalesByEventId === null) {
+		const eventDataResults = ticketCountReport.dataByTicketPricing;
+		if (eventDataResults === null) {
 			return <Loader/>;
 		}
 
-		const reportEventIds = Object.keys(countsAndSalesByEventId);
+		const reportEventIds = Object.keys(eventDataResults);
 
 		if (reportEventIds.length === 0) {
 			return <Typography>No events found.</Typography>;
@@ -95,7 +91,7 @@ class TicketCounts extends Component {
 
 		//If we're showing a report for a specific event, only display the one result
 		if (eventId) {
-			const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[eventId]);
+			const ticketCounts = eventDataResults[eventId];
 			return (
 				<div>
 					<EventTicketCountTable ticketCounts={ticketCounts}/>
@@ -106,8 +102,8 @@ class TicketCounts extends Component {
 		return (
 			<div>
 				{
-					Object.keys(countsAndSalesByEventId).map((reportEventId, index) => {
-						const ticketCounts = ticketCountReport.countsAndSalesByTicketPricing(countsAndSalesByEventId[reportEventId]);
+					Object.keys(eventDataResults).map((reportEventId, index) => {
+						const ticketCounts = eventDataResults[reportEventId];
 						const eventName = ticketCounts.eventName;
 						return (
 							<div key={reportEventId} className={classes.multiEventContainer}>
