@@ -33,7 +33,10 @@ const combineTotals = (counts, sales) => {
 		totalReservedCount: 0,
 		totalGross: 0,
 		totalOnlineClientFeesInCents: 0,
-		totalRedeemedCount: 0
+		totalRedeemedCount: 0,
+		totalOrdersOnline: 0,
+		totalOrdersBoxOffice: 0,
+		totalOrders: 0
 	};
 	counts.forEach(row => {
 		const {
@@ -60,11 +63,17 @@ const combineTotals = (counts, sales) => {
 			online_sales_in_cents,
 			box_office_sales_in_cents,
 			comp_sale_count,
-			client_online_fees_in_cents
+			client_online_fees_in_cents,
+			box_office_order_count,
+			online_order_count
 		} = row;
 
 		const total_sold_count = online_sale_count + box_office_sale_count;
 		const total_sold_in_cents = online_sales_in_cents + box_office_sales_in_cents;
+
+		totals.totalOrdersOnline += online_order_count;
+		totals.totalOrdersBoxOffice += box_office_order_count;
+		totals.totalOrders += online_order_count + box_office_order_count;
 
 		totals.totalCompsCount += comp_sale_count;
 		totals.totalSoldCount += total_sold_count;
