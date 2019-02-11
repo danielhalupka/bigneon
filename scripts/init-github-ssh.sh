@@ -6,8 +6,8 @@ declare -r SSH_FILE="$(mktemp -u $HOME/.ssh/githubXXX)"
 
 # Decrypt the file containing the private key
  openssl aes-256-cbc \
-   -K $encrypted_0f38ef5cd5f1_key \
-   -iv $encrypted_0f38ef5cd5f1_iv \
+   -K $encrypted_319ed1854cd7_key \
+   -iv $encrypted_319ed1854cd7_iv \
    -in ".travis/github_deploy_key.enc" \
    -out "$SSH_FILE" -d
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
