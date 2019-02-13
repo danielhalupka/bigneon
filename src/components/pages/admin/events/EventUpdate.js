@@ -18,6 +18,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import eventUpdateStore from "../../../../stores/eventUpdate";
 import user from "../../../../stores/user";
+import ImportPreviousEventDialog from "./ImportPreviousEventDialog";
 
 const styles = theme => ({
 	paper: {
@@ -59,7 +60,8 @@ class Event extends Component {
 			errors: {},
 			isSubmitting: false,
 			//When ticket times are dirty, don't mess with the timing
-			ticketTimesDirty: false
+			ticketTimesDirty: false,
+			showImportPreviousEventDialog: false
 		};
 	}
 
@@ -75,6 +77,8 @@ class Event extends Component {
 			this.setState({ ticketTimesDirty: true });
 		} else {
 			eventUpdateStore.clearDetails();
+
+			this.setState({ showImportPreviousEventDialog: true });
 		}
 
 		this.setOrganizationId();
@@ -440,7 +444,7 @@ class Event extends Component {
 	}
 
 	render() {
-		const { errors, isSubmitting, ticketTimesDirty } = this.state;
+		const { errors, isSubmitting, ticketTimesDirty, showImportPreviousEventDialog } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
 		const { status, isExternal, externalTicketsUrl, showTime, showCoverImage } = event;
@@ -453,6 +457,14 @@ class Event extends Component {
 
 		return (
 			<div>
+				{user.currentOrganizationId ? (
+					<ImportPreviousEventDialog
+						organizationId={user.currentOrganizationId}
+						open={showImportPreviousEventDialog}
+						onClose={() => this.setState({ showImportPreviousEventDialog: false })}
+					/>
+				) : null}
+
 				<PageHeading iconUrl="/icons/events-multi.svg">
 					{event ? "Update" : "Create"} event
 				</PageHeading>
