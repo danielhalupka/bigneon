@@ -18,7 +18,7 @@ const styles = {
 	},
 	icon: {
 		width: 35,
-		height: 35,
+		height: "auto",
 		borderRadius: 0
 	}
 };
