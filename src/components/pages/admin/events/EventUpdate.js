@@ -48,6 +48,10 @@ const styles = theme => ({
 	},
 	publishedAt: {
 		marginTop: 20
+	},
+	missingPromoImageError: {
+		color: "red",
+		textAlign: "center"
 	}
 });
 
@@ -115,7 +119,7 @@ class Event extends Component {
 	validateFields() {
 		if (this.hasSubmitted) {
 			const { event, ticketTypes, artists } = eventUpdateStore;
-			const { isExternal } = event;
+			const { isExternal, promoImageUrl } = event;
 			const artistsErrors = this.validateArtists(artists);
 
 			const eventDetailErrors = validateEventFields(event);
@@ -123,12 +127,16 @@ class Event extends Component {
 			const ticketTypeErrors = validateTicketTypeFields(
 				isExternal ? [] : ticketTypes
 			);
-			if (artistsErrors || eventDetailErrors || ticketTypeErrors) {
+
+			const missingPromoImage = !promoImageUrl;
+			
+			if (artistsErrors || eventDetailErrors || ticketTypeErrors || missingPromoImage) {
 				this.setState({
 					errors: {
 						event: eventDetailErrors,
 						ticketTypes: ticketTypeErrors,
-						artists: artistsErrors
+						artists: artistsErrors,
+						missingPromoImage
 					}
 				});
 
@@ -480,6 +488,8 @@ class Event extends Component {
 						onChangeCoverImage={() => eventUpdateStore.updateEvent({ showCoverImage: !showCoverImage })}
 						noMediaTitle="Upload event image"
 					/>
+
+					{errors.missingPromoImage ? <Typography className={classes.missingPromoImageError}>*Missing promo image</Typography> : null}
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Artists</FormSubHeading>
