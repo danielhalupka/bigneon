@@ -11,11 +11,12 @@ import notifications from "../../../../stores/notifications";
 import optimizedImageUrl from "../../../../helpers/optimizedImageUrl";
 import Button from "../../../elements/Button";
 import eventUpdateStore from "../../../../stores/eventUpdate";
-import CheckBox from "../../../elements/form/CheckBox";
+import { updateTimezonesInObjects } from "../../../../helpers/time";
+import createGoogleMapsLink from "../../../../helpers/createGoogleMapsLink";
 
-const displayTime = ({ event_start }) => {
-	const displayDate = moment(event_start).format("ddd, D MMM YYYY");
-	const displayShowTime = moment(event_start).format("hh:mm A");
+const displayTime = (event_start, timezone) => {
+	const displayDate = moment.utc(event_start).tz(timezone).format("ddd, D MMM YYYY");
+	const displayShowTime = moment.utc(event_start).tz(timezone).format("hh:mm A");
 
 	return `${displayDate}, Show ${displayShowTime}`;
 };
@@ -56,14 +57,7 @@ class ImportPreviousEventDialog extends Component {
 			eventsNames: {},
 			events: [],
 			selectedEventId: null,
-			selectedImportOptions: {
-				venue: { label: "Venue", active: true },
-				eventType: { label: "Event type", active: true },
-				showTime: { label: "Show time", active: true },
-				doorTime: { label: "Door time", active: true },
-				endTime: { label: "End time", active: true },
-				ageLimit: { label: "Age limit", active: true }
-			}
+			isImporting: false
 		};
 	}
 
@@ -94,52 +88,66 @@ class ImportPreviousEventDialog extends Component {
 	}
 
 	onImport() {
+		this.setState({ isImporting: true });
+
 		const { onClose } = this.props;
-		const { selectedImportOptions, events, selectedEventId } = this.state;
+		const { selectedEventId } = this.state;
 
-		const previousEvent = events.find(e => e.id === selectedEventId);
-		if (!previousEvent) {
-			return;
-		}
+		Bigneon()
+			.events.read({ id: selectedEventId })
+			.then(response => {
+				const { event_start, event_end, event_type, door_time, age_limit, venue, ...event } = response.data;
 
-		console.log(previousEvent);
+				const previousEventDate = event_start
+					? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+						.set({
+							second: 0,
+							millisecond: 0
+						})
+					: undefined;
 
-		const { venue, event_type, age_limit, localized_times } = previousEvent;
-		const { event_start, door_time, event_end } = localized_times;
+				const eventDate = moment.utc();
+				if (previousEventDate) {
+					eventDate.set({
+						hour: previousEventDate.get("hour"),
+						minute: previousEventDate.get("minute"),
+						second: 0,
+						millisecond: 0
+					}).add("d", 2);
+				}
 
-		const updateEventDetails = {};
+				//Event endTime = eventDate + (eventDate - previousEndTime)
+				let endTime = undefined;
+				if (event_end) {
+					const previousEventEndTime = moment.utc(event_end, moment.HTML5_FMT.DATETIME_LOCAL_MS);
+					const diff = previousEventEndTime.diff(previousEventDate);
+					endTime = eventDate.clone().add(diff);
+				}
 
-		if (selectedImportOptions.venue.active) {
-			updateEventDetails.venueId = venue.id;
-		}
+				let updateEventDetails = {
+					venueId: venue.id,
+					eventType: event_type,
+					doorTimeHours: door_time
+						? moment(event_start).diff(moment(door_time), "m") / 60
+						: 1,
+					ageLimit: age_limit,
+					eventDate,
+					endTime
+				};
 
-		if (selectedImportOptions.eventType.active) {
-			updateEventDetails.eventType = event_type;
-		}
+				updateEventDetails = { ...updateEventDetails, ...updateTimezonesInObjects(updateEventDetails, venue.timezone) };
+				eventUpdateStore.updateEvent(updateEventDetails);
+				onClose();
 
-		if (selectedImportOptions.showTime.active) {
-			//TODO set time of eventDate obj
-		}
-
-		if (selectedImportOptions.doorTime.active) {
-			const doorTimeHours = door_time
-				? moment(event_start).diff(moment(door_time), "m") / 60
-				: 1;
-			updateEventDetails.doorTimeHours = doorTimeHours;
-		}
-
-		if (selectedImportOptions.endTime.active) {
-			//TODO set time of eventDate obj
-		}
-
-		if (selectedImportOptions.ageLimit.active) {
-			updateEventDetails.ageLimit = age_limit;
-		}
-
-		console.log(updateEventDetails);
-
-		eventUpdateStore.updateEvent(updateEventDetails);
-		onClose();
+				this.setState({ isImporting: false });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event details failed.",
+					error
+				});
+			});
 	}
 
 	renderSelectOption(props) {
@@ -149,9 +157,9 @@ class ImportPreviousEventDialog extends Component {
 
 		const eventDetails = events.find(e => e.id === id);
 
-		const { name, promo_image_url, localized_times, venue } = eventDetails;
+		const { name, promo_image_url, event_start, venue } = eventDetails;
 
-		const icon = <img alt={name} className={classes.eventIcon} src={optimizedImageUrl(promo_image_url)}/>;
+		const icon = <img alt={name} className={classes.eventIcon} src={promo_image_url ? optimizedImageUrl(promo_image_url) : ""}/>;
 
 		return (
 			<MenuItem
@@ -171,7 +179,7 @@ class ImportPreviousEventDialog extends Component {
 						</ListItemIcon>
 					)
 					: null}
-				<ListItemText inset primary={props.children} secondary={`${venue.name} - ${displayTime(localized_times)}`}/>
+				<ListItemText inset primary={props.children} secondary={`${venue.name} - ${displayTime(event_start, venue.timezone)}`}/>
 			</MenuItem>
 		);
 	}
@@ -181,12 +189,12 @@ class ImportPreviousEventDialog extends Component {
 		const { classes } = this.props;
 
 		const eventDetails = events.find(e => e.id === selectedEventId);
-		const { name, promo_image_url, localized_times, venue } = eventDetails;
+		const { name, promo_image_url, event_start, venue } = eventDetails;
 
 		return (
 			<div className={classes.selectedEventContainer}>
 				<img alt={name} className={classes.eventIcon} src={optimizedImageUrl(promo_image_url)}/>
-				<ListItemText inset primary={name} secondary={`${venue.name} - ${displayTime(localized_times)}`}/>
+				<ListItemText inset primary={name} secondary={`${venue.name} - ${displayTime(event_start, venue.timezone)}`}/>
 			</div>
 		);
 	}
@@ -207,45 +215,13 @@ class ImportPreviousEventDialog extends Component {
 		);
 	}
 
-	renderImportCheckboxes() {
-		const { selectedEventId, selectedImportOptions } = this.state;
-		const { classes } = this.props;
-
-		if (!selectedEventId) {
-			return <div className={classes.checkboxContainer}/>;
-		}
-
-		return (
-			<Grid container spacing={24} className={classes.checkboxContainer}>
-				{Object.keys(selectedImportOptions).map((key) => {
-					const { active, label } = selectedImportOptions[key];
-					return (
-						<Grid key={key} item xs={12} sm={6} lg={6}>
-							<CheckBox
-								active={active}
-								onClick={() => {
-									this.setState(({ selectedImportOptions }) => {
-										selectedImportOptions[key].active = !active;
-										return { selectedImportOptions };
-									});
-								}}
-							>
-								{label}
-							</CheckBox>
-						</Grid>
-					);
-				})}
-			</Grid>
-		);
-	}
-
 	render() {
 		const {
 			open,
 			onClose,
 			classes
 		} = this.props;
-		const { selectedEventId } = this.state;
+		const { selectedEventId, isImporting } = this.state;
 
 		return (
 			<Dialog
@@ -258,7 +234,6 @@ class ImportPreviousEventDialog extends Component {
 					<Typography>
 						Save time by importing event settings from a different event. This will import basic event information like Door Time, Show Time, End Time, Age Restrictions, and Venue. You can always make changes after importing.					</Typography>
 					{this.renderPastEventsAutoComplete()}
-					{this.renderImportCheckboxes()}
 
 					<div className={classes.buttonContainer}>
 						<Button
@@ -268,12 +243,12 @@ class ImportPreviousEventDialog extends Component {
 							No thanks
 						</Button>
 						<Button
-							disabled={!selectedEventId}
+							disabled={!selectedEventId || isImporting}
 							style={{ flex: 1, marginLeft: 5 }}
 							variant={"callToAction"}
 							onClick={this.onImport.bind(this)}
 						>
-							Import settings
+							{isImporting ? "Importing..." : "Import settings"}
 						</Button>
 					</div>
 				</div>
