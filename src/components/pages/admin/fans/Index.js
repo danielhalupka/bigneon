@@ -291,7 +291,7 @@ class FanList extends Component {
 				<div className={classes.header}>
 					<PageHeading
 						iconUrl="/icons/my-events-multi.svg"
-						subheading={paging ? `${paging.total} total fans` : null}
+						subheading={paging && paging.total ? `${paging.total} total fans` : null}
 					>
 					Fans
 					</PageHeading>
