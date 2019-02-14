@@ -432,7 +432,7 @@ class Event extends Component {
 				{!shouldUnpublish ? (
 					<Typography className={classes.publishedAt}>
 						Published at{" "}
-						{moment(event.publishDate).format("MM/DD/YYYY hh:mm A")}
+						{moment(event.publishDate).format("MM/DD/YYYY hh:mm A z")}
 					</Typography>
 				) : null}
 			</div>
@@ -443,7 +443,7 @@ class Event extends Component {
 		const { errors, isSubmitting, ticketTimesDirty } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { status, isExternal, externalTicketsUrl, showTime, showCoverImage } = event;
+		const { status, isExternal, externalTicketsUrl, showCoverImage, eventDate } = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
@@ -537,7 +537,7 @@ class Event extends Component {
 									this.setState({ ticketTimesDirty: true });
 								}}
 								validateFields={this.validateFields.bind(this)}
-								eventStartDate={showTime}
+								eventStartDate={eventDate}
 								ticketTimesDirty={ticketTimesDirty}
 							/>
 						</div>
