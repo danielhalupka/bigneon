@@ -14,6 +14,7 @@ import eventUpdateStore from "../../../../stores/eventUpdate";
 import { updateTimezonesInObjects } from "../../../../helpers/time";
 import createGoogleMapsLink from "../../../../helpers/createGoogleMapsLink";
 import Loader from "../../../elements/loaders/Loader";
+import { fontFamilyDemiBold, textColorPrimary } from "../../../styles/theme";
 
 const displayTime = (event_start, timezone) => {
 	const displayDate = moment.utc(event_start).tz(timezone).format("ddd, D MMM YYYY");
@@ -25,7 +26,10 @@ const displayTime = (event_start, timezone) => {
 const styles = theme => {
 	return ({
 		root: {
-			maxWidth: 500
+			maxWidth: 400
+		},
+		explainerContainer: {
+			padding: theme.spacing.unit * 3
 		},
 		eventIcon: {
 			width: 80,
@@ -33,7 +37,8 @@ const styles = theme => {
 			borderRadius: 4
 		},
 		buttonContainer: {
-			display: "flex"
+			display: "flex",
+			marginTop: 60
 		},
 		checkboxContainer: {
 			minHeight: 100,
@@ -46,6 +51,15 @@ const styles = theme => {
 			flex: 1,
 			display: "flex",
 			alignItems: "center"
+		},
+		selectionOptionTextPrimary: {
+			fontSize: theme.typography.fontSize * 0.95,
+			color: textColorPrimary,
+			fontFamily: fontFamilyDemiBold
+		},
+		selectionOptionTextSecondary: {
+			fontSize: theme.typography.fontSize * 0.8,
+			color: "#9DA3B4"
 		}
 	});
 };
@@ -180,7 +194,15 @@ class ImportPreviousEventDialog extends Component {
 						</ListItemIcon>
 					)
 					: null}
-				<ListItemText inset primary={props.children} secondary={`${venue.name} - ${displayTime(event_start, venue.timezone)}`}/>
+				<ListItemText
+					classes={{
+						primary: classes.selectionOptionTextPrimary,
+						secondary: classes.selectionOptionTextSecondary
+					}}
+					inset
+					primary={props.children}
+					secondary={`${venue.name} - ${displayTime(event_start, venue.timezone)}`}
+				/>
 			</MenuItem>
 		);
 	}
@@ -195,7 +217,15 @@ class ImportPreviousEventDialog extends Component {
 		return (
 			<div className={classes.selectedEventContainer}>
 				<img alt={name} className={classes.eventIcon} src={optimizedImageUrl(promo_image_url)}/>
-				<ListItemText inset primary={name} secondary={`${venue.name} - ${displayTime(event_start, venue.timezone)}`}/>
+				<ListItemText
+					classes={{
+						primary: classes.selectionOptionTextPrimary,
+						secondary: classes.selectionOptionTextSecondary
+					}}
+					inset
+					primary={name}
+					secondary={`${venue.name} - ${displayTime(event_start, venue.timezone)}`}
+				/>
 			</div>
 		);
 	}
@@ -232,19 +262,24 @@ class ImportPreviousEventDialog extends Component {
 				title={"Import event settings"}
 			>
 				<div className={classes.root}>
-					<Typography>
-						Save time by importing event settings from a different event. This will import basic event information like Door Time, Show Time, End Time, Age Restrictions, and Venue. You can always make changes after importing.					</Typography>
+					<div className={classes.explainerContainer}>
+						<Typography>
+							Save time by importing event settings from a different event. This will import basic event information like Door Time, Show Time, End Time, Age Restrictions, and Venue. You can always make changes after importing.
+						</Typography>
+					</div>
 
 					{events === null ? <Loader>Loading past events...</Loader> : this.renderPastEventsAutoComplete()}
 
 					<div className={classes.buttonContainer}>
 						<Button
+							size={"large"}
 							style={{ flex: 1, marginRight: 5 }}
 							onClick={onClose}
 						>
 							No thanks
 						</Button>
 						<Button
+							size={"large"}
 							disabled={!selectedEventId || isImporting}
 							style={{ flex: 1, marginLeft: 5 }}
 							variant={"callToAction"}
