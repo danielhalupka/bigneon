@@ -129,7 +129,7 @@ class Event extends Component {
 			);
 
 			const missingPromoImage = !promoImageUrl;
-			
+
 			if (artistsErrors || eventDetailErrors || ticketTypeErrors || missingPromoImage) {
 				this.setState({
 					errors: {

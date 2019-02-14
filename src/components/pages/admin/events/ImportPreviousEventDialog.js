@@ -13,6 +13,7 @@ import Button from "../../../elements/Button";
 import eventUpdateStore from "../../../../stores/eventUpdate";
 import { updateTimezonesInObjects } from "../../../../helpers/time";
 import createGoogleMapsLink from "../../../../helpers/createGoogleMapsLink";
+import Loader from "../../../elements/loaders/Loader";
 
 const displayTime = (event_start, timezone) => {
 	const displayDate = moment.utc(event_start).tz(timezone).format("ddd, D MMM YYYY");
@@ -55,7 +56,7 @@ class ImportPreviousEventDialog extends Component {
 
 		this.state = {
 			eventsNames: {},
-			events: [],
+			events: null,
 			selectedEventId: null,
 			isImporting: false
 		};
@@ -221,7 +222,7 @@ class ImportPreviousEventDialog extends Component {
 			onClose,
 			classes
 		} = this.props;
-		const { selectedEventId, isImporting } = this.state;
+		const { selectedEventId, isImporting, events } = this.state;
 
 		return (
 			<Dialog
@@ -233,7 +234,8 @@ class ImportPreviousEventDialog extends Component {
 				<div className={classes.root}>
 					<Typography>
 						Save time by importing event settings from a different event. This will import basic event information like Door Time, Show Time, End Time, Age Restrictions, and Venue. You can always make changes after importing.					</Typography>
-					{this.renderPastEventsAutoComplete()}
+
+					{events === null ? <Loader>Loading past events...</Loader> : this.renderPastEventsAutoComplete()}
 
 					<div className={classes.buttonContainer}>
 						<Button
