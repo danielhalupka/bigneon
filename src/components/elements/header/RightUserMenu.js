@@ -119,14 +119,11 @@ class RightHeaderMenu extends React.Component {
 				open={open}
 				onClose={this.handleClose.bind(this)}
 			>
-				{user.isOrgOwner ||
-				user.isOrgMember ||
-				user.isAdmin ||
-				user.isOrgAdmin ? (
-						<Link to="/admin/events">
-							<MenuItem onClick={this.handleClose.bind(this)}>Admin</MenuItem>
-						</Link>
-					) : null}
+				{user.canViewStudio ? (
+					<Link to="/admin/events">
+						<MenuItem onClick={this.handleClose.bind(this)}>Admin</MenuItem>
+					</Link>
+				) : null}
 				<Link to="/my-events">
 					<MenuItem onClick={this.handleClose.bind(this)}>My events</MenuItem>
 				</Link>
@@ -199,11 +196,7 @@ class RightHeaderMenu extends React.Component {
 		return (
 			<span className={classes.menuButton} style={{ paddingTop: 4 }}>
 				<Link to="/login" className={classes.menuLink}>
-					<Button
-						variant="callToAction"
-					>
-						Sign In
-					</Button>
+					<Button variant="callToAction">Sign In</Button>
 				</Link>
 			</span>
 		);

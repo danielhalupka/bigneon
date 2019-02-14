@@ -163,7 +163,7 @@ class EventsList extends Component {
 					},
 					{
 						text: "Edit event",
-						disabled: eventEnded,
+						disabled: eventEnded || !user.isOrgMember,
 						onClick: () =>
 							this.props.history.push(
 								`/admin/events/${this.eventMenuSelected}/edit`
@@ -178,6 +178,7 @@ class EventsList extends Component {
 					},
 					{
 						text: "Cancel event",
+						disabled: !user.isOrgMember,
 						onClick: () =>
 							this.setState({ cancelEventId: this.eventMenuSelected }),
 						MenuOptionIcon: CancelIcon
@@ -201,23 +202,25 @@ class EventsList extends Component {
 							open={Boolean(optionsAnchorEl)}
 							onClose={this.handleOptionsClose}
 						>
-							{eventOptions.map(({ text, onClick, MenuOptionIcon, disabled }) => {
-								return (
-									<MenuItem
-										key={text}
-										onClick={() => {
-											this.handleOptionsClose();
-											onClick();
-										}}
-										disabled={disabled}
-									>
-										<ListItemIcon>
-											<MenuOptionIcon/>
-										</ListItemIcon>
-										<ListItemText inset primary={text}/>
-									</MenuItem>
-								);
-							})}
+							{eventOptions.map(
+								({ text, onClick, MenuOptionIcon, disabled }) => {
+									return (
+										<MenuItem
+											key={text}
+											onClick={() => {
+												this.handleOptionsClose();
+												onClick();
+											}}
+											disabled={disabled}
+										>
+											<ListItemIcon>
+												<MenuOptionIcon/>
+											</ListItemIcon>
+											<ListItemText inset primary={text}/>
+										</MenuItem>
+									);
+								}
+							)}
 						</Menu>
 					</div>
 				);
@@ -289,13 +292,16 @@ class EventsList extends Component {
 							justifyContent: "flex-end"
 						}}
 					>
-						<div className={classes.actionButtons}>
-							<Link to={"/admin/events/create"}>
-								<Button variant="callToAction">New event</Button>
-							</Link>
-						</div>
+						{user.isOrgMember ? (
+							<div className={classes.actionButtons}>
+								<Link to={"/admin/events/create"}>
+									<Button variant="callToAction">New event</Button>
+								</Link>
+							</div>
+						) : (
+							<div/>
+						)}
 					</Grid>
-
 				</Grid>
 
 				<Grid container spacing={16}>
@@ -307,7 +313,7 @@ class EventsList extends Component {
 										underlined={upcomingOrPast === "upcoming"}
 										to={`/admin/events/upcoming`}
 									>
-												Upcoming
+										Upcoming
 									</StyledLink>
 								</Typography>
 
@@ -316,7 +322,7 @@ class EventsList extends Component {
 										underlined={upcomingOrPast === "past"}
 										to={`/admin/events/past`}
 									>
-												Past
+										Past
 									</StyledLink>
 								</Typography>
 							</div>

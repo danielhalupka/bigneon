@@ -132,9 +132,10 @@ class User {
 						}
 					});
 			},
-			onError || (e => {
-				console.error(e);
-			})
+			onError ||
+				(e => {
+					console.error(e);
+				})
 		);
 	}
 
@@ -171,10 +172,12 @@ class User {
 				} else {
 					this.token = false;
 
-					onError ? onError(error) : notifications.show({
-						message: "Failed to refresh session.",
-						variant: "error"
-					});
+					onError
+						? onError(error)
+						: notifications.show({
+							message: "Failed to refresh session.",
+							variant: "error"
+						  });
 				}
 			});
 	}
@@ -323,6 +326,27 @@ class User {
 	@computed
 	get isOrgAdmin() {
 		return this.globalRoles.indexOf("OrgAdmin") > -1;
+	}
+
+	@computed
+	get isPromoterReadOnly() {
+		return this.globalRoles.indexOf("PromoterReadOnly") > -1;
+	}
+
+	@computed
+	get isPromoter() {
+		return this.globalRoles.indexOf("Promoter") > -1 || this.isPromoterReadOnly;
+	}
+
+	@computed
+	get canViewStudio() {
+		return (
+			this.isOrgOwner ||
+			this.isOrgMember ||
+			this.isAdmin ||
+			this.isOrgAdmin ||
+			this.isPromoter
+		);
 	}
 
 	@computed
