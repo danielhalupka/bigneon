@@ -115,13 +115,7 @@ class EventsList extends Component {
 					past_or_upcoming: upcomingOrPast
 				})
 				.then(eventResponse => {
-					//Append all events together
-					this.setState(({ events }) => {
-						const previousEvents = events ? events : [];
-						return {
-							events: [...previousEvents, ...eventResponse.data.data] //@TODO Implement pagination
-						};
-					});
+					this.setState({ events: eventResponse.data.data }); //@TODO Implement pagination
 				})
 				.catch(error => {
 					console.error(error);

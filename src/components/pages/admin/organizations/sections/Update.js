@@ -10,6 +10,8 @@ import LocationInputGroup from "../../../../common/form/LocationInputGroup";
 import addressTypeFromGoogleResult from "../../../../../helpers/addressTypeFromGoogleResult";
 import Bigneon from "../../../../../helpers/bigneon";
 import removePhoneFormatting from "../../../../../helpers/removePhoneFormatting";
+import moment from "moment-timezone";
+import SelectGroup from "../../../../common/form/SelectGroup";
 
 const styles = theme => ({});
 
@@ -27,6 +29,7 @@ class OrganizationUpdate extends Component {
 			state: "",
 			country: "",
 			zip: "",
+			timezone: moment.tz.guess(),
 			errors: {},
 			isSubmitting: false,
 			showApiKeys: false
@@ -48,7 +51,8 @@ class OrganizationUpdate extends Component {
 						city,
 						state,
 						country,
-						zip
+						zip,
+						timezone
 					} = response.data;
 
 					this.setState({
@@ -59,7 +63,8 @@ class OrganizationUpdate extends Component {
 						city: city || "",
 						state: state || "",
 						country: country || "",
-						zip: zip || ""
+						zip: zip || "",
+						timezone: timezone ||  moment.tz.guess()
 					});
 				})
 				.catch(error => {
@@ -89,7 +94,7 @@ class OrganizationUpdate extends Component {
 			return true;
 		}
 
-		const { name, address, eventFee } = this.state;
+		const { name, address, eventFee, timezone } = this.state;
 		const { organizationId } = this.props;
 		const phone = removePhoneFormatting(this.state.phone);
 
@@ -107,6 +112,10 @@ class OrganizationUpdate extends Component {
 			errors.phone = "Missing phone number.";
 		} else if (!validPhone(phone)) {
 			errors.phone = "Invalid phone number.";
+		}
+
+		if (!timezone) {
+			errors.timezone = "Missing timezone";
 		}
 
 		this.setState({ errors });
@@ -188,7 +197,8 @@ class OrganizationUpdate extends Component {
 			city,
 			state,
 			country,
-			zip
+			zip,
+			timezone
 		} = this.state;
 		const { organizationId } = this.props;
 
@@ -199,7 +209,8 @@ class OrganizationUpdate extends Component {
 			city,
 			state,
 			country,
-			zip
+			zip,
+			timezone
 		};
 
 		//If we're updating an existing org
@@ -229,6 +240,26 @@ class OrganizationUpdate extends Component {
 				this.props.history.push(`/admin/organizations/${organizationId}`);
 			});
 		});
+	}
+
+	renderTimezones() {
+		//TODO This is an exact duplicate of src/components/pages/admin/venues/Venue.js lets keep the code DRY
+		const { timezone, errors } = this.state;
+		const timezones = moment.tz.names().map(name => ({
+			value: name,
+			label: name
+		}));
+		return (
+			<SelectGroup
+				value={timezone}
+				items={timezones}
+				error={errors.timezone}
+				name={"timezone"}
+				label={"Timezone"}
+				onBlur={this.validateFields.bind(this)}
+				onChange={e => this.setState({ timezone: e.target.value })}
+			/>
+		);
 	}
 
 	render() {
@@ -282,6 +313,8 @@ class OrganizationUpdate extends Component {
 						onChange={e => this.setState({ phone: e.target.value })}
 						onBlur={this.validateFields.bind(this)}
 					/>
+
+					{this.renderTimezones()}
 
 					<LocationInputGroup
 						error={errors.address}
