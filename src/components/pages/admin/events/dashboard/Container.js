@@ -89,7 +89,7 @@ class EventDashboardContainer extends Component {
 			.events.dashboard({ id: eventId })
 			.then(response => {
 				const { last_30_days, event } = response.data;
-				
+
 				this.setState({
 					event
 				});
@@ -128,6 +128,11 @@ class EventDashboardContainer extends Component {
 				<Link to={`/admin/events/${event.id}/dashboard/holds`}>
 					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
 						Smart holds
+					</MenuItem>
+				</Link>
+				<Link to={`/admin/events/${event.id}/external-access`}>
+					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+						Promoter Access
 					</MenuItem>
 				</Link>
 				<a href={`/exports/events/${event.id}/guests`} target="_blank">
@@ -196,8 +201,9 @@ class EventDashboardContainer extends Component {
 					key="ticket-counts"
 					to={`/admin/events/${event.id}/dashboard/reports/ticket-counts`}
 				>
-					<MenuItem selected={isActiveReportMenu("ticket-counts")}
-							  onClick={this.handleReportsMenuClose.bind(this)}
+					<MenuItem
+						selected={isActiveReportMenu("ticket-counts")}
+						onClick={this.handleReportsMenuClose.bind(this)}
 					>
 						Ticket counts report
 					</MenuItem>
@@ -211,8 +217,9 @@ class EventDashboardContainer extends Component {
 					key="audit"
 					to={`/admin/events/${event.id}/dashboard/reports/audit`}
 				>
-					<MenuItem selected={isActiveReportMenu("audit")}
-							  onClick={this.handleReportsMenuClose.bind(this)}
+					<MenuItem
+						selected={isActiveReportMenu("audit")}
+						onClick={this.handleReportsMenuClose.bind(this)}
 					>
 						Event audit report
 					</MenuItem>
@@ -226,8 +233,9 @@ class EventDashboardContainer extends Component {
 					key="summary-audit"
 					to={`/admin/events/${event.id}/dashboard/reports/summary-audit`}
 				>
-					<MenuItem selected={isActiveReportMenu("summary-audit")}
-							  onClick={this.handleReportsMenuClose.bind(this)}
+					<MenuItem
+						selected={isActiveReportMenu("summary-audit")}
+						onClick={this.handleReportsMenuClose.bind(this)}
 					>
 						Event summary audit report
 					</MenuItem>
@@ -301,13 +309,26 @@ class EventDashboardContainer extends Component {
 					>
 						<div className={classes.tagsContainer}>
 							<div>
-								<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
+								<ColorTag
+									style={{ marginRight: 10 }}
+									variant={isPublished ? "default" : "disabled"}
+								>
+									{isPublished ? "Published" : "Draft"}
+								</ColorTag>
 							</div>
 							<div>
-								{eventEnded ?
-									<ColorTag style={{ marginRight: 10 }} variant="disabled">{"Event ended"}</ColorTag> :
-									<ColorTag style={{ marginRight: 10 }} variant={isOnSale ? "green" : "disabled"}>{isOnSale ? "On sale" : "Off sale"}</ColorTag>
-								}
+								{eventEnded ? (
+									<ColorTag style={{ marginRight: 10 }} variant="disabled">
+										{"Event ended"}
+									</ColorTag>
+								) : (
+									<ColorTag
+										style={{ marginRight: 10 }}
+										variant={isOnSale ? "green" : "disabled"}
+									>
+										{isOnSale ? "On sale" : "Off sale"}
+									</ColorTag>
+								)}
 							</div>
 						</div>
 						{!eventEnded ? (
@@ -315,18 +336,20 @@ class EventDashboardContainer extends Component {
 								<Button variant="callToAction">Edit event</Button>
 							</Link>
 						) : null}
-
 					</Grid>
 				</Grid>
 
-				<Card variant="block" style={{ borderRadius: "6px 6px 0 0", marginBottom: 10 }}>
+				<Card
+					variant="block"
+					style={{ borderRadius: "6px 6px 0 0", marginBottom: 10 }}
+				>
 					<div className={classes.menuContainer}>
 						<Typography className={classes.menuText}>
 							<StyledLink
 								underlined={subheading === "summary"}
 								to={`/admin/events/${event.id}/dashboard`}
 							>
-									Dashboard
+								Dashboard
 							</StyledLink>
 						</Typography>
 						{event.is_external ? null : (
@@ -336,7 +359,7 @@ class EventDashboardContainer extends Component {
 									underlined={subheading === "tools"}
 									onClick={this.handleToolsMenu.bind(this)}
 								>
-										Tools
+									Tools
 								</StyledLink>
 							</Typography>
 						)}
@@ -347,7 +370,7 @@ class EventDashboardContainer extends Component {
 									underlined={subheading === "reports"}
 									onClick={this.handleReportsMenu.bind(this)}
 								>
-										Reports
+									Reports
 								</StyledLink>
 							</Typography>
 						)}
@@ -358,7 +381,12 @@ class EventDashboardContainer extends Component {
 					<div className={classes.innerCard}>
 						{children}
 
-						{event ? <VisitEventPage id={event.id} style={{ marginTop: 40, marginBottom: 20 }}/> : null}
+						{event ? (
+							<VisitEventPage
+								id={event.id}
+								style={{ marginTop: 40, marginBottom: 20 }}
+							/>
+						) : null}
 					</div>
 				</Card>
 			</div>
