@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import moment from "moment";
+import moment from "moment-timezone";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
 import {
@@ -14,7 +14,7 @@ import {
 	formatTicketDataForInputs,
 	formatTicketDataForSaving
 } from "../components/pages/admin/events/updateSections/Tickets";
-
+import { updateTimezonesInObjects } from "../helpers/time";
 //TODO separate artists and ticketTypes into their own stores
 
 const freshEvent = formatEventDataForInputs({});
@@ -44,6 +44,9 @@ class EventUpdate {
 	@observable
 	ticketTypeActiveIndex = null;
 
+	@observable
+	timezone = "";
+
 	@action
 	loadDetails(id) {
 		this.id = id;
@@ -53,13 +56,17 @@ class EventUpdate {
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 				const { organization_id } = event;
+				const { timezone } = venue;
 				const formattedEventData = formatEventDataForInputs(event);
+				this.timezone = timezone;
 				this.event = formattedEventData;
-				this.artists = formatArtistsForInputs(artists);
 				this.venue = venue;
+				this.artists = formatArtistsForInputs(artists);
 				this.organizationId = organization_id;
 
-				this.loadTicketTypes(formattedEventData);
+				this.setTimezone(timezone);
+
+				this.loadTicketTypes(formattedEventData, () => this.loadTimezone(venue.id));
 			})
 			.catch(error => {
 				console.error(error);
@@ -71,10 +78,11 @@ class EventUpdate {
 	}
 
 	@action
-	loadTicketTypes(event) {
+	loadTicketTypes(event, updateTimezones) {
 		if (!this.id) {
 			//No event yet, add one ticket by default
 			this.addTicketType();
+			updateTimezones();
 		}
 		Bigneon()
 			.events.ticketTypes.index({ event_id: this.id })
@@ -94,6 +102,8 @@ class EventUpdate {
 				if (this.ticketTypes.length < 1) {
 					this.addTicketType();
 				}
+
+				updateTimezones();
 			})
 			.catch(error => {
 				console.error(error);
@@ -102,6 +112,8 @@ class EventUpdate {
 					defaultMessage: "Loading event ticket types failed.",
 					error
 				});
+
+				updateTimezones();
 			});
 	}
 
@@ -112,7 +124,8 @@ class EventUpdate {
 		const startDate = moment().set({
 			hour: 12,
 			minute: 30,
-			second: 0
+			second: 0,
+			millisecond: 0
 		});
 		const endDate = moment(this.event.eventDate).add(1, "days");
 
@@ -166,7 +179,7 @@ class EventUpdate {
 		let startDate = moment(ticketTypes[index].startDate);
 		let startTime = moment(ticketTypes[index].startTime);
 		const endDate = moment(ticketTypes[index].endDate);
-		const endTime = moment(ticketTypes[index].endTime);
+		const endTime = moment(ticketTypes[index].endDate);
 
 		if (pricing.length) {
 			startDate = moment(pricing[pricing.length - 1].endDate);
@@ -201,14 +214,6 @@ class EventUpdate {
 
 	@action
 	updateEvent(eventDetails) {
-		if (!this.id && eventDetails.hasOwnProperty("eventDate")) {
-			eventDetails.showTime = moment(eventDetails.eventDate).set({
-				hour: this.event.showTime.get("hour"),
-				minute: this.event.showTime.get("minute"),
-				second: this.event.showTime.get("second")
-			});
-		}
-
 		this.event = { ...this.event, ...eventDetails };
 
 		//If they're updating the ID, update the root var
@@ -216,12 +221,19 @@ class EventUpdate {
 		if (id) {
 			this.id = id;
 		}
+
 		//Only automatically propagate the eventDate to ticketTypes on new events
-		if (!this.id && eventDetails.hasOwnProperty("showTime")) {
-			const { showTime } = eventDetails;
+		if (!this.id && eventDetails.hasOwnProperty("eventDate")) {
+			const { eventDate } = eventDetails;
 			this.ticketTypes.forEach((ticketType, index) => {
-				this.updateTicketType(index, { endDate: moment(showTime) });
+				this.updateTicketType(index, { endDate: moment(eventDate) });
 			});
+		}
+
+		//Update the timezone if venue changes
+		if (eventDetails.hasOwnProperty("venueId")) {
+			const { venueId } = eventDetails;
+			this.loadTimezone(venueId);
 		}
 	}
 
@@ -246,6 +258,10 @@ class EventUpdate {
 	changeArtistSetTime(index, setTime) {
 		const artists = this.artists;
 		artists[index].setTime = setTime.clone();
+
+		if (this.timezone) {
+			artists[index] = { ...artists[index], ...updateTimezonesInObjects(artists[index] , this.timezone, true) };
+		}
 		this.artists = artists;
 	}
 
@@ -451,8 +467,66 @@ class EventUpdate {
 		this.organizationId = null;
 		this.ticketTypes = [];
 		this.ticketTypeActiveIndex = null;
+		this.timezone = "";
 
 		this.addTicketType();
+	}
+
+	loadTimezone(id) {
+		Bigneon().venues.read({ id }).then((response) => {
+			const { timezone } = response.data;
+			this.setTimezone(timezone);
+		}).catch(error => {
+			console.error(error);
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Failed to update event timezone."
+			});
+		});
+	}
+
+	/**
+	 * Retrieves the timezone from the venue id and
+	 * updates every instance of a moment object in use with the new timezone
+	 * @params {timezone}
+	 */
+	setTimezone(timezone) {
+		const maintainLocalTime = timezone !== this.timezone || !this.id; //If they're switching timezone or if it's a new event
+
+		if (timezone) {
+
+			this.timezone = timezone;
+
+			//Get all moment objects, update the timezone and set them again
+			const eventDetails = updateTimezonesInObjects(this.event, timezone, maintainLocalTime);
+			this.updateEvent(eventDetails);
+
+			//Update artist set times
+			this.artists.forEach((artist, index) => {
+				const { setTime } = artist;
+				if (setTime) {
+					const newSetTime = updateTimezonesInObjects({ setTime }, timezone, maintainLocalTime).setTime;
+					if (newSetTime) {
+						this.changeArtistSetTime(index, newSetTime);
+					}
+				}
+			});
+
+			//Update ticket type start/end date/times
+			this.ticketTypes.forEach((ticketType, index) => {
+				const updateTicketTypeDates = updateTimezonesInObjects(ticketType, timezone, maintainLocalTime);
+
+				const { pricing } = ticketType;
+
+				//Update all pricing date/times
+				const updatedPricing = [];
+				pricing.forEach((pricePoint, index) => {
+					updatedPricing.push({ ...pricePoint, ...updateTimezonesInObjects(pricePoint, timezone, maintainLocalTime) });
+				});
+
+				this.updateTicketType(index, { ...updateTicketTypeDates, pricing: updatedPricing });
+			});
+		}
 	}
 }
 

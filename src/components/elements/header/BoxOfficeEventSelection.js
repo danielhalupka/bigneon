@@ -125,6 +125,7 @@ class BoxOfficeEventSelection extends React.Component {
 			>
 				{availableEvents.map(
 					({ id, name, promo_image_url, venue, event_start, door_time, status }) => {
+						//TODO use localised times in event obj
 						const displayTimes = {
 							event_start: moment.utc(event_start).local(),
 							door_time: moment.utc(door_time || event_start).local()

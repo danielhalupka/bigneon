@@ -14,7 +14,8 @@ import {
 	Popover,
 	ClickAwayListener
 } from "@material-ui/core";
-import moment from "moment";
+import moment from "moment-timezone";
+import { observer } from "mobx-react";
 
 const placeHolders = {
 	time: "hh:mm am/pm",
@@ -56,6 +57,7 @@ const styles = theme => {
 
 const timeFormat = "hh:mm A";
 
+@observer
 class DateTimePickerGroup extends Component {
 	constructor(props) {
 		super(props);
@@ -68,25 +70,37 @@ class DateTimePickerGroup extends Component {
 				: value.isValid()
 					? value.format(timeFormat)
 					: value.creationData().input,
-			isTimeValid: !value || value.isValid()
+			isTimeValid: !value || value.isValid(),
+			displayTimezone: ""
 		};
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps, prevState, snapshot) {
 		const { value } = this.props;
+
 		const { isTimeValid, timeFormatted, dateFormatted } = this.state;
 		const newIsTimeValid = !value || value.isValid();
-		const newTimeFormatted = !value
-			? ""
-			: value.isValid()
-				? value.format(timeFormat)
-				: value.creationData().input;
+
+		let newTimeFormatted = timeFormatted;
+		if (!value) {
+			newTimeFormatted = "";
+		} else if (value.isValid()) {
+			newTimeFormatted = value.format(timeFormat);
+		} else {
+			newTimeFormatted = value.creationData().input;
+		}
 
 		if (isTimeValid !== newIsTimeValid || timeFormatted !== newTimeFormatted) {
 			this.setState({
 				isTimeValid: newIsTimeValid,
 				timeFormatted: newTimeFormatted
 			});
+		}
+
+		const displayTimezone = value && value.isValid() ? value.format("z") : "";
+		if (displayTimezone && prevState.displayTimezone !== displayTimezone) {
+			//Set the timezone display if exists and has changed
+			this.setState({ displayTimezone });
 		}
 	}
 
@@ -111,20 +125,37 @@ class DateTimePickerGroup extends Component {
 
 	onDateChange = value => {
 		const { onChange, type } = this.props;
+		value.set({ seconds: 0, millisecond: 0 });
 		onChange(value);
 	};
 
 	onTimeChanged = event => {
 		const newValue = event.target.value;
-		this.setState({ timeFormatted: newValue, anchorEl: null });
-		const { onChange } = this.props;
 
-		onChange(moment(newValue, timeFormat, true));
+		this.setState({ timeFormatted: newValue, anchorEl: null });
+
+		if (moment(newValue, timeFormat, true).isValid()) {
+			this.onTimeSelected(newValue);
+		}
 	};
 
-	onTimeSelected = (event, value) => {
+	onTimeSelected = (newValue) => {
 		const { onChange } = this.props;
-		onChange(moment(value, timeFormat, true));
+
+		const newTime = moment.utc(newValue, timeFormat, true);
+		let { value } = this.props;
+		if (!value) {
+			value = newTime;
+		} else {
+			value.set({
+				hour: newTime.get("hour"),
+				minute: newTime.get("minute"),
+				seconds: 0,
+				millisecond: 0
+			});
+		}
+
+		onChange(value);
 		this.setState({ anchorEl: null });
 	};
 
@@ -137,7 +168,6 @@ class DateTimePickerGroup extends Component {
 			type,
 			error,
 			name,
-			label,
 			placeholder,
 			onFocus,
 			onBlur,
@@ -145,6 +175,7 @@ class DateTimePickerGroup extends Component {
 			value,
 			timeIncrement = 30
 		} = this.props;
+		let { label } = this.props;
 
 		const additionalProps = {};
 		const inputProps = {};
@@ -157,7 +188,11 @@ class DateTimePickerGroup extends Component {
 			start.add(timeIncrement, "minutes");
 		}
 
-		const { anchorEl, timeFormatted, isTimeValid } = this.state;
+		const { anchorEl, timeFormatted, isTimeValid, displayTimezone } = this.state;
+
+		if (displayTimezone) {
+			label = `${label} (${displayTimezone})`;
+		}
 
 		return (
 			<FormControl
@@ -201,8 +236,8 @@ class DateTimePickerGroup extends Component {
 							error={!isTimeValid || !!error}
 							onClick={event => this.onClick(event)}
 							value={timeFormatted}
-							onChange={this.onTimeChanged}
 							onFocus={onFocus}
+							onChange={this.onTimeChanged.bind(this)}
 							onBlur={onBlur}
 							//TODO use pink dropdown icon from designs
 							// InputProps={{
@@ -236,7 +271,7 @@ class DateTimePickerGroup extends Component {
 													time === timeFormatted ? classes.highlight : null
 												}
 												key={time}
-												onClick={event => this.onTimeSelected(event, time)}
+												onClick={event => this.onTimeSelected(time)}
 											>
 												{time}
 											</MenuItem>
