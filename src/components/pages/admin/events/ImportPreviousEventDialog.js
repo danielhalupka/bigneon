@@ -129,10 +129,6 @@ class ImportPreviousEventDialog extends Component {
 
 				const previousEventDate = event_start
 					? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-						.set({
-							second: 0,
-							millisecond: 0
-						})
 					: undefined;
 
 				const eventDate = moment.utc();
@@ -163,7 +159,7 @@ class ImportPreviousEventDialog extends Component {
 						minute: previousEventDate.get("minute"),
 						second: 0,
 						millisecond: 0
-					}).add("d", 2);
+					}).add(2, "d");
 
 					if (previousEventEndTime) {
 						const diff = previousEventEndTime.diff(previousEventDate);
@@ -172,9 +168,6 @@ class ImportPreviousEventDialog extends Component {
 				}
 
 				eventUpdateStore.updateEvent(updateEventDetails);
-
-				console.log(venue.timezone);
-				console.log(updateEventDetails.eventDate.format("z"));
 				onClose();
 
 				this.setState({ isImporting: false });

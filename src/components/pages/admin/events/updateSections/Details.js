@@ -180,7 +180,7 @@ const formatDataForInputs = (event) => {
 		cover_image_url
 	} = event;
 
-	const tomorrowNoon = moment.utc().add("d", 1).set({
+	const tomorrowNoon = moment.utc().add(1, "d").set({
 		hour: "12",
 		minute: "00",
 		second: "00"
