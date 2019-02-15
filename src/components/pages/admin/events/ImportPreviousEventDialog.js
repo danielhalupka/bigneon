@@ -38,8 +38,7 @@ const styles = theme => {
 			borderRadius: 4
 		},
 		buttonContainer: {
-			display: "flex",
-			marginTop: 60
+			display: "flex"
 		},
 		checkboxContainer: {
 			minHeight: 100,
@@ -73,7 +72,8 @@ class ImportPreviousEventDialog extends Component {
 			eventsNames: {},
 			events: null,
 			selectedEventId: null,
-			isImporting: false
+			isImporting: false,
+			autoCompleteInFocus: false
 		};
 	}
 
@@ -251,6 +251,8 @@ class ImportPreviousEventDialog extends Component {
 
 		return (
 			<AutoCompleteGroup
+				onFocus={() => this.setState({ autoCompleteInFocus: true })}
+				onBlur={() => this.setState({ autoCompleteInFocus: false })}
 				value={events.find(e => e.id === selectedEventId)}
 				items={eventsNames}
 				name={"events"}
@@ -268,7 +270,7 @@ class ImportPreviousEventDialog extends Component {
 			onClose,
 			classes
 		} = this.props;
-		const { selectedEventId, isImporting, events } = this.state;
+		const { selectedEventId, isImporting, events, autoCompleteInFocus } = this.state;
 
 		return (
 			<Dialog
@@ -285,6 +287,8 @@ class ImportPreviousEventDialog extends Component {
 					</div>
 
 					{events === null ? <Loader>Loading past events...</Loader> : this.renderPastEventsAutoComplete()}
+
+					{autoCompleteInFocus && !selectedEventId ? <div style={{ marginTop: 100 }}/> : null}
 
 					<div className={classes.buttonContainer}>
 						<Button
