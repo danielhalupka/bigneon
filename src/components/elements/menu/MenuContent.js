@@ -95,7 +95,7 @@ class MenuContent extends Component {
 				/>
 			);
 		}
-		
+
 		if (isPromoter || isPromoterReadOnly) {
 			return (
 				<PromoterList
