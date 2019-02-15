@@ -31,10 +31,19 @@ class User {
 	userRoles = [];
 
 	@observable
+	userScopes = [];
+
+	@observable
 	globalRoles = [];
 
 	@observable
+	globalScopes = [];
+
+	@observable
 	organizationRoles = {};
+
+	@observable
+	organizationScopes = {};
 
 	@observable
 	currentOrganizationId = null;
@@ -89,7 +98,9 @@ class User {
 						this.email = email;
 						this.phone = phone;
 						this.userRoles = roles;
+						this.userScopes = scopes;
 						this.organizationRoles = organization_roles;
+						this.organizationScopes = organization_scopes;
 						this.profilePicUrl = profile_pic_url;
 
 						this.loadAllPossibleOrgs();
@@ -132,9 +143,10 @@ class User {
 						}
 					});
 			},
-			onError || (e => {
-				console.error(e);
-			})
+			onError ||
+				(e => {
+					console.error(e);
+				})
 		);
 	}
 
@@ -171,10 +183,12 @@ class User {
 				} else {
 					this.token = false;
 
-					onError ? onError(error) : notifications.show({
-						message: "Failed to refresh session.",
-						variant: "error"
-					});
+					onError
+						? onError(error)
+						: notifications.show({
+							message: "Failed to refresh session.",
+							variant: "error"
+						  });
 				}
 			});
 	}
@@ -184,18 +198,18 @@ class User {
 
 		const organizationId = localStorage.getItem("currentOrganizationId");
 		if (organizationId && availableOrgIds.includes(organizationId)) {
-			this.setCurrentOrganizationRoles(organizationId);
+			this.setCurrentOrganizationRolesAndScopes(organizationId);
 		} else if (availableOrgIds.length > 0) {
 			//If it doesn't exist locally assume first org
-			this.setCurrentOrganizationRoles(availableOrgIds[0]);
+			this.setCurrentOrganizationRolesAndScopes(availableOrgIds[0]);
 		} else {
 			//If the don't belong to any, set to false
-			this.setCurrentOrganizationRoles(false);
+			this.setCurrentOrganizationRolesAndScopes(false);
 		}
 	}
 
 	@action
-	setCurrentOrganizationRoles(id, reloadPage = false) {
+	setCurrentOrganizationRolesAndScopes(id, reloadPage = false) {
 		this.currentOrganizationId = id;
 
 		localStorage.setItem("currentOrganizationId", id);
@@ -204,8 +218,9 @@ class User {
 		if (reloadPage) {
 			document.location.reload(true);
 		} else {
-			//Set the active roles here as we'll know what roles this user has for this org
+			//Set the active roles and scopes here as we'll know what roles this user has for this org
 			this.globalRoles = this.userRoles.concat(this.organizationRoles[id]);
+			this.globalScopes = this.userScopes.concat(this.organizationScopes[id]);
 		}
 	}
 
@@ -242,7 +257,9 @@ class User {
 		this.phone = "";
 		this.userRoles = [];
 		this.globalRoles = [];
+		this.globalScopes = [];
 		this.organizationRoles = {};
+		this.organizationScopes = {};
 		this.currentOrganizationId = null;
 		this.profilePicUrl = "";
 		this.organizations = {};
@@ -286,6 +303,10 @@ class User {
 		this.showRequiresAuthDialog = false;
 	}
 
+	hasScope(scope) {
+		return this.globalScopes.indexOf(scope) > -1;
+	}
+
 	@computed
 	get isAuthenticated() {
 		//If the token is set, return 'true'.
@@ -323,6 +344,27 @@ class User {
 	@computed
 	get isOrgAdmin() {
 		return this.globalRoles.indexOf("OrgAdmin") > -1;
+	}
+
+	@computed
+	get isPromoterReadOnly() {
+		return this.globalRoles.indexOf("PromoterReadOnly") > -1;
+	}
+
+	@computed
+	get isPromoter() {
+		return this.globalRoles.indexOf("Promoter") > -1 || this.isPromoterReadOnly;
+	}
+
+	@computed
+	get canViewStudio() {
+		return (
+			this.isOrgOwner ||
+			this.isOrgMember ||
+			this.isAdmin ||
+			this.isOrgAdmin ||
+			this.isPromoter
+		);
 	}
 
 	@computed

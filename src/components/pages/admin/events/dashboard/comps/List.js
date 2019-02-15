@@ -9,6 +9,7 @@ import HoldRow from "./CompRow";
 import CompDialog from "./CompDialog";
 import Container from "../Container";
 import Loader from "../../../../../elements/loaders/Loader";
+import user from "../../../../../../stores/user";
 
 const styles = theme => ({
 	root: {}
@@ -207,7 +208,11 @@ class CompList extends Component {
 				<div style={{ display: "flex" }}>
 					<Typography variant="title">{holdDetails.name}</Typography>
 					<span style={{ flex: 1 }}/>
-					<Button onClick={e => this.onAddHold()}>Assign Name To List</Button>
+					{user.hasScope("comp:write") ? (
+						<Button onClick={e => this.onAddHold()}>Assign Name To List</Button>
+					) : (
+						<span/>
+					)}
 				</div>
 
 				<Divider style={{ marginBottom: 40 }}/>
