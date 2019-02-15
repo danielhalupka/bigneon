@@ -60,6 +60,7 @@ class Layout {
 				user.isOrgAdmin ||
 				user.isOrgBoxOffice ||
 				user.isOrgDoorPerson ||
+				user.isPromoter ||
 				user.isPromoterReadOnly
 			);
 		} else {

@@ -63,6 +63,7 @@ class MenuContent extends Component {
 			isUser,
 			isOrgBoxOffice,
 			isOrgDoorPerson,
+			isPromoter,
 			isPromoterReadOnly
 		} = user;
 		if (isAdmin) {
@@ -94,7 +95,8 @@ class MenuContent extends Component {
 				/>
 			);
 		}
-		if (isPromoterReadOnly) {
+		
+		if (isPromoter || isPromoterReadOnly) {
 			return (
 				<PromoterList
 					toggleDrawer={toggleDrawer}
