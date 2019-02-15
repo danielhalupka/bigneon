@@ -18,6 +18,7 @@ import InputGroup from "../../../common/form/InputGroup";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import eventUpdateStore from "../../../../stores/eventUpdate";
 import user from "../../../../stores/user";
+import ImportPreviousEventDialog from "./ImportPreviousEventDialog";
 
 const styles = theme => ({
 	paper: {
@@ -47,6 +48,10 @@ const styles = theme => ({
 	},
 	publishedAt: {
 		marginTop: 20
+	},
+	missingPromoImageError: {
+		color: "red",
+		textAlign: "center"
 	}
 });
 
@@ -59,7 +64,8 @@ class Event extends Component {
 			errors: {},
 			isSubmitting: false,
 			//When ticket times are dirty, don't mess with the timing
-			ticketTimesDirty: false
+			ticketTimesDirty: false,
+			showImportPreviousEventDialog: false
 		};
 	}
 
@@ -75,6 +81,8 @@ class Event extends Component {
 			this.setState({ ticketTimesDirty: true });
 		} else {
 			eventUpdateStore.clearDetails();
+
+			this.setState({ showImportPreviousEventDialog: true });
 		}
 
 		this.setOrganizationId();
@@ -111,7 +119,7 @@ class Event extends Component {
 	validateFields() {
 		if (this.hasSubmitted) {
 			const { event, ticketTypes, artists } = eventUpdateStore;
-			const { isExternal } = event;
+			const { isExternal, promoImageUrl } = event;
 			const artistsErrors = this.validateArtists(artists);
 
 			const eventDetailErrors = validateEventFields(event);
@@ -119,12 +127,16 @@ class Event extends Component {
 			const ticketTypeErrors = validateTicketTypeFields(
 				isExternal ? [] : ticketTypes
 			);
-			if (artistsErrors || eventDetailErrors || ticketTypeErrors) {
+
+			const missingPromoImage = !promoImageUrl;
+
+			if (artistsErrors || eventDetailErrors || ticketTypeErrors || missingPromoImage) {
 				this.setState({
 					errors: {
 						event: eventDetailErrors,
 						ticketTypes: ticketTypeErrors,
-						artists: artistsErrors
+						artists: artistsErrors,
+						missingPromoImage
 					}
 				});
 
@@ -432,7 +444,7 @@ class Event extends Component {
 				{!shouldUnpublish ? (
 					<Typography className={classes.publishedAt}>
 						Published at{" "}
-						{moment(event.publishDate).format("MM/DD/YYYY hh:mm A")}
+						{moment(event.publishDate).format("MM/DD/YYYY hh:mm A z")}
 					</Typography>
 				) : null}
 			</div>
@@ -440,10 +452,10 @@ class Event extends Component {
 	}
 
 	render() {
-		const { errors, isSubmitting, ticketTimesDirty } = this.state;
+		const { errors, isSubmitting, ticketTimesDirty, showImportPreviousEventDialog } = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { status, isExternal, externalTicketsUrl, showTime, showCoverImage } = event;
+		const { status, isExternal, externalTicketsUrl, showCoverImage, eventDate } = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
@@ -453,6 +465,14 @@ class Event extends Component {
 
 		return (
 			<div>
+				{user.currentOrganizationId ? (
+					<ImportPreviousEventDialog
+						organizationId={user.currentOrganizationId}
+						open={showImportPreviousEventDialog}
+						onClose={() => this.setState({ showImportPreviousEventDialog: false })}
+					/>
+				) : null}
+
 				<PageHeading iconUrl="/icons/events-multi.svg">
 					{event ? "Update" : "Create"} event
 				</PageHeading>
@@ -468,6 +488,8 @@ class Event extends Component {
 						onChangeCoverImage={() => eventUpdateStore.updateEvent({ showCoverImage: !showCoverImage })}
 						noMediaTitle="Upload event image"
 					/>
+
+					{errors.missingPromoImage ? <Typography className={classes.missingPromoImageError}>*Missing promo image</Typography> : null}
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Artists</FormSubHeading>
@@ -537,7 +559,7 @@ class Event extends Component {
 									this.setState({ ticketTimesDirty: true });
 								}}
 								validateFields={this.validateFields.bind(this)}
-								eventStartDate={showTime}
+								eventStartDate={eventDate}
 								ticketTimesDirty={ticketTimesDirty}
 							/>
 						</div>

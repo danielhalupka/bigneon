@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
-import { Hidden, Typography, withStyles } from "@material-ui/core";
+import { Hidden, withStyles } from "@material-ui/core";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
@@ -15,7 +15,6 @@ import EventArtist from "./EventArtist";
 import LeftAlignedSubCard from "../../../../elements/LeftAlignedSubCard";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import user from "../../../../../stores/user";
-import IconButton from "./PricePoint";
 import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
@@ -49,7 +48,7 @@ const formatForInput = artistArray => {
 			id: artist.id,
 			importance,
 			setTime: set_time
-				? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+				? moment.utc(set_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 				: null
 		};
 	});

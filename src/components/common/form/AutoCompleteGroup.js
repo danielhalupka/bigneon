@@ -151,7 +151,8 @@ class AutoCompleteGroup extends React.Component {
 			onBlur,
 			onFocus,
 			style,
-			renderSelectOption
+			renderSelectOption,
+			renderValueContainer
 		} = this.props;
 
 		const selectStyles = {
@@ -174,7 +175,7 @@ class AutoCompleteGroup extends React.Component {
 			Control,
 			NoOptionsMessage,
 			Placeholder,
-			ValueContainer
+			ValueContainer: renderValueContainer || ValueContainer
 		};
 
 		return (
@@ -196,7 +197,14 @@ class AutoCompleteGroup extends React.Component {
 						options={suggestions}
 						components={components}
 						value={value}
-						onChange={({ value, label }) => onChange(value, label)}
+						onChange={(chosen) => {
+							if (chosen) {
+								const { value, label } = chosen;
+								onChange(value, label);
+							} else {
+								onChange(null, null);
+							}
+						}}
 						onCreateOption={onCreateOption}
 						isClearable
 						formatCreateLabel={formatCreateLabel}
@@ -226,7 +234,8 @@ AutoCompleteGroup.propTypes = {
 	onFocus: PropTypes.func,
 	style: PropTypes.object,
 	onInputChange: PropTypes.func,
-	renderSelectOption: PropTypes.func
+	renderSelectOption: PropTypes.func,
+	renderValueContainer: PropTypes.func
 };
 
 export default withStyles(styles, { withTheme: true })(AutoCompleteGroup);

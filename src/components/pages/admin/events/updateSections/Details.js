@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { withStyles, Grid, Collapse, Hidden } from "@material-ui/core";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
@@ -12,6 +12,7 @@ import SelectGroup from "../../../../common/form/SelectGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import Bn from "bn-api-node";
+import { updateTimezonesInObjects } from "../../../../../helpers/time";
 
 const styles = theme => ({});
 
@@ -72,7 +73,6 @@ const formatDataForSaving = (event, organizationId) => {
 		publishDate,
 		venueId,
 		doorTime,
-		showTime,
 		doorTimeHours,
 		ageLimit,
 		additionalInfo,
@@ -102,24 +102,15 @@ const formatDataForSaving = (event, organizationId) => {
 
 	if (
 		eventDate &&
-		showTime &&
-		moment(eventDate).isValid() &&
-		moment(showTime).isValid()
+		moment(eventDate).isValid()
 	) {
-		//eventDate = eventDate + show time and door time need evenData added to them
-		eventDate.set({
-			hour: showTime.get("hour"),
-			minute: showTime.get("minute"),
-			second: showTime.get("second")
-		});
-
 		eventDetails.event_start = moment
 			.utc(eventDate)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 	}
 
 	if (eventDate && moment(eventDate).isValid()) {
-		// Set doorTime from showTime and doorTimeHours
+		// Set doorTime from eventDate and doorTimeHours
 		const tmpDoorTime = moment(eventDate).subtract(doorTimeHours, "h");
 		eventDetails.door_time = moment
 			.utc(tmpDoorTime)
@@ -166,7 +157,7 @@ const formatDataForSaving = (event, organizationId) => {
 	return eventDetails;
 };
 
-const formatDataForInputs = event => {
+const formatDataForInputs = (event) => {
 	const {
 		age_limit,
 		door_time,
@@ -189,41 +180,35 @@ const formatDataForInputs = event => {
 		cover_image_url
 	} = event;
 
-	const tomorrow = new Date();
-	tomorrow.setDate(new Date().getDate() + 1);
-
-	const eventDate = event_start
-		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-		: moment.utc(tomorrow).local();
-	const noon = moment(eventDate).set({
+	const tomorrowNoon = moment.utc().add(1, "d").set({
 		hour: "12",
 		minute: "00",
 		second: "00"
 	});
-	const showTime = event_start
-		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-		: noon;
+
+	const eventDate = event_start
+		? moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: tomorrowNoon.clone();
 	const doorTime = door_time
-		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-		: noon;
+		? moment.utc(door_time, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: tomorrowNoon.clone();
 	const redeemDate = redeem_date
-		? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-		: noon;
+		? moment.utc(redeem_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
+		: tomorrowNoon.clone();
 	const doorTimeHours = door_time
-		? moment.utc(event_start).diff(moment.utc(door_time), "m") / 60
+		? eventDate.diff(moment.utc(door_time), "m") / 60
 		: 1; // Default: 1 hour
 	const publishDate = publish_date
-		? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		? moment.utc(publish_date, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 		: null;
 	const endTime = event_end
-		? moment.utc(event_end, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		? moment.utc(event_end, moment.HTML5_FMT.DATETIME_LOCAL_MS)
 		: null;
 
 	const eventDetails = {
 		override_status, //TODO get from API
 		name: name || "",
 		eventDate,
-		showTime,
 		doorTime,
 		endTime,
 		doorTimeHours,
@@ -237,13 +222,14 @@ const formatDataForInputs = event => {
 		showTopLineInfo: !!top_line_info,
 		promoImageUrl: promo_image_url,
 		isExternal: is_external,
-		externalTicketsUrl: is_external && external_url ? external_url : null,
+		externalTicketsUrl: is_external && external_url ? external_url : "",
 		status,
 		eventType: event_type,
 		showCoverImage: !!cover_image_url
 	};
 
 	return eventDetails;
+	//return { ...eventDetails, ...updateTimezonesInObjects(eventDetails, "UTC", true) };
 };
 
 @observer
@@ -291,18 +277,9 @@ class Details extends Component {
 				.catch(error => {
 					console.error(error);
 
-					let message = "Loading venues failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
+					notifications.showFromErrorResponse({
+						defaultMessage: "Loading venues failed",
+						error
 					});
 				});
 		});
@@ -440,14 +417,14 @@ class Details extends Component {
 		const {
 			name,
 			eventDate,
-			showTime,
 			endTime,
 			additionalInfo,
 			topLineInfo,
 			videoUrl,
 			showTopLineInfo,
 			doorTimeHours = "1",
-			eventType
+			eventType,
+			redeemDate
 		} = eventUpdateStore.event;
 
 		//If a user hasn't adjusted the event start time yet
@@ -455,8 +432,8 @@ class Details extends Component {
 		let displayEndTime = null;
 		if (endTime) {
 			displayEndTime = endTime;
-		} else if (showTime) {
-			displayEndTime = moment(showTime).add(
+		} else if (eventDate) {
+			displayEndTime = moment(eventDate).add(
 				DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
 				"hours"
 			);
@@ -557,8 +534,15 @@ class Details extends Component {
 						value={eventDate}
 						name="eventDate"
 						label="Event date"
-						onChange={eventDate => {
-							this.changeDetails({ eventDate });
+						onChange={newEventDate => {
+							newEventDate.set({
+								hour: eventDate.get("hour"),
+								minute: eventDate.get("minute"),
+								second: eventDate.get("second")
+							});
+
+							this.changeDetails({ eventDate: newEventDate });
+
 							//TODO add this check back when possible to change the end date of a ticket if it's later than the event date
 							//const tickets = this.state.tickets;
 							// if (tickets.length > 0) {
@@ -574,11 +558,18 @@ class Details extends Component {
 
 				<Grid item xs={12} sm={12} md={3} lg={3}>
 					<DateTimePickerGroup
-						error={errors.showTime}
-						value={showTime}
-						name="showTime"
-						label="Showtime"
-						onChange={showTime => this.changeDetails({ showTime })}
+						error={errors.eventDate}
+						value={eventDate}
+						name="show-time"
+						label="Show time"
+						onChange={eventTime => {
+							eventDate.set({
+								hour: eventTime.get("hour"),
+								minute: eventTime.get("minute"),
+								second: eventTime.get("second")
+							});
+							this.changeDetails({ eventDate });
+						}}
 						onBlur={validateFields}
 						format="HH:mm"
 						type="time"
@@ -612,8 +603,8 @@ class Details extends Component {
 							//Adjust time part of newly selected date
 							if (endTime) {
 								adjustTime = endTime;
-							} else if (showTime) {
-								adjustTime = moment(showTime).add(
+							} else if (eventDate) {
+								adjustTime = moment(eventDate).add(
 									DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
 									"hours"
 								);
@@ -644,8 +635,8 @@ class Details extends Component {
 
 							if (endTime) {
 								updatedEndTime = moment(endTime);
-							} else if (showTime) {
-								updatedEndTime = moment(showTime).add(
+							} else if (eventDate) {
+								updatedEndTime = moment(eventDate).add(
 									DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
 									"hours"
 								);
