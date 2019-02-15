@@ -517,24 +517,7 @@ class ExternalAccess extends Component {
 							role = role.replace(" (Invited)", "");
 							return roleLookup[role];
 						});
-						const canRemove =
-							(!isInvite &&
-								//Admin can do anything (except remove an invite)
-								user.isAdmin) ||
-							//You cannot remove yourself
-							(user.id !== user_id &&
-								//Only org owners and admins can edit these
-								(user.isOrgOwner || user.isOrgAdmin) &&
-								//You cannot remove an org owner unless you are another org owner
-								(user.isOrgOwner ||
-									enumRoles.indexOf(Bn.Enums.UserRole.ORG_OWNER) === -1) &&
-								//An org admin can only adjust levels below them
-								(user.isOrgAdmin &&
-									enumRoles.filter(
-										role =>
-											role === Bn.Enums.UserRole.ORG_OWNER ||
-											role === Bn.Enums.UserRole.ORG_ADMIN
-									).length === 0));
+						const canRemove = false;
 
 						return (
 							<UserRow key={i}>
@@ -566,27 +549,9 @@ class ExternalAccess extends Component {
 										{displayRoles.join(", ")}
 									</Typography>
 								) : (
-									this.renderRoles(enumRoles, user_id)
+									this.renderRoles(enumRoles, user_id, false)
 								)}
-								<Typography>
-									{!isDeleting ? (
-										<IconButton
-											onClick={() => {
-												this.showRemoveDialog(
-													isInvite,
-													isInvite ? invite_id : user_id
-												);
-											}}
-											iconUrl="/icons/delete-gray.svg"
-										>
-											Delete
-										</IconButton>
-									) : (
-										<span style={{ display: "block", width: "36px" }}>
-											&nbsp;
-										</span>
-									)}
-								</Typography>
+								<Typography/>
 							</UserRow>
 						);
 					})}
