@@ -89,7 +89,7 @@ class CurrentOrganizationMenu extends React.Component {
 						<MenuItem
 							key={id}
 							onClick={() => {
-								user.setCurrentOrganizationRoles(id, true);
+								user.setCurrentOrganizationRolesAndScopes(id, true);
 								this.handleClose();
 							}}
 							selected={id === currentOrganizationId}
