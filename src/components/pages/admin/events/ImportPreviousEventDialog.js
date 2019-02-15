@@ -77,20 +77,33 @@ class ImportPreviousEventDialog extends Component {
 	}
 
 	componentDidMount() {
+		this.loadEvents("upcoming", () => this.loadEvents("past"));
+	}
+
+	loadEvents(past_or_upcoming, callback = () => {}) {
 		const { organizationId } = this.props;
-		
+
 		Bigneon()
 			.organizations.events.index({
-				organization_id: organizationId
-				//past_or_upcoming: "Past"
+				organization_id: organizationId,
+				past_or_upcoming
 			})
 			.then(eventResponse => {
-				const eventsNames = {};
+				const newEventsNames = {};
 				eventResponse.data.data.forEach(({ id, name }) => {
-					eventsNames[id] = name;
+					newEventsNames[id] = name;
 				});
 
-				this.setState({ events: eventResponse.data.data, eventsNames });
+				this.setState(({ events, eventsNames }) => {
+					let newEvents = [];
+					if (events) {
+						newEvents = [...events, ...eventResponse.data.data];
+					} else {
+						newEvents = eventResponse.data.data;
+					}
+
+					return { events: newEvents, eventsNames: { ...eventsNames, ...newEventsNames } };
+				}, callback);
 			})
 			.catch(error => {
 				console.error(error);
