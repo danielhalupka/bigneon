@@ -78,10 +78,10 @@ class ImportPreviousEventDialog extends Component {
 	}
 
 	componentDidMount() {
-		this.loadEvents("upcoming", () => this.loadEvents("past"));
+		this.loadEvents("upcoming", () => this.loadEvents("past", this.sortEvents.bind(this)));
 	}
 
-	loadEvents(past_or_upcoming, callback = () => {}) {
+	loadEvents(past_or_upcoming, callback) {
 		const { organizationId } = this.props;
 
 		Bigneon()
@@ -114,6 +114,24 @@ class ImportPreviousEventDialog extends Component {
 					error
 				});
 			});
+	}
+
+	sortEvents() {
+		const { events } = this.state;
+		if (!events) {
+			return;
+		}
+
+		//Sort by created_at
+		const sortedEvents = events.sort((a, b) => {
+			if (moment(a.created_at).diff(moment(b.created_at)) < 0) {
+				return 1;
+			} else {
+				return -1;
+			}
+		});
+
+		this.setState({ events: sortedEvents });
 	}
 
 	onImport() {
