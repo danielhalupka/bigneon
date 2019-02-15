@@ -222,7 +222,7 @@ const formatDataForInputs = (event) => {
 		showTopLineInfo: !!top_line_info,
 		promoImageUrl: promo_image_url,
 		isExternal: is_external,
-		externalTicketsUrl: is_external && external_url ? external_url : null,
+		externalTicketsUrl: is_external && external_url ? external_url : "",
 		status,
 		eventType: event_type,
 		showCoverImage: !!cover_image_url
