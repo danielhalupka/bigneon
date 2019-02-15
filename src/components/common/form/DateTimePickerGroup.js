@@ -150,7 +150,8 @@ class DateTimePickerGroup extends Component {
 			value.set({
 				hour: newTime.get("hour"),
 				minute: newTime.get("minute"),
-				second: newTime.get("second")
+				seconds: 0,
+				millisecond: 0
 			});
 		}
 
