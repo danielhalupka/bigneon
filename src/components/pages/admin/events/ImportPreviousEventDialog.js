@@ -15,6 +15,7 @@ import { updateTimezonesInObjects } from "../../../../helpers/time";
 import createGoogleMapsLink from "../../../../helpers/createGoogleMapsLink";
 import Loader from "../../../elements/loaders/Loader";
 import { fontFamilyDemiBold, textColorPrimary } from "../../../styles/theme";
+import { DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME } from "./updateSections/Details";
 
 const displayTime = (event_start, timezone) => {
 	const displayDate = moment.utc(event_start).tz(timezone).format("ddd, D MMM YYYY");
@@ -135,22 +136,11 @@ class ImportPreviousEventDialog extends Component {
 					: undefined;
 
 				const eventDate = moment.utc();
-				if (previousEventDate) {
-					eventDate.set({
-						hour: previousEventDate.get("hour"),
-						minute: previousEventDate.get("minute"),
-						second: 0,
-						millisecond: 0
-					}).add("d", 2);
-				}
 
 				//Event endTime = eventDate + (eventDate - previousEndTime)
-				let endTime = undefined;
-				if (event_end) {
-					const previousEventEndTime = moment.utc(event_end, moment.HTML5_FMT.DATETIME_LOCAL_MS);
-					const diff = previousEventEndTime.diff(previousEventDate);
-					endTime = eventDate.clone().add(diff);
-				}
+				const endTime = previousEventDate.clone().add(DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME, "h"); //Default if one doesn't exist
+
+				const previousEventEndTime = event_end ? moment.utc(event_end, moment.HTML5_FMT.DATETIME_LOCAL_MS) : null;
 
 				let updateEventDetails = {
 					venueId: venue.id,
@@ -164,7 +154,27 @@ class ImportPreviousEventDialog extends Component {
 				};
 
 				updateEventDetails = { ...updateEventDetails, ...updateTimezonesInObjects(updateEventDetails, venue.timezone) };
+
+				//Get the original hours & minutes from the previous event start time (In that timezone/DST)
+				if (previousEventDate) {
+					previousEventDate.tz(venue.timezone);
+					updateEventDetails.eventDate.set({
+						hour: previousEventDate.get("hour"),
+						minute: previousEventDate.get("minute"),
+						second: 0,
+						millisecond: 0
+					}).add("d", 2);
+
+					if (previousEventEndTime) {
+						const diff = previousEventEndTime.diff(previousEventDate);
+						updateEventDetails.endTime = updateEventDetails.eventDate.clone().add(diff);
+					}
+				}
+
 				eventUpdateStore.updateEvent(updateEventDetails);
+
+				console.log(venue.timezone);
+				console.log(updateEventDetails.eventDate.format("z"));
 				onClose();
 
 				this.setState({ isImporting: false });
