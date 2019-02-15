@@ -130,21 +130,33 @@ class EventDashboardContainer extends Component {
 						Smart holds
 					</MenuItem>
 				</Link>
-				<Link to={`/admin/events/${event.id}/external-access`}>
-					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-						Promoter Access
-					</MenuItem>
-				</Link>
-				<a href={`/exports/events/${event.id}/guests`} target="_blank">
-					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-						Export guest list
-					</MenuItem>
-				</a>
-				<Link to={`/admin/events/${event.id}/refunds`}>
-					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-						Refunds
-					</MenuItem>
-				</Link>
+				{user.hasScope("org:users") ? (
+					<Link to={`/admin/events/${event.id}/external-access`}>
+						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+							Promoter Access
+						</MenuItem>
+					</Link>
+				) : (
+					<span/>
+				)}
+				{user.hasScope("event:view-guests") ? (
+					<a href={`/exports/events/${event.id}/guests`} target="_blank">
+						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+							Export guest list
+						</MenuItem>
+					</a>
+				) : (
+					<span/>
+				)}
+				{user.hasScope("order:refund") ? (
+					<Link to={`/admin/events/${event.id}/refunds`}>
+						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+							Refunds
+						</MenuItem>
+					</Link>
+				) : (
+					<span/>
+				)}
 			</Menu>
 		);
 	}
@@ -331,7 +343,7 @@ class EventDashboardContainer extends Component {
 								)}
 							</div>
 						</div>
-						{!eventEnded ? (
+						{!eventEnded && user.hasScope("event:write") ? (
 							<Link to={`/admin/events/${event.id}/edit`}>
 								<Button variant="callToAction">Edit event</Button>
 							</Link>

@@ -163,7 +163,7 @@ class EventsList extends Component {
 					},
 					{
 						text: "Edit event",
-						disabled: eventEnded || !user.isOrgMember,
+						disabled: eventEnded || !user.hasScope("event:write"),
 						onClick: () =>
 							this.props.history.push(
 								`/admin/events/${this.eventMenuSelected}/edit`
@@ -178,7 +178,7 @@ class EventsList extends Component {
 					},
 					{
 						text: "Cancel event",
-						disabled: !user.isOrgMember,
+						disabled: !user.hasScope("event:write"),
 						onClick: () =>
 							this.setState({ cancelEventId: this.eventMenuSelected }),
 						MenuOptionIcon: CancelIcon

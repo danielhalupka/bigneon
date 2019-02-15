@@ -13,6 +13,7 @@ import AdminMenuList from "../../common/menu/lists/Admin";
 import UserMenuList from "../../common/menu/lists/User";
 import OrgOwnerList from "../../common/menu/lists/OrgOwner";
 import OrgMemberList from "../../common/menu/lists/OrgMember";
+import PromoterList from "../../common/menu/lists/Promoter";
 import GuestMenuList from "../../common/menu/lists/Guest";
 import DoorPersonList from "../../common/menu/lists/DoorPerson";
 import BoxOfficeList from "../../common/menu/lists/BoxOfficeView";
@@ -61,7 +62,8 @@ class MenuContent extends Component {
 			isGuest,
 			isUser,
 			isOrgBoxOffice,
-			isOrgDoorPerson
+			isOrgDoorPerson,
+			isPromoterReadOnly
 		} = user;
 		if (isAdmin) {
 			return (
@@ -86,6 +88,15 @@ class MenuContent extends Component {
 		if (isOrgMember) {
 			return (
 				<OrgMemberList
+					toggleDrawer={toggleDrawer}
+					openMenuItem={openMenuItem}
+					changeOpenMenu={name => this.changeOpenMenu(name)}
+				/>
+			);
+		}
+		if (isPromoterReadOnly) {
+			return (
+				<PromoterList
 					toggleDrawer={toggleDrawer}
 					openMenuItem={openMenuItem}
 					changeOpenMenu={name => this.changeOpenMenu(name)}

@@ -31,10 +31,19 @@ class User {
 	userRoles = [];
 
 	@observable
+	userScopes = [];
+
+	@observable
 	globalRoles = [];
 
 	@observable
+	globalScopes = [];
+
+	@observable
 	organizationRoles = {};
+
+	@observable
+	organizationScopes = {};
 
 	@observable
 	currentOrganizationId = null;
@@ -89,7 +98,9 @@ class User {
 						this.email = email;
 						this.phone = phone;
 						this.userRoles = roles;
+						this.userScopes = scopes;
 						this.organizationRoles = organization_roles;
+						this.organizationScopes = organization_scopes;
 						this.profilePicUrl = profile_pic_url;
 
 						this.loadAllPossibleOrgs();
@@ -187,18 +198,18 @@ class User {
 
 		const organizationId = localStorage.getItem("currentOrganizationId");
 		if (organizationId && availableOrgIds.includes(organizationId)) {
-			this.setCurrentOrganizationRoles(organizationId);
+			this.setCurrentOrganizationRolesAndScopes(organizationId);
 		} else if (availableOrgIds.length > 0) {
 			//If it doesn't exist locally assume first org
-			this.setCurrentOrganizationRoles(availableOrgIds[0]);
+			this.setCurrentOrganizationRolesAndScopes(availableOrgIds[0]);
 		} else {
 			//If the don't belong to any, set to false
-			this.setCurrentOrganizationRoles(false);
+			this.setCurrentOrganizationRolesAndScopes(false);
 		}
 	}
 
 	@action
-	setCurrentOrganizationRoles(id, reloadPage = false) {
+	setCurrentOrganizationRolesAndScopes(id, reloadPage = false) {
 		this.currentOrganizationId = id;
 
 		localStorage.setItem("currentOrganizationId", id);
@@ -207,8 +218,9 @@ class User {
 		if (reloadPage) {
 			document.location.reload(true);
 		} else {
-			//Set the active roles here as we'll know what roles this user has for this org
+			//Set the active roles and scopes here as we'll know what roles this user has for this org
 			this.globalRoles = this.userRoles.concat(this.organizationRoles[id]);
+			this.globalScopes = this.userScopes.concat(this.organizationScopes[id]);
 		}
 	}
 
@@ -245,7 +257,9 @@ class User {
 		this.phone = "";
 		this.userRoles = [];
 		this.globalRoles = [];
+		this.globalScopes = [];
 		this.organizationRoles = {};
+		this.organizationScopes = {};
 		this.currentOrganizationId = null;
 		this.profilePicUrl = "";
 		this.organizations = {};
@@ -287,6 +301,10 @@ class User {
 	@action
 	hideAuthRequiredDialog() {
 		this.showRequiresAuthDialog = false;
+	}
+
+	hasScope(scope) {
+		return this.globalScopes.indexOf(scope) > -1;
 	}
 
 	@computed

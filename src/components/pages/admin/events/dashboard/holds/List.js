@@ -11,6 +11,7 @@ import HoldDialog, { HOLD_TYPES } from "./HoldDialog";
 import Container from "../Container";
 import Dialog from "../../../../../elements/Dialog";
 import Loader from "../../../../../elements/loaders/Loader";
+import user from "../../../../../../stores/user";
 
 const styles = theme => ({
 	root: {}
@@ -167,32 +168,43 @@ class TicketHoldList extends Component {
 								active={active}
 								gray={!(index % 2)}
 								key={id}
-								actions={[
-									{
-										id: id,
-										name: "Split",
-										iconUrl: `/icons/split-${iconColor}.svg`,
-										onClick: onAction.bind(this)
-									},
-									{
-										id: id,
-										name: "Link",
-										iconUrl: `/icons/link-${iconColor}.svg`,
-										onClick: onAction.bind(this)
-									},
-									{
-										id: id,
-										name: "Edit",
-										iconUrl: `/icons/edit-${iconColor}.svg`,
-										onClick: onAction.bind(this)
-									},
-									{
-										id: id,
-										name: "Delete",
-										iconUrl: `/icons/delete-${iconColor}.svg`,
-										onClick: onAction.bind(this)
-									}
-								]}
+								actions={
+									user.hasScope("hold:write")
+										? [
+											{
+												id: id,
+												name: "Split",
+												iconUrl: `/icons/split-${iconColor}.svg`,
+												onClick: onAction.bind(this)
+											},
+											{
+												id: id,
+												name: "Link",
+												iconUrl: `/icons/link-${iconColor}.svg`,
+												onClick: onAction.bind(this)
+											},
+											{
+												id: id,
+												name: "Edit",
+												iconUrl: `/icons/edit-${iconColor}.svg`,
+												onClick: onAction.bind(this)
+											},
+											{
+												id: id,
+												name: "Delete",
+												iconUrl: `/icons/delete-${iconColor}.svg`,
+												onClick: onAction.bind(this)
+											}
+										  ]
+										: [
+											{
+												id: id,
+												name: "Link",
+												iconUrl: `/icons/link-${iconColor}.svg`,
+												onClick: onAction.bind(this)
+											}
+										  ]
+								}
 							>
 								{tds}
 							</HoldRow>
@@ -230,24 +242,24 @@ class TicketHoldList extends Component {
 		const onClose = () => this.setState({ deleteId: null });
 
 		return (
-			<Dialog
-				title={"Delete hold?"}
-				open={!!deleteId}
-				onClose={onClose}
-			>
+			<Dialog title={"Delete hold?"} open={!!deleteId} onClose={onClose}>
 				<div>
 					<Typography>Are you sure you want to delete this hold?</Typography>
 
-					<br/><br/>
+					<br/>
+					<br/>
 					<div style={{ display: "flex" }}>
-						<Button style={{ flex: 1, marginRight: 5 }} onClick={onClose}>Cancel</Button>
-						<Button style={{ flex: 1, marginLeft: 5 }}
+						<Button style={{ flex: 1, marginRight: 5 }} onClick={onClose}>
+							Cancel
+						</Button>
+						<Button
+							style={{ flex: 1, marginLeft: 5 }}
 							onClick={() => {
 								this.deleteHold(deleteId);
 								onClose();
 							}}
 						>
-					Delete
+							Delete
 						</Button>
 					</div>
 				</div>
@@ -266,7 +278,11 @@ class TicketHoldList extends Component {
 				<div style={{ display: "flex" }}>
 					<Typography variant="title">Manage Ticket Holds</Typography>
 					<span style={{ flex: 1 }}/>
-					<Button onClick={e => this.onAddHold()}>Create Hold</Button>
+					{user.hasScope("hold:write") ? (
+						<Button onClick={e => this.onAddHold()}>Create Hold</Button>
+					) : (
+						<span/>
+					)}
 				</div>
 
 				<Divider style={{ marginBottom: 40 }}/>

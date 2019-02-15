@@ -59,7 +59,8 @@ class Layout {
 				user.isOrgMember ||
 				user.isOrgAdmin ||
 				user.isOrgBoxOffice ||
-				user.isOrgDoorPerson
+				user.isOrgDoorPerson ||
+				user.isPromoterReadOnly
 			);
 		} else {
 			return null;
