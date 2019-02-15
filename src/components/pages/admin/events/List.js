@@ -286,7 +286,7 @@ class EventsList extends Component {
 							justifyContent: "flex-end"
 						}}
 					>
-						{user.isOrgMember ? (
+						{user.hasScope("event:write") ? (
 							<div className={classes.actionButtons}>
 								<Link to={"/admin/events/create"}>
 									<Button variant="callToAction">New event</Button>
