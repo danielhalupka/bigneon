@@ -105,6 +105,12 @@ const styles = theme => ({
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.9
 	},
+	ticketDetailsDisabledText: {
+		color: "#9da3b4",
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9
+	},
+
 	bottomActionRow: {
 		display: "flex",
 		justifyContent: "flex-end",
@@ -220,9 +226,19 @@ class EventTicketsCard extends Component {
 						price_in_cents,
 						order_id
 					} = ticket;
-
+					
 					const orderNumber = order_id.slice(-8); //TODO eventually this will also come in the API
-					const disabled = status && status !== "Purchased";
+
+					let disabled = false;
+					switch (status) {
+						case "Purchased":
+							disabled = false;
+							break;
+						case "Redeemed":
+							disabled = true;
+							break;
+						//TODO deal with the other statuses
+					}
 
 					return (
 						<EventTicketRow key={id} item>
@@ -249,15 +265,21 @@ class EventTicketsCard extends Component {
 								$ {(price_in_cents / 100).toFixed(2)}
 							</Typography>
 
-							<Typography className={classes.ticketDetailsText}>
-								<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
-									show qr
-								</StyledLink>
-								<span style={{ marginRight: 10 }}/>
-								<StyledLink underlined onClick={() => onShowTransferQR([id])}>
-								 	transfer
-								 </StyledLink>
-							</Typography>
+							{disabled ?
+								<Typography className={classes.ticketDetailsDisabledText}>{status}</Typography>
+								:
+								(
+									<Typography className={classes.ticketDetailsText}>
+										<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
+										show qr
+										</StyledLink>
+										<span style={{ marginRight: 10 }}/>
+										<StyledLink underlined onClick={() => onShowTransferQR([id])}>
+										transfer
+										</StyledLink>
+									</Typography>
+								)}
+
 						</EventTicketRow>
 					);
 				})}
