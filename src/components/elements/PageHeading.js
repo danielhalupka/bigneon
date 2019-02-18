@@ -29,6 +29,9 @@ const styles = theme => {
 			textTransform: "capitalize",
 			fontFamily: fontFamilyDemiBold,
 			fontSize: theme.typography.fontSize * 2.5,
+			[theme.breakpoints.down("md")]: {
+				fontSize: theme.typography.fontSize * 2.2
+			},
 			[theme.breakpoints.down("xs")]: {
 				fontSize: theme.typography.fontSize * 1.6
 			}
@@ -69,8 +72,8 @@ const PageHeading = props => {
 			}
 		});
 	}
-
-	const headingIsLong = totalChars > 21; //Adjust this if needed
+	
+	const headingIsLong = totalChars > 30; //Adjust this if needed
 
 	return (
 		<div style={style} className={classes.root}>
