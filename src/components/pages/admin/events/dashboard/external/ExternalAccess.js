@@ -239,121 +239,118 @@ class ExternalAccess extends Component {
 	// 		});
 	// }
 
-	// removeUser() {
-	// 	const { isInviteRemove, removeId } = this.state;
-	// 	const { organizationId } = this.props;
+	removeUser() {
+		const { isInviteRemove, removeId } = this.state;
 
-	// 	this.setState({ isDeleting: true });
+		this.setState({ isDeleting: true });
 
-	// 	if (isInviteRemove) {
-	// 		Bigneon()
-	// 			.organizations.invite.del({
-	// 				organization_id: organizationId,
-	// 				invite_id: removeId
-	// 			})
-	// 			.then(result => {
-	// 				if (result.status === 200) {
-	// 					notifications.show({
-	// 						message: "Removed invitation.",
-	// 						variant: "success"
-	// 					});
-	// 					this.loadOrgMembers();
-	// 				} else {
-	// 					notifications.show({
-	// 						message: "Removing invitation failed.",
-	// 						variant: "error"
-	// 					});
-	// 				}
-	// 				this.setState({
-	// 					isDeleting: false,
-	// 					removeId: null,
-	// 					areYouSureDialogOpen: false
-	// 				});
-	// 			})
-	// 			.catch(error => {
-	// 				notifications.showFromErrorResponse({
-	// 					defaultMessage: "Removing invitation failed.",
-	// 					error
-	// 				});
-	// 				this.setState({
-	// 					isDeleting: false,
-	// 					removeId: null,
-	// 					areYouSureDialogOpen: false
-	// 				});
-	// 			});
-	// 	} else {
-	// 		Bigneon()
-	// 			.organizations.users.del({
-	// 				organization_id: organizationId,
-	// 				user_id: removeId
-	// 			})
-	// 			.then(result => {
-	// 				if (result.status === 200) {
-	// 					notifications.show({
-	// 						message: "Removed user.",
-	// 						variant: "success"
-	// 					});
-	// 					this.loadOrgMembers();
-	// 				} else {
-	// 					notifications.show({
-	// 						message: "Removing user failed.",
-	// 						variant: "error"
-	// 					});
-	// 				}
-	// 				this.setState({
-	// 					isDeleting: false,
-	// 					removeId: null,
-	// 					areYouSureDialogOpen: false
-	// 				});
-	// 			})
-	// 			.catch(error => {
-	// 				notifications.showFromErrorResponse({
-	// 					defaultMessage: "Removing user failed.",
-	// 					error
-	// 				});
-	// 				this.setState({
-	// 					isDeleting: false,
-	// 					removeId: null,
-	// 					areYouSureDialogOpen: false
-	// 				});
-	// 			});
-	// 	}
-	// }
+		if (isInviteRemove) {
+			Bigneon()
+				.events.users.deleteInvite({
+					event_id: this.eventId,
+					invite_id: removeId
+				})
+				.then(result => {
+					if (result.status === 200) {
+						notifications.show({
+							message: "Removed invitation.",
+							variant: "success"
+						});
+						this.loadMembers();
+					} else {
+						notifications.show({
+							message: "Removing invitation failed.",
+							variant: "error"
+						});
+					}
+					this.setState({
+						isDeleting: false,
+						removeId: null,
+						areYouSureDialogOpen: false
+					});
+				})
+				.catch(error => {
+					notifications.showFromErrorResponse({
+						defaultMessage: "Removing invitation failed.",
+						error
+					});
+					this.setState({
+						isDeleting: false,
+						removeId: null,
+						areYouSureDialogOpen: false
+					});
+				});
+		} else {
+			Bigneon()
+				.events.users.del({
+					event_id: this.eventId,
+					user_id: removeId
+				})
+				.then(result => {
+					if (result.status === 200) {
+						notifications.show({
+							message: "Removed promoter.",
+							variant: "success"
+						});
+						this.loadMembers();
+					} else {
+						notifications.show({
+							message: "Removing promoter failed.",
+							variant: "error"
+						});
+					}
+					this.setState({
+						isDeleting: false,
+						removeId: null,
+						areYouSureDialogOpen: false
+					});
+				})
+				.catch(error => {
+					notifications.showFromErrorResponse({
+						defaultMessage: "Removing promoter failed.",
+						error
+					});
+					this.setState({
+						isDeleting: false,
+						removeId: null,
+						areYouSureDialogOpen: false
+					});
+				});
+		}
+	}
 
-	// onDialogClose() {
-	// 	this.setState({ removeId: null, areYouSureDialogOpen: false });
-	// }
+	onDialogClose() {
+		this.setState({ removeId: null, areYouSureDialogOpen: false });
+	}
 
-	// showRemoveDialog(isInviteRemove, removeId) {
-	// 	this.setState({ isInviteRemove, removeId, areYouSureDialogOpen: true });
-	// }
+	showRemoveDialog(isInviteRemove, removeId) {
+		this.setState({ isInviteRemove, removeId, areYouSureDialogOpen: true });
+	}
 
-	// get renderAreYouSureDialog() {
-	// 	const { areYouSureDialogOpen, isInviteRemove, removeId } = this.state;
+	get renderAreYouSureDialog() {
+		const { areYouSureDialogOpen, isInviteRemove, removeId } = this.state;
 
-	// 	const onClose = this.onDialogClose.bind(this);
-	// 	let dialogTitle = "Are you sure you want to remove this user";
-	// 	dialogTitle += isInviteRemove
-	// 		? "'s invitation?"
-	// 		: " from the organization?";
+		const onClose = this.onDialogClose.bind(this);
+		let dialogTitle = "Are you sure you want to remove this promoter";
+		dialogTitle += isInviteRemove ? "'s invitation?" : " from the event?";
 
-	// 	return (
-	// 		<Dialog open={areYouSureDialogOpen} onClose={onClose} title={dialogTitle}>
-	// 			<div>
-	// 				<Button onClick={onClose}>Cancel</Button>
-	// 				<Button
-	// 					variant="warning"
-	// 					onClick={() => {
-	// 						this.removeUser();
-	// 					}}
-	// 					autoFocus
-	// 				>
-	// 					Remove User
-	// 				</Button>
-	// 			</div>
-	// 		</Dialog>
-	// 	);
-	// }
+		return (
+			<Dialog open={areYouSureDialogOpen} onClose={onClose} title={dialogTitle}>
+				<div>
+					<Button onClick={onClose}>Cancel</Button>
+					<Button
+						variant="warning"
+						onClick={() => {
+							this.removeUser();
+						}}
+						autoFocus
+					>
+						Remove Promoter
+					</Button>
+				</div>
+			</Dialog>
+		);
+	}
 
 	renderRoles(selectRoles = [], userId = "", allowMultiple = false) {
 		const { classes } = this.props;
@@ -517,7 +514,6 @@ class ExternalAccess extends Component {
 							role = role.replace(" (Invited)", "");
 							return roleLookup[role];
 						});
-						const canRemove = false;
 
 						return (
 							<UserRow key={i}>
@@ -544,14 +540,30 @@ class ExternalAccess extends Component {
 									</Typography>
 								</div>
 								<Typography className={classes.itemText}>{email}</Typography>
-								{!canRemove ? (
-									<Typography className={classes.itemText}>
-										{displayRoles.join(", ")}
-									</Typography>
-								) : (
-									this.renderRoles(enumRoles, user_id, false)
-								)}
-								<Typography/>
+
+								<Typography className={classes.itemText}>
+									{displayRoles.join(", ")}
+								</Typography>
+
+								<Typography>
+									{!isDeleting ? (
+										<IconButton
+											onClick={() => {
+												this.showRemoveDialog(
+													isInvite,
+													isInvite ? invite_id : user_id
+												);
+											}}
+											iconUrl="/icons/delete-gray.svg"
+										>
+											Delete
+										</IconButton>
+									) : (
+										<span style={{ display: "block", width: "36px" }}>
+											&nbsp;
+										</span>
+									)}
+								</Typography>
 							</UserRow>
 						);
 					})}
