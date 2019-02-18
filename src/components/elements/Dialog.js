@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -58,59 +58,66 @@ const DialogTransition = props => {
 	return <Slide direction="up" {...props}/>;
 };
 
-const CustomDialog = props => {
-	const { children, onClose, iconUrl, title, classes, ...rest } = props;
+class CustomDialog extends Component {
+	componentWillUnmount() {
+		iosScrollBackgroundHack(false);
+	}
 
-	//Mobile full screen dialog
-	if (screenWidth < 500) {
+	render() {
+		const { children, onClose, iconUrl, title, classes, ...rest } = this.props;
+
+		//Mobile full screen dialog
+		if (screenWidth < 500) {
+			return (
+				<Dialog
+					fullScreen
+					TransitionComponent={DialogTransition}
+					onClose={onClose}
+					aria-labelledby="dialog-title"
+					onEntering={() => iosScrollBackgroundHack(true)}
+					onExiting={() => iosScrollBackgroundHack(false)}
+					{...rest}
+				>
+					<div>
+						<div onClick={onClose} className={classes.closeDialogContainer}>
+							<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg"/>
+						</div>
+						{iconUrl ? <TopCardIcon iconUrl={iconUrl}/> : null}
+						{title ? (
+							<Typography variant="headline" className={classes.title}>
+								{title}
+							</Typography>
+						) : null}
+						<div className={classes.mobileContent}>{children}</div>
+					</div>
+				</Dialog>
+			);
+		}
+
 		return (
 			<Dialog
-				fullScreen
 				TransitionComponent={DialogTransition}
 				onClose={onClose}
 				aria-labelledby="dialog-title"
-				onEntering={() => iosScrollBackgroundHack(true)}
-				onExiting={() => iosScrollBackgroundHack(false)}
+				PaperProps={{
+					className: classes.paper
+				}}
+				BackdropProps={{ style: { backgroundColor: "transparent" } }}
 				{...rest}
 			>
-				<div>
-					<div onClick={onClose} className={classes.closeDialogContainer}>
-						<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg"/>
-					</div>
-					{iconUrl ? <TopCardIcon iconUrl={iconUrl}/> : null}
+				<Card variant="dialog" iconUrl={iconUrl}>
 					{title ? (
 						<Typography variant="headline" className={classes.title}>
 							{title}
 						</Typography>
 					) : null}
-					<div className={classes.mobileContent}>{children}</div>
-				</div>
+					<DialogContent className={classes.content}>{children}</DialogContent>
+				</Card>
 			</Dialog>
 		);
 	}
 
-	return (
-		<Dialog
-			TransitionComponent={DialogTransition}
-			onClose={onClose}
-			aria-labelledby="dialog-title"
-			PaperProps={{
-				className: classes.paper
-			}}
-			BackdropProps={{ style: { backgroundColor: "transparent" } }}
-			{...rest}
-		>
-			<Card variant="dialog" iconUrl={iconUrl}>
-				{title ? (
-					<Typography variant="headline" className={classes.title}>
-						{title}
-					</Typography>
-				) : null}
-				<DialogContent className={classes.content}>{children}</DialogContent>
-			</Card>
-		</Dialog>
-	);
-};
+}
 
 CustomDialog.propTypes = {
 	classes: PropTypes.object.isRequired,
