@@ -307,7 +307,7 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/admin/events/:id/refunds"
+									path="/admin/events/:id/manage-orders"
 									component={AdminEventRefunds}
 									isAuthenticated={isAuthenticated}
 								/>

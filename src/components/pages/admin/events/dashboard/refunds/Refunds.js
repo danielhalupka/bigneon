@@ -280,7 +280,7 @@ class Refunds extends Component {
 				<Grid className={classes.filterOptions} container>
 					<Grid  item xs={12} sm={12} md={6} lg={8}>
 						<PageHeading iconUrl="/icons/events-multi.svg">
-							Refunds - {eventName}
+							Manage orders - {eventName}
 						</PageHeading>
 					</Grid>
 					<Grid item xs={12} sm={12} md={6} lg={4}>

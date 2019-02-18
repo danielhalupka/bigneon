@@ -149,9 +149,9 @@ class EventDashboardContainer extends Component {
 					<span/>
 				)}
 				{user.hasScope("order:refund") ? (
-					<Link to={`/admin/events/${event.id}/refunds`}>
+					<Link to={`/admin/events/${event.id}/manage-orders`}>
 						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-							Refunds
+							Manage orders
 						</MenuItem>
 					</Link>
 				) : (
