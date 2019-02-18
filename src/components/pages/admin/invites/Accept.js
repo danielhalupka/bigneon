@@ -11,7 +11,11 @@ import { fontFamilyDemiBold } from "../../../styles/theme";
 
 const styles = theme => ({
 	text: { textAlign: "center" },
-	bold: { fontFamily: fontFamilyDemiBold }
+	bold: { fontFamily: fontFamilyDemiBold },
+	actionButtonContainer: {
+		paddingTop: 40,
+		display: "flex"
+	}
 });
 
 @observer
@@ -74,11 +78,11 @@ class InviteAccept extends Component {
 			});
 	}
 
-	goToSignupFirst() {
+	goToAuthFirst(route = "/sign-up") {
 		//Save the token, then take them to the signup page
 		localStorage.setItem("security_token", this.security_token);
 
-		this.props.history.push(`/sign-up`);
+		this.props.history.push(route);
 	}
 
 	goToLoginFirst() {
@@ -195,11 +199,18 @@ class InviteAccept extends Component {
 						Please signup to accept the invite.
 					</Typography>
 
-					<div style={{ paddingTop: 40 }}>
+					<div className={classes.actionButtonContainer}>
+						<Button
+							onClick={() => this.goToAuthFirst("/login")}
+							style={{ flex: 1, marginRight: 5 }}
+						>
+							Login
+						</Button>
+
 						<Button
 							variant="callToAction"
-							onClick={this.goToSignupFirst.bind(this)}
-							style={{ width: "100%" }}
+							onClick={() => this.goToAuthFirst("/sign-up")}
+							style={{ flex: 1, marginLeft: 5 }}
 						>
 							Sign up
 						</Button>
