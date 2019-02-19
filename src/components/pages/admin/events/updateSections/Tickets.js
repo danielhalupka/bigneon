@@ -25,7 +25,8 @@ const formatForSaving = (ticketTypes, event) => {
 			saleEndTimeOption,
 			endTime,
 			limitPerPerson,
-			priceForDisplay
+			priceForDisplay,
+			soldOutBehavior
 		} = ticketType;
 
 		let { startDate, endDate } = ticketType;
@@ -49,10 +50,12 @@ const formatForSaving = (ticketTypes, event) => {
 				endDate = moment(eventDate);
 				break;
 			case "close":
-				endDate = event.endTime ? moment(event.endTime) : moment(eventDate).add(
-					DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
-					"hours"
-				);
+				endDate = event.endTime
+					? moment(event.endTime)
+					: moment(eventDate).add(
+						DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
+						"hours"
+					  );
 				break;
 			//If no option or set to custom, assume they're updating it manually
 			case "custom":
@@ -69,16 +72,9 @@ const formatForSaving = (ticketTypes, event) => {
 
 		const ticket_pricing = [];
 		pricing.forEach(pricePoint => {
-			const {
-				id,
-				name, startTime, endTime,
-				value
-			} = pricePoint;
+			const { id, name, startTime, endTime, value } = pricePoint;
 
-			let {
-				startDate,
-				endDate
-			} = pricePoint;
+			let { startDate, endDate } = pricePoint;
 
 			startDate = moment(startDate);
 			if (startTime) {
@@ -117,7 +113,8 @@ const formatForSaving = (ticketTypes, event) => {
 			limit_per_person:
 				limitPerPerson === "" ? undefined : Number(limitPerPerson),
 			price_in_cents: Number(priceForDisplay) * 100,
-			ticket_pricing
+			ticket_pricing,
+			sold_out_behavior: soldOutBehavior
 		});
 	});
 
@@ -138,7 +135,8 @@ const formatForInput = (ticket_types, event) => {
 			start_date,
 			end_date,
 			price_in_cents,
-			status
+			status,
+			sold_out_behavior
 		} = ticket_type;
 
 		const pricing = [];
@@ -177,10 +175,9 @@ const formatForInput = (ticket_types, event) => {
 
 		let saleEndTimeOption;
 		const { doorTime, eventDate, endTime } = event;
-		const closeTime = endTime ? moment(endTime) : moment(eventDate).add(
-			DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME,
-			"hours"
-		);
+		const closeTime = endTime
+			? moment(endTime)
+			: moment(eventDate).add(DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME, "hours");
 
 		if (ticketEndDate.isSame(doorTime)) {
 			saleEndTimeOption = "door";
@@ -209,7 +206,8 @@ const formatForInput = (ticket_types, event) => {
 			pricing,
 			showPricing: pricing.length > 0,
 			priceForDisplay: price_in_cents / 100,
-			status
+			status,
+			soldOutBehavior: sold_out_behavior
 		};
 
 		ticketTypes.push(ticketType);
@@ -279,12 +277,16 @@ const validateFields = ticketTypes => {
 		const {
 			id,
 			eventId,
-			name, startTime,
-			saleEndTimeOption, endTime,
+			name,
+			startTime,
+			saleEndTimeOption,
+			endTime,
 			capacity,
-			increment, pricing,
+			increment,
+			pricing,
 			priceForDisplay,
-			status
+			status,
+			soldOutBehavior
 		} = ticket;
 
 		if (status === "Cancelled") {
@@ -369,15 +371,9 @@ const validateFields = ticketTypes => {
 			const ticketEndDate = endDate;
 
 			sortedPricing.forEach((pricingItem, index) => {
-				const {
-					name, startTime, endTime,
-					value
-				} = pricingItem;
+				const { name, startTime, endTime, value } = pricingItem;
 
-				let {
-					startDate,
-					endDate
-				} = pricingItem;
+				let { startDate, endDate } = pricingItem;
 
 				startDate = moment(startDate);
 				if (startTime) {
@@ -403,7 +399,7 @@ const validateFields = ticketTypes => {
 						hour: previousPricing.endTime.get("hour"),
 						minute: previousPricing.endTime.get("minute"),
 						second: previousPricing.endTime.get("second")
-					})
+					  })
 					: null;
 
 				const pricingError = {};
@@ -477,8 +473,7 @@ class EventTickets extends Component {
 		};
 	}
 
-	componentDidMount() {
-	}
+	componentDidMount() {}
 
 	updateTicketType(index, details) {
 		eventUpdateStore.updateTicketType(index, details);

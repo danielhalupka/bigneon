@@ -105,10 +105,16 @@ class SelectedEvent {
 					const { data } = response;
 
 					this.ticket_types.forEach((tt, index) => {
-						if (tt.id === data.ticket_type.id) {
+						if (data.ticket_type && tt.id === data.ticket_type.id) {
 							this.ticket_types[index] = data.ticket_type;
+							data.ticket_type = null;
 						}
 					});
+					// if the ticket type is not already present, and the event is
+					// this event, add it.
+					if (data.ticket_type && data.ticket_type.event_id === this.event.id) {
+						this.ticket_types.push(data.ticket_type);
+					}
 				},
 				error => {
 					onError(error);

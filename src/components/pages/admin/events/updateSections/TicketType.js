@@ -5,7 +5,8 @@ import {
 	withStyles,
 	Typography,
 	InputAdornment,
-	Collapse, Hidden
+	Collapse,
+	Hidden
 } from "@material-ui/core";
 
 import InputGroup from "../../../../common/form/InputGroup";
@@ -74,15 +75,14 @@ const FormHeading = ({ classes, children }) => (
 	</Typography>
 );
 
-const TicketHeading = (
-	{
-		classes,
-		index,
-		name,
-		onEditClick,
-		deleteTicketType,
-		active
-	}) => (
+const TicketHeading = ({
+	classes,
+	index,
+	name,
+	onEditClick,
+	deleteTicketType,
+	active
+}) => (
 	<div className={classes.ticketHeader}>
 		<FormHeading classes={classes}>
 			{name ? `${index + 1}. ${name}` : "Add your new ticket"}
@@ -97,7 +97,6 @@ const TicketHeading = (
 			<IconButton onClick={deleteTicketType} iconUrl="/icons/delete-gray.svg">
 				Delete
 			</IconButton>
-
 		</div>
 	</div>
 );
@@ -132,7 +131,8 @@ const TicketDetails = observer(props => {
 		pricing,
 		eventStartDate,
 		ticketTimesDirty,
-		priceForDisplay
+		priceForDisplay,
+		soldOutBehavior
 	} = props;
 
 	let useEndDate = endDate;
@@ -150,7 +150,11 @@ const TicketDetails = observer(props => {
 	if (errors && Object.keys(errors).length > 0) {
 		//Check if error is not with name, capacity, priceForDisplay. If there are other errors then show additional options.
 		Object.keys(errors).forEach(errorKey => {
-			if (errorKey !== "name" && errorKey !== "capacity" && errorKey !== "priceForDisplay") {
+			if (
+				errorKey !== "name" &&
+				errorKey !== "capacity" &&
+				errorKey !== "priceForDisplay"
+			) {
 				showAdditionalOptions = true;
 			}
 		});
@@ -161,7 +165,8 @@ const TicketDetails = observer(props => {
 		}
 	}
 
-	const onShowAdditionalOptions = () => updateTicketType(index, { showAdditionalOptions: true });
+	const onShowAdditionalOptions = () =>
+		updateTicketType(index, { showAdditionalOptions: true });
 
 	return (
 		<div className={classes.activeContent}>
@@ -231,15 +236,11 @@ const TicketDetails = observer(props => {
 						</Button>
 					</Hidden>
 					<Hidden smDown>
-						<Button
-							variant="additional"
-							onClick={onShowAdditionalOptions}
-						>
+						<Button variant="additional" onClick={onShowAdditionalOptions}>
 							Additional options
 						</Button>
 					</Hidden>
 				</div>
-
 			) : null}
 
 			<Collapse in={!!showAdditionalOptions}>
@@ -392,6 +393,22 @@ const TicketDetails = observer(props => {
 						/>
 					</div>
 				</div>
+				<div className={classes.additionalInputsRow}>
+					<div className={classes.additionalInputContainer}>
+						<SelectGroup
+							value={soldOutBehavior || "showSoldOut"}
+							items={[
+								{ value: "ShowSoldOut", label: "Show Sold Out" },
+								{ value: "Hide", label: "Hide" }
+							]}
+							name={"sold-out-behavior"}
+							label={"When tickets are sold out"}
+							onChange={e => {
+								updateTicketType(index, { soldOutBehavior: e.target.value });
+							}}
+						/>
+					</div>
+				</div>
 
 				{!showPricing ? (
 					<div>
@@ -406,21 +423,19 @@ const TicketDetails = observer(props => {
 						>
 							Schedule a price change
 						</Button>
-
 					</div>
 				) : null}
 
 				<Collapse in={!!showPricing}>
 					{pricing
 						.slice()
-						.sort(
-							(a, b) => {
-								return a.startDate < b.startDate
-									? -1
-									: a.startDate > b.startDate
-										? 1
-										: 0;
-							})
+						.sort((a, b) => {
+							return a.startDate < b.startDate
+								? -1
+								: a.startDate > b.startDate
+									? 1
+									: 0;
+						})
 						.map((pricePoint, pricePointIndex) => {
 							return (
 								<div key={pricePointIndex}>
@@ -486,7 +501,8 @@ TicketType.propTypes = {
 	ticketTimesDirty: PropTypes.bool,
 	eventStartDate: PropTypes.object,
 	startDate: PropTypes.object,
-	startTime: PropTypes.object
+	startTime: PropTypes.object,
+	soldOutBehavior: PropTypes.string
 	//id: PropTypes.string,
 	//capacity
 	//endDate

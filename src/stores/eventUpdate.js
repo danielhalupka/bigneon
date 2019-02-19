@@ -66,7 +66,9 @@ class EventUpdate {
 
 				this.setTimezone(timezone);
 
-				this.loadTicketTypes(formattedEventData, () => this.loadTimezone(venue.id));
+				this.loadTicketTypes(formattedEventData, () =>
+					this.loadTimezone(venue.id)
+				);
 			})
 			.catch(error => {
 				console.error(error);
@@ -140,6 +142,7 @@ class EventUpdate {
 			startDate,
 			startTime: startDate,
 			endDate,
+			soldOutBehavior: "ShowSoldOut",
 			//By default the server will create a Default ticket price point, anything additional added to this array is an override.
 			pricing: []
 		};
@@ -250,7 +253,11 @@ class EventUpdate {
 	@action
 	addArtist(id) {
 		const artists = this.artists;
-		artists.push({ id, setTime: null, importance: artists.length === 0 ? 0 : 1 });
+		artists.push({
+			id,
+			setTime: null,
+			importance: artists.length === 0 ? 0 : 1
+		});
 		this.artists = artists;
 	}
 
@@ -260,7 +267,10 @@ class EventUpdate {
 		artists[index].setTime = setTime.clone();
 
 		if (this.timezone) {
-			artists[index] = { ...artists[index], ...updateTimezonesInObjects(artists[index] , this.timezone, true) };
+			artists[index] = {
+				...artists[index],
+				...updateTimezonesInObjects(artists[index], this.timezone, true)
+			};
 		}
 		this.artists = artists;
 	}
@@ -401,60 +411,66 @@ class EventUpdate {
 
 		if (id) {
 			return new Promise(resolve => {
-				Bigneon().events.ticketTypes.update(
-					{
+				Bigneon()
+					.events.ticketTypes.update({
 						id,
 						event_id,
 						...ticketType
-					}
-				).then(() => {
-					resolve({ result: id, error: false });
-				}).catch(error => {
-					console.error(error);
-					resolve({ result: false, error });
-				});
+					})
+					.then(() => {
+						resolve({ result: id, error: false });
+					})
+					.catch(error => {
+						console.error(error);
+						resolve({ result: false, error });
+					});
 			});
 		} else {
 			return new Promise(resolve => {
-				Bigneon().events.ticketTypes.create({
-					event_id,
-					...ticketType
-				}).then(result => {
-					resolve({ result, error: false });
-				}).catch(error => {
-					console.error(error);
-					resolve({ result: false, error });
-				});
+				Bigneon()
+					.events.ticketTypes.create({
+						event_id,
+						...ticketType
+					})
+					.then(result => {
+						resolve({ result, error: false });
+					})
+					.catch(error => {
+						console.error(error);
+						resolve({ result: false, error });
+					});
 			});
 		}
 	}
 
 	async cancelTicketType(index) {
 		const deleteTicketType = this.deleteTicketType.bind(this);
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			const ticketTypes = this.ticketTypes;
 			const ticketType = ticketTypes[index];
 			if (ticketType.id) {
-				Bigneon().events.ticketTypes.cancel({
-					event_id: this.id,
-					ticket_type_id: ticketType.id
-				}).then(result => {
-					deleteTicketType(index);
-					resolve({ result: result.data, error: false });
-				}).catch(error => {
-					console.error(error);
-					notifications.show({
-						message: "Update event failed.",
-						variant: "error"
+				Bigneon()
+					.events.ticketTypes.cancel({
+						event_id: this.id,
+						ticket_type_id: ticketType.id
+					})
+					.then(result => {
+						deleteTicketType(index);
+						resolve({ result: result.data, error: false });
+					})
+					.catch(error => {
+						console.error(error);
+						notifications.show({
+							message: "Update event failed.",
+							variant: "error"
+						});
+						resolve({ result: false, error });
 					});
-					resolve({ result: false, error });
-				});
 			} else {
 				//It hasn't been saved yet
 				deleteTicketType(index);
 				resolve({ result: {}, error: false });
 			}
-
 		});
 	}
 
@@ -473,16 +489,19 @@ class EventUpdate {
 	}
 
 	loadTimezone(id) {
-		Bigneon().venues.read({ id }).then((response) => {
-			const { timezone } = response.data;
-			this.setTimezone(timezone);
-		}).catch(error => {
-			console.error(error);
-			notifications.showFromErrorResponse({
-				error,
-				defaultMessage: "Failed to update event timezone."
+		Bigneon()
+			.venues.read({ id })
+			.then(response => {
+				const { timezone } = response.data;
+				this.setTimezone(timezone);
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Failed to update event timezone."
+				});
 			});
-		});
 	}
 
 	/**
@@ -494,18 +513,25 @@ class EventUpdate {
 		const maintainLocalTime = timezone !== this.timezone || !this.id; //If they're switching timezone or if it's a new event
 
 		if (timezone) {
-
 			this.timezone = timezone;
 
 			//Get all moment objects, update the timezone and set them again
-			const eventDetails = updateTimezonesInObjects(this.event, timezone, maintainLocalTime);
+			const eventDetails = updateTimezonesInObjects(
+				this.event,
+				timezone,
+				maintainLocalTime
+			);
 			this.updateEvent(eventDetails);
 
 			//Update artist set times
 			this.artists.forEach((artist, index) => {
 				const { setTime } = artist;
 				if (setTime) {
-					const newSetTime = updateTimezonesInObjects({ setTime }, timezone, maintainLocalTime).setTime;
+					const newSetTime = updateTimezonesInObjects(
+						{ setTime },
+						timezone,
+						maintainLocalTime
+					).setTime;
 					if (newSetTime) {
 						this.changeArtistSetTime(index, newSetTime);
 					}
@@ -514,17 +540,27 @@ class EventUpdate {
 
 			//Update ticket type start/end date/times
 			this.ticketTypes.forEach((ticketType, index) => {
-				const updateTicketTypeDates = updateTimezonesInObjects(ticketType, timezone, maintainLocalTime);
+				const updateTicketTypeDates = updateTimezonesInObjects(
+					ticketType,
+					timezone,
+					maintainLocalTime
+				);
 
 				const { pricing } = ticketType;
 
 				//Update all pricing date/times
 				const updatedPricing = [];
 				pricing.forEach((pricePoint, index) => {
-					updatedPricing.push({ ...pricePoint, ...updateTimezonesInObjects(pricePoint, timezone, maintainLocalTime) });
+					updatedPricing.push({
+						...pricePoint,
+						...updateTimezonesInObjects(pricePoint, timezone, maintainLocalTime)
+					});
 				});
 
-				this.updateTicketType(index, { ...updateTicketTypeDates, pricing: updatedPricing });
+				this.updateTicketType(index, {
+					...updateTicketTypeDates,
+					pricing: updatedPricing
+				});
 			});
 		}
 	}
