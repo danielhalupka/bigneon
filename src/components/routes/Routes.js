@@ -6,9 +6,9 @@ import {
 	Redirect
 } from "react-router-dom";
 import { observer } from "mobx-react";
-import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
 
+import CustomPickerUtils from "../../helpers/customPickerUtils";
 import OnRouteChange from "./OnRouteChange";
 import withRoot from "./withRoot";
 import Container from "../elements/Container";
@@ -126,7 +126,7 @@ class Routes extends Component {
 
 		return (
 			<Router>
-				<MuiPickersUtilsProvider utils={MomentUtils}>
+				<MuiPickersUtilsProvider utils={CustomPickerUtils}>
 					<Container>
 						<OnRouteChange>
 							<Switch>

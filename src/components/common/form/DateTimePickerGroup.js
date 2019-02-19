@@ -212,7 +212,7 @@ class DateTimePickerGroup extends Component {
 							onBlur={onBlur}
 							onFocus={onFocus}
 							placeholder={placeholder || placeHolders[type]}
-							format="MM/DD/YYYY"
+							format={value._z ? value._z.name : "UCT"} //See src/helpers/customPickerUtils.js for the reason the timezone is passed through as the format
 							keyboard
 							InputProps={inputProps}
 							clearable
