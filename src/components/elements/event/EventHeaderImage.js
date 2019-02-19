@@ -8,9 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import SupportingArtistsLabel from "../../pages/events/SupportingArtistsLabel";
 import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
 import DateFlag from "./DateFlag";
-import Divider from "../../common/Divider";
 import user from "../../../stores/user";
-import AppButton from "../AppButton";
 import nl2br from "../../../helpers/nl2br";
 
 const styles = theme => ({
@@ -198,7 +196,8 @@ const EventHeaderImage = props => {
 					<Grid
 						item
 						xs={12}
-						sm={12}
+						sm={10}
+						md={5}
 						lg={6}
 						className={classes.desktopTextContent}
 						//style={{ borderStyle: "solid", borderColor: "red" }}

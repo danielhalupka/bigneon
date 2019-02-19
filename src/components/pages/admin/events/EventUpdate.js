@@ -363,7 +363,7 @@ class Event extends Component {
 							type="date"
 							error={errors.publishDate}
 							value={event.publishDate}
-							name="eventDate"
+							name="publishDate"
 							label="Publish date"
 							onChange={publishDate => {
 								const publishTime = moment(event.publishDate);
