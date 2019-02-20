@@ -7,10 +7,16 @@
 import MomentUtils from "@date-io/moment";
 import moment from "moment-timezone";
 
+const dateFormat = "MM/DD/YYYY";
+
 class CustomPickerUtils extends MomentUtils {
-	format(value, timezone) {
-		return moment(value).tz(timezone)
-			.format("MM/DD/YYYY");
+	parse(text, formatButActuallyTimezone) {
+		return moment(text, dateFormat);
+	}
+
+	//Don't change this, it's required to display the date formatted with the correct timezone
+	format(value, formatButActuallyTimezone) {
+		return moment(value).tz(formatButActuallyTimezone).format(dateFormat);
 	}
 }
 

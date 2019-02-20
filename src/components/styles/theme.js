@@ -135,7 +135,7 @@ const theme = createMuiTheme({
 			day: {
 				color: primaryHex
 			},
-			selected: {
+			isSelected: {
 				backgroundColor: secondaryHex
 			},
 			current: {
