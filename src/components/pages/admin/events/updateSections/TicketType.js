@@ -16,6 +16,7 @@ import DateTimePickerGroup from "../../../../common/form/DateTimePickerGroup";
 import PricePoint from "./PricePoint";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import SelectGroup from "../../../../common/form/SelectGroup";
+import CheckBox from "../../../../elements/form/CheckBox";
 
 const styles = theme => {
 	return {
@@ -132,7 +133,8 @@ const TicketDetails = observer(props => {
 		eventStartDate,
 		ticketTimesDirty,
 		priceForDisplay,
-		soldOutBehavior
+		soldOutBehavior,
+		isPrivate
 	} = props;
 
 	let useEndDate = endDate;
@@ -408,6 +410,17 @@ const TicketDetails = observer(props => {
 							}}
 						/>
 					</div>
+					<div className={classes.additionalInputContainer}>
+						<CheckBox
+							name={"is_private"}
+							onClick={e => {
+								updateTicketType(index, { isPrivate: !isPrivate });
+							}}
+							active={isPrivate}
+						>
+							Private (Can only be sold via holds)
+						</CheckBox>
+					</div>
 				</div>
 
 				{!showPricing ? (
@@ -502,7 +515,8 @@ TicketType.propTypes = {
 	eventStartDate: PropTypes.object,
 	startDate: PropTypes.object,
 	startTime: PropTypes.object,
-	soldOutBehavior: PropTypes.string
+	soldOutBehavior: PropTypes.string,
+	isPrivate: PropTypes.bool
 	//id: PropTypes.string,
 	//capacity
 	//endDate

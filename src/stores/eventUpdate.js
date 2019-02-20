@@ -143,6 +143,7 @@ class EventUpdate {
 			startTime: startDate,
 			endDate,
 			soldOutBehavior: "ShowSoldOut",
+			isPrivate: false,
 			//By default the server will create a Default ticket price point, anything additional added to this array is an override.
 			pricing: []
 		};
