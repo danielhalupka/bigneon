@@ -1,7 +1,7 @@
 module.exports = {
-  adminSideBar: require("./admin-side-bar"),
-  site: require("./site"),
-  menuBar: require("./menu-bar"),
+	adminSideBar: require("./admin-side-bar"),
+	site: require("./site"),
+	menuBar: require("./menu-bar"),
 
-  signInPage: require("./pages/sign-in")
+	signInPage: require("./pages/sign-in")
 };

@@ -1,9 +1,9 @@
-var { client } = require("nightwatch-api");
+const { client } = require("nightwatch-api");
 
-let organizationsPage = {};
+const organizationsPage = {};
 organizationsPage.clickCreateOrganization = async () => {
-  await client
-    .useXpath()
-    .click("//button[span[contains(text(),'Create Organization')]]");
+	await client
+		.useXpath()
+		.click("//button[span[contains(text(),'Create Organization')]]");
 };
 module.exports = organizationsPage;

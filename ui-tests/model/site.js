@@ -1,9 +1,9 @@
-var { client } = require("nightwatch-api");
+const { client } = require("nightwatch-api");
 
-let site = {};
+const site = {};
 
 site.open = async () => {
-  await client.url("https://develop.bigneon.com");
+	await client.url("https://develop.bigneon.com");
 };
 
 site.login = async (username, password) => {};

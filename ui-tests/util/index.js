@@ -1,7 +1,7 @@
 module.exports = {
-  sleep: function(ms) {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
-  }
+	sleep: function(ms) {
+		return new Promise(resolve => {
+			setTimeout(resolve, ms);
+		});
+	}
 };
