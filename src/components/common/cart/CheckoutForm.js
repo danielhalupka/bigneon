@@ -88,13 +88,17 @@ class CheckoutForm extends Component {
 		}
 	}
 
-	async onSubmit(ev) {
+	async onSubmit(e) {
+		e.preventDefault();
+
 		const { name, paymentMethod } = this.state;
 
 		let stripeToken = null;
 		if (paymentMethod === "Card|Stripe") {
 			this.setState({ isSubmitting: true, statusMessage: "Authorizing..." });
-			const { error, token } = await this.props.stripe.createToken({ name });
+			const response = await this.props.stripe.createToken({ name });
+
+			const { error, token } = response;
 
 			if (error) {
 				const { message, type } = error;
@@ -124,7 +128,6 @@ class CheckoutForm extends Component {
 		onSubmit(methodSplit[0], methodSplit[1], stripeToken, () =>
 			this.setState({ isSubmitting: false, statusMessage: null })
 		); //extra callback for if the charge fails
-		ev.preventDefault();
 	}
 
 	renderProcessingDialog() {

@@ -225,6 +225,7 @@ class CheckoutConfirmation extends Component {
 				method: method
 			})
 			.then(response => {
+
 				const { data } = response;
 				if (data.checkout_url) {
 					window.location = data.checkout_url;
@@ -249,18 +250,9 @@ class CheckoutConfirmation extends Component {
 				}
 			})
 			.catch(error => {
-				let message = "Checkout failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Checkout failed.",
+					error
 				});
 				console.error(error);
 				onError();
