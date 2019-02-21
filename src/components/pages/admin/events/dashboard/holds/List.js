@@ -41,11 +41,11 @@ class TicketHoldList extends Component {
 
 	loadEventDetails(id) {
 		Bigneon()
-			.events.read({ id })
+			.events.ticketTypes.index({ event_id: id })
 			.then(response => {
-				const { ticket_types } = response.data;
+				const { data } = response.data;
 				this.setState({
-					ticketTypes: ticket_types
+					ticketTypes: data
 				});
 			})
 			.catch(error => {
