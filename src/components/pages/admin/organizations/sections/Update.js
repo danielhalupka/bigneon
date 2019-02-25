@@ -133,23 +133,18 @@ class OrganizationUpdate extends Component {
 			.then(response => {
 				const { id } = response.data;
 				onSuccess(id);
+
+				//After a new org is created, assume the user wants to select it
+				user.loadAllPossibleOrgs();
+				user.setCurrentOrganizationRolesAndScopes(id);
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Create organization failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Create organization failed.",
+					error
 				});
 			});
 	}
