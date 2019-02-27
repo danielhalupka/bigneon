@@ -32,7 +32,8 @@ const validateFields = event => {
 		videoUrl,
 		isExternal,
 		externalTicketsUrl,
-		eventType
+		eventType,
+		privateAccessCode
 	} = event;
 
 	if (!name) {
@@ -54,7 +55,11 @@ const validateFields = event => {
 	}
 
 	if (!eventType) {
-		errors.eventType = "Invalid Event Type";
+		errors.eventType = "Invalid Event Type.";
+	}
+
+	if (privateAccessCode && privateAccessCode.length > 6) {
+		errors.privateAccessCode = "Access code needs to be less than 6 characters.";
 	}
 
 	//TODO validate all fields
@@ -84,7 +89,8 @@ const formatDataForSaving = (event, organizationId) => {
 		videoUrl,
 		endTime,
 		eventType = "Music",
-		showCoverImage
+		showCoverImage,
+		privateAccessCode
 	} = event;
 
 	const eventDetails = {
@@ -97,7 +103,8 @@ const formatDataForSaving = (event, organizationId) => {
 		external_url: externalTicketsUrl,
 		override_status,
 		video_url: videoUrl,
-		event_type: eventType
+		event_type: eventType,
+		private_access_code: privateAccessCode
 	};
 
 	if (
@@ -177,7 +184,8 @@ const formatDataForInputs = (event) => {
 		override_status = "",
 		status = "Draft",
 		event_type = "Music",
-		cover_image_url
+		cover_image_url,
+		private_access_code
 	} = event;
 
 	const tomorrowNoon = moment.utc().add(1, "d").set({
@@ -225,7 +233,8 @@ const formatDataForInputs = (event) => {
 		externalTicketsUrl: is_external && external_url ? external_url : "",
 		status,
 		eventType: event_type,
-		showCoverImage: !!cover_image_url
+		showCoverImage: !!cover_image_url,
+		privateAccessCode: private_access_code
 	};
 
 	return eventDetails;
@@ -424,7 +433,8 @@ class Details extends Component {
 			showTopLineInfo,
 			doorTimeHours = "1",
 			eventType,
-			redeemDate
+			redeemDate,
+			privateAccessCode
 		} = eventUpdateStore.event;
 
 		//If a user hasn't adjusted the event start time yet
@@ -481,6 +491,26 @@ class Details extends Component {
 					lg={6}
 				>
 					{this.renderEventTypes()}
+				</Grid>
+
+				<Grid
+					style={{ paddingBottom: 0, marginBottom: 0 }}
+					item
+					xs={12}
+					sm={12}
+					md={6}
+					lg={6}
+				>
+					<InputGroup
+						error={errors.privateAccessCode}
+						value={privateAccessCode}
+						name="privateAccessCode"
+						label="Private access code (Disables public access without code)"
+						placeholder="eg. p@swd!"
+						type="text"
+						onChange={e => this.changeDetails({ privateAccessCode: e.target.value })}
+						onBlur={validateFields}
+					/>
 				</Grid>
 
 				<Grid

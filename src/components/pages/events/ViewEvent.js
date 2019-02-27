@@ -23,6 +23,7 @@ import SocialIconLink from "../../elements/social/SocialIconLink";
 import nl2br from "../../../helpers/nl2br";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
+import PrivateEventDialog from "./PrivateEventDialog";
 
 const styles = theme => ({
 	root: {},
@@ -253,7 +254,12 @@ class ViewEvent extends Component {
 		} = selectedEvent;
 
 		if (event === null) {
-			return <Loader style={{ height: 400 }}/>;
+			return (
+				<div>
+					<PrivateEventDialog/>
+					<Loader style={{ height: 400 }}/>
+				</div>
+			) ;
 		}
 
 		if (event === false) {

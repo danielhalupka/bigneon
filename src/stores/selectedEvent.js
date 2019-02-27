@@ -2,6 +2,8 @@ import { observable, action, computed } from "mobx";
 import moment from "moment-timezone";
 import createGoogleMapsLink from "../helpers/createGoogleMapsLink";
 import Bigneon from "../helpers/bigneon";
+import changeUrlParam from "../helpers/changeUrlParam";
+import notification from "./notifications";
 
 class SelectedEvent {
 	@observable
@@ -25,6 +27,14 @@ class SelectedEvent {
 	@observable
 	user_is_interested = null;
 
+	private_access_code = null;
+
+	@observable
+	showPrivateAccessCodeInputDialog = false;
+
+	@observable
+	privateAccessCodeError = "";
+
 	@action
 	refreshResult(id, onError = () => {}) {
 		//If we're updating the state to a different event just reset the values first so it doesn't load old data in components observing this
@@ -34,10 +44,24 @@ class SelectedEvent {
 			this.artists = [];
 			this.organization = null;
 			this.user_is_interested = null;
+			this.private_access_code = null;
+			this.showPrivateAccessCodeInputDialog = false;
+			this.privateAccessCodeError = "";
+		}
+
+		this.id = id;
+
+		const query = { id };
+		
+		const url = new URL(window.location.href);
+		const private_access_code = url.searchParams.get("private_access_code") || this.private_access_code;
+		if (private_access_code) {
+			query.private_access_code = private_access_code;
+			this.private_access_code = private_access_code;
 		}
 
 		Bigneon()
-			.events.read({ id })
+			.events.read(query)
 			.then(response => {
 				const { artists, organization, venue, ...event } = response.data;
 
@@ -69,8 +93,6 @@ class SelectedEvent {
 					.tz(venueTimezone)
 					.format("h:mm A");
 
-				this.id = id;
-
 				this.event = {
 					...event,
 					eventStartDateMoment,
@@ -79,6 +101,11 @@ class SelectedEvent {
 					displayShowTime,
 					promo_image_url: promo_image_url || "/images/event-placeholder.png"
 				};
+
+				//If we got the code from this store, append it to the url for any route changes
+				if (private_access_code) {
+					changeUrlParam("private_access_code", private_access_code);
+				}
 			})
 			.catch(error => {
 				console.error(error);
@@ -92,8 +119,29 @@ class SelectedEvent {
 					message = error.response.data.error;
 				}
 
-				onError(message);
+				//For 401, show the dialog for entering a private code
+				if (error.response && error.response.status && error.response.status === 401) {
+					this.private_access_code = null;
+					this.showPrivateAccessCodeInputDialog = true;
+					this.privateAccessCodeError = private_access_code ? "Incorrect code." : "";
+				} else {
+					onError(message);
+				}
 			});
+	}
+
+	retryRefreshWithCode(code) {
+		this.private_access_code = code;
+
+		this.refreshResult(this.id, (error) => {
+			console.log("Code attempt failed");
+			notification.showFromErrorResponse({
+				defaultMessage: "Failed to load event with access code.",
+				error
+			});
+
+			this.private_access_code = null;
+		});
 	}
 
 	@action

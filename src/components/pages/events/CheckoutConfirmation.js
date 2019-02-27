@@ -27,6 +27,7 @@ import orders from "../../../stores/orders";
 import tickets from "../../../stores/tickets";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
+import PrivateEventDialog from "./PrivateEventDialog";
 
 const styles = theme => ({
 	root: {
@@ -187,18 +188,9 @@ class CheckoutConfirmation extends Component {
 				}
 			})
 			.catch(error => {
-				let message = "Checkout failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Checkout failed.",
+					error
 				});
 				console.error(error);
 			});
@@ -340,7 +332,12 @@ class CheckoutConfirmation extends Component {
 		const { event, artists, id } = selectedEvent;
 
 		if (event === null) {
-			return <Loader/>;
+			return (
+				<div>
+					<PrivateEventDialog/>
+					<Loader style={{ height: 400 }}/>
+				</div>
+			);
 		}
 
 		if (event === false) {

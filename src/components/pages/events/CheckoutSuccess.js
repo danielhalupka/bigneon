@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Typography, withStyles, CardMedia } from "@material-ui/core";
+import { Typography, withStyles } from "@material-ui/core";
 import { observer } from "mobx-react";
 import PropTypes from "prop-types";
 import Hidden from "@material-ui/core/Hidden";
@@ -13,12 +13,10 @@ import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCar
 import { fontFamilyDemiBold } from "../../styles/theme";
 import Card from "../../elements/Card";
 import AppButton from "../../elements/AppButton";
-import Button from "../../elements/Button";
-import InputGroup from "../../common/form/InputGroup";
-import user from "../../../stores/user";
 import SMSLinkForm from "../../elements/SMSLinkForm";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
+import PrivateEventDialog from "./PrivateEventDialog";
 
 const overlayCardWidth = 350;
 
@@ -109,7 +107,12 @@ class CheckoutSuccess extends Component {
 		const { event, artists } = selectedEvent;
 
 		if (event === null) {
-			return <Loader/>;
+			return (
+				<div>
+					<PrivateEventDialog/>
+					<Loader style={{ height: 400 }}/>
+				</div>
+			);
 		}
 
 		if (event === false) {

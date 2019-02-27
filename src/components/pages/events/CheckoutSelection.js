@@ -18,6 +18,7 @@ import InputWithButton from "../../common/form/InputWithButton";
 import moment from "moment";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
+import PrivateEventDialog from "./PrivateEventDialog";
 
 const styles = theme => ({
 	root: {},
@@ -231,7 +232,7 @@ class CheckoutSelection extends Component {
 		const { ticketSelection, errors } = this.state;
 		if (!ticket_types) {
 			//TODO use a loader
-			return null; //Still loading this
+			return <Loader>Loading tickets...</Loader>;
 		}
 
 		const ticketTypeRendered = ticket_types
@@ -311,7 +312,12 @@ class CheckoutSelection extends Component {
 		const { event, venue, artists, organization, id } = selectedEvent;
 
 		if (event === null) {
-			return <Loader/>;
+			return (
+				<div>
+					<PrivateEventDialog/>
+					<Loader style={{ height: 400 }}/>
+				</div>
+			);
 		}
 
 		if (event === false) {
