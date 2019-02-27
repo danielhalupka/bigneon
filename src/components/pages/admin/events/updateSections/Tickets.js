@@ -263,11 +263,6 @@ const styles = theme => ({
 			fontSize: theme.typography.fontSize * 1.2
 		}
 	},
-	title: {
-		textTransform: "uppercase",
-		fontFamily: "TTCommons-DemiBold",
-		opacity: 0.5
-	},
 	inactiveContent: {
 		paddingTop: theme.spacing.unit * 2,
 		paddingBottom: theme.spacing.unit * 2
@@ -498,9 +493,7 @@ class EventTickets extends Component {
 	}
 
 	deleteTicketType(index) {
-		eventUpdateStore.cancelTicketType(index).then(result => {
-			// console.log(result);
-		});
+		eventUpdateStore.cancelTicketType(index).then(({ result, error }) => {});
 		this.onDialogClose();
 	}
 
@@ -578,34 +571,25 @@ class EventTickets extends Component {
 
 					return (
 						<LeftAlignedSubCard key={index} active={active}>
-							{isCancelled ? (
-								<div className={classes.root}>
-									<div className={classes.inactiveContent}>
-										<Typography className={classes.title} variant="subheading">
-											{index + 1}. {ticketType.name} (Cancelled)
-										</Typography>
-									</div>
-								</div>
-							) : (
-								<TicketType
-									onEditClick={() => {
-										const newIndex =
-											eventUpdateStore.ticketTypeActiveIndex === index
-												? null
-												: index;
-										eventUpdateStore.ticketTypeActivate(newIndex);
-									}}
-									updateTicketType={this.updateTicketType}
-									deleteTicketType={() => this.openDeleteDialog(index)}
-									active={active}
-									index={index}
-									validateFields={validateFields}
-									errors={ticketTypeErrors}
-									ticketTimesDirty={ticketTimesDirty}
-									eventStartDate={eventStartDate}
-									{...ticketType}
-								/>
-							)}
+							<TicketType
+								isCancelled={isCancelled}
+								onEditClick={() => {
+									const newIndex =
+										eventUpdateStore.ticketTypeActiveIndex === index
+											? null
+											: index;
+									eventUpdateStore.ticketTypeActivate(newIndex);
+								}}
+								updateTicketType={this.updateTicketType}
+								deleteTicketType={() => this.openDeleteDialog(index)}
+								active={active}
+								index={index}
+								validateFields={validateFields}
+								errors={ticketTypeErrors}
+								ticketTimesDirty={ticketTimesDirty}
+								eventStartDate={eventStartDate}
+								{...ticketType}
+							/>
 						</LeftAlignedSubCard>
 					);
 				})}

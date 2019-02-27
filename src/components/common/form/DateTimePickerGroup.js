@@ -173,12 +173,21 @@ class DateTimePickerGroup extends Component {
 			onBlur,
 			classes,
 			value,
-			timeIncrement = 30
+			timeIncrement = 30,
+			disabled
 		} = this.props;
 		let { label } = this.props;
 
 		const additionalProps = {};
-		const inputProps = {};
+		let inputProps = {};
+
+		if (disabled) {
+			inputProps = {
+				...inputProps,
+				disabled,
+				endAdornment: null
+			};
+		}
 
 		const start = moment().set({ hour: 0, minute: 0, second: 0 });
 		const end = moment(start).add(24, "hours");
@@ -229,12 +238,13 @@ class DateTimePickerGroup extends Component {
 				{type === "time" ? (
 					<div>
 						<TextField
+							disabled={disabled}
 							style={{ width: "100%" }}
 							id={name}
 							name={name}
 							label={label}
 							error={!isTimeValid || !!error}
-							onClick={event => this.onClick(event)}
+							onClick={!disabled ? event => this.onClick(event) : null}
 							value={timeFormatted}
 							onFocus={onFocus}
 							onChange={this.onTimeChanged.bind(this)}
@@ -302,7 +312,8 @@ DateTimePickerGroup.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	onBlur: PropTypes.func,
 	onFocus: PropTypes.func,
-	timeIncrement: PropTypes.number
+	timeIncrement: PropTypes.number,
+	disabled: PropTypes.bool
 };
 
 export default withStyles(styles)(DateTimePickerGroup);

@@ -42,7 +42,8 @@ const PricePoint = props => {
 		errors,
 		validateFields,
 		updatePricePointDetails,
-		onDelete
+		onDelete,
+		isCancelled
 	} = props;
 
 	return (
@@ -56,6 +57,7 @@ const PricePoint = props => {
 				lg={2}
 			>
 				<InputGroup
+					disabled={isCancelled}
 					error={errors.name}
 					value={name}
 					name="name"
@@ -81,6 +83,7 @@ const PricePoint = props => {
 				lg={2}
 			>
 				<DateTimePickerGroup
+					disabled={isCancelled}
 					error={errors.startDate}
 					value={startDate}
 					name="startDate"
@@ -104,6 +107,7 @@ const PricePoint = props => {
 				lg={2}
 			>
 				<DateTimePickerGroup
+					disabled={isCancelled}
 					error={errors.startTime}
 					value={startTime}
 					name="startTime"
@@ -127,6 +131,7 @@ const PricePoint = props => {
 				lg={2}
 			>
 				<DateTimePickerGroup
+					disabled={isCancelled}
 					error={errors.endDate}
 					value={endDate}
 					name="endDate"
@@ -150,6 +155,7 @@ const PricePoint = props => {
 				lg={2}
 			>
 				<DateTimePickerGroup
+					disabled={isCancelled}
 					error={errors.endTime}
 					value={endTime}
 					name="endTime"
@@ -170,6 +176,7 @@ const PricePoint = props => {
 				lg={1}
 			>
 				<InputGroup
+					disabled={isCancelled}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>
 					}}
@@ -186,29 +193,31 @@ const PricePoint = props => {
 				/>
 			</Grid>
 
-			<Grid
-				className={classes.inputContainer}
-				item
-				xs={12}
-				sm={12}
-				md={1}
-				lg={1}
-			>
-				<Hidden mdUp>
-					<Button
-						onClick={onDelete}
-						style={{ marginBottom: 20 }}
-					>
-						Delete price schedule
-					</Button>
-				</Hidden>
+			{!isCancelled ? (
+				<Grid
+					className={classes.inputContainer}
+					item
+					xs={12}
+					sm={12}
+					md={1}
+					lg={1}
+				>
+					<Hidden mdUp>
+						<Button
+							onClick={onDelete}
+							style={{ marginBottom: 20 }}
+						>
+							Delete price schedule
+						</Button>
+					</Hidden>
 
-				<Hidden smDown>
-					<IconButton onClick={onDelete} aria-label="Delete">
-						<DeleteIcon/>
-					</IconButton>
-				</Hidden>
-			</Grid>
+					<Hidden smDown>
+						<IconButton onClick={onDelete} aria-label="Delete">
+							<DeleteIcon/>
+						</IconButton>
+					</Hidden>
+				</Grid>
+			) : null}
 		</Grid>
 	);
 };
@@ -222,7 +231,8 @@ PricePoint.propTypes = {
 	startDate: PropTypes.object.isRequired,
 	endDate: PropTypes.object.isRequired,
 	value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-	onDelete: PropTypes.func.isRequired
+	onDelete: PropTypes.func.isRequired,
+	isCancelled: PropTypes.bool
 };
 
 export default withStyles(styles)(PricePoint);

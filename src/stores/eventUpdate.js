@@ -171,7 +171,16 @@ class EventUpdate {
 	@action
 	deleteTicketType(index) {
 		const ticketTypes = this.ticketTypes;
-		ticketTypes.splice(index, 1);
+		const ticketType = ticketTypes[index];
+
+		//If there's an id, it's in the db already so we set the status as cancelled
+		if (ticketType.id) {
+			ticketType.status = "Cancelled";
+			ticketTypes[index] = ticketType;
+		} else {
+			ticketTypes.splice(index, 1);
+		}
+
 		this.ticketTypes = ticketTypes;
 	}
 
@@ -461,9 +470,9 @@ class EventUpdate {
 					})
 					.catch(error => {
 						console.error(error);
-						notifications.show({
-							message: "Update event failed.",
-							variant: "error"
+						notifications.showFromErrorResponse({
+							defaultMessage: "Cancelling ticket failed.",
+							error
 						});
 						resolve({ result: false, error });
 					});

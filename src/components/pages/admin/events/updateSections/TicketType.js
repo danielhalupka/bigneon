@@ -8,6 +8,7 @@ import {
 	Collapse,
 	Hidden
 } from "@material-ui/core";
+import classnames from "classnames";
 
 import InputGroup from "../../../../common/form/InputGroup";
 import Button from "../../../../elements/Button";
@@ -62,16 +63,21 @@ const styles = theme => {
 		additionalInputContainer: {
 			flex: 1,
 			paddingRight: theme.spacing.unit * 4,
+			display: "flex",
+			alignItems: "center",
 
 			[theme.breakpoints.down("sm")]: {
 				paddingRight: theme.spacing.unit
 			}
+		},
+		inactive: {
+			opacity: 0.5
 		}
 	};
 };
 
-const FormHeading = ({ classes, children }) => (
-	<Typography className={classes.title} variant="subheading">
+const FormHeading = ({ className, children }) => (
+	<Typography className={className} variant="subheading">
 		{children}
 	</Typography>
 );
@@ -82,23 +88,36 @@ const TicketHeading = ({
 	name,
 	onEditClick,
 	deleteTicketType,
-	active
+	active,
+   	isCancelled
 }) => (
 	<div className={classes.ticketHeader}>
-		<FormHeading classes={classes}>
-			{name ? `${index + 1}. ${name}` : "Add your new ticket"}
+		<FormHeading className={classnames({ [classes.title]: true, [classes.inactive]: isCancelled })}>
+			{name ? `${index + 1}. ${name}${isCancelled ? " (Cancelled)" : ""}` : "Add your new ticket"}
 		</FormHeading>
-		<div>
-			<IconButton
-				onClick={onEditClick}
-				iconUrl={`/icons/edit-${active ? "active" : "gray"}.svg`}
-			>
-				Edit
-			</IconButton>
-			<IconButton onClick={deleteTicketType} iconUrl="/icons/delete-gray.svg">
-				Delete
-			</IconButton>
-		</div>
+		{isCancelled ? (
+			<div>
+				<IconButton
+					onClick={onEditClick}
+					iconUrl={`/icons/${active ? "up-active" : "down-gray"}.svg`}
+				>
+					Expand
+				</IconButton>
+			</div>
+		) : (
+			<div>
+				<IconButton
+					onClick={onEditClick}
+					iconUrl={`/icons/edit-${active ? "active" : "gray"}.svg`}
+				>
+					Edit
+				</IconButton>
+				<IconButton onClick={deleteTicketType} iconUrl="/icons/delete-gray.svg">
+					Delete
+				</IconButton>
+			</div>
+		)}
+
 	</div>
 );
 
@@ -134,7 +153,8 @@ const TicketDetails = observer(props => {
 		ticketTimesDirty,
 		priceForDisplay,
 		soldOutBehavior,
-		isPrivate
+		isPrivate,
+		isCancelled
 	} = props;
 
 	let useEndDate = endDate;
@@ -177,6 +197,7 @@ const TicketDetails = observer(props => {
 			<div className={classes.simpleInputs}>
 				<div className={classes.simpleInputContainer} style={{ flex: 2 }}>
 					<InputGroup
+						disabled={isCancelled}
 						error={errors.name}
 						value={name}
 						name="name"
@@ -192,6 +213,7 @@ const TicketDetails = observer(props => {
 
 				<div className={classes.simpleInputContainer}>
 					<InputGroup
+						disabled={isCancelled}
 						error={errors.capacity}
 						value={capacity || ""}
 						name="capacity"
@@ -207,6 +229,7 @@ const TicketDetails = observer(props => {
 
 				<div className={classes.simpleInputContainer}>
 					<InputGroup
+						disabled={isCancelled}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">$</InputAdornment>
@@ -249,6 +272,7 @@ const TicketDetails = observer(props => {
 				<div className={classes.additionalInputsRow}>
 					<div className={classes.additionalInputContainer}>
 						<DateTimePickerGroup
+							disabled={isCancelled}
 							error={errors.startDate}
 							value={startDate}
 							name="startDate.date"
@@ -261,6 +285,7 @@ const TicketDetails = observer(props => {
 					</div>
 					<div className={classes.additionalInputContainer}>
 						<DateTimePickerGroup
+							disabled={isCancelled}
 							error={errors.startTime}
 							value={startTime}
 							name="startTime"
@@ -278,6 +303,7 @@ const TicketDetails = observer(props => {
 						style={{ marginBottom: 10 }}
 					>
 						<SelectGroup
+							disabled={isCancelled}
 							value={saleEndTimeOption || "close"}
 							items={[
 								{ value: "door", label: "Event Door Time" },
@@ -297,6 +323,7 @@ const TicketDetails = observer(props => {
 					<div className={classes.additionalInputsRow}>
 						<div className={classes.additionalInputContainer}>
 							<DateTimePickerGroup
+								disabled={isCancelled}
 								error={errors.endDate}
 								value={useEndDate}
 								name="endDate"
@@ -311,6 +338,7 @@ const TicketDetails = observer(props => {
 						</div>
 						<div className={classes.additionalInputContainer}>
 							<DateTimePickerGroup
+								disabled={isCancelled}
 								error={errors.endTime}
 								value={useEndTime}
 								name="endTime"
@@ -329,6 +357,7 @@ const TicketDetails = observer(props => {
 				<div className={classes.additionalInputsRow}>
 					<div className={classes.additionalInputContainer}>
 						<InputGroup
+							disabled={isCancelled}
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">$</InputAdornment>
@@ -348,6 +377,7 @@ const TicketDetails = observer(props => {
 					</div>
 					<div className={classes.additionalInputContainer}>
 						<InputGroup
+							disabled={isCancelled}
 							error={errors.limitPerPerson}
 							value={limitPerPerson}
 							name="maxTicketsPerCustomer"
@@ -367,6 +397,7 @@ const TicketDetails = observer(props => {
 				<div className={classes.additionalInputsRow}>
 					<div className={classes.additionalInputContainer}>
 						<InputGroup
+							disabled={isCancelled}
 							error={errors.increment}
 							value={increment}
 							name="increment"
@@ -382,6 +413,7 @@ const TicketDetails = observer(props => {
 
 					<div className={classes.additionalInputContainer}>
 						<InputGroup
+							disabled={isCancelled}
 							error={errors.description}
 							value={description}
 							name="description"
@@ -398,6 +430,7 @@ const TicketDetails = observer(props => {
 				<div className={classes.additionalInputsRow}>
 					<div className={classes.additionalInputContainer}>
 						<SelectGroup
+							disabled={isCancelled}
 							value={soldOutBehavior || "showSoldOut"}
 							items={[
 								{ value: "ShowSoldOut", label: "Show Sold Out" },
@@ -412,6 +445,7 @@ const TicketDetails = observer(props => {
 					</div>
 					<div className={classes.additionalInputContainer}>
 						<CheckBox
+							disabled={isCancelled}
 							name={"is_private"}
 							onClick={e => {
 								updateTicketType(index, { isPrivate: !isPrivate });
@@ -423,9 +457,9 @@ const TicketDetails = observer(props => {
 					</div>
 				</div>
 
-				{!showPricing ? (
+				{!showPricing && !isCancelled ? (
 					<div>
-						<FormHeading classes={classes}>Scheduled Price Changes</FormHeading>
+						<FormHeading className={classes.title}>Scheduled Price Changes</FormHeading>
 
 						<Button
 							variant="additional"
@@ -452,10 +486,11 @@ const TicketDetails = observer(props => {
 						.map((pricePoint, pricePointIndex) => {
 							return (
 								<div key={pricePointIndex}>
-									<FormHeading classes={classes}>
+									<FormHeading className={classes.title}>
 										Scheduled price change {pricePointIndex + 1}
 									</FormHeading>
 									<PricePoint
+										isCancelled={isCancelled}
 										updatePricePointDetails={pricePointDetails => {
 											const updatedPricePoint = {
 												...pricePoint,
@@ -479,12 +514,17 @@ const TicketDetails = observer(props => {
 								</div>
 							);
 						})}
-					<Button
-						variant="additional"
-						onClick={() => eventUpdateStore.addTicketPricing(index)}
-					>
-						Schedule a price change
-					</Button>
+					{!isCancelled ? (
+						<Button
+							variant="additional"
+							onClick={() => eventUpdateStore.addTicketPricing(index)}
+						>
+							Schedule a price change
+						</Button>
+					) :
+						null
+					}
+
 				</Collapse>
 			</Collapse>
 		</div>
@@ -516,7 +556,8 @@ TicketType.propTypes = {
 	startDate: PropTypes.object,
 	startTime: PropTypes.object,
 	soldOutBehavior: PropTypes.string,
-	isPrivate: PropTypes.bool
+	isPrivate: PropTypes.bool,
+	isCancelled: PropTypes.bool
 	//id: PropTypes.string,
 	//capacity
 	//endDate

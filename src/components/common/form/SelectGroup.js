@@ -35,7 +35,8 @@ const SelectGroup = props => {
 		disableUnderline,
 		selectStyle,
 		styleClassName = "formControl",
-		displayEmpty
+		displayEmpty,
+		disabled
 	} = props;
 	const { classes } = props;
 
@@ -56,6 +57,7 @@ const SelectGroup = props => {
 		>
 			{label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
 			<Select
+				disabled={disabled}
 				style={selectStyle}
 				disableUnderline={disableUnderline}
 				value={value}
@@ -99,7 +101,8 @@ SelectGroup.propTypes = {
 	disableUnderline: PropTypes.bool,
 	selectStyle: PropTypes.object,
 	styleClassName: PropTypes.string,
-	displayEmpty: PropTypes.bool
+	displayEmpty: PropTypes.bool,
+	disabled: PropTypes.bool
 };
 
 export default withStyles(styles)(SelectGroup);
