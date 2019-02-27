@@ -75,6 +75,12 @@ class InputWithButton extends Component {
 		}
 	}
 
+	handleKeyPress(e) {
+		if (e.key === "Enter") {
+			this.props.onSubmit(this.state.value);
+		}
+	}
+
 	render() {
 		const { value } = this.state;
 		const {
@@ -107,6 +113,7 @@ class InputWithButton extends Component {
 							this.setState({ value });
 						}}
 						placeholder={placeholder}
+						onKeyPress={this.handleKeyPress.bind(this)}
 					/>
 				</div>
 
