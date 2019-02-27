@@ -76,7 +76,8 @@ const InputGroup = props => {
 		autoFocus,
 		InputProps = {},
 		autoComplete,
-		allowNegative
+		allowNegative,
+		labelProps
 	} = props;
 
 	let inputPropClasses = {};
@@ -108,7 +109,7 @@ const InputGroup = props => {
 			<TextField
 				error={!!error}
 				id={name}
-				label={<FormatInputLabel>{label}</FormatInputLabel>}
+				label={<FormatInputLabel {...labelProps}>{label}</FormatInputLabel>}
 				type={type}
 				value={value}
 				onChange={onChangeEvent}
@@ -134,7 +135,8 @@ const InputGroup = props => {
 
 InputGroup.defaultProps = {
 	value: "",
-	type: "text"
+	type: "text",
+	labelProps: {}
 };
 
 InputGroup.propTypes = {
@@ -153,7 +155,8 @@ InputGroup.propTypes = {
 	InputProps: PropTypes.object,
 	disabled: PropTypes.bool,
 	autoComplete: PropTypes.string,
-	allowNegative: PropTypes.bool
+	allowNegative: PropTypes.bool,
+	labelProps: PropTypes.object
 };
 
 export default withStyles(styles)(InputGroup);

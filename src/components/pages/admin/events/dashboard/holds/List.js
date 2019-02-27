@@ -44,9 +44,15 @@ class TicketHoldList extends Component {
 			.events.ticketTypes.index({ event_id: id })
 			.then(response => {
 				const { data } = response.data;
-				this.setState({
-					ticketTypes: data
+
+				const ticketTypes = [];
+				data.forEach((ticketType) => {
+					if (ticketType.status !== "Cancelled") {
+						ticketTypes.push(ticketType);
+					}
 				});
+
+				this.setState({ ticketTypes });
 			})
 			.catch(error => {
 				console.error(error);

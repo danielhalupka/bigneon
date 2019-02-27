@@ -173,7 +173,8 @@ class HoldDialog extends React.Component {
 			hold: createHoldForInput(),
 			parentHold: createHoldForInput(),
 			errors: {},
-			isSubmitting: false
+			isSubmitting: false,
+			totalAvailablePerTicketType: {} // {ticketTypeId: count}
 		};
 	}
 
@@ -182,14 +183,16 @@ class HoldDialog extends React.Component {
 	}
 
 	loadHold() {
-		const { holdType, holdId, eventId } = this.props;
+		const { holdType, holdId, eventId, ticketTypes } = this.props;
+
+		this.loadLatestTotalAvailable(eventId);
 
 		if (holdId) {
 			//Load the hold
 			Bigneon()
 				.holds.read({ id: holdId })
-				.then(holdData => {
-					const hold = holdData.data;
+				.then(response => {
+					const hold = response.data;
 					if (holdType === HOLD_TYPES.SPLIT) {
 						const { ...parentHold } = hold;
 						hold.quantity = 0;
@@ -209,6 +212,25 @@ class HoldDialog extends React.Component {
 				})
 			});
 		}
+	}
+
+	loadLatestTotalAvailable(event_id) {
+		Bigneon()
+			.events.ticketTypes.index({ event_id })
+			.then(response => {
+				const data = response.data.data;
+				const totalAvailablePerTicketType = {};
+				data.forEach(({ id, available, status }) => {
+					if (status !== "Cancelled") {
+						totalAvailablePerTicketType[id] = available;
+					}
+				});
+
+				this.setState({ totalAvailablePerTicketType });
+			})
+			.catch(error => {
+				console.error(error);
+			});
 	}
 
 	onSubmit() {
@@ -237,7 +259,6 @@ class HoldDialog extends React.Component {
 			.then(response => {
 				const event = response.data;
 				const end_at = endAtOption.endAtDateString(event, endAt);
-				console.log(end_at);
 
 				const formattedHold = formatHoldForSaving({ ...hold, end_at });
 
@@ -334,7 +355,10 @@ class HoldDialog extends React.Component {
 
 	renderQuantities() {
 		const { holdType } = this.props;
-		const { hold, errors, parentHold } = this.state;
+		const { hold, errors, parentHold, totalAvailablePerTicketType } = this.state;
+
+		const { ticket_type_id } = hold;
+		const totalAvailable = ticket_type_id && totalAvailablePerTicketType[ticket_type_id] ? totalAvailablePerTicketType[ticket_type_id] : null;
 
 		if (holdType === HOLD_TYPES.SPLIT) {
 			const totalHeld = parentHold.quantity - hold.quantity;
@@ -345,7 +369,7 @@ class HoldDialog extends React.Component {
 						<InputGroup
 							value={totalHeld}
 							name="total_held"
-							label="Total Held"
+							label="Total Held*"
 							placeholder="100"
 							type="text"
 							disabled={true}
@@ -377,7 +401,14 @@ class HoldDialog extends React.Component {
 						error={errors.quantity}
 						value={hold.quantity}
 						name="quantity"
-						label="Total Held"
+						label="Total Held*"
+						labelProps={totalAvailable ? {
+							superText: `All ${totalAvailable} tickets`,
+							onSuperTextClick: () => {
+								hold.quantity = totalAvailable;
+								this.setState({ hold });
+							}
+						} : null}
 						placeholder="100"
 						type="number"
 						onChange={e => {
