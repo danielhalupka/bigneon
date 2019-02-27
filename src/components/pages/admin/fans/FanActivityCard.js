@@ -18,7 +18,7 @@ const styles = theme => ({
 	boldSpan: {
 		fontFamily: fontFamilyDemiBold
 	},
-	orderLink: {
+	linkText: {
 		color: secondaryHex,
 		fontFamily: fontFamilyDemiBold
 	},
@@ -36,17 +36,19 @@ const styles = theme => ({
 	}
 });
 
-const FanHistoryCard = ({
+const FanActivityCard = ({
 	order_date,
 	type,
 	event_name,
 	order_id,
 	revenue_in_cents,
 	ticket_sales,
+	event_start,
+	event_id,
 	classes
 }) => (
 	<div className={classes.root}>
-		<Card variant="raisedLight">
+		<Card variant="subCard">
 			<div className={classes.card}>
 				{type === "Purchase" ? (
 					<div>
@@ -56,12 +58,12 @@ const FanHistoryCard = ({
 						<Typography>
 							Purchased <span className={classes.boldSpan}>{ticket_sales}</span>{" "}
 							ticket
-							{ticket_sales > 1 ? "s" : ""}
+							{ticket_sales > 1 ? "s " : " "}
 							for <span className={classes.boldSpan}>{event_name}</span>
 						</Typography>
 						<div className={classes.bottomRow}>
 							<a href={`/orders/${order_id}`} target="_blank">
-								<Typography className={classes.orderLink}>
+								<Typography className={classes.linkText}>
 								Order #{order_id.slice(-6)}
 								</Typography>
 							</a>
@@ -71,18 +73,39 @@ const FanHistoryCard = ({
 							</Typography>
 						</div>
 					</div>
-				) : (
-					<Typography>Other event</Typography>
-				)}
+				) : null}
+
+				{type === "Attendance" ? (
+					<div>
+						<Typography className={classes.date}>
+							{moment(event_start).format("M/D/Y hh:mmA")}
+						</Typography>
+						<Typography>
+							Attended&nbsp;
+							<a href={`/events/${event_id}`} target="_blank">
+								<span className={classes.linkText}>
+									{event_name}
+								</span>
+							</a>
+						</Typography>
+					</div>
+				) : null}
+
 			</div>
 		</Card>
 	</div>
 );
 
-FanHistoryCard.propTypes = {
-	order_date: PropTypes.string.isRequired,
-	ticket_sales: PropTypes.number.isRequired,
-	event_name: PropTypes.string.isRequired
+FanActivityCard.propTypes = {
+	order_date: PropTypes.string,
+	event_start: PropTypes.string,
+	ticket_sales: PropTypes.number,
+	event_name: PropTypes.string.isRequired,
+	event_id: PropTypes.string,
+	revenue_in_cents: PropTypes.number,
+	order_id: PropTypes.string,
+	type: PropTypes.oneOf(["Purchase", "Attendance"]).isRequired
+
 };
 
-export default withStyles(styles)(FanHistoryCard);
+export default withStyles(styles)(FanActivityCard);

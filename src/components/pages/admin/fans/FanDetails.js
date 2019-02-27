@@ -6,12 +6,14 @@ import notifications from "../../../../stores/notifications";
 import Bigneon from "../../../../helpers/bigneon";
 import PageHeading from "../../../elements/PageHeading";
 import user from "../../../../stores/user";
-import FanHistoryCard from "./FanHistoryCard";
+import FanActivityCard from "./FanActivityCard";
 import Card from "../../../elements/Card";
 import { fontFamilyDemiBold } from "../../../styles/theme";
 import SocialIconLink from "../../../elements/social/SocialIconLink";
 import StyledLink from "../../../elements/StyledLink";
 import Loader from "../../../elements/loaders/Loader";
+import PropTypes from "prop-types";
+import moment from "moment-timezone";
 
 const imageSize = 100;
 
@@ -107,8 +109,8 @@ class Fan extends Component {
 
 		this.state = {
 			profile: null,
-			history: null,
-			activeHeading: "sales"
+			activities: null,
+			activeHeadings: { sales: true, attendance: false }
 		};
 	}
 
@@ -129,8 +131,15 @@ class Fan extends Component {
 		Bigneon()
 			.organizations.fans.read({ user_id, organization_id })
 			.then(response => {
+				const { attendance_information, ...profile } = response.data;
+
+				const activities = [];
+				attendance_information.forEach(item => {
+					activities.push({ ...item, type: "Attendance" });
+				});
+
 				this.setState(
-					{ profile: response.data },
+					{ profile, activities },
 					this.loadFanHistory.bind(this)
 				);
 			})
@@ -149,7 +158,10 @@ class Fan extends Component {
 		Bigneon()
 			.organizations.fans.history({ user_id, organization_id })
 			.then(result => {
-				this.setState({ history: result.data.data });
+				this.setState(({ activities }) => {
+					activities = [...activities, ...result.data.data];
+					return { activities };
+				}, this.sortActivity.bind(this));
 			})
 			.catch(error =>
 				notifications.showFromErrorResponse({
@@ -157,6 +169,31 @@ class Fan extends Component {
 					defaultMessage: "Failed to load fan history."
 				})
 			);
+	}
+
+	sortActivity() {
+		const { activities } = this.state;
+
+		activities.sort((a, b) => {
+			//Gte the dates we need to compare
+			const aDate = a.type === "Purchase" ? a.order_date : a.event_start;
+			const bDate = b.type === "Purchase" ? b.order_date : b.event_start;
+
+			if (moment(aDate).diff(moment(bDate)) < 0) {
+				return 1;
+			} else {
+				return -1;
+			}
+		});
+
+		this.setState({ activities });
+	}
+
+	changeSelectedHeading(key) {
+		this.setState(({ activeHeadings }) => {
+			activeHeadings[key] = !activeHeadings[key];
+			return { activeHeadings };
+		});
 	}
 
 	renderProfile() {
@@ -212,60 +249,65 @@ class Fan extends Component {
 
 	renderMenu() {
 		const { classes } = this.props;
-		const { activeHeading } = this.state;
+		const { activeHeadings } = this.state;
 
-		return null;
-		//TODO add back when displaying attendance
-		// return (
-		// 	<Grid item xs={12} sm={6} md={4} lg={3}>
-		// 		<Grid container spacing={24}>
-		// 			<Grid item xs={3} sm={3} lg={3}>
-		// 				<Typography className={classes.menuText}>
-		// 					<StyledLink
-		// 						underlined={activeHeading === "sales"}
-		// 						onClick={() => this.setState({ activeHeading: "sales" })}
-		// 					>
-		// 						Sales
-		// 					</StyledLink>
-		// 				</Typography>
-		// 			</Grid>
-		//
-		// 			<Grid item xs={1} sm={1} lg={1}>
-		// 				<div className={classes.verticalDividerSmall}/>
-		// 			</Grid>
-		//
-		// 			<Grid item xs={3} sm={3} lg={3}>
-		// 				<Typography className={classes.menuText}>
-		// 					<StyledLink
-		// 						underlined={activeHeading === "attendance"}
-		// 						onClick={() => this.setState({ activeHeading: "attendance" })}
-		// 					>
-		// 						Attendance
-		// 					</StyledLink>
-		// 				</Typography>
-		// 			</Grid>
-		// 		</Grid>
-		// 	</Grid>
-		// );
+		//return null;
+		// TODO add back when displaying attendance
+		return (
+			<Grid item xs={12} sm={6} md={4} lg={3}>
+				<Grid container spacing={24}>
+					<Grid item xs={3} sm={3} lg={3}>
+						<Typography className={classes.menuText}>
+							<StyledLink
+								underlined={activeHeadings.sales}
+								onClick={() => this.changeSelectedHeading("sales")}
+							>
+								Sales
+							</StyledLink>
+						</Typography>
+					</Grid>
+
+					<Grid item xs={1} sm={1} lg={1}>
+						<div className={classes.verticalDividerSmall}/>
+					</Grid>
+
+					<Grid item xs={3} sm={3} lg={3}>
+						<Typography className={classes.menuText}>
+							<StyledLink
+								underlined={activeHeadings.attendance}
+								onClick={() => this.changeSelectedHeading("attendance")}
+							>
+								Attendance
+							</StyledLink>
+						</Typography>
+					</Grid>
+				</Grid>
+			</Grid>
+		);
 	}
 
-	renderSales() {
-		const { history } = this.state;
+	renderCards() {
+		const { activeHeadings, activities } = this.state;
 
-		if (history === null) {
+		if (activities === null) {
 			return <Loader>Loading history...</Loader>;
 		}
-		return history.map((item, index) => {
-			return <FanHistoryCard key={index} {...item}/>;
+
+		return activities.map((item, index) => {
+			if (item.type === "Purchase" && !activeHeadings.sales) {
+				return;
+			}
+
+			if (item.type === "Attendance" && !activeHeadings.attendance) {
+				return;
+			}
+
+			return <FanActivityCard key={index} {...item}/>;
 		});
 	}
 
-	renderAttendance() {
-		return null;
-	}
-
 	render() {
-		const { profile, activeHeading } = this.state;
+		const { profile, activeHeadings } = this.state;
 
 		if (profile === null) {
 			return <Loader>Loading fan details...</Loader>;
@@ -354,9 +396,7 @@ class Fan extends Component {
 							lg={12}
 							style={{ paddingTop: 20 }}
 						>
-							{activeHeading === "sales"
-								? this.renderSales()
-								: this.renderAttendance()}
+							{this.renderCards()}
 						</Grid>
 					</div>
 				</Card>
