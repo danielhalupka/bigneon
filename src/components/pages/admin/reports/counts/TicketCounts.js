@@ -51,7 +51,7 @@ class TicketCounts extends Component {
 	}
 
 	exportCSV(eventId) {
-		const eventData = ticketCountReport.dataByTicketPricing[eventId];
+		const eventData = ticketCountReport.dataByPrice[eventId];
 		if (!eventData) {
 			return notifications.show({
 				message: "No data to export."
@@ -78,7 +78,7 @@ class TicketCounts extends Component {
 
 	renderList() {
 		const { eventId, classes } = this.props;
-		const eventDataResults = ticketCountReport.dataByTicketPricing;
+		const eventDataResults = ticketCountReport.dataByPrice;
 		if (eventDataResults === null) {
 			return <Loader/>;
 		}
