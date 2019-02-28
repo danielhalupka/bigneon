@@ -49,7 +49,7 @@ class Audit extends Component {
 	exportCSV() {
 		const { eventId } = this.props;
 
-		const { tickets = {} } = ticketCountReport.dataByTicketPricing[eventId];
+		const { tickets = {} } = ticketCountReport.dataByPrice[eventId];
 		if (!Object.keys(tickets).length) {
 			return notifications.show({
 				message: "No rows to export.",
@@ -79,7 +79,7 @@ class Audit extends Component {
 		csvRows.push([""]);
 		csvRows.push([""]);
 
-		const ticketCountRows = ticketCountReport.csv(ticketCountReport.dataByTicketPricing[eventId]);
+		const ticketCountRows = ticketCountReport.csv(ticketCountReport.dataByPrice[eventId]);
 		csvRows = [...csvRows, ...ticketCountRows];
 
 		downloadCSV(csvRows, "event-audit-report");
