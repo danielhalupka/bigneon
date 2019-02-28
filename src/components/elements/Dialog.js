@@ -22,7 +22,9 @@ const styles = theme => ({
 	paper: {
 		backgroundColor: "transparent",
 		outline: "none",
-		boxShadow: "none"
+		boxShadow: "none",
+		overflowY: "scroll",
+		maxHeight: "100%"
 	},
 	content: {
 		maxWidth: 600,
@@ -79,9 +81,11 @@ class CustomDialog extends Component {
 					{...rest}
 				>
 					<div>
-						<div onClick={onClose} className={classes.closeDialogContainer}>
-							<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg"/>
-						</div>
+						{onClose ? (
+							<div onClick={onClose} className={classes.closeDialogContainer}>
+								<img alt="close" className={classes.closeIcon} src="/icons/delete-active.svg"/>
+							</div>
+						) : null}
 						{iconUrl ? <TopCardIcon iconUrl={iconUrl}/> : null}
 						{title ? (
 							<Typography variant="headline" className={classes.title}>

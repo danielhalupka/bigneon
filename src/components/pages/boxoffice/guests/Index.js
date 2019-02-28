@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Typography, withStyles, Grid } from "@material-ui/core";
+import { withStyles, Grid } from "@material-ui/core";
 import { observer } from "mobx-react";
+import PropTypes from "prop-types";
 
 import Bigneon from "../../../../helpers/bigneon";
 import notifications from "../../../../stores/notifications";
@@ -9,11 +10,15 @@ import GuestRow from "./GuestRow";
 import BoxInput from "../../../elements/form/BoxInput";
 import BottomCompleteOrderBar from "../common/BottomCompleteOrderBar";
 import CheckingInDialog from "./CheckingInDialog";
-import user from "../../../../stores/user";
 import NotFound from "../../../common/NotFound";
 import layout from "../../../../stores/layout";
 import BlankSlate from "../common/BlankSlate";
 import Loader from "../../../elements/loaders/Loader";
+import { onAddItemsToCart } from "../common/helpers";
+import cart from "../../../../stores/cart";
+import CheckoutDialog from "../sales/CheckoutDialog";
+import PurchaseSuccessOptionsDialog from "../sales/PurchaseSuccessOptionsDialog";
+import SuccessDialog from "../sales/SuccessDialog";
 
 const styles = theme => ({
 	root: {},
@@ -30,14 +35,19 @@ class GuestList extends Component {
 		this.state = {
 			filteredGuests: null,
 			searchQuery: "",
-			expandedUserId: null,
+			expandedRowKey: null,
 			selectedTickets: {},
+			selectedHolds: {},
 			isCheckingIn: false,
-			showCheckingInDialog: false
+			showCheckingInDialog: false,
+			showCheckoutModal: false,
+			currentOrderDetails: null,
+			successMessage: ""
 		};
 
 		this.onExpandChange = this.onExpandChange.bind(this);
 		this.onTicketSelect = this.onTicketSelect.bind(this);
+		this.onHoldSelect = this.onHoldSelect.bind(this);
 	}
 
 	componentDidMount() {
@@ -48,6 +58,17 @@ class GuestList extends Component {
 		if (this.timeout) {
 			clearTimeout(this.timeout);
 		}
+	}
+
+	onCheckoutSuccess(currentOrderDetails) {
+		this.setState({
+			selectedTickets: {},
+			selectedHolds: {},
+			currentOrderDetails,
+			isCheckingIn: false
+		});
+
+		boxOffice.refreshEventTickets();
 	}
 
 	stringContainedInArray(strList, searchQuery) {
@@ -65,16 +86,20 @@ class GuestList extends Component {
 	filterGuestsOnQuery(e) {
 		this.setState({
 			searchQuery: e.target.value,
-			expandedUserId: null,
-			selectedTickets: {}
+			expandedRowKey: null,
+			selectedTickets: {},
+			selectedHolds: {},
+			currentOrderDetails: null
 		});
 	}
 
 	filteredGuests() {
-		const { guests } = boxOffice;
-		if (!guests) {
-			return {};
+		const { guests, childHolds } = boxOffice;
+		if (!guests || !childHolds) {
+			return null;
 		}
+
+		//TODO filter holds also
 
 		const { searchQuery } = this.state;
 
@@ -97,11 +122,24 @@ class GuestList extends Component {
 			}
 		});
 
-		return filteredGuests;
+		const filteredHolds = {};
+		Object.keys(childHolds).forEach(id => {
+			const { name, redemption_code } = childHolds[id];
+			if (
+				this.stringContainedInArray(
+					[name, redemption_code],
+					searchQuery
+				)
+			) {
+				filteredHolds[id] = childHolds[id];
+			}
+		});
+
+		return { guests: filteredGuests, holds: filteredHolds };
 	}
 
-	onExpandChange(expandedUserId) {
-		this.setState({ expandedUserId, selectedTickets: {} });
+	onExpandChange(expandedRowKey) {
+		this.setState({ expandedRowKey, selectedTickets: {}, selectedHolds: {} });
 	}
 
 	onTicketSelect({ id, ...ticket }) {
@@ -113,6 +151,18 @@ class GuestList extends Component {
 			}
 
 			return { selectedTickets };
+		});
+	}
+
+	onHoldSelect(index) {
+		this.setState(({ selectedHolds }) => {
+			if (selectedHolds[index]) {
+				delete selectedHolds[index];
+			} else {
+				selectedHolds[index] = true;
+			}
+
+			return { selectedHolds };
 		});
 	}
 
@@ -143,7 +193,6 @@ class GuestList extends Component {
 			const id = ticketIds[index];
 
 			const { redeem_key, event_id } = selectedTickets[id];
-
 			if (redeem_key) {
 				const { error } = await this.redeemSingleTicket({
 					id,
@@ -152,7 +201,6 @@ class GuestList extends Component {
 				});
 
 				if (error) {
-					console.error(error);
 					this.setState({ isCheckingIn: false, showCheckingInDialog: false });
 					notifications.showFromErrorResponse({
 						defaultMessage: "Redeeming ticket failed.",
@@ -173,29 +221,80 @@ class GuestList extends Component {
 		boxOffice.refreshGuests();
 	}
 
+	async onCheckoutHolds() {
+		this.setState({ isCheckingIn: true });
+
+		const { selectedHolds, expandedRowKey } = this.state;
+		const { childHolds } = boxOffice;
+
+		const quantity = Object.keys(selectedHolds).length;
+
+		const {
+			name,
+			max_per_order,
+			hold_type,
+			discount_in_cents,
+			available,
+			redemption_code,
+			ticket_type_id
+		} = childHolds[expandedRowKey];
+
+		const items = [{ quantity, ticket_type_id, redemption_code }];
+
+		const { error } = await onAddItemsToCart(items);
+		if (error) {
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Failed to add to cart."
+			});
+			return this.setState({ isCheckingIn: false });
+		}
+
+		cart.refreshCart(() => {
+			this.setState({ showCheckoutModal: true });
+		});
+
+	}
+
 	renderBottomBar() {
 		const {
 			selectedTickets,
+			selectedHolds,
 			isCheckingIn,
 			showCheckingInDialog,
-			expandedUserId
+			expandedRowKey,
+			showCheckoutModal
 		} = this.state;
 
-		const { guests } = boxOffice;
+		const { guests, childHolds } = boxOffice;
 
 		let totalAvailable = 0;
-		if (guests && guests[expandedUserId]) {
-			const { tickets } = guests[expandedUserId];
-			tickets.forEach(({ status }) => {
-				if (status !== "Redeemed") {
-					totalAvailable++;
-				}
-			});
+
+		let totalNumberSelected = 0;
+		let checkoutType;
+
+		if (Object.keys(selectedTickets).length > 0) {
+			checkoutType = "tickets";
+			totalNumberSelected = Object.keys(selectedTickets).length;
+
+			if (guests && guests[expandedRowKey]) {
+				const { tickets } = guests[expandedRowKey];
+				tickets.forEach(({ status }) => {
+					if (status !== "Redeemed") {
+						totalAvailable++;
+					}
+				});
+			}
+			
+		} else if (Object.keys(selectedHolds).length > 0) {
+			checkoutType = "holds";
+			totalNumberSelected = Object.keys(selectedHolds).length;
+
+			if (childHolds && childHolds[expandedRowKey]) {
+				const { available } = childHolds[expandedRowKey];
+				totalAvailable = available;
+			}
 		}
-
-		const totalNumberSelected = Object.keys(selectedTickets).length;
-
-		Object.keys(selectedTickets).forEach(id => {});
 
 		const buttonText = `Check in ${
 			totalNumberSelected ? totalNumberSelected : ""
@@ -212,7 +311,7 @@ class GuestList extends Component {
 					col1Text={`Total tickets available: ${totalAvailable}`}
 					col3Text={`Total tickets selected: ${totalNumberSelected}`}
 					disabled={isCheckingIn || !(totalNumberSelected > 0)}
-					onSubmit={this.onRedeemSelectedTickets.bind(this)}
+					onSubmit={checkoutType === "tickets" ? this.onRedeemSelectedTickets.bind(this) : this.onCheckoutHolds.bind(this)}
 					buttonText={buttonText}
 					disabledButtonText={
 						totalNumberSelected > 0 ? "Checking in..." : "Check in"
@@ -235,19 +334,23 @@ class GuestList extends Component {
 			return <BlankSlate>No active event selected.</BlankSlate>;
 		}
 
-		if (!boxOffice.guests || boxOffice.guests === {}) {
+		if (boxOffice.childHolds !== null && Object.keys(boxOffice.childHolds).length === 0 && boxOffice.guests !== null && Object.keys(boxOffice.guests).length === 0) {
 			return <BlankSlate>No guests found for event.</BlankSlate>;
 		}
 
-		const { searchQuery, expandedUserId, selectedTickets } = this.state;
+		const { searchQuery, expandedRowKey, selectedTickets, selectedHolds, showCheckoutModal, currentOrderDetails, successMessage, holdCheckoutType } = this.state;
 
 		const { classes } = this.props;
 
-		const filteredGuests = this.filteredGuests();
+		const filteredResults = this.filteredGuests();
 
-		if (filteredGuests === null) {
+		if (filteredResults === null) {
 			return <Loader/>;
 		}
+
+		const { guests, holds } = filteredResults;
+		const { ticketTypes } = boxOffice;
+		const guestIndexOffset = Object.keys(holds).length; //For listing each row
 
 		return (
 			<div>
@@ -262,21 +365,109 @@ class GuestList extends Component {
 					</Grid>
 				</Grid>
 
-				{Object.keys(filteredGuests).map((id, index) => {
-					const expanded = id === expandedUserId;
+				{Object.keys(holds).map((id, index) => {
+					const expanded = id === expandedRowKey;
+					const {
+						available,
+						discount_in_cents,
+						end_at,
+						event_id,
+						hold_type,
+						max_per_order,
+						name,
+						quantity,
+						redemption_code,
+						ticket_type_id,
+						price_in_cents,
+						ticket_type_name
+					} = holds[id];
+
+					let discountedPriceInCents;
+					if (!isNaN(price_in_cents) && !isNaN(discount_in_cents)) {
+						discountedPriceInCents = price_in_cents - discount_in_cents;
+					}
+
 					return (
 						<GuestRow
 							key={id}
+							rowKey={id}
 							index={index}
-							userId={id}
-							{...filteredGuests[id]}
+							type={"hold"}
+							name={name}
+							available={available}
+							hold_type={hold_type}
+							discountedPriceInCents={discountedPriceInCents}
+							ticketTypeName={ticket_type_name}
 							onExpandChange={this.onExpandChange}
 							expanded={expanded}
-							onTicketSelect={this.onTicketSelect}
+							onSelect={this.onHoldSelect}
+							selectedHolds={expanded ? selectedHolds : {}}
+						/>
+					);
+				})}
+
+				{Object.keys(guests).map((id, index) => {
+					const expanded = id === expandedRowKey;
+					const { first_name, last_name, tickets } = guests[id];
+
+					let name = `Guest (No Details Provided))`;
+					if (first_name && last_name) {
+						name = `${last_name}, ${first_name}`;
+					} else if (first_name) {
+						name = first_name;
+					}
+
+					return (
+						<GuestRow
+							key={id}
+							rowKey={id}
+							type={"guest"}
+							name={name}
+							tickets={tickets}
+							index={index + guestIndexOffset}
+							onExpandChange={this.onExpandChange}
+							expanded={expanded}
+							onSelect={this.onTicketSelect}
 							selectedTickets={expanded ? selectedTickets : {}}
 						/>
 					);
 				})}
+
+				{ticketTypes ? (
+					<div>
+						<CheckoutDialog
+							open={showCheckoutModal}
+							onClose={() => this.setState({ showCheckoutModal: false, isCheckingIn: false })}
+							ticketTypes={ticketTypes || {}}
+							onSuccess={this.onCheckoutSuccess.bind(this)}
+							onError={() => {
+								this.setState({ isCheckingIn: false });
+							}}
+						/>
+
+						<PurchaseSuccessOptionsDialog
+							currentOrderDetails={currentOrderDetails}
+							onClose={() => this.setState({ currentOrderDetails: null })}
+							onCheckInSuccess={() =>
+								this.setState({
+									currentOrderDetails: null,
+									successMessage: "Check-in complete"
+								})
+							}
+							onTransferSuccess={() =>
+								this.setState({
+									currentOrderDetails: null,
+									successMessage: "Transfer link sent"
+								})
+							}
+						/>
+
+						<SuccessDialog
+							message={successMessage}
+							onClose={() => this.setState({ successMessage: "" })}
+						/>
+					</div>
+				) : null}
 
 				{this.renderBottomBar()}
 			</div>

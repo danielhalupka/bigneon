@@ -104,7 +104,7 @@ class BoxOffice {
 				data.forEach(({ id, ...hold }) => {
 					holds[id] = hold;
 				});
-
+				
 				this.holds = holds;
 			})
 			.catch(error => {
@@ -214,6 +214,23 @@ class BoxOffice {
 	@computed
 	get activeEventDetails() {
 		return getEventFromId(this.availableEvents, this.activeEventId);
+	}
+
+	@computed
+	get childHolds() {
+		if (!this.holds) {
+			return null;
+		}
+
+		//For box office guests we only want to show holds that have parent holds
+		const childHolds = {};
+		Object.keys(this.holds).forEach((id) => {
+			if (this.holds[id].parent_hold_id) {
+				childHolds[id] = this.holds[id];
+			}
+		});
+
+		return childHolds;
 	}
 }
 

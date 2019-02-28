@@ -4,7 +4,6 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { observer } from "mobx-react";
 
-import Bigneon from "../../../../helpers/bigneon";
 import Dialog from "../../../elements/Dialog";
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import Divider from "../../../common/Divider";
@@ -16,6 +15,7 @@ import Button from "../../../elements/Button";
 import cart from "../../../../stores/cart";
 import notifications from "../../../../stores/notifications";
 import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
+import { onCheckout } from "../common/helpers";
 
 const styles = theme => ({
 	content: {
@@ -102,7 +102,7 @@ class CheckoutDialog extends React.Component {
 		};
 	}
 
-	onSubmit(e) {
+	async onSubmit(e) {
 		e.preventDefault();
 
 		const { firstName, lastName, email, phone, note } = this.state;
@@ -115,35 +115,24 @@ class CheckoutDialog extends React.Component {
 
 		this.setState({ isSubmitting: true });
 
-		Bigneon()
-			.cart.checkout({
-				amount: cart.total_in_cents,
-				method: {
-					type: "External",
-					reference: "TODO",
-					first_name: firstName,
-					last_name: lastName,
-					phone,
-					email,
-					note
-				}
-			})
-			.then(response => {
-				cart.refreshCart();
+		const { error, result } = await onCheckout({ firstName, lastName, phone, email, note });
 
-				const { onClose, onSuccess } = this.props;
-				this.setState(this.defaultState, () => {
-					onClose();
-					setTimeout(() => onSuccess({ ...response.data, email, phone }), 500);
-				});
-			})
-			.catch(error => {
-				notifications.showFromErrorResponse({
-					error,
-					defaultMessage: "Checkout failed."
-				});
-				console.error(error);
+		if (error) {
+			notifications.showFromErrorResponse({
+				error,
+				defaultMessage: "Checkout failed."
 			});
+			console.error(error);
+			this.props.onError(error);
+		} else {
+			cart.refreshCart();
+
+			const { onClose, onSuccess } = this.props;
+			this.setState(this.defaultState, () => {
+				onClose();
+				setTimeout(() => onSuccess({ ...result, email, phone }), 500);
+			});
+		}
 	}
 
 	validateFields() {
@@ -459,7 +448,8 @@ CheckoutDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	ticketTypes: PropTypes.object.isRequired,
-	onSuccess: PropTypes.func.isRequired
+	onSuccess: PropTypes.func.isRequired,
+	onError: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(CheckoutDialog);

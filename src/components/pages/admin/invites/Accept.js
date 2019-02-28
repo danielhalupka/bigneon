@@ -73,6 +73,8 @@ class InviteAccept extends Component {
 
 				if (error && error.response && error.response.status === 404) {
 					errorMessage = "Invite does not exist or has already been accepted.";
+					//If the invite isn't there, remove the token or it'll show up on each login
+					localStorage.removeItem("security_token");
 				}
 				this.setState({ errorMessage });
 			});

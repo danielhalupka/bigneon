@@ -22,7 +22,6 @@ const styles = theme => {
 			padding: theme.spacing.unit,
 			paddingRight: 80 + theme.spacing.unit * 2, //Catering for width being 100% and end components going off page
 			backgroundColor: "#FFFFFF",
-
 			borderTop: "1px solid #DEE2E8"
 		},
 		text: {
@@ -42,7 +41,8 @@ const styles = theme => {
 		},
 		col4: {
 			flex: 1,
-			textAlign: "right"
+			textAlign: "right",
+			paddingLeft: theme.spacing.unit
 		}
 	};
 };

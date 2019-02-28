@@ -6,6 +6,7 @@ import Card from "../../../elements/Card";
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import GuestTicketRow from "./GuestTicketRow";
 import CheckBox from "../../../elements/form/CheckBox";
+import { dollars } from "../../../../helpers/money";
 
 const styles = theme => ({
 	root: {
@@ -18,7 +19,8 @@ const styles = theme => ({
 		paddingBottom: theme.spacing.unit,
 		display: "flex",
 		alignItems: "center",
-		justifyContent: "space-between"
+		justifyContent: "space-between",
+		cursor: "pointer"
 	},
 	indexNumber: {
 		fontFamily: fontFamilyDemiBold,
@@ -34,16 +36,20 @@ const styles = theme => ({
 		color: "#9DA3B4"
 	},
 	leftContent: {},
-	rightContent: {},
+	rightContent: {
+		display: "flex",
+		alignItems: "center"
+	},
+	paymentRequiredIcon: {
+		width: "auto",
+		height: 30,
+		marginRight: theme.spacing.unit * 2
+	},
 	topRow: {
 		display: "flex"
 	},
 	bottomRow: {
 		display: "flex"
-	},
-	expandContainer: {
-		cursor: "pointer",
-		height: "100%"
 	},
 	expandIcon: {
 		height: 10
@@ -53,103 +59,139 @@ const styles = theme => ({
 	}
 });
 
+const DiscountIcon = ({ classes }) =><img className={classes.paymentRequiredIcon} alt={"Payment required"} src={"/icons/sales-active.svg"}/>;
+
 const GuestRow = props => {
 	const {
 		index,
-		userId,
+		type,
+		rowKey,
 		email,
-		first_name,
-		last_name,
+		name,
 		phone,
+		hold_type,
 		tickets,
+		available,
 		onExpandChange,
 		expanded,
-		onTicketSelect,
+		onSelect,
 		selectedTickets,
+		selectedHolds,
+		ticketTypeName,
+		discountedPriceInCents,
 		classes
 	} = props;
 
-	let displayName = `Guest (No Details Provided))`;
-	if (first_name && last_name) {
-		displayName = `${last_name}, ${first_name}`;
-	} else if (first_name) {
-		displayName = first_name;
+	let ticketHeadings = [];
+	let ticketRows = [];
+
+	if (type === "guest") {
+		ticketHeadings = [ " ", "Ticket #", "Order #", "Ticket type", "Price", "Status" ];
+
+		ticketRows = tickets.map(ticket => {
+			const {
+				id,
+				ticket_type,
+				price_in_cents,
+				order_id,
+				status
+			} = ticket;
+			const isPurchased = status === "Purchased";
+
+			return (
+				<GuestTicketRow key={id}>
+					<span>
+						{isPurchased ? (
+							<CheckBox
+								active={!!selectedTickets[id]}
+								onClick={() => onSelect(ticket)}
+							/>
+						) : null}
+					</span>
+					<Typography>{id.slice(-8)}</Typography>
+					<Typography>{order_id ? order_id.slice(-8) : "-"}</Typography>
+					<Typography>{ticket_type}</Typography>
+					<Typography>$ {(price_in_cents / 100).toFixed(2)}</Typography>
+					<Typography>{status}</Typography>
+				</GuestTicketRow>
+			);
+		});
+	}
+
+	if (type === "hold") {
+		ticketHeadings = [ " ", "Ticket #", "Hold", "Ticket type", "Price", "" ];
+
+		for (let index = 0; index < available; index++) {
+			let price = "";
+			if (hold_type === "Comp") {
+				price = "Free";
+			} else if (hold_type === "Discount" && discountedPriceInCents) {
+				price = dollars(discountedPriceInCents);
+			}
+
+			ticketRows.push(
+				<GuestTicketRow key={index}>
+					<span>
+						<CheckBox
+							active={!!selectedHolds[index]}
+							onClick={() => onSelect(index)}
+						/>
+					</span>
+					<Typography>{rowKey.slice(-8)}</Typography>
+					<Typography>{name.slice(-8)}</Typography>
+					<Typography>{ticketTypeName}</Typography>
+					<Typography>{price}</Typography>
+					{hold_type === "Discount" ? <DiscountIcon classes={classes}/> : null}
+				</GuestTicketRow>
+			);
+		}
 	}
 
 	return (
 		<div className={classes.root}>
 			<Card>
-				<div className={classes.inner}>
+				<div className={classes.inner} onClick={() => onExpandChange(expanded ? null : rowKey)}>
 					<div className={classes.leftContent}>
 						<div className={classes.topRow}>
 							<Typography className={classes.indexNumber}>
 								{index + 1}.
 							</Typography>
-							<Typography className={classes.name}>{displayName}</Typography>
+							<Typography className={classes.name}>{name}</Typography>
 						</div>
 						<div className={classes.bottomRow}>
-							<Typography className={classes.ticketInfo}>
-								{tickets.map(({ id }) => {
-									return <span key={id}>#{id.slice(-8)}. </span>;
-								})}
-							</Typography>
+							{
+								type === "guest" ? (
+									<Typography className={classes.ticketInfo}>
+										{tickets.map(({ id }) => {
+											return <span key={id}>#{id.slice(-8)}</span>;
+										})}
+									</Typography>
+								) : (
+									<Typography className={classes.ticketInfo}>
+										{hold_type}
+									</Typography>
+								)}
+
 						</div>
 					</div>
 					<div className={classes.rightContent}>
-						<div
-							className={classes.expandContainer}
-							onClick={() => onExpandChange(expanded ? null : userId)}
-						>
-							<img
-								alt="Expand icon"
-								className={classes.expandIcon}
-								src={
-									expanded ? "/icons/up-active.svg" : "/icons/down-active.svg"
-								}
-							/>
-						</div>
+						{hold_type === "Discount" ? <DiscountIcon classes={classes}/> : null}
+						<img
+							alt="Expand icon"
+							className={classes.expandIcon}
+							src={
+								expanded ? "/icons/up-active.svg" : "/icons/down-active.svg"
+							}
+						/>
 					</div>
 				</div>
 
 				<Collapse in={expanded}>
 					<div className={classes.ticketContainer}>
 						<GuestTicketRow heading>
-							<span>&nbsp;</span>
-							<span>Ticket #</span>
-							<span>Order #</span>
-							<span>Ticket type</span>
-							<span>Price</span>
-							<span>Status</span>
+							{ticketHeadings.map((heading, index) => <span key={index}>{heading}</span>)}
 						</GuestTicketRow>
-
-						{tickets.map(ticket => {
-							const {
-								id,
-								ticket_type,
-								price_in_cents,
-								order_id,
-								status
-							} = ticket;
-							const isPurchased = status === "Purchased";
-
-							return (
-								<GuestTicketRow key={id}>
-									<span>
-										{isPurchased ? (
-											<CheckBox
-												active={!!selectedTickets[id]}
-												onClick={() => onTicketSelect(ticket)}
-											/>
-										) : null}
-									</span>
-									<Typography>{id.slice(-8)}</Typography>
-									<Typography>{order_id ? order_id.slice(-8) : "-"}</Typography>
-									<Typography>{ticket_type}</Typography>
-									<Typography>$ {(price_in_cents / 100).toFixed(2)}</Typography>
-									<Typography>{status}</Typography>
-								</GuestTicketRow>
-							);
-						})}
+						{ticketRows}
 					</div>
 				</Collapse>
 			</Card>
@@ -159,14 +201,52 @@ const GuestRow = props => {
 
 GuestRow.propTypes = {
 	classes: PropTypes.object.isRequired,
-	userId: PropTypes.string.isRequired,
-	first_name: PropTypes.string,
-	last_name: PropTypes.string,
-	tickets: PropTypes.array.isRequired,
+	type: PropTypes.oneOf(["guest", "hold"]).isRequired,
+	rowKey: PropTypes.string.isRequired,
 	onExpandChange: PropTypes.func.isRequired,
 	expanded: PropTypes.bool.isRequired,
-	onTicketSelect: PropTypes.func.isRequired,
-	selectedTickets: PropTypes.object.isRequired
+	onSelect: PropTypes.func.isRequired,
+
+	name: PropTypes.string.isRequired,
+
+	//Used for type=guest
+	tickets: (props, propName, componentName) => {
+		if (props.type === "guest" && !props[propName]) {
+			return new Error(`Invalid prop '${propName}' supplied to '${componentName}'. If type='guest' then '${propName}' is required`);
+		}
+	},
+	selectedTickets: (props, propName, componentName) => {
+		if (props.type === "guest" && !props[propName]) {
+			return new Error(`Invalid prop '${propName}' supplied to '${componentName}'. If type='guest' then '${propName}' is required`);
+		}
+	},
+
+	//Used for type=hold
+	available: (props, propName, componentName) => {
+		if (props.type === "hold" && isNaN(props[propName])) {
+			return new Error(`Invalid prop '${propName}' supplied to '${componentName}'. If type='hold' then '${propName}' number is required`);
+		}
+	},
+	hold_type: (props, propName, componentName) => {
+		if (props.type === "hold" && props[propName] !== "Discount" && props[propName] !== "Comp") {
+			return new Error(`Invalid prop '${propName}' supplied to '${componentName}'. If type='hold' then '${propName}' must be either 'Discount' or 'Comp'`);
+		}
+	},
+	ticketTypeName: (props, propName, componentName) => {
+		if (props.type === "hold" && !props[propName]) {
+			return new Error(`Missing prop '${propName}' for '${componentName}'. If type='hold' then '${propName}' is required`);
+		}
+	},
+	discountedPriceInCents: (props, propName, componentName) => {
+		if (props.type === "hold" && props.hold_type === "Discount" && isNaN(props[propName])) {
+			return new Error(`Invalid prop '${propName}' supplied to '${componentName}'. Requires a number when hold_type===Discount`);
+		}
+	},
+	selectedHolds: (props, propName, componentName) => {
+		if (props.type === "hold" && !props[propName]) {
+			return new Error(`Invalid prop '${propName}' supplied to '${componentName}'. If type='guest' then '${propName}' is required`);
+		}
+	}
 };
 
 export default withStyles(styles)(GuestRow);
