@@ -13,7 +13,7 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit
 	},
 	price: {
-		fontSize: theme.typography.fontSize * 2,
+		fontSize: theme.typography.fontSize * 1.8,
 		fontFamily: fontFamilyDemiBold,
 		color: theme.palette.secondary.main
 	},
@@ -25,6 +25,14 @@ const styles = theme => ({
 		fontSize: theme.typography.fontSize * 0.8,
 		color: "gray",
 		textAlign: "center"
+	},
+	description: {
+		fontSize: theme.typography.fontSize * 0.8,
+		color: "#9DA3B4"
+	},
+	descriptionContainer: {
+		paddingLeft: theme.spacing.unit,
+		paddingRight: theme.spacing.unit
 	}
 });
 
@@ -60,11 +68,12 @@ const TicketSelection = props => {
 						{available ? `$${price}` : ""}
 					</Typography>
 				</Grid>
-				<Grid item xs={6} sm={6} md={5} lg={6}>
+				<Grid item xs={6} sm={6} md={5} lg={6} className={classes.descriptionContainer}>
 					<Typography className={classes.name}>{name}</Typography>
 					<Typography variant="caption" style={{ color: "red" }}>
 						{lppText}
 					</Typography>
+					{description ? <Typography className={classes.description}>{description}</Typography> : null}
 				</Grid>
 
 				<Grid item xs={3} sm={3} md={3} lg={3}>
@@ -107,7 +116,7 @@ TicketSelection.propTypes = {
 	available: PropTypes.bool,
 	onNumberChange: PropTypes.func.isRequired,
 	name: PropTypes.string.isRequired,
-	description: PropTypes.string.isRequired,
+	description: PropTypes.string,
 	price: PropTypes.number.isRequired,
 	error: PropTypes.string,
 	amount: PropTypes.number,

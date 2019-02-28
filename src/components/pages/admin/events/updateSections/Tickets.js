@@ -27,7 +27,8 @@ const formatForSaving = (ticketTypes, event) => {
 			limitPerPerson,
 			priceForDisplay,
 			soldOutBehavior,
-			isPrivate
+			isPrivate,
+			description
 		} = ticketType;
 
 		let { startDate, endDate } = ticketType;
@@ -116,7 +117,8 @@ const formatForSaving = (ticketTypes, event) => {
 			price_in_cents: Number(priceForDisplay) * 100,
 			ticket_pricing,
 			sold_out_behavior: soldOutBehavior,
-			is_private: isPrivate
+			is_private: isPrivate,
+			description
 		});
 	});
 

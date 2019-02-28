@@ -25,7 +25,11 @@ const styles = theme => ({
 	eventSubCardContent: {
 		paddingLeft: theme.spacing.unit * 4,
 		paddingRight: theme.spacing.unit * 4,
-		paddingBottom: theme.spacing.unit * 4
+		paddingBottom: theme.spacing.unit * 4,
+		[theme.breakpoints.down("sm")]: {
+			paddingLeft: theme.spacing.unit * 2,
+			paddingRight: theme.spacing.unit * 2
+		}
 	},
 	eventSubCardRow1: {
 		// display: "flex",
@@ -238,16 +242,17 @@ class CheckoutSelection extends Component {
 		const ticketTypeRendered = ticket_types
 			.map(
 				({
-					id,
-					name,
-					ticket_pricing,
-					increment,
-					limit_per_person,
-					start_date,
-					end_date,
-					redemption_code,
-					available
-				}) => {
+					 id,
+					 name,
+					 ticket_pricing,
+					 increment,
+					 limit_per_person,
+					 start_date,
+					 end_date,
+					 redemption_code,
+					 available,
+					 description
+				 }) => {
 					const nowIsValidTime = moment
 						.utc()
 						.isBetween(moment.utc(start_date), moment.utc(end_date));
@@ -255,16 +260,14 @@ class CheckoutSelection extends Component {
 					if (!nowIsValidTime) {
 						return;
 					}
-					// console.log("limit_per_person: ", limit_per_person);
-					let description = "";
+
 					let price = 0;
 					let ticketsAvailable = false;
 					if (ticket_pricing) {
 						price = ticket_pricing.price_in_cents / 100;
-						description = ticket_pricing.name;
 						ticketsAvailable = available > 0;
 					} else {
-						description = "(Tickets currently unavailable)";
+						//description = "(Tickets currently unavailable)";
 					}
 					const limitPerPerson = Math.min(available, limit_per_person);
 
