@@ -178,26 +178,18 @@ class TicketSales extends Component {
 				hold_type,
 				max_per_order,
 				ticket_type_id,
-				redemption_code
+				redemption_code,
+				price_in_cents,
+				ticket_type_name,
+				...rest
 			} = holds[id];
-
+			
 			if (holdCode && holdCode !== redemption_code) {
 				return null;
 			}
 
-			const ticketType = ticketTypes[ticket_type_id];
-			const { ticket_pricing } = ticketType;
-
-			let disabled = false;
-			let discountedPrice = 0;
-
-			if (!ticket_pricing) {
-				//No active price point
-				disabled = true;
-			} else {
-				const { price_in_cents } = ticket_pricing;
-				discountedPrice = price_in_cents - discount_in_cents;
-			}
+			const disabled = false;
+			const discountedPrice = price_in_cents - discount_in_cents;
 
 			return (
 				<TicketRow
