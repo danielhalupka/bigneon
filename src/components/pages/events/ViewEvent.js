@@ -55,7 +55,11 @@ const styles = theme => ({
 	eventSubCardContent: {
 		paddingLeft: theme.spacing.unit * 4,
 		paddingRight: theme.spacing.unit * 4,
-		paddingBottom: theme.spacing.unit * 4
+		paddingBottom: theme.spacing.unit * 4,
+		[theme.breakpoints.down("sm")]: {
+			paddingLeft: theme.spacing.unit * 2,
+			paddingRight: theme.spacing.unit * 2
+		}
 	},
 	eventSubCardRow1: {
 		display: "flex",
@@ -95,14 +99,21 @@ const styles = theme => ({
 		fontSize: theme.typography.fontSize * 0.75,
 		color: "#ff22b2"
 	},
-	ticketPricing: {
-		marginTop: theme.spacing.unit * 2,
+	ticketPricingContainer: {
+		paddingTop: theme.spacing.unit * 2
+	},
+	ticketName: {
 		fontSize: theme.typography.fontSize * 1.1,
 		fontFamily: fontFamilyDemiBold
 	},
+	ticketDescription: {
+		fontSize: theme.typography.fontSize * 0.8,
+		color: "#9DA3B4"
+	},
 	ticketPricingValue: {
 		fontSize: theme.typography.fontSize * 1.8,
-		color: theme.palette.secondary.main
+		color: theme.palette.secondary.main,
+		lineHeight: 0.8
 	},
 	callToAction: {
 		marginTop: theme.spacing.unit * 2,
@@ -334,7 +345,7 @@ class ViewEvent extends Component {
 					) : null}
 					<br/>
 
-					{ticket_types.map(({ id, name, status, ticket_pricing, available }) => {
+					{ticket_types.map(({ id, name, status, ticket_pricing, available, description }) => {
 						let price = "";
 						if (ticket_pricing) {
 							if (available > 0) {
@@ -343,20 +354,31 @@ class ViewEvent extends Component {
 							} else {
 								price = "Sold Out";
 							}
-							//description = ticket_pricing.name;
 						}
 
 						//TODO check if they're available, if none are available change the layout
-						if (price) {
-							return (
-								<Typography key={id} className={classes.ticketPricing}>
-									<span className={classes.ticketPricingValue}>{price}</span>
-									&nbsp;&nbsp;
-									{name}
-								</Typography>
-							);
-						}
+						return (
+							<Grid key={id} alignItems="center" container className={classes.ticketPricingContainer}>
+								<Grid item xs={4} sm={4} md={5} lg={4}>
+									{price ? <Typography className={classes.ticketPricingValue}>{price}</Typography> : null}
+								</Grid>
+								<Grid item xs={8} sm={8} md={7} lg={8}>
+									<Typography className={classes.ticketName}>{name}</Typography>
+								</Grid>
+								{description ? (
+									<Grid item xs={4} sm={4} md={5} lg={4}>
+										<span/>
+									</Grid>
+								) : null }
+								{description ? (
+									<Grid item xs={8} sm={8} md={7} lg={8}>
+										<Typography className={classes.ticketDescription}>{description}</Typography>
+									</Grid>
+								) : null }
+							</Grid>
+						);
 					})}
+
 					{this.getDetailPageButton}
 
 					{/* <div className={classes.socialLinks}>
