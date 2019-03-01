@@ -230,7 +230,7 @@ class EventsList extends Component {
 							name={name}
 							isExternal={event.is_external}
 							venueName={venue.name || "Unknown Venue"}
-							eventDate={moment(event.event_start).tz(timezone)}
+							eventDate={moment.utc(event.event_start).tz(timezone)}
 							menuButton={MenuButton}
 							isPublished={isPublished}
 							isOnSale={isPublished && moment.utc(event.on_sale) < moment.utc()}
@@ -242,7 +242,6 @@ class EventsList extends Component {
 							isExpanded={expandedCardId === id}
 							onExpandClick={this.expandCardDetails}
 							ticketTypes={event.ticket_types}
-							venueTimezone={timezone}
 							eventEnded={eventEnded}
 						/>
 					</Grid>

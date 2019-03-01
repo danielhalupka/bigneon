@@ -131,13 +131,9 @@ const EventSummaryCard = props => {
 		eventEnded
 	} = props;
 
-	let { venueTimezone } = props;
-
-	venueTimezone = venueTimezone || "America/Los_Angeles";
 	const mediaStyle = imageUrl ? { backgroundImage: `url(${imageUrl})` } : {};
-	const eventStartDateMoment = moment.utc(eventDate);
 
-	const displayEventStartDate = eventStartDateMoment.tz(venueTimezone).format(
+	const displayEventStartDate = eventDate.format(
 		"dddd, MMMM Do YYYY h:mm A"
 	);
 
@@ -331,8 +327,7 @@ EventSummaryCard.propTypes = {
 	onExpandClick: PropTypes.func.isRequired,
 	ticketTypes: PropTypes.array.isRequired,
 	cancelled: PropTypes.bool,
-	eventEnded: PropTypes.bool,
-	venueTimezone: PropTypes.string
+	eventEnded: PropTypes.bool
 };
 
 export default withStyles(styles)(EventSummaryCard);
