@@ -354,7 +354,7 @@ class EventUpdate {
 			}
 		}
 
-		return { result: true, error: false };
+		return { result: this.id, error: false };
 	}
 
 	async saveEvent(params) {

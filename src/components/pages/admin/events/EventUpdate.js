@@ -75,8 +75,8 @@ class Event extends Component {
 			this.props.match.params &&
 			this.props.match.params.id
 		) {
-			this.eventId = this.props.match.params.id;
-			eventUpdateStore.loadDetails(this.eventId);
+			const id = this.props.match.params.id;
+			eventUpdateStore.loadDetails(id);
 			//On loading an event, don't automatically change ticket times
 			this.setState({ ticketTimesDirty: true });
 		} else {
@@ -162,7 +162,6 @@ class Event extends Component {
 
 		//Check if the ID in the URL changed
 		if (currentId && currentId !== prevId) {
-			this.eventId = currentId;
 			eventUpdateStore.updateEvent({ id: currentId });
 		}
 
@@ -174,7 +173,7 @@ class Event extends Component {
 
 	updateUrl(id) {
 		if (id) {
-			this.props.history.push(`/admin/events/${id}/edit`);
+			window.history.pushState(null, "", `/admin/events/${id}/edit`);
 		}
 	}
 
@@ -188,16 +187,11 @@ class Event extends Component {
 			});
 		}
 
-		const saveResponse = await eventUpdateStore.saveEventDetails(
-			this.updateUrl.bind(this)
-		);
+		const saveResponse = await eventUpdateStore.saveEventDetails(this.updateUrl);
 
 		if (!saveResponse.result) {
 			return saveResponse;
 		}
-
-		const { id } = eventUpdateStore;
-		this.updateUrl(id);
 
 		return saveResponse;
 	}
@@ -213,7 +207,8 @@ class Event extends Component {
 		const { result, error } = saveResponse;
 
 		if (result) {
-			eventUpdateStore.loadDetails(this.eventId);
+			const id = result;
+			eventUpdateStore.loadDetails(id);
 			notifications.show({ variant: "success", message: "Draft saved." });
 		} else {
 			console.error(error);
@@ -276,11 +271,11 @@ class Event extends Component {
 			.events.publish({ id })
 			.then(response => {
 				this.setState({ isSubmitting: false });
-				eventUpdateStore.loadDetails(this.eventId);
 				notifications.show({
 					variant: "success",
 					message: "Event published."
 				});
+				eventUpdateStore.loadDetails(id);
 			})
 			.catch(error => {
 				console.error(error);
@@ -308,7 +303,7 @@ class Event extends Component {
 			.events.unpublish({ id })
 			.then(response => {
 				this.setState({ isSubmitting: false });
-				eventUpdateStore.loadDetails(this.eventId);
+				eventUpdateStore.loadDetails(id);
 				notifications.show({
 					variant: "success",
 					message: "Event updated."
@@ -597,7 +592,7 @@ class Event extends Component {
 									fullWidth
 									variant="callToAction"
 								>
-									{isDraft ? "Publish" : "Update"}
+									{isDraft ? "Publish" : isSubmitting ? "Updating..." : "Update"}
 								</Button>
 							</div>
 						</div>
