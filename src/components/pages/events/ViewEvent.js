@@ -347,7 +347,6 @@ class ViewEvent extends Component {
 						let price = "";
 						if (ticket_pricing) {
 							if (available > 0) {
-
 								price = `$${(ticket_pricing.price_in_cents / 100).toFixed(2)}`;
 							} else {
 								price = "Sold Out";
@@ -355,6 +354,10 @@ class ViewEvent extends Component {
 						}
 
 						//TODO check if they're available, if none are available change the layout
+						if (!price) {
+							return null;
+						}
+
 						return (
 							<Grid key={id} alignItems="center" container className={classes.ticketPricingContainer}>
 								<Grid item xs={4} sm={4} md={5} lg={4}>
