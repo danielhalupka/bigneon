@@ -1,15 +1,12 @@
 import React, { Component } from "react";
-import { CardElement, injectStripe, Elements } from "react-stripe-elements";
+import { CardElement, injectStripe } from "react-stripe-elements";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 
 import notification from "../../../stores/notifications";
 import {
 	Grid,
-	Typography,
-	RadioGroup,
-	FormControlLabel,
-	Radio
+	Typography
 } from "@material-ui/core";
 import Button from "../../elements/Button";
 import user from "../../../stores/user";
@@ -40,6 +37,12 @@ const styles = theme => ({
 	heading: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 1.2
+	},
+	paymentOptionContainer: {
+		display: "flex",
+		alignItems: "center",
+		marginBottom: theme.spacing.unit * 2,
+		cursor: "pointer"
 	}
 });
 
@@ -197,18 +200,12 @@ class CheckoutForm extends Component {
 	}
 
 	render() {
-		const { classes, allowedPaymentMethods } = this.props;
+		const { classes, allowedPaymentMethods, cryptoIcons } = this.props;
 		const { isSubmitting, paymentMethod } = this.state;
 
 		const iconSrc = {
 			Stripe: ["credit-card-gray.svg"],
-			Globee: [
-				"crypto/BTC.png",
-				"crypto/DCR.png",
-				"crypto/LNBT.png",
-				"crypto/LTC.png",
-				"crypto/XMR.png"
-			]
+			Globee: cryptoIcons
 		};
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
@@ -217,18 +214,20 @@ class CheckoutForm extends Component {
 					{this.header}
 					<br/>
 					{allowedPaymentMethods.map((method, index) => {
+						const onClick = () =>
+							this.onPaymentMethodChanged(
+								method.method + "|" + method.provider
+							);
 						return (
 							<div key={method.method + "|" + method.provider}>
-								<RadioButton
-									active={
-										paymentMethod === method.method + "|" + method.provider
-									}
-									onClick={() =>
-										this.onPaymentMethodChanged(
-											method.method + "|" + method.provider
-										)
-									}
-								>
+								<div onClick={onClick} className={classes.paymentOptionContainer}>
+									<RadioButton
+										active={
+											paymentMethod === method.method + "|" + method.provider
+										}
+										onClick={onClick}
+									/>
+
 									{iconSrc[method.provider].map(icon => {
 										return (
 											<img
@@ -236,10 +235,12 @@ class CheckoutForm extends Component {
 												height="30"
 												src={"/icons/" + icon}
 												key={icon}
+												style={{ marginRight: 2 }}
 											/>
 										);
 									})}
-								</RadioButton>
+								</div>
+
 								{this.renderPaymentSpecificDetails(
 									method.method + "|" + method.provider
 								)}
@@ -267,12 +268,23 @@ class CheckoutForm extends Component {
 	}
 }
 
+CheckoutForm.defaultProps = {
+	cryptoIcons: [
+		"crypto/BTC.png",
+		"crypto/DCR.png",
+		"crypto/LNBT.png",
+		"crypto/LTC.png",
+		"crypto/XMR.png"
+	]
+};
+
 CheckoutForm.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 	onMobileError: PropTypes.func,
 	classes: PropTypes.object.isRequired,
 	mobile: PropTypes.bool,
-	allowedPaymentMethods: PropTypes.array.isRequired
+	allowedPaymentMethods: PropTypes.array.isRequired,
+	cryptoIcons: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default withStyles(styles, { withTheme: true })(

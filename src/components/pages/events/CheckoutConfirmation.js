@@ -344,7 +344,14 @@ class CheckoutConfirmation extends Component {
 			return <Typography variant="subheading">Event not found.</Typography>;
 		}
 
-		const { promo_image_url } = event;
+		const { promo_image_url, organization_id } = event;
+
+		let cryptoIcons;
+		//FIXME remove hardcoded org ID.
+		//waiting on api to return these https://github.com/big-neon/bn-api/issues/1092
+		if(organization_id === "714e776e-9934-492a-b844-332fef381db8") {
+			cryptoIcons = ["crypto/LTC.png"];
+		}
 
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
@@ -365,6 +372,7 @@ class CheckoutConfirmation extends Component {
 					<div>
 						{cartSummary.orderTotalInCents > 0 ? (
 							<CheckoutForm
+								cryptoIcons={cryptoIcons}
 								onSubmit={this.onCheckout.bind(this)}
 								allowedPaymentMethods={cart.allowed_payment_methods}
 							/>

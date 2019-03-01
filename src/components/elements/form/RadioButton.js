@@ -41,16 +41,18 @@ const RadioButton = props => {
 	return (
 		<div className={classes.root} onClick={onClick}>
 			<div className={classes[active ? "activeCircle" : "circle"]}/>
-			<Typography className={classes[active ? "labelActive" : "label"]}>
-				{children}
-			</Typography>
+			{children ? (
+				<Typography className={classes[active ? "labelActive" : "label"]}>
+					{children}
+				</Typography>
+			) : null}
 		</div>
 	);
 };
 
 RadioButton.propTypes = {
 	active: PropTypes.bool.isRequired,
-	children: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
+	children: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 	classes: PropTypes.object.isRequired,
 	onClick: PropTypes.func.isRequired
 };
