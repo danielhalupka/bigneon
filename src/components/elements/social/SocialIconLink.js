@@ -108,7 +108,8 @@ SocialIconLink.propTypes = {
 		"soundcloud",
 		"snapchat",
 		"website",
-		"bandcamp"
+		"bandcamp",
+		"spotify"
 	]).isRequired,
 	userName: PropTypes.string,
 	size: PropTypes.number,

@@ -1,9 +1,17 @@
 import { observable, computed, action } from "mobx";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
 import user from "./user";
+
+//TODO remove this when timezone is passed in API
+//https://github.com/big-neon/bn-api/issues/1091
+const momentFromLocalizedTime = (localized_time) => {
+	const n = localized_time.indexOf("-");
+	const dateString = localized_time.substring(0, n != -1 ? n : localized_time.length);
+	return moment(dateString, "ddd,  D MMM YYYY hh:mm:ss");
+};
 
 //TODO add filtering options to be used in display components
 
@@ -30,10 +38,10 @@ class Tickets {
 				data.forEach(ticketGroup => {
 					const event = ticketGroup[0];
 					const tickets = ticketGroup[1];
+					const { localized_times } = event;
 
-					event.formattedDate = moment
-						.utc(event.event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-						.format("ddd MM/DD/YY, h:mm A z");
+					event.eventDate = momentFromLocalizedTime(localized_times.event_start);
+					event.formattedDate = event.eventDate.format("ddd MM/DD/YY, h:mm A");
 
 					ticketGroups.push({ event, tickets });
 				});
@@ -71,12 +79,9 @@ class Tickets {
 
 		let upcomingCount = 0;
 		this.groups.forEach(({ event }) => {
-			const { event_start } = event;
-			const eventStartDate = moment.utc(
-				event_start,
-				moment.HTML5_FMT.DATETIME_LOCAL_MS
-			);
-			const timeDifference = moment.utc().diff(eventStartDate);
+			const { localized_times } = event;
+			const eventStartDate = momentFromLocalizedTime(localized_times.event_start);
+			const timeDifference = moment().diff(eventStartDate);
 			if (timeDifference < 0) {
 				upcomingCount++;
 			}

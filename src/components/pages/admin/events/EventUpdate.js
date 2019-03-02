@@ -19,6 +19,8 @@ import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
 import eventUpdateStore from "../../../../stores/eventUpdate";
 import user from "../../../../stores/user";
 import ImportPreviousEventDialog from "./ImportPreviousEventDialog";
+import Dialog from "../../../elements/Dialog";
+import Loader from "../../../elements/loaders/Loader";
 
 const styles = theme => ({
 	paper: {
@@ -181,10 +183,11 @@ class Event extends Component {
 		this.hasSubmitted = true;
 
 		if (!this.validateFields()) {
-			return notifications.show({
+			notifications.show({
 				variant: "warning",
 				message: "There are invalid event details."
 			});
+			return false;
 		}
 
 		const saveResponse = await eventUpdateStore.saveEventDetails(this.updateUrl);
@@ -197,11 +200,11 @@ class Event extends Component {
 	}
 
 	async onSaveDraft() {
-		this.setState({ isSubmitting: true });
+		this.setState({ isSubmitting: true, isSavingDraft: true });
 
 		const saveResponse = await this.saveEventDetails();
 		if (!saveResponse) {
-			return this.setState({ isSubmitting: false });
+			return this.setState({ isSubmitting: false, isSavingDraft: false });
 		}
 
 		const { result, error } = saveResponse;
@@ -267,6 +270,7 @@ class Event extends Component {
 	}
 
 	publishEvent(id) {
+		this.setState({ isPublishing: true });
 		Bigneon()
 			.events.publish({ id })
 			.then(response => {
@@ -276,8 +280,11 @@ class Event extends Component {
 					message: "Event published."
 				});
 				eventUpdateStore.loadDetails(id);
+
+				this.setState({ isPublishing: false });
 			})
 			.catch(error => {
+				this.setState({ isPublishing: false });
 				console.error(error);
 				this.setState({ isSubmitting: false });
 				if (error.response && error.response.status === 422) {
@@ -446,6 +453,30 @@ class Event extends Component {
 		);
 	}
 
+	renderLoader() {
+		const { isSubmitting, isSavingDraft, isPublishing } = this.state;
+		const { id } = eventUpdateStore;
+
+		let loadingText = "";
+		if (id) {
+			if (isSavingDraft) {
+				loadingText = "Saving draft...";
+			} else if (isPublishing) {
+				loadingText = "Publishing event...";
+			} else {
+				loadingText = "Updating event...";
+			}
+		} else {
+			loadingText = "Creating new event...";
+		}
+
+		return (
+			<Dialog open={isSubmitting}>
+				<Loader style={{ marginTop: 20 }}>{loadingText}</Loader>
+			</Dialog>
+		);
+	}
+
 	render() {
 		const { errors, isSubmitting, ticketTimesDirty, showImportPreviousEventDialog } = this.state;
 
@@ -460,6 +491,7 @@ class Event extends Component {
 
 		return (
 			<div>
+				{this.renderLoader()}
 				{user.currentOrganizationId ? (
 					<ImportPreviousEventDialog
 						organizationId={user.currentOrganizationId}

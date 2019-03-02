@@ -8,7 +8,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Hidden from "@material-ui/core/Hidden";
 import Collapse from "@material-ui/core/Collapse";
-import moment from "moment";
 
 import Card from "../../elements/Card";
 import StyledLink from "../../elements/StyledLink";
@@ -226,7 +225,7 @@ class EventTicketsCard extends Component {
 						price_in_cents,
 						order_id
 					} = ticket;
-					
+
 					const orderNumber = order_id.slice(-8); //TODO eventually this will also come in the API
 
 					let disabled = false;
@@ -373,7 +372,7 @@ class EventTicketsCard extends Component {
 			top_line_info,
 			venue,
 			artists,
-			event_start
+			eventDate
 		} = event;
 
 		//TODO show artists when added to api
@@ -390,7 +389,7 @@ class EventTicketsCard extends Component {
 									"/images/event-placeholder.png"})`
 							}}
 						>
-							<DateFlag date={moment(event_start)}/>
+							<DateFlag date={eventDate}/>
 						</div>
 					</Hidden>
 
