@@ -217,9 +217,8 @@ class CheckoutConfirmation extends Component {
 				method: method
 			})
 			.then(response => {
-
 				const { data } = response;
-				if (data.checkout_url) {
+				if (data.status === "PendingPayment" && data.checkout_url) {
 					window.location = data.checkout_url;
 					return;
 				}
