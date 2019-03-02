@@ -218,7 +218,7 @@ class CheckoutConfirmation extends Component {
 			})
 			.then(response => {
 				const { data } = response;
-				if (data.status === "PendingPayment" && data.checkout_url) {
+				if (data.status !== "Paid" && data.checkout_url) {
 					window.location = data.checkout_url;
 					return;
 				}
@@ -348,7 +348,7 @@ class CheckoutConfirmation extends Component {
 		let cryptoIcons;
 		//FIXME remove hardcoded org ID.
 		//waiting on api to return these https://github.com/big-neon/bn-api/issues/1092
-		if(organization_id === "714e776e-9934-492a-b844-332fef381db8") {
+		if (organization_id === "714e776e-9934-492a-b844-332fef381db8") {
 			cryptoIcons = ["crypto/LTC.png"];
 		}
 
