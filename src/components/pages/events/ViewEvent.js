@@ -320,9 +320,9 @@ class ViewEvent extends Component {
 				<div className={classes.eventSubCardRow3}>
 					<div className={classes.textAndIconRow}>
 						<img className={classes.eventSubCardIcon} src="/icons/location-black.svg"/>
-						<Link to={`/venues/${venue.id}`}>
-							<Typography className={classes.eventSubCardSubHeading}>{venue.name}</Typography>
-						</Link>
+						{/*<Link to={`/venues/${venue.id}`}>*/}
+						<Typography className={classes.eventSubCardSubHeading}>{venue.name}</Typography>
+						{/*</Link>*/}
 					</div>
 
 					<Typography className={classes.eventSubCardSubText}>

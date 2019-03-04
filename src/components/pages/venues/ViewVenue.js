@@ -91,7 +91,7 @@ class ViewVenue extends Component {
 		const { events, venue } = this.state;
 
 		if (events === null) {
-			return <Typography variant="subheading">Finding events...</Typography>;
+			return <Loader>Finding events...</Loader>;
 		}
 		const { timezone } = venue;
 
