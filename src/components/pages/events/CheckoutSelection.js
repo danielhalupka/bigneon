@@ -152,19 +152,16 @@ class CheckoutSelection extends Component {
 			selectedEvent.applyRedemptionCode(code, error => {
 				this.setState({ isSubmittingPromo: false });
 
-				if (error.response.status === 404) {
-					notifications.show({
-						message: "Promo code does not exist",
-						variant: "error"
-					});
-				} else {
-					const formattedError = notifications.showFromErrorResponse({
-						error,
-						defaultMessage: "Failed to apply promo code."
-					});
+				let defaultMessage = "Failed to apply promo code.";
 
-					console.error(error);
+				if (error.response.status === 404) {
+					defaultMessage = "Promo code does not exist.";
 				}
+
+				notifications.showFromErrorResponse({
+					defaultMessage,
+					error
+				});
 			});
 		});
 	}
