@@ -160,8 +160,7 @@ class CheckoutSelection extends Component {
 				} else {
 					const formattedError = notifications.showFromErrorResponse({
 						error,
-						defaultMessage: "Failed to apply promo code.",
-						variant: "error"
+						defaultMessage: "Failed to apply promo code."
 					});
 
 					console.error(error);

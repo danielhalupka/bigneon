@@ -2,6 +2,7 @@ import { Component } from "react";
 import { withRouter } from "react-router-dom";
 import layout from "../../stores/layout";
 import analytics from "../../helpers/analytics";
+import errorReporting from "../../helpers/errorReporting";
 
 const showSideMenuRoutes = ["/admin", "/my-events", "/orders", "/account"];
 const showStudioLogoRoutes = ["/admin", "/box-office"];
@@ -21,7 +22,6 @@ class OnRouteChange extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-
 		//Every time a route is changed
 		if (this.props.location !== prevProps.location) {
 			analytics.page();
@@ -30,6 +30,8 @@ class OnRouteChange extends Component {
 			window.scrollTo(0, 0);
 
 			this.setLayout();
+
+			errorReporting.addBreadcrumb(`Navigated to: ${window.location.pathname}`);
 		}
 	}
 

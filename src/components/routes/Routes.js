@@ -8,6 +8,7 @@ import {
 import { observer } from "mobx-react";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
 
+import errorReporting from "../../helpers/errorReporting";
 import CustomPickerUtils from "../../helpers/customPickerUtils";
 import OnRouteChange from "./OnRouteChange";
 import withRoot from "./withRoot";
@@ -70,6 +71,8 @@ import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import ReceiveTransfer from "../pages/myevents/ReceiveTransfer";
 import GuestList from "../pages/boxoffice/guests/Index";
 
+errorReporting.init();
+
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
 	return (
@@ -119,6 +122,11 @@ class Routes extends Component {
 		if (this.interval) {
 			clearInterval(this.interval);
 		}
+	}
+
+	componentDidCatch(error, errorInfo) {
+		//Capturing all global react crashes
+		errorReporting.captureCaughtComponentError(error, errorInfo);
 	}
 
 	render() {

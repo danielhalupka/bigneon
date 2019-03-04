@@ -1,9 +1,11 @@
 import { observable, computed, action } from "mobx";
+
 import decodeJWT from "../helpers/decodeJWT";
 import notifications from "./notifications";
 import Bigneon from "../helpers/bigneon";
 import cart from "./cart";
 import orders from "./orders";
+import errorReporting from "../helpers/errorReporting";
 
 class User {
 	@observable
@@ -119,6 +121,8 @@ class User {
 
 						cart.refreshCart();
 						orders.refreshOrders();
+
+						errorReporting.configureScope({ userId: id, roles, organization_roles, organization_scopes });
 					})
 					.catch(error => {
 						console.error(error);
@@ -221,6 +225,8 @@ class User {
 			//Set the active roles and scopes here as we'll know what roles this user has for this org
 			this.globalRoles = this.userRoles.concat(this.organizationRoles[id]);
 			this.globalScopes = this.userScopes.concat(this.organizationScopes[id]);
+
+			errorReporting.addBreadcrumb(`Set current org: ${id}`);
 		}
 	}
 
@@ -276,6 +282,8 @@ class User {
 			});
 		}
 
+		errorReporting.addBreadcrumb("User logged out.");
+		
 		cart.emptyCart();
 	}
 

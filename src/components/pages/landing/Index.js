@@ -1,13 +1,10 @@
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Results from "./cards/Results";
 import Hero from "./Hero";
 import eventResults from "../../../stores/eventResults";
 import notifications from "../../../stores/notifications";
 import Meta from "./Meta";
-
-const styles = theme => ({});
 
 class Home extends Component {
 	constructor(props) {
@@ -31,8 +28,6 @@ class Home extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
-
 		return (
 			<div>
 				<Meta/>
@@ -48,4 +43,4 @@ class Home extends Component {
 	}
 }
 
-export default withStyles(styles)(Home);
+export default Home;
