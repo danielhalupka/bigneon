@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import { withStyles } from "@material-ui/core";
+import { Typography, withStyles } from "@material-ui/core";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 
@@ -106,19 +106,10 @@ class PasswordReset extends Component {
 				}
 			})
 			.catch(error => {
-				let message = "Password reset failed.";
-
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
 				this.setState({ isSubmitting: false });
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Password reset failed",
+					error
 				});
 			});
 	}
@@ -127,7 +118,8 @@ class PasswordReset extends Component {
 		const { password, confirmPassword, isSubmitting, errors } = this.state;
 
 		return (
-			<Container>
+			<Container {...this.props}>
+				<Typography variant="headline">Enter new password</Typography>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
 						<InputGroup
@@ -154,7 +146,7 @@ class PasswordReset extends Component {
 						<Button
 							disabled={isSubmitting}
 							type="submit"
-							style={{ marginRight: 10 }}
+							style={{ width: "100%" }}
 							variant="callToAction"
 						>
 							{isSubmitting ? "Resetting..." : "Reset"}

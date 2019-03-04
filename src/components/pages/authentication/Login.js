@@ -18,7 +18,7 @@ class Login extends Component {
 
 	render() {
 		return (
-			<Container {...this.props} type="login" heading="Login to your account">
+			<Container {...this.props} type="login">
 				<Meta type="login"/>
 				<Typography variant="headline">Login to your account</Typography>
 				<Link to="/sign-up">
