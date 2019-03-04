@@ -201,7 +201,7 @@ const TicketDetails = observer(props => {
 						error={errors.name}
 						value={name}
 						name="name"
-						label="Ticket name"
+						label="Ticket name *"
 						placeholder="General Admission"
 						type="text"
 						onChange={e => {
@@ -217,7 +217,7 @@ const TicketDetails = observer(props => {
 						error={errors.capacity}
 						value={capacity || ""}
 						name="capacity"
-						label="Qty"
+						label="Qty *"
 						placeholder="1"
 						type="number"
 						onChange={e => {
@@ -238,7 +238,7 @@ const TicketDetails = observer(props => {
 						error={errors.priceForDisplay}
 						value={priceForDisplay}
 						name="value"
-						label="Price"
+						label="Price *"
 						placeholder=""
 						type="number"
 						onChange={e => {
@@ -276,7 +276,7 @@ const TicketDetails = observer(props => {
 							error={errors.startDate}
 							value={startDate}
 							name="startDate.date"
-							label="Sale start date"
+							label="Sale start date *"
 							type="date"
 							onChange={startDate => updateTicketType(index, { startDate })}
 							onBlur={validateFields}
@@ -289,7 +289,7 @@ const TicketDetails = observer(props => {
 							error={errors.startTime}
 							value={startTime}
 							name="startTime"
-							label="Sale start time"
+							label="Sale start time *"
 							type="time"
 							onChange={startTime => updateTicketType(index, { startTime })}
 							onBlur={validateFields}
@@ -312,7 +312,7 @@ const TicketDetails = observer(props => {
 								{ value: "custom", label: "Custom" }
 							]}
 							name={"close-times"}
-							label={"Ticket sale end time"}
+							label={"Ticket sale end time *"}
 							onChange={e => {
 								updateTicketType(index, { saleEndTimeOption: e.target.value });
 							}}
@@ -328,7 +328,7 @@ const TicketDetails = observer(props => {
 								value={useEndDate}
 								name="endDate"
 								type="date"
-								label="Sale end date"
+								label="Sale end date *"
 								onChange={endDate => {
 									updateTicketType(index, { endDate });
 								}}
@@ -343,7 +343,7 @@ const TicketDetails = observer(props => {
 								value={useEndTime}
 								name="endTime"
 								type="time"
-								label="Sale end time"
+								label="Sale end time *"
 								onChange={endTime => {
 									updateTicketType(index, { endTime });
 								}}
@@ -437,7 +437,7 @@ const TicketDetails = observer(props => {
 								{ value: "Hide", label: "Hide" }
 							]}
 							name={"sold-out-behavior"}
-							label={"When tickets are sold out"}
+							label={"When tickets are sold out *"}
 							onChange={e => {
 								updateTicketType(index, { soldOutBehavior: e.target.value });
 							}}

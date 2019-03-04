@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 import moment from "moment-timezone";
 import { observer } from "mobx-react";
+import FormatInputLabel from "../../elements/form/FormatInputLabel";
 
 const placeHolders = {
 	time: "hh:mm am/pm",
@@ -176,7 +177,7 @@ class DateTimePickerGroup extends Component {
 			timeIncrement = 30,
 			disabled
 		} = this.props;
-		let { label } = this.props;
+		const { label } = this.props;
 
 		const additionalProps = {};
 		let inputProps = {};
@@ -199,8 +200,9 @@ class DateTimePickerGroup extends Component {
 
 		const { anchorEl, timeFormatted, isTimeValid, displayTimezone } = this.state;
 
+		let timezoneLabel;
 		if (displayTimezone) {
-			label = `${label} (${displayTimezone})`;
+			timezoneLabel = ` (${displayTimezone})`;
 		}
 
 		return (
@@ -215,7 +217,7 @@ class DateTimePickerGroup extends Component {
 							style={{ width: "100%" }}
 							id={name}
 							error={!!error}
-							label={label}
+							label={<span><FormatInputLabel>{label}</FormatInputLabel>{timezoneLabel}</span>}
 							value={value}
 							onChange={v => this.onDateChange(v)}
 							onBlur={onBlur}
@@ -242,7 +244,7 @@ class DateTimePickerGroup extends Component {
 							style={{ width: "100%" }}
 							id={name}
 							name={name}
-							label={label}
+							label={<span><FormatInputLabel>{label}</FormatInputLabel>{timezoneLabel}</span>}
 							error={!isTimeValid || !!error}
 							onClick={!disabled ? event => this.onClick(event) : null}
 							value={timeFormatted}

@@ -308,7 +308,7 @@ class Details extends Component {
 			venues.forEach(venue => {
 				venueOptions.push({ value: venue.id, label: venue.name });
 			});
-			label = "Venue";
+			label = "Venue *";
 		} else {
 			label = "Loading venues...";
 		}
@@ -379,7 +379,7 @@ class Details extends Component {
 				items={ageLimits}
 				error={errors.ageLimit}
 				name={"age-limit"}
-				label={"Age Limit"}
+				label={"Age Limit *"}
 				onChange={e => {
 					const ageLimit = e.target.value;
 					this.changeDetails({ ageLimit });
@@ -405,7 +405,7 @@ class Details extends Component {
 				items={eventTypes}
 				error={errors.eventType}
 				name={"event-types"}
-				label={"Event Type"}
+				label={"Event Type *"}
 				onChange={e => {
 					const eventType = e.target.value;
 					this.changeDetails({ eventType });
@@ -463,7 +463,7 @@ class Details extends Component {
 						error={errors.name}
 						value={name}
 						name="eventName"
-						label="Event name"
+						label="Event name *"
 						placeholder="eg. Child's play"
 						type="text"
 						onChange={e => this.changeDetails({ name: e.target.value })}
@@ -563,7 +563,7 @@ class Details extends Component {
 						error={errors.eventDate}
 						value={eventDate}
 						name="eventDate"
-						label="Event date"
+						label="Event date *"
 						onChange={newEventDate => {
 							newEventDate.set({
 								hour: eventDate.get("hour"),
@@ -591,7 +591,7 @@ class Details extends Component {
 						error={errors.eventDate}
 						value={eventDate}
 						name="show-time"
-						label="Show time"
+						label="Show time *"
 						onChange={eventTime => {
 							eventDate.set({
 								hour: eventTime.get("hour"),
@@ -612,7 +612,7 @@ class Details extends Component {
 						items={Details.doorHoursOptions}
 						error={errors.doorTime}
 						name="doorTimeHours"
-						label="Door time"
+						label="Door time *"
 						styleClassName="formControlNoMargin"
 						onChange={this.handleDoorTimeChange}
 					/>
@@ -624,7 +624,7 @@ class Details extends Component {
 						error={errors.endTime}
 						value={displayEndTime}
 						name="endTime"
-						label="Event end date"
+						label="Event end date *"
 						onChange={newEndDate => {
 							const updatedEndTime = newEndDate;
 
@@ -659,7 +659,7 @@ class Details extends Component {
 						error={errors.endTime}
 						value={displayEndTime}
 						name="endTime"
-						label="Event end time"
+						label="Event end time *"
 						onChange={newEndTime => {
 							let updatedEndTime = moment();
 

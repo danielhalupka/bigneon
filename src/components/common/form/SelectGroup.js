@@ -6,6 +6,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
+import FormatInputLabel from "../../elements/form/FormatInputLabel";
 
 const styles = theme => ({
 	formControl: {
@@ -55,7 +56,7 @@ const SelectGroup = props => {
 			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
-			{label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
+			{label ? <InputLabel htmlFor={name}><FormatInputLabel>{label}</FormatInputLabel></InputLabel> : null}
 			<Select
 				disabled={disabled}
 				style={selectStyle}
