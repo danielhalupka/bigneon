@@ -5,6 +5,7 @@ import Divider from "@material-ui/core/Divider";
 import { Typography } from "@material-ui/core";
 
 import MenuItem from "../../../elements/menu/MenuItem";
+import MobileSwitchOrgMenuItem from "./MobileSwitchOrgMenuItem";
 
 const styles = theme => {
 	return {};
@@ -69,7 +70,7 @@ const AdminList = props => {
 				Settings
 			</MenuItem>
 
-			<Divider style={{ marginTop: 30, marginBottom: 30 }}/>
+			<Divider style={{ marginTop: 10, marginBottom: 10 }}/>
 
 			<Typography
 				style={{
@@ -95,6 +96,8 @@ const AdminList = props => {
 			>
 				Venues
 			</MenuItem>
+
+			<MobileSwitchOrgMenuItem/>
 		</div>
 	);
 };

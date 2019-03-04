@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
 import MenuItem from "../../../elements/menu/MenuItem";
+import MobileSwitchOrgMenuItem from "./MobileSwitchOrgMenuItem";
 
 const styles = theme => {
 	return {};
@@ -55,6 +56,8 @@ const OrgMemberList = props => {
 			>
 				Artists
 			</MenuItem>
+
+			<MobileSwitchOrgMenuItem/>
 		</div>
 	);
 };

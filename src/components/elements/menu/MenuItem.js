@@ -32,7 +32,8 @@ const styles = theme => {
 		icon: { width: 28, height: 28 },
 		text: { paddingTop: 3, textTransform: "capitalize" },
 		textSmall: {
-			fontSize: theme.typography.fontSize * 0.7
+			fontSize: theme.typography.fontSize * 0.7,
+			textAlign: "center"
 		},
 		expandIcon: { color: theme.palette.grey[500], width: 22, height: 22 }
 	};

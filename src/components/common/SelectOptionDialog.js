@@ -27,6 +27,7 @@ class SelectOptionDialog extends React.Component {
 			classes,
 			onClose,
 			onSelect,
+			selectedKey,
 			...other
 		} = this.props;
 
@@ -39,7 +40,7 @@ class SelectOptionDialog extends React.Component {
 				<div>
 					<List>
 						{Object.keys(items).map(key => (
-							<ListItem button onClick={() => onSelect(key)} key={key}>
+							<ListItem selected={selectedKey === key} button onClick={() => onSelect(key)} key={key}>
 								{iconComponent ? (
 									<ListItemAvatar>
 										<Avatar className={classes.avatar}>{iconComponent}</Avatar>
@@ -61,7 +62,8 @@ SelectOptionDialog.propTypes = {
 	classes: PropTypes.object.isRequired,
 	onClose: PropTypes.func.isRequired,
 	items: PropTypes.object.isRequired,
-	onSelect: PropTypes.func.isRequired
+	onSelect: PropTypes.func.isRequired,
+	selectedKey: PropTypes.string
 };
 
 export default withStyles(styles)(SelectOptionDialog);

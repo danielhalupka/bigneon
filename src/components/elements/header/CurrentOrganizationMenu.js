@@ -10,8 +10,6 @@ import Hidden from "@material-ui/core/Hidden";
 import user from "../../../stores/user";
 import { primaryHex } from "../../styles/theme";
 import { toolBarHeight } from "../../styles/theme";
-import Bigneon from "../../../helpers/bigneon";
-import notifications from "../../../stores/notifications";
 
 const styles = theme => ({
 	root: {
