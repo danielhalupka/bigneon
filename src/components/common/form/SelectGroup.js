@@ -56,7 +56,7 @@ const SelectGroup = props => {
 			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
-			{label ? <InputLabel htmlFor={name}><FormatInputLabel>{label}</FormatInputLabel></InputLabel> : null}
+			{label ? <InputLabel shrink htmlFor={name}><FormatInputLabel>{label}</FormatInputLabel></InputLabel> : null}
 			<Select
 				disabled={disabled}
 				style={selectStyle}

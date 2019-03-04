@@ -120,6 +120,9 @@ const InputGroup = props => {
 					...InputProps,
 					classes: inputPropClasses
 				}}
+				InputLabelProps={{
+					shrink: true
+				}}
 				placeholder={placeholder}
 				multiline={multiline}
 				autoFocus={autoFocus}
