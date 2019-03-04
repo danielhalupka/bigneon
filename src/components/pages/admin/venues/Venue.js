@@ -195,15 +195,9 @@ class Venue extends Component {
 		}
 
 		const {
-			name,
-			address,
-			city,
-			state,
-			country,
-			postal_code,
 			organizationId,
 			venueId,
-			timezone
+			regionId
 		} = this.state;
 		const phone = removePhoneFormatting(this.state.phone);
 
@@ -230,6 +224,10 @@ class Venue extends Component {
 		// if (!address) {
 		// 	errors.address = "Missing address.";
 		// }
+
+		if (!regionId) {
+			errors.regionId = "Select a region.";
+		}
 
 		if (!venueId) {
 			if (!organizationId) {
