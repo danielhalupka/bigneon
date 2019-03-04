@@ -25,7 +25,16 @@ class Login extends Component {
 					<Button variant="text">New here? Create a free account.</Button>
 				</Link>
 				<LoginForm
-					onSuccess={(href = "/") => this.props.history.push(href)}
+					onSuccess={(href) => {
+						let redirectTo = "/";
+						if (href) {
+							redirectTo = href;
+						} else if (user.canViewStudio) {
+							redirectTo = "/admin/events";
+						}
+
+						this.props.history.push(redirectTo);
+					}}
 				/>
 			</Container>
 		);
