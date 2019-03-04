@@ -32,7 +32,6 @@ class MobileSwitchOrgMenuItem extends React.Component {
 					onClick={() => this.setState({ open: true })}
 					shortLayout
 					iconName="account"
-					to="/admin/events"
 				>
 					Switch org
 				</MenuItem>

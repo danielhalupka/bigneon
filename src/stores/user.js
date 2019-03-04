@@ -220,7 +220,7 @@ class User {
 
 		//If this is being called by the user selecting their role, we need to reload the page so the content is related to that org
 		if (reloadPage) {
-			document.location.reload(true);
+			window.location.href = "/admin/events";
 		} else {
 			//Set the active roles and scopes here as we'll know what roles this user has for this org
 			this.globalRoles = this.userRoles.concat(this.organizationRoles[id]);
