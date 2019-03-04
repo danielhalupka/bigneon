@@ -20,7 +20,7 @@ class Notification {
 		this.message = message;
 		this.variant = variant;
 
-		errorReporting.captureException(error, message);
+		errorReporting.captureApiErrorResponse(error, message);
 
 		return formattedError;
 	}
@@ -30,8 +30,8 @@ class Notification {
 		this.message = message;
 		this.variant = variant;
 
-		if (variant === "error" || variant === "warning") {
-			errorReporting.captureMessage(message, variant);
+		if (variant === "error") {
+			errorReporting.captureMessage(message);
 		}
 	}
 

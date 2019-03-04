@@ -52,6 +52,28 @@ const captureException = (error, message = null) => {
 	});
 };
 
+const captureApiErrorResponse = (error, message) => {
+	if (!dsn) {
+		return;
+	}
+
+	Sentry.withScope(scope => {
+		let titleMessage = message;
+		scope.setExtra("User message", message);
+
+		if (error && error.response) {
+			const { status, statusText, data } = error.response;
+			scope.setExtra("response.status", status);
+			scope.setExtra("response.statusText", statusText);
+			scope.setExtra("response.data", data);
+
+			titleMessage = `API response failed with ${status} - ${titleMessage}`;
+		}
+
+		Sentry.captureMessage(titleMessage, "error");
+	});
+};
+
 const captureMessage = (message, level = "error") => {
 	if (!dsn) {
 		return;
@@ -72,4 +94,4 @@ const addBreadcrumb = (message) => {
 	});
 };
 
-export default { init, configureScope, captureCaughtComponentError, captureException, captureMessage, addBreadcrumb };
+export default { init, configureScope, captureCaughtComponentError, captureException, captureApiErrorResponse, captureMessage, addBreadcrumb };
