@@ -213,7 +213,7 @@ class CheckoutForm extends Component {
 				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={12}>
 					{this.header}
 					<br/>
-					{allowedPaymentMethods.map((method, index) => {
+					{allowedPaymentMethods ? allowedPaymentMethods.map((method, index) => {
 						const onClick = () =>
 							this.onPaymentMethodChanged(
 								method.method + "|" + method.provider
@@ -246,7 +246,7 @@ class CheckoutForm extends Component {
 								)}
 							</div>
 						);
-					})}
+					}) : null}
 				</Grid>
 
 				<Grid item xs={12} sm={12} lg={12}>
