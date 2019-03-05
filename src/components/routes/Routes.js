@@ -106,7 +106,7 @@ class Routes extends Component {
 			const script = document.createElement("script");
 
 			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-			document.head.append(script);
+			document.head.appendChild(script);
 		}
 
 		//Check the user details every now and then so we know when a token has expired
