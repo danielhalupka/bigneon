@@ -167,8 +167,8 @@ const VerticalBarChart = props => {
 				</div>
 				<div className={classes.chartFooter}>
 					<div className={classes.xLabels}>
-						{xLabels.map(label => (
-							<Typography key={label} className={classes.xLabelText}>
+						{xLabels.map((label, index) => (
+							<Typography key={index} className={classes.xLabelText}>
 								{label}
 							</Typography>
 						))}
