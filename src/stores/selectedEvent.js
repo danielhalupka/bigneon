@@ -54,7 +54,15 @@ class SelectedEvent {
 		const query = { id };
 		
 		const url = new URL(window.location.href);
-		const private_access_code = url.searchParams.get("private_access_code") || this.private_access_code;
+		let private_access_code;
+
+		if (url && url.searchParams.get("private_access_code")) {
+			private_access_code = url.searchParams.get("private_access_code");
+		} else {
+			private_access_code = this.private_access_code;
+		}
+
+		//const private_access_code = url ? url.searchParams.get("private_access_code") : this.private_access_code;
 		if (private_access_code) {
 			query.private_access_code = private_access_code;
 			this.private_access_code = private_access_code;
@@ -132,6 +140,7 @@ class SelectedEvent {
 
 	retryRefreshWithCode(code) {
 		this.private_access_code = code;
+		changeUrlParam("private_access_code", "");
 
 		this.refreshResult(this.id, (error) => {
 			console.log("Code attempt failed");
