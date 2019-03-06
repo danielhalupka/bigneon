@@ -1,4 +1,3 @@
-//TODO Required API key in .env REACT_APP_GOOGLE_PLACES_API_KEY
 //Enable: Geolocation API, Maps JavaScript API, Places API for Web, Geocoding API
 import React from "react";
 import PropTypes from "prop-types";
@@ -14,6 +13,7 @@ import AddressBlock from "../../common/form/AddressBlock";
 import { primaryHex } from "../../styles/theme";
 import Button from "../../elements/Button";
 import Loader from "../../elements/loaders/Loader";
+import loadGoogleMaps from "../../../helpers/loadGoogleMaps";
 
 const styles = theme => {
 	return {
@@ -29,8 +29,33 @@ class LocationInputGroup extends React.Component {
 		super(props);
 		this.state = {
 			showGoogle: !!process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
-			overrideManualEntry: false
+			overrideManualEntry: false,
+			scriptLoaded: false
 		};
+	}
+
+	componentDidMount() {
+		loadGoogleMaps();
+
+		this.updateAPIScriptLoaded();
+		this.checkForLoadedScriptTimeout = setTimeout(this.updateAPIScriptLoaded.bind(this), 500);
+	}
+
+	componentWillUnmount() {
+		this.stopCheckingAPIScriptLoaded();
+	}
+
+	stopCheckingAPIScriptLoaded() {
+		if (this.checkForLoadedScriptTimeout) {
+			clearTimeout(this.checkForLoadedScriptTimeout);
+		}
+	}
+
+	updateAPIScriptLoaded() {
+		if (window.google) {
+			this.setState({ scriptLoaded: true });
+			this.stopCheckingAPIScriptLoaded();
+		}
 	}
 
 	onSelect(address, addressBlock) {
@@ -87,11 +112,12 @@ class LocationInputGroup extends React.Component {
 			label,
 			classes
 		} = this.props;
-		const { showGoogle } = this.state;
+		const { showGoogle, scriptLoaded } = this.state;
 
-		if (window.google === undefined || !showGoogle) {
+		if (!scriptLoaded || !showGoogle) {
 			return;
 		}
+
 		return (
 			<div>
 				<PlacesAutocomplete

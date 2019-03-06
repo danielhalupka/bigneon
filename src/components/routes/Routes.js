@@ -71,8 +71,6 @@ import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import ReceiveTransfer from "../pages/myevents/ReceiveTransfer";
 import GuestList from "../pages/boxoffice/guests/Index";
 
-errorReporting.init();
-
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
 	return (
@@ -94,21 +92,6 @@ const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 @observer
 class Routes extends Component {
 	componentDidMount() {
-		//Load the google API here because we need the a .env var
-		if (!process.env.REACT_APP_GOOGLE_PLACES_API_KEY) {
-			if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-				console.warn(
-					"Please add a REACT_APP_GOOGLE_PLACES_API_KEY value to use google places"
-				);
-			}
-		} else {
-			const apiKey = process.env.REACT_APP_GOOGLE_PLACES_API_KEY;
-			const script = document.createElement("script");
-
-			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-			document.head.appendChild(script);
-		}
-
 		//Check the user details every now and then so we know when a token has expired
 		this.interval = setInterval(() => {
 			user.refreshUser();

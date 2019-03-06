@@ -102,18 +102,9 @@ class Venue extends Component {
 					console.error(error);
 					this.setState({ isSubmitting: false });
 
-					let message = "Loading venue details failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
-						variant: "error"
+					notifications.showFromErrorResponse({
+						defaultMessage: "Loading venue details failed.",
+						error
 					});
 				});
 		}
@@ -126,18 +117,9 @@ class Venue extends Component {
 			})
 			.catch(error => {
 				console.error(error);
-				let message = "Loading regions failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading regions failed.",
+					error
 				});
 			});
 		Bigneon()
@@ -148,18 +130,10 @@ class Venue extends Component {
 			})
 			.catch(error => {
 				console.error(error);
-				let message = "Loading organizations failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
 
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading organizations failed.",
+					error
 				});
 			});
 	}
@@ -451,6 +425,7 @@ class Venue extends Component {
 			longitude = null,
 			showManualEntry
 		} = this.state;
+
 		const addressBlock = {
 			address,
 			city,

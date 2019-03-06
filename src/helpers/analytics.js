@@ -109,7 +109,9 @@ const segment = {
 
 		const analytics = (this.segment = []);
 
-		if (analytics.initialize) return;
+		if (analytics.initialize) {
+			return;
+		}
 
 		// A list of the methods in Analytics.js to stub.
 		analytics.methods = [
@@ -227,7 +229,12 @@ const segment = {
 
 const providers = [facebook, ga, segment];
 
-const init = providerOptions => {
+const init = () => {
+	const providerOptions = {
+		ga: process.env.REACT_APP_GOOGLE_ANALYTICS_KEY,
+		segment: process.env.REACT_APP_SEGMENT_KEY
+	};
+
 	Object.keys(providerOptions).forEach(k => {
 		const opts = providerOptions[k];
 		addTrackingKey(k, opts);
