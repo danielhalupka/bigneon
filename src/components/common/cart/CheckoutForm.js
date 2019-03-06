@@ -253,7 +253,7 @@ class CheckoutForm extends Component {
 					<div className={classes.buttonsContainer}>
 						<Button
 							type="submit"
-							disabled={isSubmitting}
+							disabled={isSubmitting || !paymentMethod}
 							onClick={this.onSubmit.bind(this)}
 							size="large"
 							variant="callToAction"
