@@ -105,7 +105,7 @@ class CheckoutDialog extends React.Component {
 	async onSubmit(e) {
 		e.preventDefault();
 
-		const { firstName, lastName, email, phone, note } = this.state;
+		const { firstName, lastName, email, phone, note, paymentOption } = this.state;
 
 		this.submitAttempted = true;
 
@@ -115,7 +115,14 @@ class CheckoutDialog extends React.Component {
 
 		this.setState({ isSubmitting: true });
 
-		const { error, result } = await onCheckout({ firstName, lastName, phone, email, note });
+		let external_payment_type;
+		if (paymentOption === "credit") {
+			external_payment_type = "CreditCard";
+		} else if (paymentOption === "cash") {
+			external_payment_type = "Cash";
+		}
+
+		const { error, result } = await onCheckout({ firstName, lastName, phone, email, note, external_payment_type });
 
 		if (error) {
 			notifications.showFromErrorResponse({

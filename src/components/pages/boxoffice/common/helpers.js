@@ -15,13 +15,14 @@ export const onAddItemsToCart = async (items) => {
 	});
 };
 
-export const onCheckout = async ({ firstName, lastName, phone, email, note }) => {
+export const onCheckout = async ({ firstName, lastName, phone, email, note, external_payment_type }) => {
 	return new Promise(function(resolve, reject) {
 		Bigneon()
 			.cart.checkout({
 				amount: cart.total_in_cents,
 				method: {
 					type: "External",
+					external_payment_type,
 					reference: "BoxOfficeSale",
 					first_name: firstName,
 					last_name: lastName,
