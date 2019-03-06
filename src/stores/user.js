@@ -6,6 +6,7 @@ import Bigneon from "../helpers/bigneon";
 import cart from "./cart";
 import orders from "./orders";
 import errorReporting from "../helpers/errorReporting";
+import maskString from "../helpers/maskString";
 
 class User {
 	@observable
@@ -321,6 +322,15 @@ class User {
 		//If it's not set yet been checked it's 'null'.
 		//If it has been checked but not authed then it's 'false'
 		return this.token ? !!this.token : this.token;
+	}
+
+	//Used for tracking/error reporting as to not leak user names
+	get maskedUserName() {
+		if (this.isAuthenticated) {
+			return `${maskString(this.firstName)} ${maskString(this.lastName)}`;
+		} else {
+			"";
+		}
 	}
 
 	@computed

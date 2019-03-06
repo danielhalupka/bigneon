@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/browser";
+import user from "../stores/user";
 
 const dsn = process.env.REACT_APP_SENTRY_DSN;
 
@@ -68,6 +69,12 @@ const captureApiErrorResponse = (error, message) => {
 			scope.setExtra("response.data", data);
 
 			titleMessage = `API response failed with ${status} - ${titleMessage}`;
+		}
+
+		const { isAuthenticated } = user;
+		scope.setExtra("User authenticated", isAuthenticated);
+		if (isAuthenticated) {
+			scope.setExtra("Masked user name", user.maskedUserName);
 		}
 
 		Sentry.captureMessage(titleMessage, "error");

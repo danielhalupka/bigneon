@@ -109,7 +109,7 @@ const InputGroup = props => {
 			<TextField
 				error={!!error}
 				id={name}
-				label={<FormatInputLabel {...labelProps}>{label}</FormatInputLabel>}
+				label={label ? <FormatInputLabel {...labelProps}>{label}</FormatInputLabel> : null}
 				type={type}
 				value={value}
 				onChange={onChangeEvent}

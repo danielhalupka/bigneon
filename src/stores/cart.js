@@ -83,19 +83,9 @@ class Cart {
 			})
 			.catch(error => {
 				console.error(error);
-
-				let message = "Loading cart details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading cart details failed.",
+					error
 				});
 			});
 	}
