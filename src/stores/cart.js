@@ -107,7 +107,7 @@ class Cart {
 			this.seconds_until_expiry = seconds_until_expiry;
 			this.startExpiryTicker();
 		} else {
-			this.seconds_until_expiry = null;
+			this.seconds_until_expiry = 0;
 		}
 		callback ? callback() : null;
 	}
@@ -214,6 +214,15 @@ class Cart {
 		return `${minutes > 0 ? `${minutes}:` : ""}${
 			seconds >= 10 ? seconds : `0${seconds}`
 		}`;
+	}
+
+	@computed
+	get cartExpired() {
+		if (this.seconds_until_expiry === null) {
+			return false; //Not sure yet
+		}
+
+		return this.seconds_until_expiry < 1;
 	}
 
 	@computed

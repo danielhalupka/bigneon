@@ -5,7 +5,7 @@ import Hidden from "@material-ui/core/Hidden";
 import { observer } from "mobx-react";
 import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import CheckoutForm from "../../common/cart/CheckoutFormWrapper";
 import Button from "../../elements/Button";
@@ -28,6 +28,7 @@ import tickets from "../../../stores/tickets";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
 import PrivateEventDialog from "./PrivateEventDialog";
+import NotFound from "../../common/NotFound";
 
 const styles = theme => ({
 	root: {
@@ -326,7 +327,7 @@ class CheckoutConfirmation extends Component {
 	render() {
 		const { classes } = this.props;
 
-		const { cartSummary, formattedExpiryTime } = cart;
+		const { cartSummary, formattedExpiryTime, cartExpired } = cart;
 
 		const { event, artists, id } = selectedEvent;
 
@@ -340,7 +341,7 @@ class CheckoutConfirmation extends Component {
 		}
 
 		if (event === false) {
-			return <Typography variant="subheading">Event not found.</Typography>;
+			return <NotFound>Event not found.</NotFound>;
 		}
 
 		const { promo_image_url, organization_id } = event;
@@ -350,6 +351,10 @@ class CheckoutConfirmation extends Component {
 		//waiting on api to return these https://github.com/big-neon/bn-api/issues/1092
 		if (organization_id === "714e776e-9934-492a-b844-332fef381db8") {
 			cryptoIcons = ["crypto/LTC.png"];
+		}
+
+		if (cartExpired) {
+			return <Redirect to={`/events/${id}/tickets`}/>;
 		}
 
 		const subCardContent = (

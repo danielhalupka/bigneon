@@ -20,7 +20,8 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit * 2
 	},
 	image: {
-		width: "50%",
+		marginTop: theme.spacing.unit * 2,
+		width: "45%",
 		marginBottom: theme.spacing.unit * 2
 	}
 });
@@ -31,12 +32,12 @@ class NotFound extends Component {
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, children } = this.props;
 
 		return (
 			<div className={classes.root}>
 				<img className={classes.image} alt={"Page not found"} src="/images/not-found.png"/>
-				<Typography className={classes.heading}>Page not found</Typography>
+				<Typography className={classes.heading}>{children || "Page not found"}</Typography>
 				<Link to="/">
 					<Button variant={"callToAction"}>Home</Button>
 				</Link>
@@ -46,7 +47,8 @@ class NotFound extends Component {
 }
 
 NotFound.propTypes = {
-	classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired,
+	children: PropTypes.string
 };
 
 export default withStyles(styles)(NotFound);
