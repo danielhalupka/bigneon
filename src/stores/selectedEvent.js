@@ -1,9 +1,11 @@
 import { observable, action, computed } from "mobx";
 import moment from "moment-timezone";
+
 import createGoogleMapsLink from "../helpers/createGoogleMapsLink";
 import Bigneon from "../helpers/bigneon";
 import changeUrlParam from "../helpers/changeUrlParam";
 import notification from "./notifications";
+import errorReporting from "../helpers/errorReporting";
 
 class SelectedEvent {
 	@observable
@@ -66,6 +68,40 @@ class SelectedEvent {
 		if (private_access_code) {
 			query.private_access_code = private_access_code;
 			this.private_access_code = private_access_code;
+		}
+
+		//Temp fix to catch and handle the odd occasion where `Bigneon().events.read` is not a function.
+		//Attempt to instantiate again, wait a second and try the api call again.
+		//Hard limit on 10 refresh attempts and then display an error message to the user.
+		//Also adds additional sentry logging for debugging what the root cause is.
+		const readEventFunction = Bigneon().events.read;
+		if (!readEventFunction || {}.toString.call(readEventFunction) !== "[object Function]") {
+			if (isNaN(this.refreshAttempts)) {
+				this.refreshAttempts = 0;
+			}
+
+			this.refreshAttempts++;
+
+			//Try 10 times
+			if (this.refreshAttempts <= 10) {
+				errorReporting.addBreadcrumb(`refreshResult attempt ${this.refreshAttempts}`);
+				errorReporting.addBreadcrumb(`Bigneon: ${!!Bigneon}`);
+				errorReporting.addBreadcrumb(`Bigneon().events: ${!!Bigneon().events}`);
+				errorReporting.addBreadcrumb(`Bigneon().events.read: ${!!Bigneon().events.read}`);
+				errorReporting.captureMessage("Bigneon().events.read is not a function.");
+
+				Bigneon({}, {});
+
+				return setTimeout(() => {
+					this.refreshResult(id, onError);
+				}, 500);
+			} else {
+				//Give up, it's not happening
+				errorReporting.captureMessage(`Bigneon().events.read is not a function. Attempted ${this.refreshAttempts} times.`);
+				onError("Failed to load event. Please refresh.");
+				return;
+			}
+
 		}
 
 		Bigneon()
