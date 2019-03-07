@@ -79,10 +79,10 @@ class SelectedEvent {
 			//Try 10 times
 			if (this.refreshAttempts <= 10) {
 				errorReporting.addBreadcrumb(`refreshResult attempt ${this.refreshAttempts}`);
-				errorReporting.addBreadcrumb(`Bigneon: ${!!Bigneon}`);
-				errorReporting.addBreadcrumb(`Bigneon().events: ${!!Bigneon().events}`);
-				errorReporting.addBreadcrumb(`Bigneon().events.read: ${!!Bigneon().events.read}`);
-				errorReporting.captureMessage("Bigneon().events.read is not a function.");
+				errorReporting.addBreadcrumb(`Bigneon: ${JSON.stringify(Bigneon)}`);
+				errorReporting.addBreadcrumb(`Bigneon().events: ${JSON.stringify(Bigneon().events)}`);
+				errorReporting.addBreadcrumb(`Bigneon().events.read: ${JSON.stringify(Bigneon().events.read)}`);
+				errorReporting.captureMessage("Bigneon().events.read is not a function. Real value in bread crumb.");
 
 				Bigneon({}, {});
 
