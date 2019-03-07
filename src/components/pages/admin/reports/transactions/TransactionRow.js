@@ -45,20 +45,17 @@ const TransactionRow = props => {
 	const { heading, gray, active, children, onClick, classes, ...rest } = props;
 
 	const columnStyles = [
-		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
 		{ flex: 2, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
-		{ flex: 1, textAlign: "left" },
+		{ flex: 3, textAlign: "left" },
+		{ flex: 3, textAlign: "left" },
+		{ flex: 3, textAlign: "left" },
 		{ flex: 1, textAlign: "left" },
 		{ flex: 1, textAlign: "left" }
 	];
 
 	//If they're adding the event name, make the second column side
-	if (children.length === 10) {
-		columnStyles.splice(0, 0, { flex: 2, textAlign: "left" });
+	if (children.length === 7) {
+		columnStyles.splice(1, 0, { flex: 3, textAlign: "left" });
 	}
 
 	const columns = children.map((text, index) => {

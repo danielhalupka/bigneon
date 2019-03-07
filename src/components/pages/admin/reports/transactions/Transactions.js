@@ -19,7 +19,6 @@ const styles = theme => ({
 		display: "flex",
 		minHeight: 60,
 		alignItems: "center"
-		//borderStyle: "solid"
 	}
 });
 
@@ -57,16 +56,15 @@ class Transactions extends Component {
 		csvRows.push([""]);
 
 		csvRows.push([
+			"Order ID",
 			"Event",
 			"Ticket type",
 			"Order type",
 			"Payment method",
 			"Transaction date",
 			"Redemption code",
-			"Order ID",
 			"Order type",
 			"Payment method",
-
 			"Quantity Sold",
 			"Quantity Refunded",
 			"Actual Quantity",
@@ -96,7 +94,7 @@ class Transactions extends Component {
 				refunded_quantity,
 				redemption_code,
 				ticket_name,
-				transaction_date,
+				formattedDate,
 				unit_price_in_cents,
 				user_id,
 				gross_fee_in_cents_total,
@@ -107,16 +105,15 @@ class Transactions extends Component {
 			} = item;
 
 			csvRows.push([
+				order_id.slice(-8),
 				event_name,
 				ticket_name,
 				order_type,
 				payment_method,
-				transaction_date,
+				formattedDate,
 				redemption_code,
-				order_id.slice(-8),
 				order_type,
 				payment_method,
-
 				quantity,
 				refunded_quantity,
 				quantity - refunded_quantity,
@@ -152,11 +149,20 @@ class Transactions extends Component {
 				const items = [];
 				const eventFees = {};
 				response.data.forEach(item => {
-					const transaction_date = moment
+					const formattedDate = moment
 						.utc(item.transaction_date)
 						.local()
 						.format("MM/DD/YYYY h:mm:A");
-					items.push({ ...item, transaction_date });
+					items.push({ ...item, formattedDate });
+				});
+				
+				items.sort((a, b) => {
+					//Gte the dates we need to compare
+					if (moment(a.transaction_date).diff(moment(b.transaction_date)) < 0) {
+						return 1;
+					} else {
+						return -1;
+					}
 				});
 
 				this.setState({ items });
@@ -219,19 +225,16 @@ class Transactions extends Component {
 		const includeEventName = !this.props.eventId;
 
 		const ths = [
+			"Order ID",
 			"Name",
-			"Ticket name",
-			"Order type",
-			"Time",
-			"Quantity",
-			"Unit price",
-			"Total face value",
-			"Service fees",
+			"Email",
+			"Date/time",
+			"Qty",
 			"Gross"
 		];
 
 		if (includeEventName) {
-			ths.splice(0, 0, "Event");
+			ths.splice(1, 0, "Event");
 		}
 
 		return (
@@ -245,30 +248,28 @@ class Transactions extends Component {
 						order_type,
 						quantity,
 						ticket_name,
-						transaction_date,
+						formattedDate,
 						unit_price_in_cents,
 						gross_fee_in_cents_total,
 						event_fee_gross_in_cents_total,
 						first_name,
 						last_name,
 						email,
-						refunded_quantity
+						refunded_quantity,
+						order_id
 					} = item;
 
 					const tds = [
+						`#${order_id.slice(-8)}`,
 						`${first_name} ${last_name}`,
-						ticket_name,
-						order_type,
-						transaction_date,
+						email,
+						formattedDate,
 						quantity - refunded_quantity,
-						dollars(unit_price_in_cents),
-						dollars((quantity - refunded_quantity) * unit_price_in_cents),
-						dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
 						dollars(gross)
 					];
 
 					if (includeEventName) {
-						tds.splice(0, 0, event_name);
+						tds.splice(1, 0, event_name);
 					}
 
 					return (

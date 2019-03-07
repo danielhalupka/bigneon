@@ -45,16 +45,13 @@ class TransactionDialog extends React.Component {
 		if (!item) {
 			return null;
 		}
-		const {
-			user_name,
-			email
-		} = item;
+		const { first_name, last_name, email } = item;
 
 		return (
 			<div>
 				<Typography className={classes.title}>User:</Typography>
 				<Typography>
-					{user_name}
+					{first_name} {last_name}
 				</Typography>
 				<Typography>{email}</Typography>
 			</div>
@@ -76,7 +73,7 @@ class TransactionDialog extends React.Component {
 			payment_method,
 			quantity,
 			redemption_code,
-			transaction_date,
+			formattedDate,
 			unit_price_in_cents,
 			refunded_quantity
 		} = item;
@@ -112,7 +109,7 @@ class TransactionDialog extends React.Component {
 				</Detail>
 
 				<Detail label={"Transaction date"} classes={classes}>
-					{transaction_date}
+					{formattedDate}
 				</Detail>
 
 				<Detail label={"Order type"} classes={classes}>
