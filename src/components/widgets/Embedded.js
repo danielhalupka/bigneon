@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import selectedEvent from "../../stores/selectedEvent";
 import DefaultTemplate from "./templates/Default";
 import Loader from "../elements/loaders/Loader";
+import getUrlParam from "../../helpers/getUrlParam";
 
 const BlankContainer = ({ children }) => (
 	<div
@@ -46,8 +47,7 @@ class Embedded extends Component {
 			this.setState({ notFoundMessage: "No event found." });
 		}
 
-		const url = new URL(window.location.href);
-		const type = Number(url.searchParams.get("type")) || "default";
+		const type = Number(getUrlParam("type")) || "default";
 		const height = document.getElementById("root").clientHeight;
 		this.setState({ height, type });
 	}

@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import SelectGroup from "../../../common/form/SelectGroup";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import eventResults from "../../../../stores/eventResults";
+import getUrlParam from "../../../../helpers/getUrlParam";
 
 const styles = theme => ({
 	subHeading: {
@@ -21,8 +22,7 @@ class ResultsRegionFilter extends Component {
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
-		const selectedState = url.searchParams.get("state") || "all";
+		const selectedState = getUrlParam("state") || "all";
 		eventResults.changeFilter("state", selectedState);
 	}
 

@@ -234,7 +234,7 @@ const formatDataForInputs = (event) => {
 		status,
 		eventType: event_type,
 		showCoverImage: !!cover_image_url,
-		privateAccessCode: private_access_code
+		privateAccessCode: private_access_code || ""
 	};
 
 	return eventDetails;

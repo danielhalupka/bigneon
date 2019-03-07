@@ -5,6 +5,7 @@ import Hero from "./Hero";
 import eventResults from "../../../stores/eventResults";
 import notifications from "../../../stores/notifications";
 import Meta from "./Meta";
+import getUrlParam from "../../../helpers/getUrlParam";
 
 class Home extends Component {
 	constructor(props) {
@@ -12,8 +13,7 @@ class Home extends Component {
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
-		const query = url.searchParams.get("search") || "";
+		const query = getUrlParam("search") || "";
 
 		eventResults.refreshResults(
 			{ query },

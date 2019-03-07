@@ -8,6 +8,7 @@ import Bigneon from "../../../../helpers/bigneon";
 import Dialog from "../../../elements/Dialog";
 import Button from "../../../elements/Button";
 import { fontFamilyDemiBold } from "../../../styles/theme";
+import getUrlParam from "../../../../helpers/getUrlParam";
 
 const styles = theme => ({
 	text: { textAlign: "center" },
@@ -32,8 +33,7 @@ class InviteAccept extends Component {
 			orgInviterName: ""
 		};
 
-		const url = new URL(window.location.href);
-		this.security_token = url.searchParams.get("token") || "";
+		this.security_token = getUrlParam("token") || "";
 	}
 
 	componentDidMount() {

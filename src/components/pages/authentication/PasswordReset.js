@@ -10,6 +10,7 @@ import Container from "./Container";
 import notifications from "../../../stores/notifications";
 import user from "../../../stores/user";
 import Bigneon from "../../../helpers/bigneon";
+import getUrlParam from "../../../helpers/getUrlParam";
 
 const styles = () => ({});
 
@@ -29,8 +30,7 @@ class PasswordReset extends Component {
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
-		const password_reset_token = url.searchParams.get("token") || "";
+		const password_reset_token = getUrlParam("token") || "";
 
 		this.setState({ password_reset_token });
 	}

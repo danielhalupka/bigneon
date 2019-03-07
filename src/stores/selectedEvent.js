@@ -6,6 +6,7 @@ import Bigneon from "../helpers/bigneon";
 import changeUrlParam from "../helpers/changeUrlParam";
 import notification from "./notifications";
 import errorReporting from "../helpers/errorReporting";
+import getUrlParam from "../helpers/getUrlParam";
 
 class SelectedEvent {
 	@observable
@@ -55,14 +56,7 @@ class SelectedEvent {
 
 		const query = { id };
 		
-		const url = new URL(window.location.href);
-		let private_access_code;
-
-		if (url && url.searchParams.get("private_access_code")) {
-			private_access_code = url.searchParams.get("private_access_code");
-		} else {
-			private_access_code = this.private_access_code;
-		}
+		const private_access_code = getUrlParam("private_access_code") || this.private_access_code;
 
 		//const private_access_code = url ? url.searchParams.get("private_access_code") : this.private_access_code;
 		if (private_access_code) {

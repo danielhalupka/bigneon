@@ -5,6 +5,7 @@ import notifications from "../../../stores/notifications";
 import user from "../../../stores/user";
 import Bigneon from "../../../helpers/bigneon";
 import { observer } from "mobx-react";
+import getUrlParam from "../../../helpers/getUrlParam";
 
 const styles = theme => ({});
 
@@ -20,12 +21,11 @@ class ReceiveTransfer extends Component {
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
 		const transferAuth = {
-			transfer_key: url.searchParams.get("transfer_key"),
-			sender_user_id: url.searchParams.get("sender_user_id"),
-			num_tickets: parseInt(url.searchParams.get("num_tickets")),
-			signature: url.searchParams.get("signature")
+			transfer_key: getUrlParam("transfer_key"),
+			sender_user_id: getUrlParam("sender_user_id"),
+			num_tickets: parseInt(getUrlParam("num_tickets")),
+			signature: getUrlParam("signature")
 		};
 
 		this.setState({ transferAuth });

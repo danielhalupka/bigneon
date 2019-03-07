@@ -8,6 +8,7 @@ import { fontFamilyDemiBold } from "../../../styles/theme";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import PropTypes from "prop-types";
 import Button from "../../../elements/Button";
+import getUrlParam from "../../../../helpers/getUrlParam";
 
 const styles = theme => ({
 	root: {
@@ -45,9 +46,8 @@ class ReportsDate extends Component {
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
-		const fromString = url.searchParams.get("start") || "";
-		const toString = url.searchParams.get("end") || "";
+		const fromString = getUrlParam("start") || "";
+		const toString = getUrlParam("end") || "";
 
 		let startDate = null;
 		let endDate = null;

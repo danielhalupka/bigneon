@@ -5,6 +5,7 @@ import notifications from "../../../../stores/notifications";
 import Button from "../../../elements/Button";
 import Bigneon from "../../../../helpers/bigneon";
 import Dialog from "../../../elements/Dialog";
+import getUrlParam from "../../../../helpers/getUrlParam";
 
 const styles = theme => ({});
 
@@ -20,8 +21,7 @@ class InviteDecline extends Component {
 	}
 
 	componentDidMount() {
-		const url = new URL(window.location.href);
-		const security_token = url.searchParams.get("token") || "";
+		const security_token = getUrlParam("token") || "";
 
 		this.setState({ security_token });
 

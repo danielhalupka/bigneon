@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import { fontFamilyDemiBold, secondaryHex } from "../styles/theme";
 import changeUrlParam from "../../helpers/changeUrlParam";
+import getUrlParam from "../../helpers/getUrlParam";
 
 //Pass through PagingInterface returned from bn-api-node
 //https://big-neon.github.io/bn-api-node/interfaces/_interfaces_resources_structures_paging_interface_.paginginterface.html
@@ -157,8 +158,7 @@ PaginationBlock.propTypes = {
 };
 
 export const urlPageParam = () => {
-	const url = new URL(window.location.href);
-	const pageString = (url.searchParams.get("page"));
+	const pageString = getUrlParam("page");
 
 	let page = 0;
 

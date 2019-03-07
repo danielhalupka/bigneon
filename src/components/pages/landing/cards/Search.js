@@ -10,6 +10,7 @@ import notifications from "../../../../stores/notifications";
 import eventResults from "../../../../stores/eventResults";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import Card from "../../../elements/Card";
+import getUrlParam from "../../../../helpers/getUrlParam";
 
 const styles = theme => ({
 	content: {
@@ -36,8 +37,7 @@ class SearchCard extends Component {
 
 	componentDidMount() {
 		//Check the URL for a search query and default to those results first
-		const url = new URL(window.location.href);
-		const query = url.searchParams.get("search") || "";
+		const query = getUrlParam("search") || "";
 
 		this.setState({ query });
 
