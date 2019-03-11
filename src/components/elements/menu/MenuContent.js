@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import Hidden from "@material-ui/core/Hidden";
 
 //Icons
 import MenuUserProfile from "./MenuUserProfile";
@@ -20,7 +19,14 @@ import BoxOfficeList from "../../common/menu/lists/BoxOfficeView";
 
 import layout from "../../../stores/layout";
 
-const styles = theme => ({});
+const styles = theme => ({
+	root: {
+		paddingTop: theme.spacing.unit * 10,
+		[theme.breakpoints.down("sm")]: {
+			paddingTop: theme.spacing.unit
+		}
+	}
+});
 
 @observer
 class MenuContent extends Component {
@@ -148,19 +154,14 @@ class MenuContent extends Component {
 	}
 
 	render() {
-		const { toggleDrawer } = this.props;
+		const { toggleDrawer, classes } = this.props;
 
 		return (
-			<List component="nav">
-				<Hidden smDown>
-					<div style={{ height: 60 }}/>
-				</Hidden>
-
+			<List disablePadding={false} component="nav" className={classes.root}>
 				{layout.adminStyleMenu ? null : (
 					<MenuUserProfile onClick={toggleDrawer}/>
 				)}
 
-				{/* TODO Profile details go here */}
 				{this.renderMenuItems()}
 			</List>
 		);
