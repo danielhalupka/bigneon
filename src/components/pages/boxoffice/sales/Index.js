@@ -21,6 +21,7 @@ import { onAddItemsToCart } from "../common/helpers";
 const styles = theme => ({
 	root: {},
 	topRow: {
+		marginBottom: theme.spacing.unit * 2,
 		display: "flex",
 		justifyContent: "space-between"
 	}
@@ -262,7 +263,7 @@ class TicketSales extends Component {
 				disabled={isAddingToCart || !(totalNumberSelected > 0)}
 				onSubmit={this.onCheckout.bind(this)}
 				buttonText="Checkout"
-				disabledButtonText={isAddingToCart ? "Adding to cart..." : "Checkout"}
+				disabledButtonText={isAddingToCart ? "Adding..." : "Checkout"}
 			/>
 		);
 	}
@@ -294,12 +295,12 @@ class TicketSales extends Component {
 		return (
 			<div>
 				<div className={classes.topRow}>
-					<PageHeading iconUrl="/icons/my-events-active.svg">
-						General public
+					<PageHeading style={{ flex: 1 }} iconUrl="/icons/sales-multi.svg">
+						Sell
 					</PageHeading>
 
 					<InputWithButton
-						style={{ maxWidth: 300 }}
+						style={{ maxWidth: 300, flex: 2 }}
 						name={"promoCode"}
 						placeholder="Enter a code"
 						buttonText={"Apply"}
@@ -311,6 +312,10 @@ class TicketSales extends Component {
 						toUpperCase
 					/>
 				</div>
+
+				<PageHeading iconUrl="/icons/my-events-active.svg">
+					General public
+				</PageHeading>
 
 				{this.renderTicketTypes()}
 

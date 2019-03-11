@@ -5,7 +5,6 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import Hidden from "@material-ui/core/Hidden";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import moment from "moment";
@@ -24,7 +23,7 @@ const displayTime = ({ event_start, door_time }) => {
 };
 
 const styles = theme => ({
-	root: {
+	headerRoot: {
 		display: "flex",
 		flexDirection: "row",
 		alignItems: "center",
@@ -42,11 +41,8 @@ const styles = theme => ({
 	nameDiv: {
 		paddingTop: 4,
 		paddingLeft: theme.spacing.unit * 2,
-
 		display: "flex",
 		alignItems: "flex-end",
-
-		//flexDirection: "column",
 		justifyContent: "flex-end"
 	},
 	dropdownIcon: {
@@ -72,6 +68,52 @@ const styles = theme => ({
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "cover",
 		backgroundPosition: "center"
+	},
+	//Standalone classes
+	standaloneSpacer: {
+		...toolBarHeight
+	},
+	standaloneRoot: {
+		backgroundColor: "#FFFFFF",
+		height: 70,
+		display: "flex",
+		justifyContent: "center",
+		paddingLeft: theme.spacing.unit,
+		paddingRight: theme.spacing.unit,
+		marginBottom: theme.spacing.unit
+	},
+	standaloneMenuButton: {
+		color: primaryHex,
+		boxShadow: "0 2px 2px 0px rgba(1, 1, 1, 0)",
+		cursor: "pointer",
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
+	},
+	standalonePromoImageContainer: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		flex: 1
+	},
+	standalonePromoImage: {
+		height: 40,
+		width: 40,
+		borderRadius: 4,
+		backgroundRepeat: "no-repeat",
+		backgroundSize: "cover",
+		backgroundPosition: "center",
+		marginRight: theme.spacing.unit
+	},
+	standAloneNameDiv: {
+		flex: 5,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center"
+	},
+	standaloneDropdownIcon: {
+		marginLeft: theme.spacing.unit,
+		height: 10
 	}
 });
 
@@ -167,7 +209,7 @@ class BoxOfficeEventSelection extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, type } = this.props;
 		const { isAuthenticated } = user;
 		if (!isAuthenticated) {
 			return null;
@@ -199,23 +241,23 @@ class BoxOfficeEventSelection extends React.Component {
 		const publishIsInFuture = moment.utc(publish_date) > moment.utc();
 		const invalidStatus = status === "Draft" ? "(Un-Published)" : publishIsInFuture ? "(Pre-Published)" : "";
 
-		return (
-			<div className={classes.root}>
-				<span
-					aria-owns={open ? "menu-appbar" : null}
-					aria-haspopup="true"
-					onClick={this.handleMenu.bind(this)}
-					className={classes.menuButton}
-				>
-					<div
-						className={classes.promoImage}
-						style={{
-							backgroundImage: `url(${promo_image_url ||
+		if (type === "top-bar") {
+			return (
+				<div className={classes.headerRoot}>
+					<span
+						aria-owns={open ? "menu-appbar" : null}
+						aria-haspopup="true"
+						onClick={this.handleMenu.bind(this)}
+						className={classes.menuButton}
+					>
+						<div
+							className={classes.promoImage}
+							style={{
+								backgroundImage: `url(${promo_image_url ||
 							"/images/app-promo-background.png"})`
-						}}
-					/>
-					<div className={classes.nameDiv}>
-						<Hidden smDown implementation="css">
+							}}
+						/>
+						<div className={classes.nameDiv}>
 							<div>
 								<Typography className={classes.heading}>
 									{name}
@@ -226,23 +268,68 @@ class BoxOfficeEventSelection extends React.Component {
 									{venue.name} - {displayTime(displayTimes)}
 								</Typography>
 							</div>
-						</Hidden>
+							<img
+								alt="Events icon"
+								className={classes.dropdownIcon}
+								src="/icons/down-active.svg"
+							/>
+						</div>
+					</span>
+					{this.renderEventsMenu()}
+				</div>
+			);
+		}
 
-						<img
-							alt="Events icon"
-							className={classes.dropdownIcon}
-							src="/icons/down-active.svg"
-						/>
+		if (type === "stand-alone") {
+			return (
+				<div>
+					<div className={classes.standaloneSpacer}/>
+					<div className={classes.standaloneRoot}>
+						<span
+							aria-owns={open ? "menu-appbar" : null}
+							aria-haspopup="true"
+							onClick={this.handleMenu.bind(this)}
+							className={classes.standaloneMenuButton}
+						>
+							<div className={classes.standalonePromoImageContainer}>
+								<div
+									className={classes.standalonePromoImage}
+									style={{
+										backgroundImage: `url(${promo_image_url || "/images/app-promo-background.png"})`
+									}}
+								/>
+							</div>
+							<div className={classes.standAloneNameDiv}>
+								<div>
+									<Typography className={classes.heading}>
+										{name}
+										<span style={{ flex: 1 }}/>
+										<sup>{invalidStatus}</sup>
+									</Typography>
+									<Typography className={classes.subHeading}>
+										{venue.name} - {displayTime(displayTimes)}
+									</Typography>
+								</div>
+								<img
+									alt="Events icon"
+									className={classes.standaloneDropdownIcon}
+									src="/icons/down-active.svg"
+								/>
+							</div>
+						</span>
+						{this.renderEventsMenu()}
 					</div>
-				</span>
-				{this.renderEventsMenu()}
-			</div>
-		);
+				</div>
+			);
+		}
+
+		return null;
 	}
 }
 
 BoxOfficeEventSelection.propTypes = {
-	classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired,
+	type: PropTypes.oneOf(["top-bar", "stand-alone"]).isRequired
 };
 
 export default withStyles(styles)(BoxOfficeEventSelection);

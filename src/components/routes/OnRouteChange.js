@@ -17,6 +17,11 @@ const removeContainerRoutes = [
 	"/exports"
 ];
 
+const hideBottomMobileCartBar = [
+	"/tickets",
+	"/tickets/confirmation"
+];
+
 class OnRouteChange extends Component {
 	componentDidMount() {
 		this.setLayout();
@@ -43,6 +48,7 @@ class OnRouteChange extends Component {
 		let isBoxOffice = false;
 		let useContainer = true;
 		let showStudioLogo = false;
+		let showBottomMobileCartBar = true;
 
 		showStudioLogoRoutes.forEach(path => {
 			if (window.location.pathname.startsWith(path)) {
@@ -55,6 +61,7 @@ class OnRouteChange extends Component {
 			showPadding = false;
 			showFooter = false;
 			showSideMenu = true;
+			showBottomMobileCartBar = false;
 		} else {
 			showSideMenuRoutes.forEach(path => {
 				if (window.location.pathname.startsWith(path)) {
@@ -89,6 +96,13 @@ class OnRouteChange extends Component {
 					return;
 				}
 			});
+
+			hideBottomMobileCartBar.forEach(path => {
+				if (window.location.pathname.indexOf(path) !== -1) {
+					showBottomMobileCartBar = false;
+					return;
+				}
+			});
 		}
 
 		//Set layout based on above checks
@@ -98,6 +112,7 @@ class OnRouteChange extends Component {
 		layout.toggleBoxOffice(isBoxOffice);
 		layout.toggleContainer(useContainer);
 		layout.toggleShowStudioLogo(showStudioLogo);
+		layout.toggleBottomMobileCartBar(showBottomMobileCartBar);
 	}
 
 	render() {

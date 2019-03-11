@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 import cart from "../../../stores/cart";
 import { primaryHex } from "../../styles/theme";
+import layout from "../../../stores/layout";
 
 const styles = theme => {
 	return {
@@ -47,10 +48,7 @@ const CartMobileBottomBar = observer(({ classes }) => {
 		: props => <div {...props}/>;
 
 	//Hide on pages that it's not needed
-	if (
-		window.location.pathname.endsWith("/tickets") ||
-		window.location.pathname.endsWith("/tickets/confirmation")
-	) {
+	if (!layout.showBottomMobileCartBar) {
 		return null;
 	}
 

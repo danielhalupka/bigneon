@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { fontFamilyDemiBold } from "../../styles/theme";
 import classnames from "classnames";
 
 const styles = theme => {
@@ -19,8 +18,14 @@ const styles = theme => {
 		value: {
 			fontSize: theme.typography.fontSize * 2.1,
 			margin: 0,
-			paddingTop: 10,
-			height: "100%"
+			height: "100%",
+			[theme.breakpoints.up("md")]: {
+				paddingTop: 10
+			},
+			[theme.breakpoints.down("sm")]: {
+				paddingTop: 2,
+				fontSize: theme.typography.fontSize * 1.8
+			}
 		},
 		button: {
 			cursor: "pointer",
@@ -80,9 +85,7 @@ const NumberSelect = ({
 	return (
 		<div className={classes.root} style={style}>
 			<Button type="minus" classes={classes} onClick={onDecrement}/>
-			{/* <div> */}
 			<Typography className={classes.value}>{children || "0"}</Typography>
-			{/* </div> */}
 			<Button type="plus" classes={classes} onClick={onIncrement}/>
 		</div>
 	);

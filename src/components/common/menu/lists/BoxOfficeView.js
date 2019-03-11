@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "../../../elements/menu/MenuItem";
 import { observer } from "mobx-react";
 import user from "../../../../stores/user";
+import MobileBoxOfficeMenuItem from "./MobileBoxOfficeMenuItem";
 
 const styles = theme => {
 	return {};
@@ -34,6 +35,8 @@ const BoxOfficeList = observer(props => {
 			>
 				Guests
 			</MenuItem>
+
+			<MobileBoxOfficeMenuItem onClick={toggleDrawer}/>
 		</div>
 	);
 });

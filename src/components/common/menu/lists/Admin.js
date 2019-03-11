@@ -6,6 +6,7 @@ import { Typography } from "@material-ui/core";
 
 import MenuItem from "../../../elements/menu/MenuItem";
 import MobileSwitchOrgMenuItem from "./MobileSwitchOrgMenuItem";
+import MobileBoxOfficeMenuItem from "./MobileBoxOfficeMenuItem";
 
 const styles = theme => {
 	return {};
@@ -98,6 +99,7 @@ const AdminList = props => {
 			</MenuItem>
 
 			<MobileSwitchOrgMenuItem/>
+			<MobileBoxOfficeMenuItem onClick={toggleDrawer}/>
 		</div>
 	);
 };

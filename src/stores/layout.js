@@ -20,6 +20,9 @@ class Layout {
 	@observable
 	showStudioLogo = true;
 
+	@observable
+	showBottomMobileCartBar = true;
+
 	@action
 	toggleSideMenu(state) {
 		this.showSideMenu = state;
@@ -48,6 +51,11 @@ class Layout {
 	@action
 	toggleShowStudioLogo(state) {
 		this.showStudioLogo = state;
+	}
+
+	@action
+	toggleBottomMobileCartBar(state) {
+		this.showBottomMobileCartBar = state;
 	}
 
 	@computed

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { withStyles, Grid } from "@material-ui/core";
 import { observer } from "mobx-react";
-import PropTypes from "prop-types";
 
 import Bigneon from "../../../../helpers/bigneon";
 import notifications from "../../../../stores/notifications";

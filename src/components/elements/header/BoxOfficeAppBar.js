@@ -16,10 +16,7 @@ import BoxOfficeEventSelection from "./BoxOfficeEventSelection";
 
 const styles = theme => {
 	return {
-		root: {
-			position: "absolute",
-			padding: 0
-		},
+		root: {},
 		toolBar: {
 			paddingRight: theme.spacing.unit * 2,
 			paddingLeft: theme.spacing.unit * 2,
@@ -51,42 +48,49 @@ const BoxOfficeAppBar = props => {
 	const { classes, handleDrawerToggle, history } = props;
 
 	return (
-		<AppBar className={classes.appBar}>
-			<Toolbar className={classes.toolBar}>
-				{handleDrawerToggle ? (
-					<Hidden mdUp implementation="css">
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							onClick={handleDrawerToggle}
-							className={classes.navIconHide}
-						>
-							<MenuIcon color="action"/>
-						</IconButton>
-					</Hidden>
-				) : null}
-				<div className={classes.logoContainer}>
-					<Link to={"/box-office/sell"}>
-						<img
-							alt="Header logo"
-							className={classes.headerImage}
-							src="/images/bn-logo.png"
-						/>
-					</Link>
-					<Hidden smDown>
-						<div className={classes.verticalDivider}/>
-					</Hidden>
+		<div>
+			<AppBar className={classes.root}>
+				<Toolbar className={classes.toolBar}>
+					{handleDrawerToggle ? (
+						<Hidden mdUp implementation="css">
+							<IconButton
+								color="inherit"
+								aria-label="open drawer"
+								onClick={handleDrawerToggle}
+								className={classes.navIconHide}
+							>
+								<MenuIcon color="action"/>
+							</IconButton>
+						</Hidden>
+					) : null}
+					<div className={classes.logoContainer}>
+						<Link to={"/box-office/sell"}>
+							<img
+								alt="Header logo"
+								className={classes.headerImage}
+								src="/images/bn-logo.png"
+							/>
+						</Link>
+						<Hidden smDown>
+							<div className={classes.verticalDivider}/>
+						</Hidden>
 
-					<BoxOfficeEventSelection/>
-				</div>
-				<span className={classes.rightMenuOptions}>
-					<Hidden smDown>
-						<BoxOfficeLink/>
-					</Hidden>
-					<RightUserMenu history={history}/>
-				</span>
-			</Toolbar>
-		</AppBar>
+						<Hidden smDown>
+							<BoxOfficeEventSelection type="top-bar"/>
+						</Hidden>
+					</div>
+					<span className={classes.rightMenuOptions}>
+						<Hidden smDown>
+							<BoxOfficeLink/>
+						</Hidden>
+						<RightUserMenu history={history}/>
+					</span>
+				</Toolbar>
+			</AppBar>
+			<Hidden mdUp>
+				<BoxOfficeEventSelection type="stand-alone"/>
+			</Hidden>
+		</div>
 	);
 };
 

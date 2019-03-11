@@ -11,7 +11,13 @@ const styles = theme => ({
 		padding: theme.spacing.unit,
 		paddingTop: theme.spacing.unit * 2,
 		paddingBottom: theme.spacing.unit * 2,
-		display: "flex"
+		display: "flex",
+
+		[theme.breakpoints.down("sm")]: {
+			// display: "inline-block",
+			minWidth: 600
+			//borderStyle: "solid"
+		}
 	},
 	headingContainer: {
 		backgroundColor: "black",
@@ -21,16 +27,23 @@ const styles = theme => ({
 	heading: {
 		color: "#FFFFFF",
 		textTransform: "uppercase",
-		fontFamily: fontFamilyDemiBold
+		fontFamily: fontFamilyDemiBold,
+		[theme.breakpoints.down("sm")]: {
+			fontSize: theme.typography.fontSize * 0.8
+		}
 	},
-	itemText: {}
+	itemText: {
+		[theme.breakpoints.down("sm")]: {
+			fontSize: theme.typography.fontSize * 0.8
+		}
+	}
 });
 
 const GuestTicketRow = props => {
 	const { heading, children, classes } = props;
 
 	const columnStyles = [
-		{ flex: 1, textAlign: "left" },
+		{ flex: 2, textAlign: "left" },
 		{ flex: 4, textAlign: "left" },
 		{ flex: 8, textAlign: "left" },
 		{ flex: 8, textAlign: "left" },
@@ -52,7 +65,11 @@ const GuestTicketRow = props => {
 		}
 
 		return (
-			<span key={index} style={columnStyles[index]}>
+			<span
+				key={index}
+				style={columnStyles[index]}
+				className={classes.itemText}
+			>
 				{child}
 			</span>
 		);

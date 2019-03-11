@@ -1,18 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles, Typography, Collapse } from "@material-ui/core";
+import { withStyles, Typography, Collapse, Hidden } from "@material-ui/core";
 
 import Card from "../../../elements/Card";
 import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
 import GuestTicketRow from "./GuestTicketRow";
 import CheckBox from "../../../elements/form/CheckBox";
 import { dollars } from "../../../../helpers/money";
+import StyledLink from "../../../elements/StyledLink";
 
 const styles = theme => ({
 	root: {
 		marginBottom: theme.spacing.unit / 2
 	},
-	inner: {
+	header: {
 		paddingLeft: theme.spacing.unit * 2,
 		paddingRight: theme.spacing.unit * 2,
 		paddingTop: theme.spacing.unit * 1.5,
@@ -54,12 +55,37 @@ const styles = theme => ({
 	expandIcon: {
 		height: 10
 	},
-	ticketContainer: {
-		padding: theme.spacing.unit * 2
+	ticketContainerOuter: {
+		display: "flex"
+	},
+	ticketContainerInner: {
+		padding: theme.spacing.unit * 2,
+		flex: 1,
+
+		[theme.breakpoints.down("sm")]: {
+			padding: 0,
+			paddingLeft: theme.spacing.unit,
+			width: 320 - theme.spacing.unit * 4,
+			"overflowX": "scroll","overflowY": "hidden","whiteSpace": "nowrap"
+		}
 	}
 });
 
-const DiscountIcon = ({ classes }) =><img className={classes.paymentRequiredIcon} alt={"Payment required"} src={"/icons/sales-active.svg"}/>;
+const DiscountIcon = ({ classes }) => <img className={classes.paymentRequiredIcon} alt={"Payment required"} src={"/icons/sales-active.svg"}/>;
+
+const ticketIdsString = (tickets, isMobile) => {
+	const subheadingMobileCharLimit = 38;
+
+	let subHeading = tickets.map(({ id }) => {
+		return `#${id.slice(-8)}`;
+	}).join(", ");
+
+	if (isMobile && subHeading.length > subheadingMobileCharLimit) {
+		subHeading = `${subHeading.substring(0, subheadingMobileCharLimit)}...`;
+	}
+
+	return subHeading;
+};
 
 const GuestRow = props => {
 	const {
@@ -109,7 +135,9 @@ const GuestRow = props => {
 						) : null}
 					</span>
 					<Typography>{id.slice(-8)}</Typography>
-					<Typography>{order_id ? order_id.slice(-8) : "-"}</Typography>
+					<Typography>
+						{order_id ? <StyledLink underlined href={`/orders/${order_id}`} target="_blank">{order_id.slice(-8)}</StyledLink> : "-"}
+					</Typography>
 					<Typography>{ticket_type}</Typography>
 					<Typography>$ {(price_in_cents / 100).toFixed(2)}</Typography>
 					<Typography>{status}</Typography>
@@ -138,7 +166,7 @@ const GuestRow = props => {
 						/>
 					</span>
 					<Typography>{rowKey.slice(-8)}</Typography>
-					<Typography>{name.slice(-8)}</Typography>
+					<Typography>{name}</Typography>
 					<Typography>{ticketTypeName}</Typography>
 					<Typography>{price}</Typography>
 					{hold_type === "Discount" ? <DiscountIcon classes={classes}/> : null}
@@ -150,7 +178,7 @@ const GuestRow = props => {
 	return (
 		<div className={classes.root}>
 			<Card>
-				<div className={classes.inner} onClick={() => onExpandChange(expanded ? null : rowKey)}>
+				<div className={classes.header} onClick={() => onExpandChange(expanded ? null : rowKey)}>
 					<div className={classes.leftContent}>
 						<div className={classes.topRow}>
 							<Typography className={classes.indexNumber}>
@@ -159,19 +187,24 @@ const GuestRow = props => {
 							<Typography className={classes.name}>{name}</Typography>
 						</div>
 						<div className={classes.bottomRow}>
-							{
-								type === "guest" ? (
-									<Typography className={classes.ticketInfo}>
-										{tickets.map(({ id }) => {
-											return <span key={id}>#{id.slice(-8)}</span>;
-										})}
-									</Typography>
-								) : (
-									<Typography className={classes.ticketInfo}>
-										{hold_type}
-									</Typography>
-								)}
-
+							{type === "guest" ? (
+								<span>
+									<Hidden smDown>
+										<Typography noWrap className={classes.ticketInfo}>
+											{ticketIdsString(tickets, false)}
+										</Typography>
+									</Hidden>
+									<Hidden mdUp>
+										<Typography noWrap className={classes.ticketInfo}>
+											{ticketIdsString(tickets, true)}
+										</Typography>
+									</Hidden>
+								</span>
+							) : (
+								<Typography noWrap className={classes.ticketInfo}>
+									{hold_type}
+								</Typography>
+							)}
 						</div>
 					</div>
 					<div className={classes.rightContent}>
@@ -187,11 +220,13 @@ const GuestRow = props => {
 				</div>
 
 				<Collapse in={expanded}>
-					<div className={classes.ticketContainer}>
-						<GuestTicketRow heading>
-							{ticketHeadings.map((heading, index) => <span key={index}>{heading}</span>)}
-						</GuestTicketRow>
-						{ticketRows}
+					<div className={classes.ticketContainerOuter}>
+						<div className={classes.ticketContainerInner}>
+							<GuestTicketRow heading>
+								{ticketHeadings.map((heading, index) => <span key={index}>{heading}</span>)}
+							</GuestTicketRow>
+							{ticketRows}
+						</div>
 					</div>
 				</Collapse>
 			</Card>
@@ -206,7 +241,6 @@ GuestRow.propTypes = {
 	onExpandChange: PropTypes.func.isRequired,
 	expanded: PropTypes.bool.isRequired,
 	onSelect: PropTypes.func.isRequired,
-
 	name: PropTypes.string.isRequired,
 
 	//Used for type=guest

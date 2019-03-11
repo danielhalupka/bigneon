@@ -19,9 +19,11 @@ import { onCheckout } from "../common/helpers";
 
 const styles = theme => ({
 	content: {
-		minWidth: 400,
 		alignContent: "center",
-		textAlign: "center"
+		textAlign: "center",
+		[theme.breakpoints.up("md")]: {
+			minWidth: 400
+		}
 	},
 	itemRow: {
 		marginTop: theme.spacing.unit * 2,
@@ -57,6 +59,14 @@ const styles = theme => ({
 	changeHeading: {
 		fontFamily: fontFamilyDemiBold,
 		textTransform: "uppercase"
+	},
+	changeText: {
+		fontFamily: fontFamilyDemiBold,
+		textTransform: "uppercase",
+		marginTop: 30,
+		[theme.breakpoints.down("sm")]: {
+			marginTop: 20
+		}
 	},
 	expiryTime: {
 		marginTop: theme.spacing.unit,
@@ -353,21 +363,24 @@ class CheckoutDialog extends React.Component {
 			feeItemList
 		} = cartSummary;
 
-		let changeDue = 0;
+		let changeDue = "";
 		const tenderedNumber = Number(cashTendered);
 
 		if (tenderedNumber) {
-			changeDue = (tenderedNumber - orderTotalInCents / 100).toFixed(2);
+			const changeDueNumber = tenderedNumber - orderTotalInCents / 100;
+			if (changeDueNumber > 0) {
+				changeDue = `$ ${changeDueNumber.toFixed(2)}`;
+			}
 		}
 
 		return (
 			<Grid
 				container
-				spacing={0}
+				spacing={16}
 				justify="space-between"
 				className={classes.changeContainer}
 			>
-				<Grid item xs={12} sm={12} md={5} lg={5}>
+				<Grid item xs={6} sm={6} md={5} lg={5}>
 					<Typography className={classes.changeHeading}>
 						Cash tendered
 					</Typography>
@@ -385,13 +398,10 @@ class CheckoutDialog extends React.Component {
 						onBlur={this.validateFields.bind(this)}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={12} md={5} lg={5}>
+				<Grid item xs={6} sm={6} md={5} lg={5}>
 					<Typography className={classes.changeHeading}>Change due</Typography>
-					<Typography
-						style={{ marginTop: 40 }}
-						className={classes.changeHeading}
-					>
-						{changeDue > 0 ? `$ ${changeDue}` : ""}
+					<Typography className={classes.changeText}>
+						{changeDue}
 					</Typography>
 				</Grid>
 			</Grid>
@@ -442,7 +452,7 @@ class CheckoutDialog extends React.Component {
 
 					{this.renderForm()}
 					<Typography className={classes.expiryTime}>
-						Cart expired in: {formattedExpiryTime}
+						Cart expires in: {formattedExpiryTime}
 					</Typography>
 				</div>
 			</Dialog>

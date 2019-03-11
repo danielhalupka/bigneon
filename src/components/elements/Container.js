@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import { Link } from "react-router-dom";
 // import DevTools from "mobx-react-devtools";
+
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -34,7 +34,14 @@ const styles = theme => ({
 		display: "flex",
 		width: "100%"
 	},
-	toolbar: toolBarHeight,
+	toolbarSpacer: toolBarHeight,
+	boxOfficeToolBarSpacer: {
+		...toolBarHeight,
+		//Don't add space on mobile, the event selection menu take care of it
+		[theme.breakpoints.down("sm")]: {
+			minHeight: 0
+		}
+	},
 	drawerPaper: {
 		//width: layout.adminStyleMenu ? 60 : drawerWidth,
 		minHeight: window.innerHeight * 1.1,
@@ -57,7 +64,12 @@ const styles = theme => ({
 	},
 	boxOfficePaddedContainer: {
 		padding: theme.spacing.unit * 3,
-		paddingTop: theme.spacing.unit * 4
+		[theme.breakpoints.down("sm")]: {
+			padding: theme.spacing.unit * 2
+		},
+		[theme.breakpoints.down("xs")]: {
+			padding: theme.spacing.unit
+		}
 	}
 });
 
@@ -171,7 +183,8 @@ class Container extends React.Component {
 							[classes.paddedContent]: includeContainerPadding
 						})}
 					>
-						<div className={classes.toolbar}/>
+						{/*If it's box office and mobile then hide this spacer. The event select menu take care of it.*/}
+						<div className={classnames({ [classes.toolbarSpacer]: !isBoxOffice, [classes.boxOfficeToolBarSpacer]: isBoxOffice })}/>
 
 						<Grid
 							container
