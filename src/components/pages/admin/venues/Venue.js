@@ -45,7 +45,7 @@ class Venue extends Component {
 
 		this.state = {
 			venueId,
-			regionId: "",
+			regionId: null,
 			imageUrl: "",
 			name: "",
 			address: "",
@@ -93,7 +93,7 @@ class Venue extends Component {
 						state: state || "",
 						postal_code: postal_code || "",
 						phone: phone || "",
-						regionId: region_id || "",
+						regionId: region_id || null,
 						imageUrl: promo_image_url,
 						timezone: timezone || moment.tz.guess()
 					});
@@ -170,8 +170,7 @@ class Venue extends Component {
 
 		const {
 			organizationId,
-			venueId,
-			regionId
+			venueId
 		} = this.state;
 		const phone = removePhoneFormatting(this.state.phone);
 
@@ -198,10 +197,6 @@ class Venue extends Component {
 		// if (!address) {
 		// 	errors.address = "Missing address.";
 		// }
-
-		if (!regionId) {
-			errors.regionId = "Select a region.";
-		}
 
 		if (!venueId) {
 			if (!organizationId) {
@@ -359,7 +354,7 @@ class Venue extends Component {
 				items={timezones}
 				error={errors.timezone}
 				name={"timezone"}
-				label={"Timezone"}
+				label={"Timezone *"}
 				onChange={e => this.setState({ timezone: e.target.value })}
 			/>
 		);
@@ -392,7 +387,10 @@ class Venue extends Component {
 			return <Typography variant="body1">Loading regions...</Typography>;
 		}
 
-		const regionOptions = regions.map(r => ({ value: r.id, label: r.name }));
+		const regionOptions = [{ value: null, label: "No Region" }].concat(regions.map(r => ({
+			value: r.id,
+			label: r.name
+		})));
 
 		return (
 			<SelectGroup
@@ -471,7 +469,7 @@ class Venue extends Component {
 										error={errors.name}
 										value={name}
 										name="name"
-										label="Venue name"
+										label="Venue name *"
 										type="text"
 										onChange={e => this.setState({ name: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
@@ -484,7 +482,7 @@ class Venue extends Component {
 										error={errors.phone}
 										value={phone}
 										name="phone"
-										label="Phone number"
+										label="Phone number *"
 										type="phone"
 										onChange={e => this.setState({ phone: e.target.value })}
 										onBlur={this.validateFields.bind(this)}
