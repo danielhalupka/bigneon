@@ -157,6 +157,15 @@ class EventDashboardContainer extends Component {
 				) : (
 					<span/>
 				)}
+				{user.isAdmin ? ( //TODO use scope when API is ready
+					<Link to={`/admin/events/${event.id}/hospitality/last-call`}>
+						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+							Hospitality
+						</MenuItem>
+					</Link>
+				) : (
+					<span/>
+				)}
 			</Menu>
 		);
 	}

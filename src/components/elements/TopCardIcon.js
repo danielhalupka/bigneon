@@ -17,7 +17,7 @@ const styles = {
 		backgroundImage: "linear-gradient(224deg, #e53d96, #5491cc)"
 	},
 	icon: {
-		width: 35,
+		width: "auto",
 		height: "auto",
 		borderRadius: 0
 	}
