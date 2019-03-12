@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
-import notifications from "../../../../../stores/notifications";
 import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import EventSummaryRow from "./EventSummaryRow";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
-import { EventSalesTable, EVENT_SALES_HEADINGS } from "./EventSalesTable";
+import { EventSalesTable } from "./EventSalesTable";
 import Loader from "../../../../elements/loaders/Loader";
 import summaryReport from "../../../../../stores/reports/summaryReport";
 import { observer } from "mobx-react";
@@ -44,13 +43,14 @@ class EventSummary extends Component {
 	}
 
 	refreshData() {
-		const { eventId, organizationId } = this.props;
+		const { eventId, organizationId, onLoad } = this.props;
 
 		const queryParams = { organization_id: organizationId, event_id: eventId };
 		//TODO date filter
 		//start_utc
 		//end_utc
-		summaryReport.fetchCountAndSalesData(queryParams);
+
+		summaryReport.fetchCountAndSalesData(queryParams, onLoad);
 	}
 
 	exportCSV() {
@@ -168,6 +168,19 @@ class EventSummary extends Component {
 	}
 
 	render() {
+		const { printVersion } = this.props;
+
+		if (printVersion) {
+			return (
+				<div>
+					{this.renderEventSales()}
+					<br/>
+					<br/>
+					{this.renderRevenueShare()}
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<div
@@ -185,6 +198,14 @@ class EventSummary extends Component {
 						onClick={this.exportCSV.bind(this)}
 					>
 						Export CSV
+					</Button>
+					<Button
+						href={`/exports/reports/?type=summary&event_id=${this.props.eventId}`}
+						target={"_blank"}
+						iconUrl="/icons/pdf-active.svg"
+						variant="text"
+					>
+						Export PDF
 					</Button>
 				</div>
 				<Divider style={{ marginBottom: 40 }}/>
@@ -204,7 +225,9 @@ EventSummary.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	eventId: PropTypes.string.isRequired,
-	eventName: PropTypes.string
+	eventName: PropTypes.string,
+	printVersion: PropTypes.bool,
+	onLoad: PropTypes.func
 };
 
 export const EventSummaryReport = withStyles(styles)(EventSummary);

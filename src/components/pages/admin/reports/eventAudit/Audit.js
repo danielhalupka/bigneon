@@ -34,7 +34,7 @@ class Audit extends Component {
 	}
 
 	refreshData() {
-		const { eventId, organizationId } = this.props;
+		const { eventId, organizationId, onLoad } = this.props;
 
 		const queryParams = { organization_id: organizationId, event_id: eventId };
 
@@ -43,7 +43,7 @@ class Audit extends Component {
 		//end_utc
 
 		//Refresh ticket counts
-		ticketCountReport.fetchCountAndSalesData(queryParams);
+		ticketCountReport.fetchCountAndSalesData(queryParams, false, onLoad);
 	}
 
 	exportCSV() {
@@ -130,6 +130,18 @@ class Audit extends Component {
 	}
 
 	render() {
+		const { printVersion } = this.props;
+
+		if (printVersion) {
+			return (
+				<div>
+					{this.renderEventSales()}
+					<br/><br/>
+					{this.renderTicketCounts()}
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<div
@@ -148,6 +160,14 @@ class Audit extends Component {
 					>
 						Export CSV
 					</Button>
+					<Button
+						href={`/exports/reports/?type=audit&event_id=${this.props.eventId}`}
+						target={"_blank"}
+						iconUrl="/icons/pdf-active.svg"
+						variant="text"
+					>
+						Export PDF
+					</Button>
 				</div>
 				<Divider style={{ marginBottom: 40 }}/>
 
@@ -165,7 +185,9 @@ Audit.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	eventId: PropTypes.string.isRequired,
-	eventName: PropTypes.string
+	eventName: PropTypes.string,
+	printVersion: PropTypes.bool,
+	onLoad: PropTypes.func
 };
 
 export default withStyles(styles)(Audit);

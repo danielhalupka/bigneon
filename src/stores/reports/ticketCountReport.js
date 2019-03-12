@@ -95,7 +95,7 @@ export class TicketCountReport {
 	};
 
 	@action
-	fetchCountAndSalesData(queryParams, includeZeroCountTicketPricings = false) {
+	fetchCountAndSalesData(queryParams, includeZeroCountTicketPricings = false, onSuccess) {
 		if (!user.isAuthenticated) {
 			this.setCountAndSalesData();
 			return;
@@ -107,6 +107,8 @@ export class TicketCountReport {
 			.then(response => {
 				const sales = response.data.sales.filter(item => includeZeroCountTicketPricings || (item.online_sale_count + item.box_office_sale_count + item.comp_sale_count) > 0);
 				this.setCountAndSalesData(response.data.counts, sales);
+
+				onSuccess ? onSuccess() : null;
 			})
 			.catch(error => {
 				notifications.showFromErrorResponse({

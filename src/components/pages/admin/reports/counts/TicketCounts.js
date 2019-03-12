@@ -65,14 +65,14 @@ class TicketCounts extends Component {
 		//start_utc
 		//end_utc
 
-		const { eventId, organizationId } = this.props;
+		const { eventId, organizationId, onLoad } = this.props;
 
 		let queryParams = { organization_id: organizationId };
 
 		if (eventId) {
 			queryParams = { ...queryParams, event_id: eventId };
 		}
-		ticketCountReport.fetchCountAndSalesData(queryParams);
+		ticketCountReport.fetchCountAndSalesData(queryParams, false, onLoad);
 
 	}
 
@@ -122,6 +122,14 @@ class TicketCounts extends Component {
 										>
 											Export CSV
 										</Button>
+										<Button
+											href={`/exports/reports/?type=ticket_counts&event_id=${reportEventId}`}
+											target={"_blank"}
+											iconUrl="/icons/pdf-active.svg"
+											variant="text"
+										>
+											Export PDF
+										</Button>
 									</div>
 								</div>
 
@@ -139,7 +147,11 @@ class TicketCounts extends Component {
 	}
 
 	render() {
-		const { eventId, classes } = this.props;
+		const { eventId, classes, printVersion } = this.props;
+
+		if (printVersion) {
+			return this.renderList();
+		}
 
 		return (
 			<div>
@@ -149,13 +161,23 @@ class TicketCounts extends Component {
 					</Typography>
 					<span style={{ flex: 1 }}/>
 					{eventId ? (
-						<Button
-							iconUrl="/icons/csv-active.svg"
-							variant="text"
-							onClick={() => this.exportCSV(eventId)}
-						>
+						<div>
+							<Button
+								iconUrl="/icons/csv-active.svg"
+								variant="text"
+								onClick={() => this.exportCSV(eventId)}
+							>
 							Export CSV
-						</Button>
+							</Button>
+							<Button
+								href={`/exports/reports/?type=ticket_counts&event_id=${eventId}`}
+								target={"_blank"}
+								iconUrl="/icons/pdf-active.svg"
+								variant="text"
+							>
+								Export PDF
+							</Button>
+						</div>
 					) : null}
 				</div>
 				<Divider style={{ marginBottom: 40 }}/>
@@ -169,7 +191,9 @@ TicketCounts.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	eventId: PropTypes.string,
-	eventName: PropTypes.string
+	eventName: PropTypes.string,
+	printVersion: PropTypes.bool,
+	onLoad: PropTypes.func
 };
 
 export default withStyles(styles)(TicketCounts);

@@ -135,7 +135,7 @@ class Transactions extends Component {
 		//start_utc
 		//end_utc
 
-		const { eventId, organizationId } = this.props;
+		const { eventId, organizationId, onLoad } = this.props;
 
 		let queryParams = { organization_id: organizationId };
 
@@ -165,7 +165,9 @@ class Transactions extends Component {
 					}
 				});
 
-				this.setState({ items });
+				this.setState({ items }, () => {
+					onLoad ? onLoad() : null;
+				});
 			})
 			.catch(error => {
 				console.error(error);
@@ -207,6 +209,7 @@ class Transactions extends Component {
 
 	renderList() {
 		const { items, hoverIndex } = this.state;
+		const { printVersion } = this.props;
 
 		if (items === false) {
 			//Query failed
@@ -280,7 +283,7 @@ class Transactions extends Component {
 							onMouseLeave={() => this.setState({ hoverIndex: null })}
 							active={false}
 							gray={!(index % 2)}
-							active={hoverIndex === index}
+							active={hoverIndex === index && !printVersion}
 						>
 							{tds}
 						</TransactionRow>
@@ -291,7 +294,11 @@ class Transactions extends Component {
 	}
 
 	render() {
-		const { eventId, classes } = this.props;
+		const { eventId, classes, printVersion } = this.props;
+
+		if (printVersion) {
+			return this.renderList();
+		}
 
 		return (
 			<div>
@@ -307,6 +314,14 @@ class Transactions extends Component {
 					>
 						Export CSV
 					</Button>
+					<Button
+						href={`/exports/reports/?type=transactions${eventId ? `&event_id=${eventId}` : ""}`}
+						target={"_blank"}
+						iconUrl="/icons/pdf-active.svg"
+						variant="text"
+					>
+						Export PDF
+					</Button>
 				</div>
 				<Divider style={{ marginBottom: 40 }}/>
 
@@ -321,7 +336,9 @@ Transactions.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	eventId: PropTypes.string,
-	eventName: PropTypes.string
+	eventName: PropTypes.string,
+	printVersion: PropTypes.bool,
+	onLoad: PropTypes.func
 };
 
 export default withStyles(styles)(Transactions);

@@ -261,6 +261,13 @@ class SummaryAudit extends Component {
 		this.state = this.initialState;
 	}
 
+	componentDidMount() {
+		const { printVersion } = this.props;
+		if (printVersion) {
+			this.refreshData();
+		}
+	}
+
 	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
@@ -305,7 +312,10 @@ class SummaryAudit extends Component {
 		eventSummaryData(
 			todayQueryParams,
 			({ eventSales, salesTotals }) => {
-				this.setState({ todayEventSales: eventSales, todaySalesTotals: salesTotals });
+				this.setState({ todayEventSales: eventSales, todaySalesTotals: salesTotals }, () => {
+					const { onLoad } = this.props;
+					onLoad ? onLoad() : null;
+				});
 			},
 			(error) => {
 				console.error(error);
@@ -421,6 +431,18 @@ class SummaryAudit extends Component {
 	}
 
 	render() {
+		const { printVersion } = this.props;
+
+		if (printVersion) {
+			return (
+				<div>
+					{this.renderTodayEventSales()}
+					<br/><br/>
+					{this.renderDateRangeEventSales()}
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<div
@@ -430,7 +452,7 @@ class SummaryAudit extends Component {
 						alignItems: "center"
 					}}
 				>
-					<Typography variant="title">Event audit report</Typography>
+					<Typography variant="title">Event summary audit report</Typography>
 					<span style={{ flex: 1 }}/>
 					<Button
 						iconUrl="/icons/csv-active.svg"
@@ -438,6 +460,14 @@ class SummaryAudit extends Component {
 						onClick={this.exportCSV.bind(this)}
 					>
 						Export CSV
+					</Button>
+					<Button
+						href={`/exports/reports/?type=summary_audit&event_id=${this.props.eventId}`}
+						target={"_blank"}
+						iconUrl="/icons/pdf-active.svg"
+						variant="text"
+					>
+						Export PDF
 					</Button>
 				</div>
 				<ReportsDate onChange={this.refreshData.bind(this)}/>
@@ -458,7 +488,9 @@ SummaryAudit.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	eventId: PropTypes.string.isRequired,
-	eventName: PropTypes.string
+	eventName: PropTypes.string,
+	printVersion: PropTypes.bool,
+	onLoad: PropTypes.func
 };
 
 export default withStyles(styles)(SummaryAudit);

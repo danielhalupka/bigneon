@@ -75,7 +75,7 @@ const EventTicketCountTable = props => {
 								dollars(totalGross)
 							]}
 						</TicketCountRow>
-						{sales.map(row => {
+						{sales.map((row, salesIndex) => {
 							const {
 								ticket_pricing_id,
 								ticket_pricing_name,
@@ -86,7 +86,7 @@ const EventTicketCountTable = props => {
 								total_sold_in_cents
 							} = row;
 							return (
-								<TicketCountRow key={ticket_pricing_id}>
+								<TicketCountRow key={`${salesIndex}-${ticket_pricing_id}`}>
 									{[
 										ticket_pricing_name,
 										" ",

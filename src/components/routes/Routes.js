@@ -55,6 +55,7 @@ import AdminMarketing from "../pages/admin/marketing/Index";
 import AdminReports from "../pages/admin/reports/Index";
 import AdminEventRefunds from "../pages/admin/events/dashboard/refunds/Refunds";
 import AdminLastCall from "../pages/admin/events/dashboard/hospitality/LastCall";
+import AdminReportExportPDF from "../pages/admin/reports/ExportPDF";
 
 //Box office
 import BoxOfficeTicketSales from "../pages/boxoffice/sales/Index";
@@ -313,6 +314,12 @@ class Routes extends Component {
 									exact
 									path="/exports/events/:id/guests"
 									component={AdminEventExportGuestList}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/exports/reports"
+									component={AdminReportExportPDF}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute

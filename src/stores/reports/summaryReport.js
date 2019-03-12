@@ -7,8 +7,8 @@ import { dollars } from "../../helpers/money";
 
 export class SummaryReport extends TicketCountReport {
 	@action
-	fetchCountAndSalesData(queryParams) {
-		super.fetchCountAndSalesData(queryParams, false);
+	fetchCountAndSalesData(queryParams, onSuccess) {
+		super.fetchCountAndSalesData(queryParams, false, onSuccess);
 	}
 
 	csv(eventData) {
