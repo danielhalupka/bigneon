@@ -56,7 +56,7 @@ class CheckoutSelection extends Component {
 
 		this.state = {
 			errors: {},
-			ticketSelection: {},
+			ticketSelection: null,
 			isSubmitting: false,
 			isSubmittingPromo: false
 		};
@@ -64,27 +64,27 @@ class CheckoutSelection extends Component {
 	}
 
 	componentDidMount() {
-		setTimeout(() => {
+		//If we have a current cart in the store already, load that right away
+		if (cart.items && cart.items.length > 0) {
+			this.setTicketSelectionFromExistingCart(cart.items);
+		} else {
+			//Else if we don't have any items in the cart, refresh to make sure
 			cart.refreshCart(() => {
-				const { items } = cart;
-				if (items && items.length > 0) {
-					const ticketSelection = {};
+				this.setTicketSelectionFromExistingCart(cart.items);
+			}, error => {
+				//If they're not logged in, assume an empty cart
+				if (!user.isAuthenticated) {
+					this.setState({ ticketSelection: {} });
+				} else {
+					this.setState({ ticketSelection: {} });
 
-					items.forEach(({ ticket_type_id, quantity, redemption_code }) => {
-						if (ticket_type_id) {
-							ticketSelection[ticket_type_id] = {
-								quantity: ticketSelection[ticket_type_id]
-									? ticketSelection[ticket_type_id] + quantity
-									: quantity,
-								redemption_code: redemption_code
-							};
-						}
+					notifications.showFromErrorResponse({
+						defaultMessage: "Failed to existing cart items.",
+						error
 					});
-
-					this.setState({ ticketSelection });
 				}
 			});
-		}, 500); //TODO figure out why this needs to be delayed for it to work
+		}
 
 		if (
 			this.props.match &&
@@ -102,6 +102,25 @@ class CheckoutSelection extends Component {
 		} else {
 			//TODO return 404
 		}
+	}
+
+	setTicketSelectionFromExistingCart(items) {
+		const ticketSelection = {};
+
+		if (items && items.length > 0) {
+			items.forEach(({ ticket_type_id, quantity, redemption_code }) => {
+				if (ticket_type_id) {
+					ticketSelection[ticket_type_id] = {
+						quantity: ticketSelection[ticket_type_id]
+							? ticketSelection[ticket_type_id] + quantity
+							: quantity,
+						redemption_code: redemption_code
+					};
+				}
+			});
+		}
+
+		this.setState({ ticketSelection });
 	}
 
 	validateFields() {
@@ -231,7 +250,6 @@ class CheckoutSelection extends Component {
 		const { ticket_types } = selectedEvent;
 		const { ticketSelection, errors } = this.state;
 		if (!ticket_types) {
-			//TODO use a loader
 			return <Loader>Loading tickets...</Loader>;
 		}
 
@@ -306,7 +324,7 @@ class CheckoutSelection extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { isSubmitting, isSubmittingPromo } = this.state;
+		const { isSubmitting, isSubmittingPromo, ticketSelection } = this.state;
 
 		const { event, venue, artists, organization, id } = selectedEvent;
 
@@ -335,41 +353,47 @@ class CheckoutSelection extends Component {
 			eventStartDateMoment
 		} = event;
 
-		const subCardContent = (
-			<div className={classes.eventSubCardContent}>
-				<div className={classes.eventSubCardRow1}>
-					<Typography className={classes.eventSubCardHeading}>
-						Purchase tickets
-					</Typography>
+		let subCardContent;
 
-					{/*<Typography className={classes.eventSubCardDescription}>*/}
-					{/*{additional_info}*/}
-					{/*</Typography>*/}
+		if (ticketSelection === null) {
+			subCardContent = <Loader style={{ marginTop: 40, marginBottom: 40 }}>Loading cart...</Loader>;
+		} else {
+			subCardContent = (
+				<div className={classes.eventSubCardContent}>
+					<div className={classes.eventSubCardRow1}>
+						<Typography className={classes.eventSubCardHeading}>
+							Purchase tickets
+						</Typography>
+
+						{/*<Typography className={classes.eventSubCardDescription}>*/}
+						{/*{additional_info}*/}
+						{/*</Typography>*/}
+					</div>
+
+					{this.renderTicketPricing()}
+
+					<InputWithButton
+						style={{ marginBottom: 20, marginTop: 20 }}
+						name={"promoCode"}
+						placeholder="Enter a promo code"
+						buttonText="Apply"
+						onSubmit={this.onSubmitPromo.bind(this)}
+						disabled={isSubmittingPromo}
+						toUpperCase
+					/>
+
+					<Button
+						disabled={isSubmitting}
+						onClick={() => this.onSubmit()}
+						size="large"
+						style={{ width: "100%" }}
+						variant="callToAction"
+					>
+						{isSubmitting ? "Adding..." : "Select tickets"}
+					</Button>
 				</div>
-
-				{this.renderTicketPricing()}
-
-				<InputWithButton
-					style={{ marginBottom: 20, marginTop: 20 }}
-					name={"promoCode"}
-					placeholder="Enter a promo code"
-					buttonText="Apply"
-					onSubmit={this.onSubmitPromo.bind(this)}
-					disabled={isSubmittingPromo}
-					toUpperCase
-				/>
-
-				<Button
-					disabled={isSubmitting}
-					onClick={() => this.onSubmit()}
-					size="large"
-					style={{ width: "100%" }}
-					variant="callToAction"
-				>
-					{isSubmitting ? "Adding..." : "Select tickets"}
-				</Button>
-			</div>
-		);
+			);
+		}
 
 		const headerHeight = 600;
 

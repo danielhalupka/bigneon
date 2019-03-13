@@ -61,13 +61,7 @@ class Cart {
 	}
 
 	@action
-	refreshCart(onSuccess) {
-		//Right now carts only work for authed users
-		if (!user.isAuthenticated) {
-			this.emptyCart();
-			return;
-		}
-
+	refreshCart(onSuccess, onError) {
 		Bigneon()
 			.cart.read()
 			.then(response => {
@@ -82,11 +76,19 @@ class Cart {
 				}
 			})
 			.catch(error => {
-				console.error(error);
-				notifications.showFromErrorResponse({
-					defaultMessage: "Loading cart details failed.",
-					error
-				});
+				onError ? onError(error) : null;
+
+				//Right now carts only work for authed users
+				if (error.response && error.response.status === 401) {
+					this.emptyCart();
+					return;
+				} else {
+					console.error(error);
+					notifications.showFromErrorResponse({
+						defaultMessage: "Loading cart details failed.",
+						error
+					});
+				}
 			});
 	}
 
