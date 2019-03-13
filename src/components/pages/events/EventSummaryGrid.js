@@ -51,8 +51,8 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 				</Typography>
 				<Typography variant="body1">
 					{age_limit
-						? `This event is for over ${age_limit} year olds`
-						: "This event is for all ages"}
+						? `This event is ${age_limit}+`
+						: "This event is all ages"}
 				</Typography>
 
 				<div style={{ marginBottom: 30 }}/>
