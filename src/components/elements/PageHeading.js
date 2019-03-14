@@ -8,9 +8,7 @@ import { fontFamilyDemiBold, secondaryHex } from "../styles/theme";
 const styles = theme => {
 	return {
 		root: {
-			display: "flex",
 			[theme.breakpoints.down("xs")]: {
-				display: "flex",
 				alignItems: "center",
 				justifyContent: "flex-start"
 			}

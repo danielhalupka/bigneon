@@ -69,17 +69,8 @@ class CancelEventDialog extends React.Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Cancelling event details failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
+				notifications.showFromErrorResponse({
+					defaultMessage: "Cancelling event details failed.",
 					variant: "error"
 				});
 			});
