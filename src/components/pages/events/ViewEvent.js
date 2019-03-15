@@ -129,6 +129,14 @@ const styles = theme => ({
 
 @observer
 class ViewEvent extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			overlayCardHeight: 600
+		};
+	}
+
 	componentDidMount() {
 		if (this.props.match && this.props.match.params && this.props.match.params.id) {
 			const { id } = this.props.match.params;
@@ -250,6 +258,10 @@ class ViewEvent extends Component {
 				</Link>
 			);
 		}
+	}
+
+	onOverlayCardHeightChange(overlayCardHeight) {
+		this.setState({ overlayCardHeight });
 	}
 
 	render() {
@@ -401,7 +413,8 @@ class ViewEvent extends Component {
 		);
 
 		//On mobile we need to move the description and artist details down. But we don't know how much space the overlayed div will take.
-		const mobileMarginAdjustment = 600 + (ticket_types ? ticket_types.length * 50 : 50);
+		const { overlayCardHeight } = this.state;
+		const overlayCardHeightAdjustment = overlayCardHeight - 150;
 
 		return (
 			<div>
@@ -414,9 +427,7 @@ class ViewEvent extends Component {
 					<Grid item xs={12} sm={12} md={11} lg={9}>
 						<Card variant="plain">
 							<Hidden mdUp>
-								<div
-									style={{ marginTop: mobileMarginAdjustment }}
-								/>
+								<div style={{ marginTop: overlayCardHeightAdjustment }}/>
 							</Hidden>
 							<Grid
 								container
@@ -424,6 +435,7 @@ class ViewEvent extends Component {
 								direction="row"
 								justify="center"
 								className={classes.container}
+								style={{ minHeight: overlayCardHeightAdjustment }}
 							>
 								<Grid item xs={12} sm={12} md={6} lg={6}>
 									<div className={classes.eventDetailsContent}>
@@ -458,6 +470,7 @@ class ViewEvent extends Component {
 												right: 200
 											}}
 											imageSrc={promo_image_url}
+											onHeightChange={this.onOverlayCardHeightChange.bind(this)}
 										>
 											{subCardContent}
 										</EventDetailsOverlayCard>
@@ -473,6 +486,7 @@ class ViewEvent extends Component {
 												top: 300
 											}}
 											imageSrc={promo_image_url}
+											onHeightChange={this.onOverlayCardHeightChange.bind(this)}
 										>
 											{subCardContent}
 										</EventDetailsOverlayCard>

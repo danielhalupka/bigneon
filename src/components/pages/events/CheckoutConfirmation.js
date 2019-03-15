@@ -134,7 +134,9 @@ class CheckoutConfirmation extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			overlayCardHeight: 600
+		};
 	}
 
 	componentDidMount() {
@@ -249,6 +251,10 @@ class CheckoutConfirmation extends Component {
 				console.error(error);
 				onError();
 			});
+	}
+
+	onOverlayCardHeightChange(overlayCardHeight) {
+		this.setState({ overlayCardHeight });
 	}
 
 	renderTickets() {
@@ -399,6 +405,10 @@ class CheckoutConfirmation extends Component {
 			</div>
 		);
 
+		//On mobile we need to move the description and artist details down. But we don't know how much space the overlayed div will take.
+		const { overlayCardHeight } = this.state;
+		const overlayCardHeightAdjustment =  overlayCardHeight - 250;
+
 		const headerHeight = 600;
 
 		return (
@@ -411,18 +421,18 @@ class CheckoutConfirmation extends Component {
 					artists={artists}
 				/>
 
-				{/* Desktop */}
-				<div style={{ height: headerHeight }}>
-					<Hidden smDown implementation="css">
+				<div style={{ minHeight: overlayCardHeightAdjustment }}>
+					{/* Desktop */}
+					<Hidden smDown>
 						<EventDetailsOverlayCard
 							style={{
 								width: "30%",
 								maxWidth: 550,
 								top: 180,
-								right: 200,
-								height: "100%"
+								right: 200
 							}}
 							imageSrc={promo_image_url}
+							onHeightChange={this.onOverlayCardHeightChange.bind(this)}
 						>
 							{subCardContent}
 						</EventDetailsOverlayCard>
@@ -438,6 +448,7 @@ class CheckoutConfirmation extends Component {
 								top: 480
 							}}
 							imageSrc={promo_image_url}
+							onHeightChange={this.onOverlayCardHeightChange.bind(this)}
 						>
 							{subCardContent}
 						</EventDetailsOverlayCard>
