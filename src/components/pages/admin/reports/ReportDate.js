@@ -46,8 +46,8 @@ class ReportsDate extends Component {
 	}
 
 	componentDidMount() {
-		const fromString = getUrlParam("start") || "";
-		const toString = getUrlParam("end") || "";
+		const fromString = getUrlParam("start_utc") || "";
+		const toString = getUrlParam("end_utc") || "";
 
 		let startDate = null;
 		let endDate = null;
@@ -70,7 +70,7 @@ class ReportsDate extends Component {
 			const { defaultStartDaysBack } = this.props;
 			//Used for weekly settlement reports to default dates to be for the past week
 			if (defaultStartDaysBack) {
-				startDate = moment().subtract(7, "d");
+				startDate = moment().subtract(defaultStartDaysBack, "d");
 				endDate = moment();
 			}
 		}
@@ -85,8 +85,8 @@ class ReportsDate extends Component {
 				return this.setState({ errors: { startDate: "From date needs to be before to date." } });
 			}
 
-			changeUrlParam("start", startDate.format(URL_DATE_FORMAT));
-			changeUrlParam("end", endDate.format(URL_DATE_FORMAT));
+			changeUrlParam("start_utc", startDate.format(URL_DATE_FORMAT));
+			changeUrlParam("end_utc", endDate.format(URL_DATE_FORMAT));
 
 			//Inclusive of whole days
 			const startOfStartDate = startDate.startOf("day");
@@ -130,10 +130,10 @@ class ReportsDate extends Component {
 
 		if (onChangeButton) {
 			columnSizes = [
-				{ xs: 12, sm: 4, lg: 3 },
-				{ xs: 12, sm: 4, lg: 3 },
-				{ xs: 12, sm: 4, lg: 3 },
-				{ xs: 12, sm: 4, lg: 3 }
+				{ xs: 12, sm: 3, lg: 3 },
+				{ xs: 12, sm: 3, lg: 3 },
+				{ xs: 12, sm: 3, lg: 3 },
+				{ xs: 12, sm: 3, lg: 3 }
 			];
 		}
 
@@ -194,6 +194,7 @@ class ReportsDate extends Component {
 							{...columnSizes[3]}
 						>
 							<Button
+								style={{ width: "100%" }}
 								onClick={() => {
 									this.onChange(this.props.onChange);
 								}}
@@ -210,6 +211,10 @@ class ReportsDate extends Component {
 		);
 	}
 }
+
+ReportsDate.defaultProps = {
+	defaultStartDaysBack: 7
+};
 
 ReportsDate.propTypes = {
 	classes: PropTypes.object.isRequired,

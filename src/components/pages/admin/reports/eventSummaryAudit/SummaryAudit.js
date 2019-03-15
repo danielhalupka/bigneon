@@ -12,8 +12,7 @@ import { SummaryAuditTable, SUMMARY_AUDIT_HEADINGS } from "./SummaryAuditTable";
 import Loader from "../../../../elements/loaders/Loader";
 import { dollars } from "../../../../../helpers/money";
 import Bigneon from "../../../../../helpers/bigneon";
-
-const dateRangeString = (startDate, endDate) => (startDate && endDate) ? `from ${startDate.format("MMM DD, YYYY")} - ${endDate.format("MMM DD, YYYY")}` : "from all time";
+import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
 
 //Temp solution to group price points if they have the same name and price
 //If the API performs this function in the future, this code can be removed
@@ -356,7 +355,7 @@ class SummaryAudit extends Component {
 		}
 
 		csvRows.push([title]);
-		csvRows.push([`Transactions occurring ${dateRangeString(startDate, endDate)}`]);
+		csvRows.push([`Transactions occurring ${reportDateRangeHeading(startDate, endDate)}`]);
 
 		csvRows.push([""]);
 		csvRows.push([""]);
@@ -370,7 +369,7 @@ class SummaryAudit extends Component {
 		csvRows.push([""]);
 
 		//Date range sales:
-		csvRows.push([`Sales occurring ${dateRangeString(startDate, endDate)}`]);
+		csvRows.push([`Sales occurring ${reportDateRangeHeading(startDate, endDate)}`]);
 		const dateRangeRows = summaryAuditCSVRows(eventSales, salesTotals);
 		csvRows = [...csvRows, ...dateRangeRows];
 
@@ -424,7 +423,7 @@ class SummaryAudit extends Component {
 		return (
 			<div>
 				<Typography className={classes.subHeading}>Sales
-					occurring {dateRangeString(startDate, endDate)}</Typography>
+					occurring {reportDateRangeHeading(startDate, endDate)}</Typography>
 				<SummaryAuditTable eventSales={eventSales} salesTotals={salesTotals}/>
 			</div>
 		);

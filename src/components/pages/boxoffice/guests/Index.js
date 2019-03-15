@@ -98,8 +98,6 @@ class GuestList extends Component {
 			return null;
 		}
 
-		//TODO filter holds also
-
 		const { searchQuery } = this.state;
 
 		//Filtering required

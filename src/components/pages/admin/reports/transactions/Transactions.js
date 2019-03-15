@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { Grid, Typography, withStyles } from "@material-ui/core";
 import moment from "moment";
 import PropTypes from "prop-types";
 
@@ -7,11 +7,14 @@ import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 import TransactionRow from "./TransactionRow";
 import TransactionDialog from "./TransactionDialog";
-import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import Loader from "../../../../elements/loaders/Loader";
 import { dollars } from "../../../../../helpers/money";
+import ReportsDate from "../ReportDate";
+import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
+import BoxInput from "../../../../elements/form/BoxInput";
+import boxOffice from "../../../../../stores/boxOffice";
 
 const styles = theme => ({
 	root: {},
@@ -19,6 +22,10 @@ const styles = theme => ({
 		display: "flex",
 		minHeight: 60,
 		alignItems: "center"
+	},
+	exportButtonContainer: {
+		display: "flex",
+		justifyContent: "flex-end"
 	}
 });
 
@@ -26,17 +33,24 @@ class Transactions extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { items: null };
+		this.state = {
+			items: null,
+			isLoading: false,
+			searchQuery: ""
+		};
 	}
 
 	componentDidMount() {
-		this.refreshData();
+		const { printVersion } = this.props;
+		if (printVersion) {
+			this.refreshData();
+		}
 	}
 
 	exportCSV() {
-		const { items } = this.state;
+		const { items, startDate, endDate } = this.state;
 
-		if (!items) {
+		if (!items || items.length < 1) {
 			return notifications.show({
 				message: "No rows to export.",
 				variant: "warning"
@@ -53,6 +67,7 @@ class Transactions extends Component {
 		}
 
 		csvRows.push([title]);
+		csvRows.push([`Transactions occurring ${reportDateRangeHeading(startDate, endDate)}`]);
 		csvRows.push([""]);
 
 		csvRows.push([
@@ -130,18 +145,18 @@ class Transactions extends Component {
 		downloadCSV(csvRows, "transaction-report");
 	}
 
-	refreshData() {
-		//TODO date filter
-		//start_utc
-		//end_utc
+	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
+		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
 		const { eventId, organizationId, onLoad } = this.props;
 
-		let queryParams = { organization_id: organizationId };
+		let queryParams = { organization_id: organizationId, start_utc, end_utc };
 
 		if (eventId) {
 			queryParams = { ...queryParams, event_id: eventId };
 		}
+
+		this.setState({ startDate, endDate, items: null, isLoading: true });
 
 		Bigneon()
 			.reports.transactionDetails(queryParams)
@@ -165,19 +180,77 @@ class Transactions extends Component {
 					}
 				});
 
-				this.setState({ items }, () => {
+				this.setState({ items, isLoading: false }, () => {
 					onLoad ? onLoad() : null;
 				});
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({ items: false });
+				this.setState({ items: null, isLoading: false });
 
 				notifications.showFromErrorResponse({
 					error,
 					defaultMessage: "Loading event transaction report failed."
 				});
 			});
+	}
+
+	//TODO this should move to the API
+	filteredItems() {
+		const { items } = this.state;
+		if (!items) {
+			return items;
+		}
+
+		const { searchQuery } = this.state;
+
+		//Filtering required
+		const filteredItems = [];
+		items.forEach(item => {
+			const {
+				event_name,
+				gross,
+				order_type,
+				quantity,
+				ticket_name,
+				formattedDate,
+				unit_price_in_cents,
+				gross_fee_in_cents_total,
+				event_fee_gross_in_cents_total,
+				first_name,
+				last_name,
+				email,
+				refunded_quantity,
+				order_id
+			} = item;
+
+			if (
+				this.stringContainedInArray(
+					[`${first_name} ${last_name}`, email, event_name, ticket_name, order_id],
+					searchQuery
+				)
+			) {
+				filteredItems.push(item);
+			}
+		});
+
+		return filteredItems;
+	}
+
+	stringContainedInArray(strList, searchQuery) {
+		for (let index = 0; index < strList.length; index++) {
+			const str = strList[index] ? strList[index].toLowerCase() : "";
+
+			if (str.includes(searchQuery.toLowerCase())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	filterRowsOnQuery(e) {
+		this.setState({ searchQuery: e.target.value });
 	}
 
 	renderDialog() {
@@ -208,21 +281,23 @@ class Transactions extends Component {
 	}
 
 	renderList() {
-		const { items, hoverIndex } = this.state;
+		const { items, hoverIndex, isLoading } = this.state;
 		const { printVersion } = this.props;
 
-		if (items === false) {
-			//Query failed
-			return null;
+		if (isLoading) {
+			return <Loader/>;
 		}
 
 		if (items === null) {
-			return <Loader/>;
+			//Query failed
+			return null;
 		}
 
 		if (items.length === 0) {
 			return <Typography>No transactions found.</Typography>;
 		}
+
+		const filteredItems = this.filteredItems();
 
 		//If we're showing this on an org level then we need to show event names
 		const includeEventName = !this.props.eventId;
@@ -244,7 +319,7 @@ class Transactions extends Component {
 			<div>
 				<TransactionRow heading>{ths}</TransactionRow>
 
-				{items.map((item, index) => {
+				{filteredItems.map((item, index) => {
 					const {
 						event_name,
 						gross,
@@ -300,30 +375,45 @@ class Transactions extends Component {
 			return this.renderList();
 		}
 
+		const { searchQuery } = this.state;
+
 		return (
 			<div>
-				<div className={classes.header}>
-					<Typography variant="title">
-						{eventId ? "Event" : "Organization"} transaction report
-					</Typography>
-					<span style={{ flex: 1 }}/>
-					<Button
-						iconUrl="/icons/csv-active.svg"
-						variant="text"
-						onClick={this.exportCSV.bind(this)}
-					>
-						Export CSV
-					</Button>
-					<Button
-						href={`/exports/reports/?type=transactions${eventId ? `&event_id=${eventId}` : ""}`}
-						target={"_blank"}
-						iconUrl="/icons/pdf-active.svg"
-						variant="text"
-					>
-						Export PDF
-					</Button>
-				</div>
-				<Divider style={{ marginBottom: 40 }}/>
+				<Grid className={classes.header} container>
+					<Grid item xs={12} sm={12} md={4} lg={4}>
+						<Typography variant="title">
+							{eventId ? "Event" : "Organization"} transaction report
+						</Typography>
+					</Grid>
+					<Grid item xs={12} sm={12} md={4} lg={4}>
+						<BoxInput
+							name="Search"
+							value={searchQuery}
+							placeholder="Search by guest name, email or event name #"
+							onChange={this.filterRowsOnQuery.bind(this)}
+						/>
+					</Grid>
+
+					<Grid item xs={12} sm={12} md={4} lg={4} className={classes.exportButtonContainer}>
+						<Button
+							iconUrl="/icons/csv-active.svg"
+							variant="text"
+							onClick={this.exportCSV.bind(this)}
+						>
+								Export CSV
+						</Button>
+						<Button
+							href={`/exports/reports/?type=transactions${eventId ? `&event_id=${eventId}` : ""}`}
+							target={"_blank"}
+							iconUrl="/icons/pdf-active.svg"
+							variant="text"
+						>
+								Export PDF
+						</Button>
+					</Grid>
+				</Grid>
+
+				<ReportsDate onChange={this.refreshData.bind(this)} defaultStartDaysBack={30} onChangeButton/>
 
 				{this.renderDialog()}
 				{this.renderList()}

@@ -13,8 +13,6 @@ import Bigneon from "../../../../../helpers/bigneon";
 import SingleEventSettlement from "./SingleEventSettlement";
 import createGoogleMapsLink from "../../../../../helpers/createGoogleMapsLink";
 
-const dateRangeString = (startDate, endDate) => (startDate && endDate) ? `from ${startDate.format("MMM DD, YYYY")} - ${endDate.format("MMM DD, YYYY")}` : "from all time";
-
 const styles = theme => ({
 	root: {},
 	subHeading: {
