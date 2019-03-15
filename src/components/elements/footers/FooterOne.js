@@ -11,12 +11,17 @@ const rootUrl = "";
 const links = [
 	//{ label: "About Us", href: `${rootUrl}/about` },
 	{ label: "About Us", href: `${rootUrl}/venues-and-promoters.html` },
-	{ label: "Sell Tickets", href: `${rootUrl}/venues-and-promoters.html#contact-chat` },
+	{ label: "Sell Tickets", href: `${rootUrl}/venues-and-promoters.html#contact-chat` }
 	//{ label: "News", href: `${rootUrl}/blog` },
-	//{ label: "FAQ", href: `${rootUrl}/faq` },
-	{ label: "Support", href: `${rootUrl}/venues-and-promoters.html#contact-chat` }
-	
+	//{ label: "FAQ", href: `${rootUrl}/faq` }
 ];
+
+const { REACT_APP_SUPPORT_URL } = process.env;
+if (REACT_APP_SUPPORT_URL) {
+	links.push({
+		label: "Support", href: REACT_APP_SUPPORT_URL
+	});
+}
 
 const privacyPolicyLink = `${rootUrl}/privacy.html`;
 const termsLink = `${rootUrl}/terms.html`;
