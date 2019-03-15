@@ -106,7 +106,7 @@ class LoginForm extends Component {
 					localStorage.setItem("refresh_token", refresh_token);
 
 					//Pull user data with our new token
-					user.refreshUser((newUser) => {
+					user.refreshUser(newUser => {
 						analytics.identify({ ...newUser, method: "login" });
 
 						//If we have a security token, send them to the accept invite page first
@@ -148,11 +148,15 @@ class LoginForm extends Component {
 				/>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 					<CardContent>
-						{/* <FacebookButton onSuccess={this.props.onSuccess}>
-							Login with Facebook
-						</FacebookButton>
+						{process.env.REACT_APP_FACEBOOK_APP_ID ? (
+							<div>
+								<FacebookButton onSuccess={this.props.onSuccess}>
+									Login with Facebook
+								</FacebookButton>
 
-						<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider> */}
+								<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
+							</div>
+						) : null}
 
 						<InputGroup
 							error={errors.email}
