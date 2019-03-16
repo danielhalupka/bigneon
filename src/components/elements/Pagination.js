@@ -57,12 +57,10 @@ const styles = theme => {
 			borderRadius: 6,
 			borderStyle: "solid",
 			borderWidth: 0.8,
-			borderColor: "#DEE2E8",
-			cursor: "pointer"
+			borderColor: "#DEE2E8"
 		},
 		activePageNumberContainer: {
-			backgroundColor: secondaryHex,
-			cursor: "default"
+			backgroundColor: secondaryHex
 		},
 		pageNumber: {
 			lineHeight: 0,
@@ -76,7 +74,11 @@ const styles = theme => {
 };
 
 const NumberBlock = ({ classes, active, onClick, children }) => (
-	<div onClick={onClick} className={classnames({ [classes.pageNumberContainer]: true, [classes.activePageNumberContainer]: active })}>
+	<div
+		onClick={onClick}
+		className={classnames({ [classes.pageNumberContainer]: true, [classes.activePageNumberContainer]: active })}
+		style={{ cursor: onClick ? "pointer" : "default" }}
+	>
 		<Typography className={classnames({ [classes.pageNumber]: true, [classes.activePageNumber]: active })}>
 			{children}
 		</Typography>
@@ -105,14 +107,32 @@ const PaginationBlock = props => {
 	const { page, limit, total } = paging;
 
 	const totalPages = Math.ceil(total / limit);
+
+	//Must be even int
+	const maxPageBlocks = 10; //TODO make 10
+	const maxStartRange = maxPageBlocks / 2;
+	const maxEndRange = totalPages - (maxPageBlocks / 2);
+
+	let appendedMiddleSpace = false;
+
 	const numberBlocks = [];
 	for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
-		const active = page === pageIndex;
-		numberBlocks.push(
-			<NumberBlock onClick={!active ? () => onPageChange(pageIndex) : null} key={pageIndex} active={active} classes={classes}>
-				{pageIndex + 1}
-			</NumberBlock>
-		);
+		if (pageIndex <= maxStartRange || pageIndex + 1 >= maxEndRange) {
+			const active = page === pageIndex;
+			numberBlocks.push(
+				<NumberBlock onClick={!active ? () => onPageChange(pageIndex) : null} key={pageIndex} active={active} classes={classes}>
+					{pageIndex + 1}
+				</NumberBlock>
+			);
+
+		} else if (!appendedMiddleSpace) {
+			appendedMiddleSpace = true;
+			numberBlocks.push(
+				<NumberBlock key={pageIndex} classes={classes}>
+					-
+				</NumberBlock>
+			);
+		}
 	}
 
 	let onPrevious;
