@@ -254,7 +254,8 @@ class Transactions extends Component {
 	}
 
 	renderDialog() {
-		const { activeIndex, items } = this.state;
+		const { activeIndex } = this.state;
+		const items = this.filteredItems();
 
 		let userId = null;
 		let activeItem = null;
