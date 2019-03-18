@@ -33,10 +33,12 @@ const combineTotals = (counts, sales) => {
 		totalReservedCount: 0,
 		totalGross: 0,
 		totalOnlineClientFeesInCents: 0,
+		totalBoxOfficeClientFeesInCents: 0,
 		totalRedeemedCount: 0,
 		totalOrdersOnline: 0,
 		totalOrdersBoxOffice: 0,
-		totalOrders: 0
+		totalOrders: 0,
+		faceAmountOwedToClientInCents: 0
 	};
 	counts.forEach(row => {
 		const {
@@ -65,11 +67,17 @@ const combineTotals = (counts, sales) => {
 			comp_sale_count,
 			client_online_fees_in_cents,
 			box_office_order_count,
-			online_order_count
+			online_order_count,
+			client_box_office_fees_in_cents,
+			company_box_office_fees_in_cents,
+			company_online_fees_in_cents,
+			total_online_fees_in_cents,
+			total_box_office_fees_in_cents,
+			total_sold_in_cents
 		} = row;
 
 		const total_sold_count = online_sale_count + box_office_sale_count;
-		const total_sold_in_cents = online_sales_in_cents + box_office_sales_in_cents;
+		// const total_sold_in_cents = online_sales_in_cents + box_office_sales_in_cents;
 
 		totals.totalOrdersOnline += online_order_count;
 		totals.totalOrdersBoxOffice += box_office_order_count;
@@ -82,6 +90,9 @@ const combineTotals = (counts, sales) => {
 		totals.totalSoldOnlineCount += online_sale_count;
 		totals.totalGross += total_sold_in_cents;
 		totals.totalOnlineClientFeesInCents += client_online_fees_in_cents;
+		totals.totalBoxOfficeClientFeesInCents += client_box_office_fees_in_cents;
+
+		totals.faceAmountOwedToClientInCents += online_sales_in_cents; //TODO confirm correct value
 	});
 	return totals;
 };
@@ -94,27 +105,35 @@ export class TicketCountReport {
 		sales: []
 	};
 
+	@observable
+	isLoading = false;
+
 	@action
 	fetchCountAndSalesData(queryParams, includeZeroCountTicketPricings = false, onSuccess) {
+		this.setCountAndSalesData();
+
 		if (!user.isAuthenticated) {
-			this.setCountAndSalesData();
 			return;
 		}
-		return Bigneon()
-			.reports.ticketCount({
-				...queryParams
-			})
+
+		this.isLoading = true;
+
+		return Bigneon().reports.ticketCount({ ...queryParams })
 			.then(response => {
 				const sales = response.data.sales.filter(item => includeZeroCountTicketPricings || (item.online_sale_count + item.box_office_sale_count + item.comp_sale_count) > 0);
 				this.setCountAndSalesData(response.data.counts, sales);
 
 				onSuccess ? onSuccess() : null;
+
+				this.isLoading = false;
 			})
 			.catch(error => {
 				notifications.showFromErrorResponse({
 					error,
 					defaultMessage: "Loading counts failed."
 				});
+
+				this.isLoading = false;
 			});
 
 	}

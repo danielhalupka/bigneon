@@ -3,9 +3,12 @@ import PropTypes from "prop-types";
 import EventSettlementRow from "./EventSettlementRow";
 import { dollars } from "../../../../../helpers/money";
 
-const RevenueShareTicket = props => {
-	const { ticketFees, totalOrderFees, totalOtherFees } = props;
-	const ticketTypeIds = Object.keys(ticketFees);
+const RevenueShareTable = props => {
+	const { tickets, totals } = props;
+
+	console.log("totals: ", totals);
+
+	const ticketTypeIds = Object.keys(tickets);
 
 	return (
 		<div>
@@ -32,15 +35,32 @@ const RevenueShareTicket = props => {
 			</EventSettlementRow>
 
 			{ticketTypeIds.map((ticketTypeId, index) => {
-				const ticketTypeData = ticketFees[ticketTypeId];
+				const ticketTypeData = tickets[ticketTypeId];
 
 				const {
 					name,
-					pricings,
-					onlineTotalRevShare,
-					boTotalRevShare,
-					totalRevShare
+					sales,
+					counts,
+					totals
 				} = ticketTypeData;
+
+				const {
+					totalAllocation,
+					totalBoxOfficeCount,
+					totalCompsCount,
+					totalGross,
+					totalHoldsCount,
+					totalOnlineClientFeesInCents,
+					totalOpenCount,
+					totalOrders,
+					totalOrdersBoxOffice,
+					totalOrdersOnline,
+					totalRedeemedCount,
+					totalReservedCount,
+					totalSoldCount,
+					totalSoldOnlineCount,
+					totalBoxOfficeClientFeesInCents
+				} = totals;
 
 				//Summary Row of counts
 				return (
@@ -50,34 +70,55 @@ const RevenueShareTicket = props => {
 								name,
 								"",
 								"",
-								onlineTotalRevShare,
+								dollars(totalOnlineClientFeesInCents),
 								"",
-								boTotalRevShare,
-								dollars(totalRevShare)
+								dollars(totalBoxOfficeClientFeesInCents),
+								dollars(totalOnlineClientFeesInCents + totalBoxOfficeClientFeesInCents)
 							]}
 						</EventSettlementRow>
 
-						{pricings.map((pricing, pricingIndex) => {
+						{sales.map((sale, pricingIndex) => {
 							const {
-								name,
-								priceInCents,
-								onlineRevSharePerTicket,
-								onlineTotalRevShare,
-								boRevSharePerTicket,
-								boTotalRevShare,
-								totalRevShare
-							} = pricing;
+								organization_id,
+								event_id,
+								ticket_type_id,
+								ticket_pricing_id,
+								hold_id,
+								ticket_name,
+								ticket_status,
+								event_name,
+								hold_name,
+								ticket_pricing_name,
+								ticket_pricing_price_in_cents,
+								box_office_order_count,
+								online_order_count,
+								box_office_refunded_count,
+								online_refunded_count,
+								box_office_sales_in_cents,
+								online_sales_in_cents,
+								box_office_sale_count,
+								online_sale_count,
+								comp_sale_count,
+								total_box_office_fees_in_cents,
+								total_online_fees_in_cents,
+								company_box_office_fees_in_cents,
+								client_box_office_fees_in_cents,
+								company_online_fees_in_cents,
+								client_online_fees_in_cents,
+								total_sold_count,
+								total_sold_in_cents
+							} = sale;
 
 							return (
 								<EventSettlementRow key={pricingIndex}>
 									{[
 										name,
-										dollars(priceInCents),
-										dollars(onlineRevSharePerTicket),
-										dollars(onlineTotalRevShare),
-										dollars(boRevSharePerTicket),
-										dollars(boTotalRevShare),
-										dollars(totalRevShare)
+										dollars(ticket_pricing_price_in_cents),
+										"TODO",
+										dollars(client_online_fees_in_cents),
+										"TODO",
+										dollars(client_box_office_fees_in_cents),
+										dollars(client_online_fees_in_cents + client_box_office_fees_in_cents)
 									]}
 								</EventSettlementRow>
 							);
@@ -86,15 +127,32 @@ const RevenueShareTicket = props => {
 				);
 			})}
 
+			{/*faceAmountOwedToClientInCents: 0*/}
+			{/*totalAllocation: 1350*/}
+			{/*totalBoxOfficeClientFeesInCents: 0*/}
+			{/*totalBoxOfficeCount: 0*/}
+			{/*totalCompsCount: 0*/}
+			{/*totalGross: 0*/}
+			{/*totalHoldsCount: 0*/}
+			{/*totalOnlineClientFeesInCents: 0*/}
+			{/*totalOpenCount: 1350*/}
+			{/*totalOrders: 0*/}
+			{/*totalOrdersBoxOffice: 0*/}
+			{/*totalOrdersOnline: 0*/}
+			{/*totalRedeemedCount: 0*/}
+			{/*totalReservedCount: 0*/}
+			{/*totalSoldCount: 0*/}
+			{/*totalSoldOnlineCount: 0*/}
+
 			<EventSettlementRow subHeading>
 				{[
 					"Order fees",
 					"",
 					"",
-					dollars(totalOrderFees.onlineTotalRevShare),
+					dollars(totals.totalOnlineClientFeesInCents),
 					"",
-					dollars(totalOrderFees.boTotalRevShare),
-					dollars(totalOrderFees.totalRevShare)
+					dollars(totals.totalBoxOfficeClientFeesInCents),
+					dollars(totals.totalOnlineClientFeesInCents + totals.totalBoxOfficeClientFeesInCents)
 				]}
 			</EventSettlementRow>
 
@@ -103,20 +161,19 @@ const RevenueShareTicket = props => {
 					"Other fees",
 					"",
 					"",
-					dollars(totalOtherFees.onlineTotalRevShare),
+					"TODO",
 					"",
-					dollars(totalOtherFees.boTotalRevShare),
-					dollars(totalOtherFees.totalRevShare)
+					"TODO",
+					"TODO"
 				]}
 			</EventSettlementRow>
 		</div>
 	);
 };
 
-RevenueShareTicket.propTypes = {
-	ticketFees: PropTypes.object.isRequired,
-	totalOrderFees: PropTypes.object.isRequired,
-	totalOtherFees: PropTypes.object.isRequired
+RevenueShareTable.propTypes = {
+	tickets: PropTypes.object.isRequired,
+	totals: PropTypes.object.isRequired
 };
 
-export default RevenueShareTicket;
+export default RevenueShareTable;

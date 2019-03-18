@@ -43,11 +43,16 @@ const styles = theme => ({
 class TicketCounts extends Component {
 	constructor(props) {
 		super(props);
+		
 		this.state = {};
 	}
 
 	componentDidMount() {
 		this.refreshData();
+	}
+
+	componentWillUnmount() {
+		ticketCountReport.setCountAndSalesData(); //Clears current results in memory
 	}
 
 	exportCSV(eventId) {
@@ -73,13 +78,13 @@ class TicketCounts extends Component {
 			queryParams = { ...queryParams, event_id: eventId };
 		}
 		ticketCountReport.fetchCountAndSalesData(queryParams, false, onLoad);
-
 	}
 
 	renderList() {
 		const { eventId, classes } = this.props;
 		const eventDataResults = ticketCountReport.dataByPrice;
-		if (eventDataResults === null) {
+		console.log(eventDataResults);
+		if (eventDataResults === null || ticketCountReport.isLoading) {
 			return <Loader/>;
 		}
 

@@ -40,10 +40,12 @@ const styles = theme => {
 			borderBottomLeftRadius: 8,
 			borderBottomRightRadius: 8
 		},
+		totalNoRadius: {
+			backgroundColor: primaryHex
+		},
 		totalText: {
 			color: "#FFFFFF",
 			borderRadius: 4,
-			textTransform: "uppercase",
 			fontFamily: fontFamilyDemiBold
 		},
 		text: {
@@ -53,7 +55,7 @@ const styles = theme => {
 };
 
 const EventSettlementRow = props => {
-	const { heading, headingNoRadius, subHeading, gray, children, classes, total, ...rest } = props;
+	const { heading, headingNoRadius, subHeading, gray, children, classes, total, totalNoRadius, ...rest } = props;
 
 	const columnStyles = [
 		{ flex: 2, textAlign: "left" },
@@ -73,7 +75,7 @@ const EventSettlementRow = props => {
 					[classes.headingText]: heading || headingNoRadius,
 					[classes.subHeading]: subHeading,
 					[classes.text]: !heading,
-					[classes.totalText]: total
+					[classes.totalText]: total || totalNoRadius
 				})}
 				key={index}
 				style={columnStyles[index]}
@@ -89,6 +91,7 @@ const EventSettlementRow = props => {
 				[classes.root]: true,
 				[classes.gray]: gray,
 				[classes.total]: total,
+				[classes.totalNoRadius]: totalNoRadius,
 				[classes.heading]: heading,
 				[classes.headingNoRadius]: headingNoRadius,
 				[classes.subHeading]: subHeading
@@ -105,6 +108,7 @@ EventSettlementRow.propTypes = {
 	children: PropTypes.array.isRequired,
 	gray: PropTypes.bool,
 	total: PropTypes.bool,
+	totalNoRadius: PropTypes.bool,
 	heading: PropTypes.bool,
 	headingNoRadius: PropTypes.bool,
 	subHeading: PropTypes.bool

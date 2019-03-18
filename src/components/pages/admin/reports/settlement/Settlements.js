@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import moment from "moment-timezone";
+import { observer } from "mobx-react";
 
 import Button from "../../../../elements/Button";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
@@ -10,8 +11,10 @@ import downloadCSV from "../../../../../helpers/downloadCSV";
 import ReportsDate from "../ReportDate";
 import Loader from "../../../../elements/loaders/Loader";
 import Bigneon from "../../../../../helpers/bigneon";
-import SingleEventSettlement from "./SingleEventSettlement";
-import createGoogleMapsLink from "../../../../../helpers/createGoogleMapsLink";
+import settlementReport from "../../../../../stores/reports/settlementReport";
+import EventTicketCountTable from "../counts/TicketCounts";
+import Divider from "../../../../common/Divider";
+import SingleEventSettlement from "../settlement/SingleEventSettlement";
 
 const styles = theme => ({
 	root: {},
@@ -21,117 +24,65 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class Settlements extends Component {
 	constructor(props) {
 		super(props);
 
-		this.initialState = {
-			events: []
+		this.state = {
+			resultsLoaded: false
 		};
+	}
 
-		this.state = this.initialState;
+	componentDidMount() {
+		setTimeout(this.refreshData.bind(this), 1000);//TODO remove after testing
+	}
+
+	componentWillUnmount() {
+		settlementReport.setCountAndSalesData();
 	}
 
 	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
-		this.setState({ ...this.initialState, startDate, endDate, events: null });
+		this.setState({ startDate, endDate, events: null });
 
-		const { organizationId } = this.props;
+		const { organizationId, onLoad } = this.props;
 		const queryParams = { organization_id: organizationId, start_utc, end_utc };
 
-		Bigneon()
-			.reports.weeklySettlement(queryParams)
-			.then(response => {
-				const events = response.data;
-
-				this.setState({ events }, this.setEventDetails.bind(this));
-			})
-			.catch(error => {
-				console.log(error);
-				notifications.showFromErrorResponse({
-					error,
-					defaultMessage: "Loading settlement reports failed."
-				});
-			});
-	}
-
-	setEventDetails() {
-		const { events } = this.state;
-
-		events.forEach((event, index) => {
-			this.setEventData(event.event_id, index);
+		settlementReport.fetchCountAndSalesData(queryParams, () => {
+			onLoad ? onLoad() : null;
+			this.setState({ resultsLoaded: true });
 		});
 	}
 
-	setEventData(id, index) {
-		Bigneon()
-			.events.read({ id })
-			.then(response => {
-				const { artists, organization, venue, ...event } = response.data;
-
-				const {
-					name,
-					event_start
-				} = event;
-
-				const venueTimezone = venue.timezone || "America/Los_Angeles";
-
-				const eventDetails = {
-					name,
-					eventStartDisplay: moment.utc(event_start)
-						.tz(venueTimezone)
-						.format("M/D/YYYY h:mmA z"),
-					venueName: venue.name
-				};
-
-				this.setState(({ events }) => {
-					events[index] = { ...events[index], ...eventDetails };
-					return { events };
-				});
-			})
-			.catch(error => {
-				console.error(error);
-				notifications.showFromErrorResponse({
-					defaultMessage: "Loading event details failed.",
-					error
-				});
-			});
-	}
-
-	exportCSV() {
-		const {
-			events
-		} = this.state;
-
-		if (!events) {
-			return notifications.show({
-				message: "No rows to export.",
-				variant: "warning"
-			});
-		}
-
-		const csvRows = [];
-
-		const title = "Event settlement: ";
-
-		csvRows.push([title]);
-
-		downloadCSV(csvRows, "weekly-event-settlement-report");
-	}
-
 	renderResults() {
-		const { events } = this.state;
+		const { eventDetails, dataByPrice } = settlementReport;
 
-		if (events === null) {
+		if (dataByPrice === null || settlementReport.isLoading) {
 			return <Loader/>;
 		}
 
-		return (
-			<div>
-				{events.map((event, index) => <SingleEventSettlement key={index} {...event}/>)}
-			</div>
-		);
+		if (!this.state.resultsLoaded) {
+			return null;
+		}
+		
+		const reportEventIds = Object.keys(dataByPrice);
+
+		if (reportEventIds.length === 0) {
+			return <Typography>No events found.</Typography>;
+		}
+
+		return reportEventIds.map((reportEventId, index) => {
+			let displayStartDate = "";
+			let venue = "";
+			if (eventDetails[reportEventId]) {
+				displayStartDate = eventDetails[reportEventId].displayStartDate;
+				venue = eventDetails[reportEventId].venue;
+			}
+
+			return <SingleEventSettlement key={index} venue={venue} displayStartDate={displayStartDate} {...dataByPrice[reportEventId]}/>;
+		});
 	}
 
 	render() {
@@ -151,7 +102,7 @@ class Settlements extends Component {
 					<Button
 						iconUrl="/icons/csv-active.svg"
 						variant="text"
-						onClick={this.exportCSV.bind(this)}
+						onClick={() => {}}
 					>
 						Export CSV
 					</Button>
@@ -168,7 +119,8 @@ class Settlements extends Component {
 
 Settlements.propTypes = {
 	classes: PropTypes.object.isRequired,
-	organizationId: PropTypes.string.isRequired
+	organizationId: PropTypes.string.isRequired,
+	onLoad: PropTypes.func
 };
 
 export default withStyles(styles)(Settlements);

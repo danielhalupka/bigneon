@@ -4,40 +4,54 @@ import TotalsRow from "./TotalsRow";
 import { dollars } from "../../../../../helpers/money";
 
 const TotalsTable = props => {
-	const { rows } = props;
+	//TODO find out where the other values come from
+	const {
+		totalAllocation,
+		totalBoxOfficeCount,
+		totalCompsCount,
+		totalGross,
+		totalHoldsCount,
+		totalOnlineClientFeesInCents,
+		totalOpenCount,
+		totalOrders,
+		totalOrdersBoxOffice,
+		totalOrdersOnline,
+		totalRedeemedCount,
+		totalReservedCount,
+		totalSoldCount,
+		totalSoldOnlineCount,
+		totalBoxOfficeClientFeesInCents,
+		faceAmountOwedToClientInCents
+	} = props;
+
+	//const faceAmountOwed = 0;
 
 	return (
 		<div>
 			<TotalsRow heading>{[ "Ticket", "" ]}</TotalsRow>
 
-			{rows.map((row, index) => {
-				const typeProp = { };
+			<TotalsRow>
+				{[ "Face Amount Owed To Client", dollars(faceAmountOwedToClientInCents) ]}
+			</TotalsRow>
 
-				if (index + 1 === rows.length) {
-					typeProp.total = true;
-					typeProp.gray = false;
-				} else {
-					const isOdd = index % 2;
+			<TotalsRow gray>
+				{[ "Service Fee Revenue Share", dollars(totalOnlineClientFeesInCents + totalBoxOfficeClientFeesInCents) ]}
+			</TotalsRow>
 
-					typeProp.gray = !!isOdd;
-					typeProp.darkGray = !isOdd;
-				}
+			<TotalsRow>
+				{[ "Credit card processing", "TODO" ]}
+			</TotalsRow>
 
-				return (
-					<TotalsRow key={index} {...typeProp}>
-						{[
-							row.label,
-							dollars(row.valueInCents)
-						]}
-					</TotalsRow>
-				);
-			})}
+			<TotalsRow total>
+				{[ "Total Event Settlement", dollars(totalGross + totalOnlineClientFeesInCents + totalBoxOfficeClientFeesInCents) ]}
+			</TotalsRow>
 		</div>
 	);
 };
 
 TotalsTable.propTypes = {
-	rows: PropTypes.array.isRequired
+	totalOnlineClientFeesInCents: PropTypes.number.isRequired
+	//TODO
 };
 
 export default TotalsTable;
