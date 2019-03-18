@@ -96,7 +96,7 @@ const formatDataForSaving = (event, organizationId) => {
 	const eventDetails = {
 		name,
 		organization_id: organizationId,
-		age_limit: Number(ageLimit),
+		age_limit: ageLimit,
 		additional_info: additionalInfo,
 		top_line_info: topLineInfo,
 		is_external: isExternal,
