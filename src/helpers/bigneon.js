@@ -3,8 +3,8 @@ import errorReporting from "./errorReporting";
 
 let bigneon;
 
-export const bigneonFactory = (options = {}, headers = {}, mockData) => {
-	if (!bigneon) {
+export const bigneonFactory = (options = {}, headers = {}, mockData, forceReInit) => {
+	if (!bigneon || forceReInit) {
 		options = {
 			...{
 				protocol: process.env.REACT_APP_API_PROTOCOL,
