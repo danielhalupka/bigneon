@@ -63,7 +63,7 @@ class SelectedEvent {
 			query.private_access_code = private_access_code;
 			this.private_access_code = private_access_code;
 		}
-
+		
 		//Temp fix to catch and handle the odd occasion where `Bigneon().events.read` is not a function.
 		//Attempt to instantiate again, wait a second and try the api call again.
 		//Hard limit on 10 refresh attempts and then display an error message to the user.
@@ -117,7 +117,7 @@ class SelectedEvent {
 
 				errorReporting.captureMessage("Bigneon().events.read is not a function. Real value in bread crumb.");
 
-				Bigneon({}, {});
+				Bigneon({}, {}, null, true);
 
 				return setTimeout(() => {
 					this.refreshResult(id, onError);
