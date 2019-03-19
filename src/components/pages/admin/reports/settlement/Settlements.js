@@ -48,14 +48,7 @@ class Settlements extends Component {
 			adjustmentEditNotes: ""
 		};
 	}
-
-	componentDidMount() {
-		//TODO remove after testing
-		if (window.location.hostname === "localhost") {
-			//setTimeout(this.refreshData.bind(this), 1000);
-		}
-	}
-
+	
 	componentWillUnmount() {
 		settlementReport.setCountAndSalesData();
 	}
