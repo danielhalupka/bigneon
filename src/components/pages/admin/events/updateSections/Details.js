@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
-import { withStyles, Grid, Collapse, Hidden } from "@material-ui/core";
+import { withStyles, Grid, Collapse, Hidden, ListItemText } from "@material-ui/core";
 import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
@@ -12,9 +12,18 @@ import SelectGroup from "../../../../common/form/SelectGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import Bn from "bn-api-node";
-import { updateTimezonesInObjects } from "../../../../../helpers/time";
+import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
 
-const styles = theme => ({});
+const styles = theme => ({
+	selectedAgeLimitContainer: {
+		flex: 1,
+		display: "flex",
+		alignItems: "center"
+	},
+	ageLimitContainer: {
+		paddingTop: "14px"
+	}
+});
 
 export const DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME = 24; //For lack of a better var name
 
@@ -260,7 +269,8 @@ class Details extends Component {
 		super(props);
 
 		this.state = {
-			venues: null
+			venues: null,
+			selectedAgeLimitOption: null
 		};
 
 		this.changeDetails = this.changeDetails.bind(this);
@@ -363,29 +373,49 @@ class Details extends Component {
 	}
 
 	renderAgeLimits() {
-		const { errors = {}, validateFields } = this.props;
+		const { errors = {}, validateFields, classes } = this.props;
 		let { ageLimit } = eventUpdateStore.event;
+
 		ageLimit = (ageLimit || "0") + "";
 
-		const ageLimits = [
-			{ value: "0", label: "This event is all ages" },
-			{ value: "21", label: "This event is 21 and over" },
-			{ value: "18", label: "This event is 18 and over" }
-		];
+		const ageLimits = {
+			"0": "This event is all ages",
+			"21": "This event is 21 and over",
+			"18": "This event is 18 and over"
+		};
+		if (!ageLimits.hasOwnProperty(ageLimit)) {
+			ageLimits[ageLimit] = ageLimit;
+		}
 
 		return (
-			<SelectGroup
-				value={ageLimit}
-				items={ageLimits}
-				error={errors.ageLimit}
-				name={"age-limit"}
-				label={"Age Limit *"}
-				onChange={e => {
-					const ageLimit = e.target.value;
-					this.changeDetails({ ageLimit });
-				}}
-				onBlur={validateFields}
-			/>
+			<div className={classes.ageLimitContainer}>
+				<AutoCompleteGroup
+					items={ageLimits}
+					value={ageLimit}
+					name={"age-limit"}
+					placeholder={"Age Limit"}
+					onFocus={() => {
+						this.changeDetails({ageLimit: null});
+					}}
+					onChange={(value) => {
+						this.changeDetails({ ageLimit: value });
+					}}
+					onCreateOption={(value) => {
+						this.changeDetails({ ageLimit: value });
+					}}
+					renderValueContainer={() => {
+						return (
+							<div className={classes.selectedAgeLimitContainer}>
+								<ListItemText
+									primary={ageLimits[ageLimit]}
+									secondary={""}
+								/>
+							</div>
+						);
+					}}
+				/>
+
+			</div>
 		);
 	}
 
