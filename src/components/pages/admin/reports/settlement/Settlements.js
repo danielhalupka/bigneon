@@ -20,6 +20,7 @@ import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeadin
 import Dialog from "../../../../elements/Dialog";
 import InputGroup from "../../../../common/form/InputGroup";
 import EventListTable from "./EventListTable";
+import user from "../../../../../stores/user";
 
 const styles = theme => ({
 	root: {},
@@ -51,7 +52,7 @@ class Settlements extends Component {
 	componentDidMount() {
 		//TODO remove after testing
 		if (window.location.hostname === "localhost") {
-			setTimeout(this.refreshData.bind(this), 1000);
+			//setTimeout(this.refreshData.bind(this), 1000);
 		}
 	}
 
@@ -86,13 +87,43 @@ class Settlements extends Component {
 	}
 
 	onSettleEvents() {
-		alert("TODO");
+		const { adjustmentsInCents, adjustmentNotes, eventDetails } = settlementReport;
+		const { start_utc, end_utc } = this.state;
+		const event_id = Object.keys(eventDetails)[0];
+
+		const params = {
+			organization_id: user.currentOrganizationId,
+			start_utc,
+			end_utc,
+			adjustments: [{
+				comment: adjustmentNotes,
+				value_in_cents: adjustmentsInCents,
+				transaction_type: "Manual",
+				event_id //TODO move adjustments to event level not grand totals
+			}], //TODO allow for multiple adjustments later
+			comment: adjustmentNotes
+		};
+
+		Bigneon().organizations.settlements.create(params)
+			.then(() => {
+				notifications.show({
+					message: "Settlement report created.",
+					variant: "success"
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Failed to create settlement report."
+				});
+			});
 	}
 
 	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
-		this.setState({ startDate, endDate, events: null });
+		this.setState({ startDate, endDate, start_utc, end_utc, events: null });
 
 		const { organizationId, onLoad } = this.props;
 		const queryParams = { organization_id: organizationId, start_utc, end_utc };
