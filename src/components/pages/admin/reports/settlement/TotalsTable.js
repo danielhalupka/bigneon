@@ -38,9 +38,9 @@ const TotalsTable = props => {
 				{[ "Service Fee Revenue Share", dollars(totalOnlineClientFeesInCents + totalBoxOfficeClientFeesInCents) ]}
 			</TotalsRow>
 
-			<TotalsRow>
-				{[ "Credit card processing", "TODO" ]}
-			</TotalsRow>
+			{/*<TotalsRow>*/}
+			{/*{[ "Credit card processing", "TODO" ]}*/}
+			{/*</TotalsRow>*/}
 
 			<TotalsRow total>
 				{[ "Total Event Settlement", dollars(totalGross + totalOnlineClientFeesInCents + totalBoxOfficeClientFeesInCents) ]}
