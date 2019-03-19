@@ -3,8 +3,7 @@ import PropTypes from "prop-types";
 import TotalsRow from "./TotalsRow";
 import { dollars } from "../../../../../helpers/money";
 
-const TotalsTable = props => {
-	//TODO find out where the other values come from
+const EventTotalsTable = props => {
 	const {
 		totalAllocation,
 		totalBoxOfficeCount,
@@ -49,9 +48,9 @@ const TotalsTable = props => {
 	);
 };
 
-TotalsTable.propTypes = {
+EventTotalsTable.propTypes = {
 	totalOnlineClientFeesInCents: PropTypes.number.isRequired
 	//TODO
 };
 
-export default TotalsTable;
+export default EventTotalsTable;

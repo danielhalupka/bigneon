@@ -58,21 +58,33 @@ const TotalsRow = props => {
 		{ flex: 2, textAlign: "right" }
 	];
 
-	const columns = children.map((text, index) => {
+	const columns = children.map((child, index) => {
+		if (typeof child === "string") {
+			return (
+				<Typography
+					noWrap
+					className={classNames({
+						[classes.headingText]: heading,
+						[classes.text]: !heading,
+						[classes.totalText]: total
+					})}
+					key={index}
+					style={columnStyles[index]}
+				>
+					{child}
+				</Typography>
+			);
+		}
+
 		return (
-			<Typography
-				noWrap
-				className={classNames({
-					[classes.headingText]: heading,
-					[classes.text]: !heading,
-					[classes.totalText]: total
-				})}
+			<span
 				key={index}
 				style={columnStyles[index]}
 			>
-				{text}
-			</Typography>
+				{child}
+			</span>
 		);
+
 	});
 
 	return (

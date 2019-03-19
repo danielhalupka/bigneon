@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
-import TotalsTable from "./TotalsTable";
+import EventTotalsTable from "./EventTotalsTable";
 import InventorySoldTable from "./InventorySoldTable";
 import RevenueShareTable from "./RevenueShareTable";
 
@@ -37,7 +37,7 @@ const SingleEventSettlement = props => {
 			<Typography>Venue: <span className={classes.boldSpan}>{venue}</span></Typography>
 
 			<Typography className={classes.subHeading}>Event totals</Typography>
-			<TotalsTable {...totals}/>
+			<EventTotalsTable {...totals}/>
 
 			<Typography className={classes.subHeading}>Inventory sold (Net)</Typography>
 			<InventorySoldTable totals={totals} tickets={tickets}/>

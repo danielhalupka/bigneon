@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Typography, withStyles } from "@material-ui/core";
+import { InputAdornment, Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import moment from "moment-timezone";
 import { observer } from "mobx-react";
@@ -15,6 +15,10 @@ import settlementReport from "../../../../../stores/reports/settlementReport";
 import EventTicketCountTable from "../counts/TicketCounts";
 import Divider from "../../../../common/Divider";
 import SingleEventSettlement from "../settlement/SingleEventSettlement";
+import GrandTotalsTable from "./GrandTotalsTable";
+import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
+import Dialog from "../../../../elements/Dialog";
+import InputGroup from "../../../../common/form/InputGroup";
 
 const styles = theme => ({
 	root: {},
@@ -30,16 +34,48 @@ class Settlements extends Component {
 		super(props);
 
 		this.state = {
-			resultsLoaded: false
+			resultsLoaded: false,
+			showAdjustmentDialog: false,
+			adjustmentEditDollarValue: "",
+			adjustmentEditNotes: ""
 		};
 	}
 
 	componentDidMount() {
-		setTimeout(this.refreshData.bind(this), 1000);//TODO remove after testing
+		//TODO remove after testing
+		if (window.location.hostname === "localhost") {
+			setTimeout(this.refreshData.bind(this), 1000);
+		}
 	}
 
 	componentWillUnmount() {
 		settlementReport.setCountAndSalesData();
+	}
+
+	showAdjustmentDialog() {
+		const { adjustmentsInCents, adjustmentNotes } = settlementReport;
+
+		this.setState({
+			adjustmentEditDollarValue: adjustmentsInCents ? `${(adjustmentsInCents / 100).toFixed(2)}` : "",
+			adjustmentEditNotes: adjustmentNotes || "",
+			showAdjustmentDialog: true
+		});
+	}
+
+	closeAdjustmentDialog() {
+		this.setState({ showAdjustmentDialog: false });
+	}
+
+	onSetAdjustments() {
+		const { adjustmentEditDollarValue, adjustmentEditNotes } = this.state;
+
+		if (isNaN(adjustmentEditDollarValue)) {
+			return notifications.show({ message: "Invalid adjustment number.", variant: "warning" });
+		}
+
+		settlementReport.setAdjustmentDetails(Math.round(Number(adjustmentEditDollarValue) * 100), adjustmentEditNotes);
+
+		this.closeAdjustmentDialog();
 	}
 
 	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
@@ -57,7 +93,13 @@ class Settlements extends Component {
 	}
 
 	renderResults() {
-		const { eventDetails, dataByPrice } = settlementReport;
+		const {
+			eventDetails,
+			dataByPrice,
+			adjustmentsInCents,
+			adjustmentNotes,
+			grandTotals
+		} = settlementReport;
 
 		if (dataByPrice === null || settlementReport.isLoading) {
 			return <Loader/>;
@@ -73,21 +115,83 @@ class Settlements extends Component {
 			return <Typography>No events found.</Typography>;
 		}
 
-		return reportEventIds.map((reportEventId, index) => {
-			let displayStartDate = "";
-			let venue = "";
-			if (eventDetails[reportEventId]) {
-				displayStartDate = eventDetails[reportEventId].displayStartDate;
-				venue = eventDetails[reportEventId].venue;
-			}
+		const { classes } = this.props;
+		const { startDate, endDate } = this.state;
 
-			return <SingleEventSettlement key={index} venue={venue} displayStartDate={displayStartDate} {...dataByPrice[reportEventId]}/>;
-		});
+		return (
+			<div>
+				<GrandTotalsTable
+					{...grandTotals}
+					adjustmentsInCents={adjustmentsInCents}
+					adjustmentNotes={adjustmentNotes}
+					onEditAdjustments={this.showAdjustmentDialog.bind(this)}
+				/>
+
+				<Typography className={classes.subHeading} style={{ marginBottom: 10 }}>
+					Events ending from {reportDateRangeHeading(startDate, endDate)}
+				</Typography>
+
+				<div style={{ marginBottom: 40 }}/>
+
+				{reportEventIds.map((reportEventId, index) => {
+					let displayStartDate = "";
+					let venue = "";
+					if (eventDetails[reportEventId]) {
+						displayStartDate = eventDetails[reportEventId].displayStartDate;
+						venue = eventDetails[reportEventId].venue;
+					}
+
+					return <SingleEventSettlement key={index} venue={venue} displayStartDate={displayStartDate} {...dataByPrice[reportEventId]}/>;
+				})}
+			</div>
+		);
+	}
+
+	renderAdjustmentDialog() {
+		const { showAdjustmentDialog, adjustmentEditDollarValue, adjustmentEditNotes } = this.state;
+
+		return (
+			<Dialog
+				open={showAdjustmentDialog}
+				title={"Edit total adjustments"}
+				onClose={this.closeAdjustmentDialog.bind(this)}
+			>
+				<InputGroup
+					name="settlement-adjustment-value"
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position="start">$</InputAdornment>
+						)
+					}}
+					label={"Adjustment amount ($)"}
+					type="text"
+					placeholder="0.00"
+					value={adjustmentEditDollarValue}
+					onChange={e => this.setState({ adjustmentEditDollarValue: e.target.value })}
+				/>
+
+				<InputGroup
+					value={adjustmentEditNotes}
+					name="settlement-adjustment-notes"
+					label="Adjustment notes"
+					type="text"
+					placeholder="Describe these adjustments"
+					onChange={e => this.setState({ adjustmentEditNotes: e.target.value })}
+					multiline
+				/>
+
+				<div style={{ display: "flex" }}>
+					<Button style={{ flex: 1, marginRight: 5 }} onClick={this.closeAdjustmentDialog.bind(this)}>Cancel</Button>
+					<Button style={{ flex: 1, marginLeft: 5 }} variant="callToAction" onClick={this.onSetAdjustments.bind(this)}>Update</Button>
+				</div>
+			</Dialog>
+		);
 	}
 
 	render() {
 		return (
 			<div>
+				{this.renderAdjustmentDialog()}
 				<div
 					style={{
 						display: "flex",
@@ -95,7 +199,7 @@ class Settlements extends Component {
 						alignItems: "center"
 					}}
 				>
-					<Typography variant="title">Weekly event settlement</Typography>
+					<Typography variant="title">Event settlement report</Typography>
 					{/*<Typography className={classes.subHeading}>Sales occurring {dateRangeString(startDate, endDate)}</Typography>*/}
 
 					<span style={{ flex: 1 }}/>

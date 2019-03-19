@@ -6,8 +6,6 @@ import { dollars } from "../../../../../helpers/money";
 const RevenueShareTable = props => {
 	const { tickets, totals } = props;
 
-	console.log("totals: ", totals);
-
 	const ticketTypeIds = Object.keys(tickets);
 
 	return (
