@@ -456,7 +456,7 @@ EventHeaderImage.propTypes = {
 	displayEventStartDate: PropTypes.string.isRequired,
 	displayDoorTime: PropTypes.string.isRequired,
 	displayShowTime: PropTypes.string.isRequired,
-	age_limit: PropTypes.oneOf(["string", "number"]).isRequired
+	age_limit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 };
 
 export default withStyles(styles)(EventHeaderImage);
