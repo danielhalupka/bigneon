@@ -516,7 +516,8 @@ class Event extends Component {
 						noMediaTitle="Upload event image"
 					/>
 
-					{errors.missingPromoImage ? <Typography className={classes.missingPromoImageError}>*Missing promo image</Typography> : null}
+					{errors.missingPromoImage ?
+						<Typography className={classes.missingPromoImageError}>*Missing promo image</Typography> : null}
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Artists</FormSubHeading>

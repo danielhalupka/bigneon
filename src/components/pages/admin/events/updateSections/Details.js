@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
-import { withStyles, Grid, Collapse, Hidden, ListItemText } from "@material-ui/core";
+import { withStyles, Grid, Collapse, Hidden, ListItemText, TextField } from "@material-ui/core";
 import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
@@ -231,7 +231,7 @@ const formatDataForInputs = (event) => {
 		doorTimeHours,
 		publishDate,
 		redeemDate,
-		ageLimit: age_limit || "",
+		ageLimit: age_limit,
 		venueId: venue_id || "",
 		additionalInfo: additional_info || "",
 		topLineInfo: top_line_info ? top_line_info : "",
@@ -270,7 +270,8 @@ class Details extends Component {
 
 		this.state = {
 			venues: null,
-			selectedAgeLimitOption: null
+			selectedAgeLimitOption: null,
+			ageLimits: {}
 		};
 
 		this.changeDetails = this.changeDetails.bind(this);
@@ -372,49 +373,76 @@ class Details extends Component {
 		);
 	}
 
-	renderAgeLimits() {
+	renderAgeInput() {
+		const { ageLimit } = eventUpdateStore.event;
 		const { errors = {}, validateFields, classes } = this.props;
-		let { ageLimit } = eventUpdateStore.event;
-
-		ageLimit = (ageLimit || "0") + "";
-
-		const ageLimits = {
-			"0": "This event is all ages",
-			"21": "This event is 21 and over",
-			"18": "This event is 18 and over"
-		};
-		if (!ageLimits.hasOwnProperty(ageLimit)) {
-			ageLimits[ageLimit] = ageLimit;
-		}
 
 		return (
-			<div className={classes.ageLimitContainer}>
-				<AutoCompleteGroup
-					items={ageLimits}
-					value={ageLimit}
-					name={"age-limit"}
-					placeholder={"Age Limit"}
-					onFocus={() => {
-						this.changeDetails({ageLimit: null});
-					}}
-					onChange={(value) => {
-						this.changeDetails({ ageLimit: value });
-					}}
-					onCreateOption={(value) => {
-						this.changeDetails({ ageLimit: value });
-					}}
-					renderValueContainer={() => {
-						return (
-							<div className={classes.selectedAgeLimitContainer}>
-								<ListItemText
-									primary={ageLimits[ageLimit]}
-									secondary={""}
-								/>
-							</div>
-						);
-					}}
-				/>
+			<InputGroup
+				error={errors.ageLimit}
+				value={ageLimit}
+				name="age-limit"
+				label="Age Limit"
+				labelProps={{
+					superText: `Select Age Limit`,
+					onSuperTextClick: () => {
+						this.setState({ isCustom: false });
+						this.changeDetails({ ageLimit: "0" });
+					}
+				}}
+				placeholder="Age Limit"
+				onChange={e => {
+					const ageLimit = e.target.value;
+					this.changeDetails({ ageLimit });
+				}}
+			/>
+		);
+	}
 
+	renderAgeSelect() {
+		let { ageLimit } = eventUpdateStore.event;
+		ageLimit = (ageLimit === undefined ? "0" : ageLimit + "");
+
+		const ageLimits = [
+			{ value: "0", label: "This event is all ages" },
+			{ value: "18", label: "This event is 18 and over" },
+			{ value: "21", label: "This event is 21 and over" }
+		];
+		return (
+			<SelectGroup
+				value={ageLimit}
+				items={ageLimits}
+				name={"age-limit"}
+				label={"Age Limit *"}
+				labelProps={{
+					superText: `Custom Age Limit`,
+					onSuperTextClick: () => {
+						this.setState({ isCustom: true });
+						this.changeDetails({ ageLimit: "" });
+					}
+				}}
+				onChange={e => {
+					const ageLimit = e.target.value;
+					this.changeDetails({ ageLimit });
+				}}
+			/>
+		);
+	}
+
+	renderAgeLimits() {
+		const { isCustom = false } = this.state;
+		//TODO There is definitely a better way to do this using an autocomplete
+		return (
+			<div>
+				{isCustom === true ?
+					(
+						this.renderAgeInput()
+					) :
+					(
+						this.renderAgeSelect()
+
+					)
+				}
 			</div>
 		);
 	}
