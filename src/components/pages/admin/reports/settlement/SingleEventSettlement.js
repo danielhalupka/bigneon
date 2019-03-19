@@ -28,13 +28,13 @@ const styles = theme => {
 };
 
 const SingleEventSettlement = props => {
-	const { classes, eventName, totals, tickets, displayStartDate, venue } = props;
+	const { classes, eventName, totals, tickets, displayStartDate, venueName } = props;
 
 	return (
 		<div className={classes.root}>
 			<Typography className={classes.heading}>{eventName}</Typography>
 			<Typography>Event start date/time: <span className={classes.boldSpan}>{displayStartDate}</span></Typography>
-			<Typography>Venue: <span className={classes.boldSpan}>{venue}</span></Typography>
+			<Typography>Venue: <span className={classes.boldSpan}>{venueName}</span></Typography>
 
 			<Typography className={classes.subHeading}>Event totals</Typography>
 			<EventTotalsTable {...totals}/>
@@ -54,7 +54,7 @@ SingleEventSettlement.propTypes = {
 	tickets: PropTypes.object.isRequired,
 	totals: PropTypes.object.isRequired,
 	displayStartDate: PropTypes.string.isRequired,
-	venue: PropTypes.string.isRequired
+	venueName: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(SingleEventSettlement);

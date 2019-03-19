@@ -19,12 +19,19 @@ import GrandTotalsTable from "./GrandTotalsTable";
 import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
 import Dialog from "../../../../elements/Dialog";
 import InputGroup from "../../../../common/form/InputGroup";
+import EventListTable from "./EventListTable";
 
 const styles = theme => ({
 	root: {},
 	subHeading: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 1.3
+	},
+	settleEventsContainer: {
+		display: "flex",
+		justifyContent: "flex-end",
+		paddingTop: theme.spacing.unit * 2,
+		paddingBottom: theme.spacing.unit * 2
 	}
 });
 
@@ -76,6 +83,10 @@ class Settlements extends Component {
 		settlementReport.setAdjustmentDetails(Math.round(Number(adjustmentEditDollarValue) * 100), adjustmentEditNotes);
 
 		this.closeAdjustmentDialog();
+	}
+
+	onSettleEvents() {
+		alert("TODO");
 	}
 
 	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
@@ -131,17 +142,28 @@ class Settlements extends Component {
 					Events ending from {reportDateRangeHeading(startDate, endDate)}
 				</Typography>
 
+				<EventListTable eventDetails={eventDetails}/>
+
+				<div className={classes.settleEventsContainer}>
+					<Button
+						onClick={this.onSettleEvents.bind(this)}
+						variant="callToAction"
+					>
+					Settle events
+					</Button>
+				</div>
+
 				<div style={{ marginBottom: 40 }}/>
 
 				{reportEventIds.map((reportEventId, index) => {
 					let displayStartDate = "";
-					let venue = "";
+					let venueName = "";
 					if (eventDetails[reportEventId]) {
 						displayStartDate = eventDetails[reportEventId].displayStartDate;
-						venue = eventDetails[reportEventId].venue;
+						venueName = eventDetails[reportEventId].venueName;
 					}
 
-					return <SingleEventSettlement key={index} venue={venue} displayStartDate={displayStartDate} {...dataByPrice[reportEventId]}/>;
+					return <SingleEventSettlement key={index} venueName={venueName} displayStartDate={displayStartDate} {...dataByPrice[reportEventId]}/>;
 				})}
 			</div>
 		);

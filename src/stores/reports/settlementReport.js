@@ -67,11 +67,15 @@ export class SettlementReport extends TicketCountReport {
 				const result = await Bigneon().events.read({ id });
 				if (result.data) {
 					const { venue, ...event } = result.data;
-					const { event_start } = event;
+					const { event_start, event_end } = event;
+					const { timezone } = venue;
+					const dateFormat = "dddd, MMMM Do YYYY z";
 
 					this.setEventDetails(id, {
-						venue: venue.name,
-						displayStartDate: moment.utc(event_start).tz(venue.timezone).format("dddd, MMMM Do YYYY z")
+						eventName: event.name,
+						venueName: venue.name,
+						displayStartDate: moment.utc(event_start).tz(timezone).format(dateFormat),
+						displayEndDate: moment.utc(event_end).tz(timezone).format(dateFormat)
 					});
 				}
 			} catch(error) {
