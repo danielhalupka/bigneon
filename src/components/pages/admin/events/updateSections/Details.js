@@ -13,6 +13,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import Bn from "bn-api-node";
 import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
+import { secondaryHex } from "../../../../styles/theme";
 
 const styles = theme => ({
 	selectedAgeLimitContainer: {
@@ -22,6 +23,9 @@ const styles = theme => ({
 	},
 	ageLimitContainer: {
 		paddingTop: "14px"
+	},
+	superText: {
+		color: secondaryHex
 	}
 });
 
@@ -384,6 +388,9 @@ class Details extends Component {
 				name="age-limit"
 				label="Age Limit"
 				labelProps={{
+					classes: {
+						superText: classes.superText
+					},
 					superText: `Select Age Limit`,
 					onSuperTextClick: () => {
 						this.setState({ isCustom: false });
@@ -400,7 +407,9 @@ class Details extends Component {
 	}
 
 	renderAgeSelect() {
+		const { classes } = this.props;
 		let { ageLimit } = eventUpdateStore.event;
+
 		ageLimit = (ageLimit === undefined ? "0" : ageLimit + "");
 
 		const ageLimits = [
@@ -408,13 +417,17 @@ class Details extends Component {
 			{ value: "18", label: "This event is 18 and over" },
 			{ value: "21", label: "This event is 21 and over" }
 		];
+
 		return (
 			<SelectGroup
 				value={ageLimit}
 				items={ageLimits}
 				name={"age-limit"}
-				label={"Age Limit *"}
+				label={"Age Limit"}
 				labelProps={{
+					classes: {
+						superText: classes.superText
+					},
 					superText: `Custom Age Limit`,
 					onSuperTextClick: () => {
 						this.setState({ isCustom: true });
@@ -430,7 +443,11 @@ class Details extends Component {
 	}
 
 	renderAgeLimits() {
-		const { isCustom = false } = this.state;
+		let { isCustom = false } = this.state;
+		const { ageLimit } = eventUpdateStore.event;
+
+		isCustom = isCustom || isNaN(ageLimit);
+
 		//TODO There is definitely a better way to do this using an autocomplete
 		return (
 			<div>
