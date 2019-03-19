@@ -29,6 +29,7 @@ const SelectGroup = props => {
 		error,
 		name,
 		label,
+		labelProps,
 		onChange,
 		onBlur,
 		onFocus,
@@ -56,7 +57,7 @@ const SelectGroup = props => {
 			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
-			{label ? <InputLabel shrink htmlFor={name}><FormatInputLabel>{label}</FormatInputLabel></InputLabel> : null}
+			{label ? <InputLabel shrink htmlFor={name}><FormatInputLabel {...labelProps}>{label}</FormatInputLabel></InputLabel> : null}
 			<Select
 				disabled={disabled}
 				style={selectStyle}
@@ -85,6 +86,10 @@ const SelectGroup = props => {
 			<FormHelperText id={`${name}-error-text`}>{error}</FormHelperText>
 		</FormControl>
 	);
+};
+
+SelectGroup.defaultProps = {
+	labelProps: {}
 };
 
 SelectGroup.propTypes = {

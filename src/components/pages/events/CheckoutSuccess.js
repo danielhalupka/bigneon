@@ -124,7 +124,6 @@ class CheckoutSuccess extends Component {
 			displayEventStartDate,
 			additional_info,
 			top_line_info,
-			age_limit,
 			promo_image_url,
 			displayDoorTime,
 			displayShowTime,

@@ -24,6 +24,7 @@ import nl2br from "../../../helpers/nl2br";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
 import PrivateEventDialog from "./PrivateEventDialog";
+import { displayAgeLimit } from "../../../helpers/ageLimit";
 
 const styles = theme => ({
 	root: {},
@@ -304,6 +305,7 @@ class ViewEvent extends Component {
 			external_url
 		} = event;
 
+		const ageLimit  = displayAgeLimit(age_limit);
 		const subCardContent = (
 			<div className={classes.eventSubCardContent}>
 				<div className={classes.eventSubCardRow1}>
@@ -321,9 +323,7 @@ class ViewEvent extends Component {
 						<br/>
 						Doors {displayDoorTime} - Show {displayShowTime}
 						<br/>
-						{age_limit
-							? `This event is ${age_limit}+`
-							: "This event is all ages"}
+						{ageLimit}
 					</Typography>
 				</div>
 
