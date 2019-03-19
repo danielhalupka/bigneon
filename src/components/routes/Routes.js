@@ -46,6 +46,7 @@ import AdminEventDashboardSummary from "../pages/admin/events/dashboard/Summary"
 import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List";
 import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
 import AdminEventDashboardReports from "../pages/admin/events/dashboard/reports/Index";
+import AdminEventDashboardMarketing from "../pages/admin/events/dashboard/marketing/Index";
 import AdminEventExportGuestList from "../pages/admin/events/dashboard/guests/Export";
 import AdminEventDashboardExternalAccess from "../pages/admin/events/dashboard/external/ExternalAccess";
 import AdminEventUpdate from "../pages/admin/events/EventUpdate";
@@ -302,6 +303,12 @@ class Routes extends Component {
 									exact
 									path="/admin/events/:id/dashboard/reports/:type"
 									component={AdminEventDashboardReports}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/events/:id/dashboard/marketing/:type"
+									component={AdminEventDashboardMarketing}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute
