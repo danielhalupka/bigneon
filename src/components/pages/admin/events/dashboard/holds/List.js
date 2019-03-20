@@ -278,7 +278,7 @@ class TicketHoldList extends Component {
 		const { classes } = this.props;
 
 		return (
-			<Container eventId={this.eventId} subheading={"tools"}>
+			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{showHoldDialog && this.renderDialog()}
 				{this.renderDeleteDialog()}
 				<div style={{ display: "flex" }}>

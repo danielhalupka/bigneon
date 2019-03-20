@@ -21,9 +21,13 @@ import Dialog from "../../../../elements/Dialog";
 import InputGroup from "../../../../common/form/InputGroup";
 import EventListTable from "./EventListTable";
 import user from "../../../../../stores/user";
+import Card from "./SettlementReportList";
 
 const styles = theme => ({
-	root: {},
+	root: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
 	subHeading: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 1.3
@@ -37,7 +41,7 @@ const styles = theme => ({
 });
 
 @observer
-class Settlements extends Component {
+class SettlementReport extends Component {
 	constructor(props) {
 		super(props);
 
@@ -235,42 +239,47 @@ class Settlements extends Component {
 	}
 
 	render() {
+		const { classes } = this.props;
+
 		return (
-			<div>
-				{this.renderAdjustmentDialog()}
-				<div
-					style={{
-						display: "flex",
-						minHeight: 60,
-						alignItems: "center"
-					}}
-				>
-					<Typography variant="title">Event settlement report</Typography>
-					{/*<Typography className={classes.subHeading}>Sales occurring {dateRangeString(startDate, endDate)}</Typography>*/}
-
-					<span style={{ flex: 1 }}/>
-					<Button
-						iconUrl="/icons/csv-active.svg"
-						variant="text"
-						onClick={() => {}}
+			<Card variant={"block"}>
+				<div className={classes.root}>
+					{this.renderAdjustmentDialog()}
+					<div
+						style={{
+							display: "flex",
+							minHeight: 60,
+							alignItems: "center"
+						}}
 					>
-						Export CSV
-					</Button>
-				</div>
-				<div>
-					<ReportsDate defaultStartDaysBack={7} onChange={this.refreshData.bind(this)} onChangeButton/>
-				</div>
+						<Typography variant="title">Event settlement report</Typography>
+						{/*<Typography className={classes.subHeading}>Sales occurring {dateRangeString(startDate, endDate)}</Typography>*/}
 
-				{this.renderResults()}
-			</div>
+						<span style={{ flex: 1 }}/>
+						<Button
+							iconUrl="/icons/csv-active.svg"
+							variant="text"
+							onClick={() => {}}
+						>
+						Export CSV
+						</Button>
+					</div>
+					<div>
+						<ReportsDate defaultStartDaysBack={7} onChange={this.refreshData.bind(this)} onChangeButton/>
+					</div>
+
+					{this.renderResults()}
+				</div>
+			</Card>
 		);
 	}
 }
 
-Settlements.propTypes = {
+SettlementReport.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
-	onLoad: PropTypes.func
+	onLoad: PropTypes.func,
+	type: PropTypes.oneOf(["view", "create"]).isRequired
 };
 
-export default withStyles(styles)(Settlements);
+export default withStyles(styles)(SettlementReport);

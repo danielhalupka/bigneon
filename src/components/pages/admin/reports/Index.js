@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import { observer } from "mobx-react";
-import user from "../../../../stores/user";
 
+import user from "../../../../stores/user";
 import PageHeading from "../../../elements/PageHeading";
 import Card from "../../../elements/Card";
 import StyledLink from "../../../elements/StyledLink";
@@ -10,16 +10,15 @@ import Divider from "../../../common/Divider";
 import Transactions from "./transactions/Transactions";
 import TicketCounts from "./counts/TicketCounts";
 import Loader from "../../../elements/loaders/Loader";
-import Settlements from "./settlement/Settlements";
+import SettlementReport from "./settlement/SettlementReport";
+import SettlementReportList from "./settlement/SettlementReportList";
 
 const styles = theme => ({
 	content: {
-		padding: theme.spacing.unit * 4,
-		marginBottom: theme.spacing.unit
+		padding: theme.spacing.unit * 4
 	},
 	menuContainer: {
-		display: "flex",
-		marginBottom: theme.spacing.unit * 2
+		display: "flex"
 	},
 	menuText: {
 		marginRight: theme.spacing.unit * 4
@@ -108,7 +107,7 @@ class Reports extends Component {
 		}
 
 		const { hasTransactionReports, hasTicketCountReports } = user;
-		
+
 		//Add report components here as needed
 		switch (report) {
 			case undefined:
@@ -119,7 +118,11 @@ class Reports extends Component {
 			case "transaction-details":
 				return <Transactions organizationId={organizationId}/>;
 			case "settlements":
-				return <Settlements organizationId={organizationId}/>;
+				return <SettlementReportList organizationId={organizationId}/>;
+			case "view-settlement":
+				return <SettlementReport type="view" organizationId={organizationId}/>;
+			case "create-settlement":
+				return <SettlementReport type="create" organizationId={organizationId}/>;
 			default:
 				return (
 					<Typography>
@@ -136,14 +139,15 @@ class Reports extends Component {
 			<div>
 				<PageHeading>Organization Reports</PageHeading>
 
-				<Card>
+				<Card variant={"block"} style={{ borderRadius: "6px 6px 0 0" }}>
 					<div className={classes.content}>
 						{this.renderMenu()}
-						<Divider style={{ marginBottom: 10 }}/>
-
-						{this.renderContent()}
 					</div>
 				</Card>
+
+				<div style={{ marginBottom: 20 }}/>
+
+				{this.renderContent()}
 			</div>
 		);
 	}

@@ -11,9 +11,13 @@ import { fontFamilyDemiBold, secondaryHex } from "../../../../styles/theme";
 import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
 import { observer } from "mobx-react";
 import Loader from "../../../../elements/loaders/Loader";
+import Card from "../../../../elements/Card";
 
 const styles = theme => ({
-	root: {},
+	root: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
 	header: {
 		display: "flex",
 		minHeight: 60,
@@ -159,35 +163,37 @@ class TicketCounts extends Component {
 		}
 
 		return (
-			<div>
-				<div className={classes.header}>
-					<Typography variant="title">
-						{eventId ? "Event" : "Organization"} ticket counts report
-					</Typography>
-					<span style={{ flex: 1 }}/>
-					{eventId ? (
-						<div>
-							<Button
-								iconUrl="/icons/csv-active.svg"
-								variant="text"
-								onClick={() => this.exportCSV(eventId)}
-							>
+			<Card variant={"block"}>
+				<div className={classes.root}>
+					<div className={classes.header}>
+						<Typography variant="title">
+							{eventId ? "Event" : "Organization"} ticket counts report
+						</Typography>
+						<span style={{ flex: 1 }}/>
+						{eventId ? (
+							<div>
+								<Button
+									iconUrl="/icons/csv-active.svg"
+									variant="text"
+									onClick={() => this.exportCSV(eventId)}
+								>
 							Export CSV
-							</Button>
-							<Button
-								href={`/exports/reports/?type=ticket_counts&event_id=${eventId}`}
-								target={"_blank"}
-								iconUrl="/icons/pdf-active.svg"
-								variant="text"
-							>
+								</Button>
+								<Button
+									href={`/exports/reports/?type=ticket_counts&event_id=${eventId}`}
+									target={"_blank"}
+									iconUrl="/icons/pdf-active.svg"
+									variant="text"
+								>
 								Export PDF
-							</Button>
-						</div>
-					) : null}
+								</Button>
+							</div>
+						) : null}
+					</div>
+					<Divider style={{ marginBottom: 40 }}/>
+					{this.renderList()}
 				</div>
-				<Divider style={{ marginBottom: 40 }}/>
-				{this.renderList()}
-			</div>
+			</Card>
 		);
 	}
 }
