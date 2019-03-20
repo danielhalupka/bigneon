@@ -1,5 +1,6 @@
 export const displayAgeLimit = (ageLimit) => {
-	if (!ageLimit) {
+	//The weak typing is on purpose
+	if (!ageLimit || ageLimit == 0) {
 		return "This event is all ages";
 	} else if (isNaN(ageLimit)) {
 		return ageLimit;

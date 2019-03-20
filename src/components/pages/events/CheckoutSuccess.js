@@ -10,7 +10,7 @@ import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
 import Card from "../../elements/Card";
 import AppButton from "../../elements/AppButton";
 import SMSLinkForm from "../../elements/SMSLinkForm";
@@ -28,7 +28,7 @@ const styles = theme => ({
 		backgroundColor: theme.palette.background.default
 	},
 	cardContent: {
-		padding: theme.spacing.unit
+		padding: theme.spacing.unit * 2
 	},
 	appDetails: {
 		paddingTop: theme.spacing.unit * 2
@@ -43,6 +43,9 @@ const styles = theme => ({
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.9,
 		marginBottom: theme.spacing.unit
+	},
+	appDetailsHighlight: {
+		color: secondaryHex
 	},
 	appButtonContainer: {
 		display: "flex",
@@ -136,12 +139,15 @@ class CheckoutSuccess extends Component {
 			<div>
 				<div className={classes.appDetails}>
 					<Typography className={classes.appHeading}>
-							Get the bigNEON app
+						TO ACCESS YOUR TICKETS
 						<br/>
-							to access your tickets
+						GET THE BIG NEON APP
 					</Typography>
 					<Typography className={classes.appDetail}>
-							The mobile app is required to use your tickets at the show
+						Important: To protect you from fraud and the spread of counterfeit tickets, printable tickets are not available.
+					</Typography>
+					<Typography className={classes.appDetail}>
+						Download the Big Neon app and login to your account to access your tickets:
 					</Typography>
 					<br/>
 
@@ -166,6 +172,11 @@ class CheckoutSuccess extends Component {
 					</div>
 				</div>
 				<SMSLinkForm/>
+				<br/>
+				<Typography className={classes.appDetail}>
+					If you cant download the app (or don't want to) you can provide your ID and order information at the events will call desk.{" "}
+					<span className={classes.appDetailsHighlight}>Make sure the name on your account matches your ID.</span>
+				</Typography>
 			</div>
 		);
 
@@ -181,7 +192,7 @@ class CheckoutSuccess extends Component {
 				/>
 
 				{/* Desktop */}
-				<div>
+				<div style={{ minHeight: 200 }}>
 					<Hidden smDown implementation="css">
 						<EventDetailsOverlayCard
 							style={{
@@ -207,8 +218,8 @@ class CheckoutSuccess extends Component {
 						<EventDetailsOverlayCard
 							style={{
 								width: "100%",
-								paddingLeft: 20,
-								paddingRight: 20,
+								paddingLeft: 15,
+								paddingRight: 15,
 								top: 500
 							}}
 						>
