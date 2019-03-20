@@ -5,6 +5,7 @@ import moment from "moment-timezone";
 
 import Bigneon from "../../helpers/bigneon";
 import notifications from "../notifications";
+import user from "../user";
 
 export class SettlementReport extends TicketCountReport {
 	@observable
@@ -24,10 +25,52 @@ export class SettlementReport extends TicketCountReport {
 
 	@action
 	fetchCountAndSalesData(queryParams, onSuccess) {
-		super.fetchCountAndSalesData(queryParams, false, () => {
-			onSuccess ? onSuccess() : null;
-			this.loadEventDetails();
-		});
+		const includeZeroCountTicketPricings = false;
+		this.setCountAndSalesData();
+
+		if (!user.isAuthenticated) {
+			return;
+		}
+
+		this.isLoading = true;
+
+		return Bigneon().organizations.settlements.prepare({ ...queryParams })
+			.then(response => {
+				const preparedSettlementReports = response.data;
+
+				const { sales_per_event } = preparedSettlementReports;
+
+				const mergedDate = {
+					counts: [],
+					sales: []
+				};
+
+				//Merging all event data into one array for sales and counts so it's compatible with TicketCountReport store
+				Object.keys(sales_per_event).forEach(event_id => {
+					const { counts, sales } = sales_per_event[event_id];
+
+					mergedDate.counts = [...mergedDate.counts, ...counts];
+					mergedDate.sales = [...mergedDate.sales, ...sales];
+				});
+
+				//const sales = response.data.sales.filter(item => includeZeroCountTicketPricings || (item.online_sale_count + item.box_office_sale_count + item.comp_sale_count) > 0);
+				this.setCountAndSalesData(mergedDate.counts, mergedDate.sales);
+
+				onSuccess ? onSuccess() : null;
+
+				this.loadEventDetails();
+
+				this.isLoading = false;
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading settlement data failed."
+				});
+
+				this.isLoading = false;
+			});
 	}
 
 	@computed

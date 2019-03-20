@@ -87,7 +87,7 @@ class TicketCounts extends Component {
 	renderList() {
 		const { eventId, classes } = this.props;
 		const eventDataResults = ticketCountReport.dataByPrice;
-		console.log(eventDataResults);
+
 		if (eventDataResults === null || ticketCountReport.isLoading) {
 			return <Loader/>;
 		}

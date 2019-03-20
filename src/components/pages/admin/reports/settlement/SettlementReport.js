@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { InputAdornment, Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
-import moment from "moment-timezone";
 import { observer } from "mobx-react";
 
 import Button from "../../../../elements/Button";
@@ -12,8 +11,6 @@ import ReportsDate from "../ReportDate";
 import Loader from "../../../../elements/loaders/Loader";
 import Bigneon from "../../../../../helpers/bigneon";
 import settlementReport from "../../../../../stores/reports/settlementReport";
-import EventTicketCountTable from "../counts/TicketCounts";
-import Divider from "../../../../common/Divider";
 import SingleEventSettlement from "../settlement/SingleEventSettlement";
 import GrandTotalsTable from "./GrandTotalsTable";
 import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
@@ -21,7 +18,9 @@ import Dialog from "../../../../elements/Dialog";
 import InputGroup from "../../../../common/form/InputGroup";
 import EventListTable from "./EventListTable";
 import user from "../../../../../stores/user";
-import Card from "./SettlementReportList";
+import Card from "../../../../elements/Card";
+import getUrlParam from "../../../../../helpers/getUrlParam";
+import moment from "moment-timezone";
 
 const styles = theme => ({
 	root: {
@@ -46,13 +45,60 @@ class SettlementReport extends Component {
 		super(props);
 
 		this.state = {
+			isViewOnlyReport: null,
 			resultsLoaded: false,
 			showAdjustmentDialog: false,
 			adjustmentEditDollarValue: "",
 			adjustmentEditNotes: ""
 		};
 	}
-	
+
+	componentDidMount() {
+		const { history } = this.props;
+
+		console.log(history);
+		
+		//If we have an ID, load those details instead of allowing them to set dates
+		const id = getUrlParam("id");
+
+		if (id) {
+			//Don't have a find function at the moment
+			Bigneon().organizations.settlements
+				.index({ organization_id: this.props.organizationId })
+				.then(response => {
+					const { data } = response.data;
+
+					let settlementReport = null;
+
+					data.forEach((report) => {
+						if (report.id) {
+							settlementReport = report;
+						}
+					});
+
+					if (settlementReport) {
+						this.setState({ isViewOnlyReport: true });
+					} else {
+						notifications.show({
+							message: "Settlement report not found.",
+							variant: "error"
+						});
+					}
+				})
+				.catch(error => {
+					console.error(error);
+					notifications.showFromErrorResponse({
+						error,
+						defaultMessage: "Loading settlement report failed."
+					});
+				});
+
+		} else {
+			//We're creating a report
+			this.setState({ isViewOnlyReport: false });
+		}
+	}
+
 	componentWillUnmount() {
 		settlementReport.setCountAndSalesData();
 	}
@@ -107,6 +153,8 @@ class SettlementReport extends Component {
 					message: "Settlement report created.",
 					variant: "success"
 				});
+
+				this.props.history.push("/admin/reports/settlement-list");
 			})
 			.catch(error => {
 				console.error(error);
@@ -123,7 +171,7 @@ class SettlementReport extends Component {
 		this.setState({ startDate, endDate, start_utc, end_utc, events: null });
 
 		const { organizationId, onLoad } = this.props;
-		const queryParams = { organization_id: organizationId, start_utc, end_utc };
+		const queryParams = { organization_id: organizationId, start_utc, end_utc, only_finished_events: false };
 
 		settlementReport.fetchCountAndSalesData(queryParams, () => {
 			onLoad ? onLoad() : null;
@@ -240,6 +288,11 @@ class SettlementReport extends Component {
 
 	render() {
 		const { classes } = this.props;
+		const { isViewOnlyReport } = this.state;
+
+		if (isViewOnlyReport === null) {
+			return <Loader/>;
+		}
 
 		return (
 			<Card variant={"block"}>
@@ -248,7 +301,7 @@ class SettlementReport extends Component {
 					<div
 						style={{
 							display: "flex",
-							minHeight: 60,
+							minHeight: 40,
 							alignItems: "center"
 						}}
 					>
@@ -264,9 +317,12 @@ class SettlementReport extends Component {
 						Export CSV
 						</Button>
 					</div>
-					<div>
-						<ReportsDate defaultStartDaysBack={7} onChange={this.refreshData.bind(this)} onChangeButton/>
-					</div>
+
+					{!isViewOnlyReport ? (
+						<div>
+							<ReportsDate defaultStartDaysBack={7} onChange={this.refreshData.bind(this)} onChangeButton/>
+						</div>
+					) : null}
 
 					{this.renderResults()}
 				</div>
@@ -279,7 +335,7 @@ SettlementReport.propTypes = {
 	classes: PropTypes.object.isRequired,
 	organizationId: PropTypes.string.isRequired,
 	onLoad: PropTypes.func,
-	type: PropTypes.oneOf(["view", "create"]).isRequired
+	history: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(SettlementReport);

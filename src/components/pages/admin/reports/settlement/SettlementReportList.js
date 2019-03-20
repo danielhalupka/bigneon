@@ -2,26 +2,72 @@ import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
 import Card from "../../../../elements/Card";
 import user from "../../../../../stores/user";
+import Bigneon from "../../../../../helpers/bigneon";
+import notifications from "../../../../../stores/notifications";
+import Loader from "../../../../elements/loaders/Loader";
+import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
+import { fontFamilyDemiBold } from "../../../../styles/theme";
 
 const styles = theme => ({
 	root: {},
-	processButtonContainer: {
+	cardInnerContainer: {
 		padding: theme.spacing.unit * 2,
-		display: "flex"
-		//justifyContent: "flex-end"
+		display: "flex",
+		justifyContent: "space-between",
+		alignItems: "center"
+	},
+	createdDateText: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 1.1
 	}
 });
+
+const Spacer = () => <div style={{ marginTop: 20 }}/>;
 
 class SettlementReportList extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			reports: null
+		};
 	}
+
+	 componentDidMount() {
+		const { organizationId, organizationTimezone } = this.props;
+		const dateFormat = "dddd, MMMM Do YYYY z";
+
+		Bigneon().organizations.settlements.index({ organization_id: organizationId })
+			.then(response => {
+				const { data, paging } = response.data; //TODO pagination
+				const reports = [];
+
+				data.forEach(({ created_at, start_time, end_time, ...rest }) => {
+					console.log("start_time: ", start_time);
+					const displayDateRange = reportDateRangeHeading(moment.utc(start_time).tz(organizationTimezone), moment.utc(end_time).tz(organizationTimezone));
+
+					reports.push({
+						...rest,
+						displayCreatedAt: moment.utc(created_at).tz(organizationTimezone).format(dateFormat),
+						displayDateRange
+					});
+				});
+
+				this.setState({ reports });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading settlement reports failed."
+				});
+			});
+	 }
 
 	renderProcessSettlementCard() {
 		const { classes } = this.props;
@@ -29,8 +75,8 @@ class SettlementReportList extends Component {
 		if (user.isAdmin) {
 			return (
 				<Card variant={"block"}>
-					<div className={classes.processButtonContainer}>
-						<Link to={"/admin/reports/create-settlement"}>
+					<div className={classes.cardInnerContainer}>
+						<Link to={"/admin/reports/settlement"}>
 							<Button variant="callToAction">Process settlement</Button>
 						</Link>
 					</div>
@@ -39,10 +85,47 @@ class SettlementReportList extends Component {
 		}
 	}
 
+	renderList() {
+		const { reports } = this.state;
+		if (reports === null) {
+			return <Loader>Loading settlement reports...</Loader>;
+		}
+
+		const { classes } = this.props;
+
+		return reports.map(report => {
+			console.log(report);
+			const { id, displayCreatedAt, displayDateRange  } = report;
+
+			return (
+				<div key={id}>
+					<Link to={`/admin/reports/settlement?id=${id}`}>
+						<Card variant={"block"}>
+							<div className={classes.cardInnerContainer}>
+								<div>
+									<Typography className={classes.createdDateText}>{displayCreatedAt}</Typography>
+									<Typography>Events ending {displayDateRange}</Typography>
+								</div>
+								<div>
+									{/*icon icon icon*/}
+								</div>
+							</div>
+						</Card>
+					</Link>
+					<Spacer/>
+				</div>
+			);
+		});
+
+	}
+
 	render() {
 		return (
 			<div>
 				{this.renderProcessSettlementCard()}
+
+				<Spacer/>
+				{this.renderList()}
 			</div>
 		);
 	}
@@ -50,7 +133,8 @@ class SettlementReportList extends Component {
 
 SettlementReportList.propTypes = {
 	classes: PropTypes.object.isRequired,
-	organizationId: PropTypes.string.isRequired
+	organizationId: PropTypes.string.isRequired,
+	organizationTimezone: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(SettlementReportList);

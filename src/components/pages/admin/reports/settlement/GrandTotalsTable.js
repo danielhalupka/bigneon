@@ -6,7 +6,9 @@ import { Typography, withStyles } from "@material-ui/core";
 import { fontFamilyDemiBold, secondaryHex } from "../../../../styles/theme";
 
 const styles = theme => ({
-	root: {},
+	root: {
+		marginBottom: theme.spacing.unit * 4
+	},
 	heading: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 1.3,
@@ -39,7 +41,7 @@ const GrandTotalsTable = props => {
 	} = props;
 
 	return (
-		<div>
+		<div className={classes.root}>
 			<Typography className={classes.heading}>
 				Grand totals
 			</Typography>
@@ -69,7 +71,8 @@ const GrandTotalsTable = props => {
 			</TotalsRow>
 
 			<Typography className={classes.adjustmentText}>
-				<span className={classes.boldText}>Adjustment Notes:</span> {adjustmentsInCents > 0 ? adjustmentNotes : "No adjustments applies"}
+				<span className={classes.boldText}>Adjustment Notes:</span>{" "}
+				{adjustmentsInCents > 0 || adjustmentsInCents < 0 ? adjustmentNotes : "No adjustments applies"}
 			</Typography>
 		</div>
 	);

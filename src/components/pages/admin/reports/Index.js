@@ -87,8 +87,8 @@ class Reports extends Component {
 				{hasOrgEventSettlementReport ? (
 					<Typography className={classes.menuText}>
 						<StyledLink
-							underlined={report === "settlements"}
-							to={`/admin/reports/settlements`}
+							underlined={report === "settlement-list"}
+							to={`/admin/reports/settlement-list`}
 						>
 						Settlement reports
 						</StyledLink>
@@ -100,29 +100,30 @@ class Reports extends Component {
 
 	renderContent() {
 		const report = this.props.match.params.report;
-		const organizationId = user.currentOrganizationId;
 
-		if (!organizationId) {
+		const { hasTransactionReports, hasTicketCountReports, currentOrganizationId, currentOrgTimezone } = user;
+
+		if (!currentOrganizationId) {
 			return <Loader/>;
 		}
-
-		const { hasTransactionReports, hasTicketCountReports } = user;
 
 		//Add report components here as needed
 		switch (report) {
 			case undefined:
 			case "ticket-counts":
 				return hasTicketCountReports ? (
-					<TicketCounts organizationId={organizationId}/>
+					<TicketCounts organizationId={currentOrganizationId}/>
 				) : null;
 			case "transaction-details":
-				return <Transactions organizationId={organizationId}/>;
-			case "settlements":
-				return <SettlementReportList organizationId={organizationId}/>;
-			case "view-settlement":
-				return <SettlementReport type="view" organizationId={organizationId}/>;
-			case "create-settlement":
-				return <SettlementReport type="create" organizationId={organizationId}/>;
+				return <Transactions organizationId={currentOrganizationId}/>;
+			case "settlement-list":
+				if (!currentOrgTimezone) {
+					return <Loader/>;
+				}
+
+				return <SettlementReportList organizationId={currentOrganizationId} organizationTimezone={currentOrgTimezone}/>;
+			case "settlement":
+				return <SettlementReport history={this.props.history} organizationId={currentOrganizationId}/>;
 			default:
 				return (
 					<Typography>
