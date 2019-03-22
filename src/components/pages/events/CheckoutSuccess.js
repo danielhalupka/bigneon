@@ -40,11 +40,17 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit
 	},
 	appDetail: {
+		fontSize: theme.typography.fontSize * 0.9,
+		marginBottom: theme.spacing.unit
+	},
+	appDetailBold: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.9,
 		marginBottom: theme.spacing.unit
 	},
 	appDetailsHighlight: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9,
 		color: secondaryHex
 	},
 	appButtonContainer: {
@@ -144,10 +150,10 @@ class CheckoutSuccess extends Component {
 						GET THE BIG NEON APP
 					</Typography>
 					<Typography className={classes.appDetail}>
-						Important: To protect you from fraud and the spread of counterfeit tickets, printable tickets are not available.
+						<span className={classes.appDetailsHighlight}>Speed through the entrance, share tickets with friends, and extend your experience using the Big Neon app</span>, or bring your ID and order confirmation and look for the will call line at the venue.
 					</Typography>
-					<Typography className={classes.appDetail}>
-						Download the Big Neon app and login to your account to access your tickets:
+					<Typography className={classes.appDetailBold}>
+						To protect you from fraud and the spread of counterfeit tickets, <span className={classes.appDetailsHighlight}>printable tickets are not available.</span>
 					</Typography>
 					<br/>
 
@@ -172,11 +178,6 @@ class CheckoutSuccess extends Component {
 					</div>
 				</div>
 				<SMSLinkForm/>
-				<br/>
-				<Typography className={classes.appDetail}>
-					If you cant download the app (or don't want to) you can provide your ID and order information at the events will call desk.{" "}
-					<span className={classes.appDetailsHighlight}>Make sure the name on your account matches your ID.</span>
-				</Typography>
 			</div>
 		);
 
