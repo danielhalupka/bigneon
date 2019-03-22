@@ -21,6 +21,7 @@ import user from "../../../../../stores/user";
 import Card from "../../../../elements/Card";
 import getUrlParam from "../../../../../helpers/getUrlParam";
 import moment from "moment-timezone";
+import { dollars } from "../../../../../helpers/money";
 
 const styles = theme => ({
 	root: {
@@ -36,6 +37,14 @@ const styles = theme => ({
 		justifyContent: "flex-end",
 		paddingTop: theme.spacing.unit * 2,
 		paddingBottom: theme.spacing.unit * 2
+	},
+	confirmText: {
+		textAlign: "center",
+		marginTop: theme.spacing.unit,
+		marginBottom: theme.spacing.unit
+	},
+	boldText: {
+		fontFamily: fontFamilyDemiBold
 	}
 });
 
@@ -49,8 +58,12 @@ class SettlementReport extends Component {
 			resultsLoaded: false,
 			showAdjustmentDialog: false,
 			adjustmentEditDollarValue: "",
-			adjustmentEditNotes: ""
+			adjustmentEditNotes: "",
+			showConfirmSettlementDialog: false
 		};
+
+		this.closeConfirmSettlementDialog = this.closeConfirmSettlementDialog.bind(this);
+		this.closeAdjustmentDialog = this.closeAdjustmentDialog.bind(this);
 	}
 
 	componentDidMount() {
@@ -108,6 +121,10 @@ class SettlementReport extends Component {
 
 	closeAdjustmentDialog() {
 		this.setState({ showAdjustmentDialog: false });
+	}
+
+	closeConfirmSettlementDialog() {
+		this.setState({ showConfirmSettlementDialog: false });
 	}
 
 	onSetAdjustments() {
@@ -216,7 +233,7 @@ class SettlementReport extends Component {
 				{!isViewOnlyReport ? (
 					<div className={classes.settleEventsContainer}>
 						<Button
-							onClick={this.onSettleEvents.bind(this)}
+							onClick={() => this.setState({ showConfirmSettlementDialog: true })}
 							variant="callToAction"
 						>
 						Settle events
@@ -247,7 +264,7 @@ class SettlementReport extends Component {
 			<Dialog
 				open={showAdjustmentDialog}
 				title={"Edit total adjustments"}
-				onClose={this.closeAdjustmentDialog.bind(this)}
+				onClose={this.closeAdjustmentDialog}
 			>
 				<InputGroup
 					name="settlement-adjustment-value"
@@ -274,8 +291,39 @@ class SettlementReport extends Component {
 				/>
 
 				<div style={{ display: "flex" }}>
-					<Button style={{ flex: 1, marginRight: 5 }} onClick={this.closeAdjustmentDialog.bind(this)}>Cancel</Button>
+					<Button style={{ flex: 1, marginRight: 5 }} onClick={this.closeAdjustmentDialog}>Cancel</Button>
 					<Button style={{ flex: 1, marginLeft: 5 }} variant="callToAction" onClick={this.onSetAdjustments.bind(this)}>Update</Button>
+				</div>
+			</Dialog>
+		);
+	}
+
+	renderConfirmSettlementDialog() {
+		const { showConfirmSettlementDialog } = this.state;
+		const { classes } = this.props;
+
+		const { totalSettlementInCents } = settlementReport.grandTotals;
+
+		return (
+			<Dialog
+				iconUrl={"/icons/sales-white.svg"}
+				open={showConfirmSettlementDialog}
+				title={"Confirm settlement"}
+				onClose={this.closeConfirmSettlementDialog}
+			>
+				<div style={{ maxWidth: 300 }}>
+					<Typography className={classes.confirmText}>
+						By confirming, you are marking all events and transactions related to this event settled and delivering this report to the org as settled.
+						<br/>
+						<span className={classes.boldText}>
+						Complete Total Settlement: {dollars(totalSettlementInCents)}
+						</span>
+					</Typography>
+
+					<div style={{ display: "flex" }}>
+						<Button style={{ flex: 1, marginRight: 5 }} onClick={this.closeConfirmSettlementDialog}>Cancel</Button>
+						<Button style={{ flex: 1, marginLeft: 5 }} variant="callToAction" onClick={this.onSettleEvents.bind(this)}>Confirm</Button>
+					</div>
 				</div>
 			</Dialog>
 		);
@@ -289,12 +337,11 @@ class SettlementReport extends Component {
 			return <Loader/>;
 		}
 
-		//TODO create a "are you sure you want to settle?" dialog
-
 		return (
 			<Card variant={"block"}>
 				<div className={classes.root}>
 					{this.renderAdjustmentDialog()}
+					{this.renderConfirmSettlementDialog()}
 					<div
 						style={{
 							display: "flex",
