@@ -60,7 +60,7 @@ const GrandTotalsTable = props => {
 				{[
 					<span key={"adjustments"} className={classes.adjustmentText}>
 						Adjustments&nbsp;
-						<span className={classes.editText} onClick={onEditAdjustments}>Edit adjustments</span>
+						{onEditAdjustments ? <span className={classes.editText} onClick={onEditAdjustments}>Edit adjustments</span> : null}
 					</span>,
 					dollars(adjustmentsInCents)
 				]}
@@ -81,7 +81,7 @@ const GrandTotalsTable = props => {
 GrandTotalsTable.propTypes = {
 	classes: PropTypes.object.isRequired,
 	adjustmentsInCents: PropTypes.number.isRequired,
-	onEditAdjustments: PropTypes.func.isRequired,
+	onEditAdjustments: PropTypes.func,
 	adjustmentNotes: PropTypes.string,
 	totalFaceAmountOwedToClientInCents: PropTypes.number.isRequired,
 	totalServiceFeesRevenueShareInCents: PropTypes.number.isRequired,

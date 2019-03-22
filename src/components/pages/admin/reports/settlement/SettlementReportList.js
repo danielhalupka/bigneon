@@ -3,6 +3,7 @@ import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import moment from "moment-timezone";
+import { observer } from "mobx-react";
 
 import Button from "../../../../elements/Button";
 import Card from "../../../../elements/Card";
@@ -29,6 +30,7 @@ const styles = theme => ({
 
 const Spacer = () => <div style={{ marginTop: 20 }}/>;
 
+@observer
 class SettlementReportList extends Component {
 	constructor(props) {
 		super(props);
@@ -48,7 +50,6 @@ class SettlementReportList extends Component {
 				const reports = [];
 
 				data.forEach(({ created_at, start_time, end_time, ...rest }) => {
-					console.log("start_time: ", start_time);
 					const displayDateRange = reportDateRangeHeading(moment.utc(start_time).tz(organizationTimezone), moment.utc(end_time).tz(organizationTimezone));
 
 					reports.push({
@@ -94,7 +95,6 @@ class SettlementReportList extends Component {
 		const { classes } = this.props;
 
 		return reports.map(report => {
-			console.log(report);
 			const { id, displayCreatedAt, displayDateRange  } = report;
 
 			return (

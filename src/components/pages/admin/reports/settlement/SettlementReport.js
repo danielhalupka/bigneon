@@ -54,45 +54,38 @@ class SettlementReport extends Component {
 	}
 
 	componentDidMount() {
-		const { history } = this.props;
-
-		console.log(history);
-		
 		//If we have an ID, load those details instead of allowing them to set dates
 		const id = getUrlParam("id");
 
 		if (id) {
-			//Don't have a find function at the moment
-			Bigneon().organizations.settlements
-				.index({ organization_id: this.props.organizationId })
-				.then(response => {
-					const { data } = response.data;
+			Bigneon().settlements.read({ id }).then(response => {
+				const { settlement, events, transactions } = response.data;
 
-					let settlementReport = null;
+				const { start_time, end_time, comment } = settlement;
 
-					data.forEach((report) => {
-						if (report.id) {
-							settlementReport = report;
-						}
-					});
+				console.log(transactions);
 
-					if (settlementReport) {
-						this.setState({ isViewOnlyReport: true });
-					} else {
-						notifications.show({
-							message: "Settlement report not found.",
-							variant: "error"
-						});
+				let adjustmentAmountInCents = 0;
+				transactions.forEach(({ transaction_type, value_in_cents }) => {
+					if (transaction_type === "Manual") {
+						adjustmentAmountInCents += value_in_cents;
 					}
-				})
-				.catch(error => {
-					console.error(error);
-					notifications.showFromErrorResponse({
-						error,
-						defaultMessage: "Loading settlement report failed."
-					});
 				});
 
+				settlementReport.setAdjustmentDetails(adjustmentAmountInCents, comment);
+
+				const startDate = moment(start_time, moment.HTML5_FMT.DATETIME_LOCAL_MS);
+				const endDate = moment(end_time, moment.HTML5_FMT.DATETIME_LOCAL_MS);
+				this.refreshData({ start_utc: start_time, end_utc: end_time, startDate, endDate });
+
+				this.setState({ isViewOnlyReport: true });
+			}).catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Loading settlement report failed."
+				});
+			});
 		} else {
 			//We're creating a report
 			this.setState({ isViewOnlyReport: false });
@@ -203,7 +196,7 @@ class SettlementReport extends Component {
 		}
 
 		const { classes } = this.props;
-		const { startDate, endDate } = this.state;
+		const { startDate, endDate, isViewOnlyReport } = this.state;
 
 		return (
 			<div>
@@ -211,7 +204,7 @@ class SettlementReport extends Component {
 					{...grandTotals}
 					adjustmentsInCents={adjustmentsInCents}
 					adjustmentNotes={adjustmentNotes}
-					onEditAdjustments={this.showAdjustmentDialog.bind(this)}
+					onEditAdjustments={!isViewOnlyReport ? this.showAdjustmentDialog.bind(this) : null}
 				/>
 
 				<Typography className={classes.subHeading} style={{ marginBottom: 10 }}>
@@ -220,14 +213,16 @@ class SettlementReport extends Component {
 
 				<EventListTable eventDetails={eventDetails}/>
 
-				<div className={classes.settleEventsContainer}>
-					<Button
-						onClick={this.onSettleEvents.bind(this)}
-						variant="callToAction"
-					>
-					Settle events
-					</Button>
-				</div>
+				{!isViewOnlyReport ? (
+					<div className={classes.settleEventsContainer}>
+						<Button
+							onClick={this.onSettleEvents.bind(this)}
+							variant="callToAction"
+						>
+						Settle events
+						</Button>
+					</div>
+				) : null}
 
 				<div style={{ marginBottom: 40 }}/>
 
@@ -293,6 +288,8 @@ class SettlementReport extends Component {
 		if (isViewOnlyReport === null) {
 			return <Loader/>;
 		}
+
+		//TODO create a "are you sure you want to settle?" dialog
 
 		return (
 			<Card variant={"block"}>
