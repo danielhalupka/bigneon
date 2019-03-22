@@ -150,7 +150,7 @@ class CheckoutSuccess extends Component {
 						GET THE BIG NEON APP
 					</Typography>
 					<Typography className={classes.appDetail}>
-						<span className={classes.appDetailsHighlight}>Speed through the entrance and share tickets with friends using the Big Neon app</span>, or bring your ID and order confirmation and look for the will call line at the venue.
+						<span className={classes.appDetailsHighlight}>Speed through the entrance, share tickets with friends, and extend your experience using the Big Neon app</span>, or bring your ID and order confirmation and look for the will call line at the venue.
 					</Typography>
 					<Typography className={classes.appDetailBold}>
 						To protect you from fraud and the spread of counterfeit tickets, <span className={classes.appDetailsHighlight}>printable tickets are not available.</span>
