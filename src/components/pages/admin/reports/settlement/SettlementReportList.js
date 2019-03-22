@@ -52,11 +52,22 @@ class SettlementReportList extends Component {
 				data.forEach(({ created_at, start_time, end_time, ...rest }) => {
 					const displayDateRange = reportDateRangeHeading(moment.utc(start_time).tz(organizationTimezone), moment.utc(end_time).tz(organizationTimezone));
 
+					const createdAtMoment =  moment.utc(created_at).tz(organizationTimezone);
+
 					reports.push({
 						...rest,
-						displayCreatedAt: moment.utc(created_at).tz(organizationTimezone).format(dateFormat),
+						createdAtMoment,
+						displayCreatedAt: createdAtMoment.format(dateFormat),
 						displayDateRange
 					});
+				});
+
+				reports.sort((a, b) => {
+					if (a.createdAtMoment.diff(b.createdAtMoment) < 0) {
+						return 1;
+					} else {
+						return -1;
+					}
 				});
 
 				this.setState({ reports });
