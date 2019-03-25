@@ -7,6 +7,7 @@ import cart from "./cart";
 import orders from "./orders";
 import errorReporting from "../helpers/errorReporting";
 import maskString from "../helpers/maskString";
+import { logoutFB } from "../components/pages/authentication/social/FacebookButton";
 
 class User {
 	@observable
@@ -256,6 +257,13 @@ class User {
 	//After logout
 	@action
 	onLogout() {
+		if (localStorage.getItem("access_token")) {
+			errorReporting.addBreadcrumb("User logging out out.");
+		}
+
+		localStorage.removeItem("access_token");
+		localStorage.removeItem("refresh_token");
+
 		this.token = false;
 		this.id = null;
 		this.firstName = "";
@@ -271,20 +279,9 @@ class User {
 		this.profilePicUrl = "";
 		this.organizations = {};
 
-		localStorage.removeItem("access_token");
-		localStorage.removeItem("refresh_token");
-
 		//If they logged in with facebook, kill that session also
-		if (window.FB) {
-			window.FB.getLoginStatus(({ status }) => {
-				if (status === "connected") {
-					window.FB.logout(() => {});
-				}
-			});
-		}
+		logoutFB();
 
-		errorReporting.addBreadcrumb("User logged out.");
-		
 		cart.emptyCart();
 	}
 

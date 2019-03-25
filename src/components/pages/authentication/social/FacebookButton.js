@@ -18,7 +18,50 @@ const styles = theme => ({
 	}
 });
 
-class FacebookButton extends Component {
+let facebookInitialized = false;
+
+export const initFB = (onLoginStatus) => {
+	//Setup facebook auth
+	window.fbAsyncInit = function() {
+		window.FB.init({
+			appId: process.env.REACT_APP_FACEBOOK_APP_ID,
+			xfbml: true,
+			version: "v3.1"
+		});
+		window.FB.AppEvents.logPageView();
+
+		window.FB.getLoginStatus(onLoginStatus);
+
+		facebookInitialized = true;
+	}.bind(this);
+
+	(function(d, s, id) {
+		const fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) {
+			return;
+		}
+		const js = d.createElement(s);
+		js.id = id;
+		js.src = "https://connect.facebook.net/en_US/sdk.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	})(document, "script", "facebook-jssdk");
+};
+
+export const logoutFB = (onLogoutCallback = () => {}) => {
+	if (!process.env.REACT_APP_FACEBOOK_APP_ID) {
+		onLogoutCallback();
+	}
+
+	const logoutCallback = () => window.FB.logout(onLogoutCallback);
+
+	if (!facebookInitialized) {
+		initFB(logoutCallback);
+	} else {
+		logoutCallback();
+	}
+};
+
+class FacebookButtonDisplay extends Component {
 	constructor(props) {
 		super(props);
 
@@ -61,17 +104,8 @@ class FacebookButton extends Component {
 					this.setState({ isAuthenticating: false });
 					console.error(error);
 
-					let message = "Sign in failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-
-					notifications.show({
-						message,
+					notifications.showFromErrorResponse({
+						defaultMessage: "Sign in failed.",
 						variant: "error"
 					});
 				});
@@ -79,32 +113,11 @@ class FacebookButton extends Component {
 	}
 
 	fbLogout() {
-		window.FB.logout(this.onFBSignIn.bind(this));
+		logoutFB(this.onFBSignIn.bind(this));
 	}
 
 	componentDidMount() {
-		//Setup facebook auth
-		window.fbAsyncInit = function() {
-			window.FB.init({
-				appId: process.env.REACT_APP_FACEBOOK_APP_ID,
-				xfbml: true,
-				version: "v3.1"
-			});
-			window.FB.AppEvents.logPageView();
-
-			window.FB.getLoginStatus(this.onFBSignIn.bind(this));
-		}.bind(this);
-
-		(function(d, s, id) {
-			const fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) {
-				return;
-			}
-			const js = d.createElement(s);
-			js.id = id;
-			js.src = "https://connect.facebook.net/en_US/sdk.js";
-			fjs.parentNode.insertBefore(js, fjs);
-		})(document, "script", "facebook-jssdk");
+		initFB(this.onFBSignIn.bind(this));
 	}
 
 	render() {
@@ -147,10 +160,10 @@ class FacebookButton extends Component {
 	}
 }
 
-FacebookButton.propTypes = {
+FacebookButtonDisplay.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.string,
 	onSuccess: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(FacebookButton);
+export const FacebookButton = withStyles(styles)(FacebookButtonDisplay);

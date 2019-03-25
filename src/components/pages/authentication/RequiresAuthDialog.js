@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
 import Button from "../../elements/Button";
-import FacebookButton from "./social/FacebookButton";
+import { FacebookButton } from "./social/FacebookButton";
 import Divider from "../../common/Divider";
 import LoginForm from "../authentication/forms/LoginForm";
 import SignupForm from "../authentication/forms/SignupForm";

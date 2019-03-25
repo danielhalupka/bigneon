@@ -10,7 +10,7 @@ import Button from "../../../elements/Button";
 import user from "../../../../stores/user";
 import notifications from "../../../../stores/notifications";
 import { validEmail, validPhone, validPassword } from "../../../../validators";
-import FacebookButton from "../social/FacebookButton";
+import { FacebookButton } from "../social/FacebookButton";
 import Divider from "../../../common/Divider";
 import Bigneon from "../../../../helpers/bigneon";
 import removePhoneFormatting from "../../../../helpers/removePhoneFormatting";
