@@ -1,4 +1,4 @@
-import { action, computed, extendObservable } from "mobx";
+import { action } from "mobx";
 import { TicketCountReport } from "./ticketCountReport";
 import { EVENT_SALES_HEADINGS } from "../../components/pages/admin/reports/eventSummary/EventSalesTable";
 import { REVENUE_SHARE_HEADINGS } from "../../components/pages/admin/reports/eventSummary/EventSummary";

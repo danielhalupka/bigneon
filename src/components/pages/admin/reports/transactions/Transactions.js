@@ -15,9 +15,13 @@ import ReportsDate from "../ReportDate";
 import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
 import BoxInput from "../../../../elements/form/BoxInput";
 import boxOffice from "../../../../../stores/boxOffice";
+import Card from "../../../../elements/Card";
 
 const styles = theme => ({
-	root: {},
+	root: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
 	header: {
 		display: "flex",
 		minHeight: 60,
@@ -379,46 +383,48 @@ class Transactions extends Component {
 		const { searchQuery } = this.state;
 
 		return (
-			<div>
-				<Grid className={classes.header} container>
-					<Grid item xs={12} sm={12} md={4} lg={4}>
-						<Typography variant="title">
-							{eventId ? "Event" : "Organization"} transaction report
-						</Typography>
-					</Grid>
-					<Grid item xs={12} sm={12} md={4} lg={4}>
-						<BoxInput
-							name="Search"
-							value={searchQuery}
-							placeholder="Search by guest name, email or event name #"
-							onChange={this.filterRowsOnQuery.bind(this)}
-						/>
-					</Grid>
+			<Card variant={"block"}>
+				<div className={classes.root}>
+					<Grid className={classes.header} container>
+						<Grid item xs={12} sm={12} md={4} lg={4}>
+							<Typography variant="title">
+								{eventId ? "Event" : "Organization"} transaction report
+							</Typography>
+						</Grid>
+						<Grid item xs={12} sm={12} md={4} lg={4}>
+							<BoxInput
+								name="Search"
+								value={searchQuery}
+								placeholder="Search by guest name, email or event name #"
+								onChange={this.filterRowsOnQuery.bind(this)}
+							/>
+						</Grid>
 
-					<Grid item xs={12} sm={12} md={4} lg={4} className={classes.exportButtonContainer}>
-						<Button
-							iconUrl="/icons/csv-active.svg"
-							variant="text"
-							onClick={this.exportCSV.bind(this)}
-						>
+						<Grid item xs={12} sm={12} md={4} lg={4} className={classes.exportButtonContainer}>
+							<Button
+								iconUrl="/icons/csv-active.svg"
+								variant="text"
+								onClick={this.exportCSV.bind(this)}
+							>
 								Export CSV
-						</Button>
-						<Button
-							href={`/exports/reports/?type=transactions${eventId ? `&event_id=${eventId}` : ""}`}
-							target={"_blank"}
-							iconUrl="/icons/pdf-active.svg"
-							variant="text"
-						>
+							</Button>
+							<Button
+								href={`/exports/reports/?type=transactions${eventId ? `&event_id=${eventId}` : ""}`}
+								target={"_blank"}
+								iconUrl="/icons/pdf-active.svg"
+								variant="text"
+							>
 								Export PDF
-						</Button>
+							</Button>
+						</Grid>
 					</Grid>
-				</Grid>
 
-				<ReportsDate onChange={this.refreshData.bind(this)} defaultStartDaysBack={30} onChangeButton/>
+					<ReportsDate onChange={this.refreshData.bind(this)} defaultStartDaysBack={30} onChangeButton/>
 
-				{this.renderDialog()}
-				{this.renderList()}
-			</div>
+					{this.renderDialog()}
+					{this.renderList()}
+				</div>
+			</Card>
 		);
 	}
 }

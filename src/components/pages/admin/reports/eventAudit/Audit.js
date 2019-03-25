@@ -12,9 +12,13 @@ import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
 import summaryReport from "../../../../../stores/reports/summaryReport";
 import { observer } from "mobx-react";
 import Loader from "../../../../elements/loaders/Loader";
+import Card from "../../../../elements/Card";
 
 const styles = theme => ({
-	root: {},
+	root: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
 	subHeading: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 1.3
@@ -130,7 +134,7 @@ class Audit extends Component {
 	}
 
 	render() {
-		const { printVersion } = this.props;
+		const { printVersion, classes } = this.props;
 
 		if (printVersion) {
 			return (
@@ -143,40 +147,42 @@ class Audit extends Component {
 		}
 
 		return (
-			<div>
-				<div
-					style={{
-						display: "flex",
-						minHeight: 60,
-						alignItems: "center"
-					}}
-				>
-					<Typography variant="title">Event audit report</Typography>
-					<span style={{ flex: 1 }}/>
-					<Button
-						iconUrl="/icons/csv-active.svg"
-						variant="text"
-						onClick={this.exportCSV.bind(this)}
+			<Card variant={"block"}>
+				<div className={classes.root}>
+					<div
+						style={{
+							display: "flex",
+							minHeight: 60,
+							alignItems: "center"
+						}}
 					>
+						<Typography variant="title">Event audit report</Typography>
+						<span style={{ flex: 1 }}/>
+						<Button
+							iconUrl="/icons/csv-active.svg"
+							variant="text"
+							onClick={this.exportCSV.bind(this)}
+						>
 						Export CSV
-					</Button>
-					<Button
-						href={`/exports/reports/?type=audit&event_id=${this.props.eventId}`}
-						target={"_blank"}
-						iconUrl="/icons/pdf-active.svg"
-						variant="text"
-					>
+						</Button>
+						<Button
+							href={`/exports/reports/?type=audit&event_id=${this.props.eventId}`}
+							target={"_blank"}
+							iconUrl="/icons/pdf-active.svg"
+							variant="text"
+						>
 						Export PDF
-					</Button>
+						</Button>
+					</div>
+					<Divider style={{ marginBottom: 40 }}/>
+
+					{this.renderEventSales()}
+
+					<div style={{ marginBottom: 40 }}/>
+
+					{this.renderTicketCounts()}
 				</div>
-				<Divider style={{ marginBottom: 40 }}/>
-
-				{this.renderEventSales()}
-
-				<div style={{ marginBottom: 40 }}/>
-
-				{this.renderTicketCounts()}
-			</div>
+			</Card>
 		);
 	}
 }

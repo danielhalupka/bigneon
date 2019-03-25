@@ -18,6 +18,10 @@ import { observer } from "mobx-react";
 
 const styles = theme => {
 	return {
+		root: {
+			padding: theme.spacing.unit * 4,
+			marginBottom: theme.spacing.unit
+		},
 		numbersCardContent: {
 			display: "flex",
 			flexDirection: "column",
@@ -294,6 +298,7 @@ class Summary extends Component {
 
 	render() {
 		const { event } = this.state;
+		const { classes } = this.props;
 
 		if (!event) {
 			return <Loader/>;
@@ -315,7 +320,7 @@ class Summary extends Component {
 			);
 		} else {
 			return (
-				<Container eventId={event.id} subheading={"summary"}>
+				<Container eventId={event.id} subheading={"summary"} useCardContainer>
 					{this.renderBarChart()}
 
 					<div style={{ marginTop: 60 }}/>

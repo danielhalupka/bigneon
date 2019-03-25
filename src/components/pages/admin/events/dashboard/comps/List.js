@@ -202,7 +202,7 @@ class CompList extends Component {
 		const { classes } = this.props;
 
 		return (
-			<Container eventId={this.eventId} subheading={"tools"}>
+			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{showDialog && this.renderDialog()}
 
 				<div style={{ display: "flex" }}>

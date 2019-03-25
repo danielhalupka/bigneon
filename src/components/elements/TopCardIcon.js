@@ -29,7 +29,7 @@ const TopCardIcon = props => {
 	return (
 		<div className={classes.iconDiv}>
 			<Avatar className={classes.iconOuter}>
-				<Avatar alt="Card" src={iconUrl} className={classes.icon}/>
+				<Avatar alt="" src={iconUrl} className={classes.icon}/>
 			</Avatar>
 		</div>
 	);

@@ -56,6 +56,9 @@ class User {
 	organizations = {};
 
 	@observable
+	organizationsTimezone = {};
+
+	@observable
 	showRequiresAuthDialog = false;
 
 	@action
@@ -238,11 +241,14 @@ class User {
 			.then(response => {
 				const { data } = response.data;
 				const organizations = {};
-				data.forEach(organization => {
-					organizations[organization.id] = organization.name;
+				const organizationsTimezone = {};
+				data.forEach(({ id, name, timezone }) => {
+					organizations[id] = name;
+					organizationsTimezone[id] = timezone;
 				});
 
 				this.organizations = organizations;
+				this.organizationsTimezone = organizationsTimezone;
 			})
 			.catch(error => {
 				if (error.response && error.response.status !== 401) {
@@ -252,6 +258,15 @@ class User {
 					});
 				}
 			});
+	}
+
+	@computed
+	get currentOrgTimezone() {
+		if (!this.organizationsTimezone || !this.currentOrganizationId) {
+			return null;
+		}
+
+		return this.organizationsTimezone[this.currentOrganizationId];
 	}
 
 	//After logout

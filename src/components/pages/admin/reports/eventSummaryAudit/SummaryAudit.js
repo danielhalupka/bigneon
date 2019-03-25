@@ -13,6 +13,7 @@ import Loader from "../../../../elements/loaders/Loader";
 import { dollars } from "../../../../../helpers/money";
 import Bigneon from "../../../../../helpers/bigneon";
 import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
+import Card from "../../../../elements/Card";
 
 //Temp solution to group price points if they have the same name and price
 //If the API performs this function in the future, this code can be removed
@@ -239,7 +240,10 @@ const summaryAuditCSVRows = (eventSales, salesTotals) => {
 };
 
 const styles = theme => ({
-	root: {},
+	root: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
 	subHeading: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 1.3
@@ -430,7 +434,7 @@ class SummaryAudit extends Component {
 	}
 
 	render() {
-		const { printVersion } = this.props;
+		const { printVersion, classes } = this.props;
 
 		if (printVersion) {
 			return (
@@ -443,42 +447,44 @@ class SummaryAudit extends Component {
 		}
 
 		return (
-			<div>
-				<div
-					style={{
-						display: "flex",
-						minHeight: 60,
-						alignItems: "center"
-					}}
-				>
-					<Typography variant="title">Event summary audit report</Typography>
-					<span style={{ flex: 1 }}/>
-					<Button
-						iconUrl="/icons/csv-active.svg"
-						variant="text"
-						onClick={this.exportCSV.bind(this)}
+			<Card variant={"block"}>
+				<div className={classes.root}>
+					<div
+						style={{
+							display: "flex",
+							minHeight: 60,
+							alignItems: "center"
+						}}
 					>
+						<Typography variant="title">Event summary audit report</Typography>
+						<span style={{ flex: 1 }}/>
+						<Button
+							iconUrl="/icons/csv-active.svg"
+							variant="text"
+							onClick={this.exportCSV.bind(this)}
+						>
 						Export CSV
-					</Button>
-					<Button
-						href={`/exports/reports/?type=summary_audit&event_id=${this.props.eventId}`}
-						target={"_blank"}
-						iconUrl="/icons/pdf-active.svg"
-						variant="text"
-					>
+						</Button>
+						<Button
+							href={`/exports/reports/?type=summary_audit&event_id=${this.props.eventId}`}
+							target={"_blank"}
+							iconUrl="/icons/pdf-active.svg"
+							variant="text"
+						>
 						Export PDF
-					</Button>
+						</Button>
+					</div>
+					<ReportsDate onChange={this.refreshData.bind(this)}/>
+
+					{this.renderTodayEventSales()}
+
+					<div style={{ marginTop: 40 }}/>
+
+					{this.renderDateRangeEventSales()}
+
+					<div style={{ marginBottom: 40 }}/>
 				</div>
-				<ReportsDate onChange={this.refreshData.bind(this)}/>
-
-				{this.renderTodayEventSales()}
-
-				<div style={{ marginTop: 40 }}/>
-
-				{this.renderDateRangeEventSales()}
-
-				<div style={{ marginBottom: 40 }}/>
-			</div>
+			</Card>
 		);
 	}
 }
