@@ -75,9 +75,7 @@ class SettlementReport extends Component {
 				const { settlement, events, transactions } = response.data;
 
 				const { start_time, end_time, comment } = settlement;
-
-				console.log(transactions);
-
+				
 				let adjustmentAmountInCents = 0;
 				transactions.forEach(({ transaction_type, value_in_cents }) => {
 					if (transaction_type === "Manual") {
