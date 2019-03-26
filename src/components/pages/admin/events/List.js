@@ -218,9 +218,10 @@ class EventsList extends Component {
 						</Menu>
 					</div>
 				);
-				const { timezone } = venue;
 
-				const isPublished = moment.utc(event.publish_date) < moment.utc();
+				const { timezone } = venue;
+				const isPublished = moment.utc(event.publish_date).isBefore(moment.utc());
+
 				return (
 					<Grid key={id} item xs={12} sm={12} lg={12}>
 						<EventSummaryCard
@@ -233,7 +234,7 @@ class EventsList extends Component {
 							eventDate={moment.utc(event.event_start).tz(timezone)}
 							menuButton={MenuButton}
 							isPublished={isPublished}
-							isOnSale={isPublished && moment.utc(event.on_sale) < moment.utc()}
+							isOnSale={isPublished && moment.utc(event.on_sale).isBefore(moment.utc())}
 							totalSold={event.sold_held + event.sold_unreserved}
 							totalOpen={event.tickets_open}
 							totalHeld={event.tickets_held}

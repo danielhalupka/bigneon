@@ -305,8 +305,8 @@ class EventDashboardContainer extends Component {
 		}
 
 		const { publish_date, on_sale, localized_times } = event;
-		const isPublished = moment.utc(publish_date) < moment.utc();
-		const isOnSale = isPublished && moment.utc(on_sale) < moment.utc();
+		const isPublished = moment.utc(publish_date).isBefore(moment.utc());
+		const isOnSale = isPublished && moment.utc(on_sale).isBefore(moment.utc());
 
 		let eventEnded = false;
 		if (localized_times && localized_times.event_end) {
