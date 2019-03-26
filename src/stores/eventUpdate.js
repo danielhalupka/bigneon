@@ -139,13 +139,11 @@ class EventUpdate {
 			increment: 1,
 			limitPerPerson: 10,
 			price_in_cents: "",
-			startDate,
-			startTime: startDate,
-			endDate,
 			soldOutBehavior: "ShowSoldOut",
 			isPrivate: false,
 			//By default the server will create a Default ticket price point, anything additional added to this array is an override.
-			pricing: []
+			pricing: [],
+			...updateTimezonesInObjects({ startDate, startTime: startDate, endDate }, this.timezone, true)
 		};
 
 		ticketTypes.push(ticketType);
