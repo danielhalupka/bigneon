@@ -59,6 +59,7 @@ const TicketCountRow = props => {
 		{ flex: 2, textAlign: "left" },
 		{ flex: 2, textAlign: "left" },
 		{ flex: 2, textAlign: "left" },
+		{ flex: 2, textAlign: "left" },
 		{ flex: 2, textAlign: "left" }
 	];
 
