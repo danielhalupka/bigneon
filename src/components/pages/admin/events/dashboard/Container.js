@@ -64,7 +64,8 @@ class EventDashboardContainer extends Component {
 		this.state = {
 			event: null,
 			anchorToolsEl: null,
-			anchorReportsEl: null
+			anchorReportsEl: null,
+			anchorMarketingEl: null
 		};
 	}
 
@@ -80,12 +81,20 @@ class EventDashboardContainer extends Component {
 		this.setState({ anchorReportsEl: event.currentTarget });
 	}
 
+	handleMarketingMenu(event) {
+		this.setState({ anchorMarketingEl: event.currentTarget });
+	}
+
 	handleToolsMenuClose() {
 		this.setState({ anchorToolsEl: null });
 	}
 
 	handleReportsMenuClose() {
 		this.setState({ anchorReportsEl: null });
+	}
+
+	handleMarketingMenuClose() {
+		this.setState({ anchorMarketingEl: null });
 	}
 
 	loadEventDetails(eventId) {
@@ -296,6 +305,58 @@ class EventDashboardContainer extends Component {
 		);
 	}
 
+	renderMarketingMenu() {
+		const { anchorMarketingEl } = this.state;
+		const open = Boolean(anchorMarketingEl);
+		const { event } = this.state;
+
+		const items = [];
+
+		//TODO use facebook scope
+		if (user.hasScope("event:write")) {
+			items.push(
+				<Link
+					key="fb-events"
+					to={`/admin/events/${event.id}/dashboard/marketing/fb-events`}
+				>
+					<MenuItem
+						selected={isActiveReportMenu("fb-events")}
+						onClick={this.handleMarketingMenuClose.bind(this)}
+					>
+						Facebook events
+					</MenuItem>
+				</Link>
+			);
+		}
+
+		if (items.length === 0) {
+			items.push(
+				<MenuItem key="none" onClick={this.handleReportsMenuClose.bind(this)}>
+					No marketing available
+				</MenuItem>
+			);
+		}
+
+		return (
+			<Menu
+				id="menu-appbar"
+				anchorEl={anchorMarketingEl}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "right"
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: "right"
+				}}
+				open={open}
+				onClose={this.handleMarketingMenuClose.bind(this)}
+			>
+				{items}
+			</Menu>
+		);
+	}
+
 	render() {
 		const { event } = this.state;
 		const { classes, children, subheading, useCardContainer } = this.props;
@@ -399,6 +460,18 @@ class EventDashboardContainer extends Component {
 								</StyledLink>
 							</Typography>
 						)}
+						{/*TODO add back when Mike wants to work on it*/}
+						{/*{event.is_external ? null : (*/}
+						{/*<Typography className={classes.menuText}>*/}
+						{/*{this.renderMarketingMenu()}*/}
+						{/*<StyledLink*/}
+						{/*underlined={subheading === "marketing"}*/}
+						{/*onClick={this.handleMarketingMenu.bind(this)}*/}
+						{/*>*/}
+						{/*Marketing*/}
+						{/*</StyledLink>*/}
+						{/*</Typography>*/}
+						{/*)}*/}
 					</div>
 				</Card>
 
