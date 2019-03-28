@@ -46,7 +46,7 @@ const SelectGroup = props => {
 	if (items.length > 0) {
 		content = items.map(item => (
 			<MenuItem key={item.value} value={item.value}>
-				{item.label || item.value}
+				{item.label || item.name || item.value}
 			</MenuItem>
 		));
 	}
@@ -57,7 +57,11 @@ const SelectGroup = props => {
 			error={!!error}
 			aria-describedby={`%${name}-error-text`}
 		>
-			{label ? <InputLabel shrink htmlFor={name}><FormatInputLabel {...labelProps}>{label}</FormatInputLabel></InputLabel> : null}
+			{label ? (
+				<InputLabel shrink htmlFor={name}>
+					<FormatInputLabel>{label}</FormatInputLabel>
+				</InputLabel>
+			) : null}
 			<Select
 				disabled={disabled}
 				style={selectStyle}
@@ -95,7 +99,11 @@ SelectGroup.defaultProps = {
 SelectGroup.propTypes = {
 	items: PropTypes.array.isRequired,
 	error: PropTypes.string,
-	value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]).isRequired,
+	value: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.number,
+		PropTypes.bool
+	]).isRequired,
 	dropdownWidth: PropTypes.number,
 	dropdownHeight: PropTypes.number,
 	missingItemsLabel: PropTypes.string, //If there are no items, the text you want to display
