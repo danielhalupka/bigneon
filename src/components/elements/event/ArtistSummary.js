@@ -10,6 +10,7 @@ import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
 import Card from "../Card";
 import CornerRibbon from "../CornerRibbon";
 import SocialIconLink from "../social/SocialIconLink";
+import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
 
 const styles = theme => ({
 	root: {},
@@ -67,13 +68,16 @@ const ArtistSummary = props => {
 		youtube_video_urls
 	} = props;
 
-	const imageSrc = thumb_image_url || image_url;
+	let imageSrc = thumb_image_url || image_url;
+	imageSrc = optimizedImageUrl(imageSrc);
 
 	return (
 		<Card variant="subCard">
 			<div
 				className={classes.media}
-				style={{ backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${imageSrc})` }}
+				style={{
+					backgroundImage: `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${imageSrc})`
+				}}
 			>
 				<div className={classes.mediaTopRow}>
 					{headliner ? <CornerRibbon>Headliner</CornerRibbon> : null}
