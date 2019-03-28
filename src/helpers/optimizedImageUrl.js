@@ -6,6 +6,10 @@
  * quality can be 'best', 'good', 'eco' or 'low'
  */
 export default (url, quality = "low") => {
+	if (!url || typeof url !== "string") {
+		return url;
+	}
+	
 	//Only manipulate urls served from cloudinary
 	if (url.indexOf("res.cloudinary.com") === -1) {
 		return url;
