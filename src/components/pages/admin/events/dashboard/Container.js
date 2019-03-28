@@ -460,7 +460,7 @@ class EventDashboardContainer extends Component {
 								</StyledLink>
 							</Typography>
 						)}
-						//TODO add back when Mike wants to work on it
+						{/*TODO add back when Mike wants to work on it*/}
 						{/*{event.is_external ? null : (*/}
 						{/*<Typography className={classes.menuText}>*/}
 						{/*{this.renderMarketingMenu()}*/}
