@@ -129,7 +129,7 @@ class FacebookButtonDisplay extends Component {
 		let onClick = () => {
 			this.setState({ isAuthenticating: true });
 			window.FB.login(this.onFBSignIn.bind(this), {
-				scope: "email" //manage_pages,publish_pages
+				scope: "email"
 			});
 		};
 
