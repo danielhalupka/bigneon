@@ -74,7 +74,7 @@ class EventDetailsOverlayCard extends Component {
 	render() {
 		const { classes, children, style } = this.props;
 
-		const imageSrc = optimizedImageUrl(this.props.imageSrc);
+		const imageSrc = this.props.imageSrc ? optimizedImageUrl(this.props.imageSrc) : null;
 		return (
 			<div ref={this.containerDiv} className={classes.root} style={style}>
 				<Card variant="subCard">
