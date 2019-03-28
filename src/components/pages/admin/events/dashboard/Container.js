@@ -460,17 +460,18 @@ class EventDashboardContainer extends Component {
 								</StyledLink>
 							</Typography>
 						)}
-						{event.is_external ? null : (
-							<Typography className={classes.menuText}>
-								{this.renderMarketingMenu()}
-								<StyledLink
-									underlined={subheading === "marketing"}
-									onClick={this.handleMarketingMenu.bind(this)}
-								>
-									Marketing
-								</StyledLink>
-							</Typography>
-						)}
+						//TODO add back when Mike wants to work on it
+						{/*{event.is_external ? null : (*/}
+						{/*<Typography className={classes.menuText}>*/}
+						{/*{this.renderMarketingMenu()}*/}
+						{/*<StyledLink*/}
+						{/*underlined={subheading === "marketing"}*/}
+						{/*onClick={this.handleMarketingMenu.bind(this)}*/}
+						{/*>*/}
+						{/*Marketing*/}
+						{/*</StyledLink>*/}
+						{/*</Typography>*/}
+						{/*)}*/}
 					</div>
 				</Card>
 
