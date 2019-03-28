@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import { observer } from "mobx-react";
-import user from "../../../../stores/user";
 
+import user from "../../../../stores/user";
 import PageHeading from "../../../elements/PageHeading";
 import Card from "../../../elements/Card";
 import StyledLink from "../../../elements/StyledLink";
@@ -10,16 +10,15 @@ import Divider from "../../../common/Divider";
 import Transactions from "./transactions/Transactions";
 import TicketCounts from "./counts/TicketCounts";
 import Loader from "../../../elements/loaders/Loader";
-import Settlements from "./settlement/Settlements";
+import SettlementReport from "./settlement/SettlementReport";
+import SettlementReportList from "./settlement/SettlementReportList";
 
 const styles = theme => ({
 	content: {
-		padding: theme.spacing.unit * 4,
-		marginBottom: theme.spacing.unit
+		padding: theme.spacing.unit * 4
 	},
 	menuContainer: {
-		display: "flex",
-		marginBottom: theme.spacing.unit * 2
+		display: "flex"
 	},
 	menuText: {
 		marginRight: theme.spacing.unit * 4
@@ -88,8 +87,8 @@ class Reports extends Component {
 				{hasOrgEventSettlementReport ? (
 					<Typography className={classes.menuText}>
 						<StyledLink
-							underlined={report === "settlements"}
-							to={`/admin/reports/settlements`}
+							underlined={report === "settlement-list"}
+							to={`/admin/reports/settlement-list`}
 						>
 						Settlement reports
 						</StyledLink>
@@ -101,25 +100,30 @@ class Reports extends Component {
 
 	renderContent() {
 		const report = this.props.match.params.report;
-		const organizationId = user.currentOrganizationId;
 
-		if (!organizationId) {
+		const { hasTransactionReports, hasTicketCountReports, currentOrganizationId, currentOrgTimezone } = user;
+
+		if (!currentOrganizationId) {
 			return <Loader/>;
 		}
 
-		const { hasTransactionReports, hasTicketCountReports } = user;
-		
 		//Add report components here as needed
 		switch (report) {
 			case undefined:
 			case "ticket-counts":
 				return hasTicketCountReports ? (
-					<TicketCounts organizationId={organizationId}/>
+					<TicketCounts organizationId={currentOrganizationId}/>
 				) : null;
 			case "transaction-details":
-				return <Transactions organizationId={organizationId}/>;
-			case "settlements":
-				return <Settlements organizationId={organizationId}/>;
+				return <Transactions organizationId={currentOrganizationId}/>;
+			case "settlement-list":
+				if (!currentOrgTimezone) {
+					return <Loader/>;
+				}
+
+				return <SettlementReportList organizationId={currentOrganizationId} organizationTimezone={currentOrgTimezone}/>;
+			case "settlement":
+				return <SettlementReport history={this.props.history} organizationId={currentOrganizationId}/>;
 			default:
 				return (
 					<Typography>
@@ -136,14 +140,15 @@ class Reports extends Component {
 			<div>
 				<PageHeading>Organization Reports</PageHeading>
 
-				<Card>
+				<Card variant={"block"} style={{ borderRadius: "6px 6px 0 0" }}>
 					<div className={classes.content}>
 						{this.renderMenu()}
-						<Divider style={{ marginBottom: 10 }}/>
-
-						{this.renderContent()}
 					</div>
 				</Card>
+
+				<div style={{ marginBottom: 20 }}/>
+
+				{this.renderContent()}
 			</div>
 		);
 	}

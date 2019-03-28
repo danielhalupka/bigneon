@@ -95,14 +95,9 @@ class ReportsDate extends Component {
 			callBack({
 				startDate: startOfStartDate,
 				endDate: endOfEndDate,
-				start_utc: moment
-					.utc(startOfStartDate)
-					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-				end_utc: moment
-					.utc(endOfEndDate)
-					.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
-			}
-			);
+				start_utc: startOfStartDate.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_utc: endOfEndDate.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			});
 		} else if (!startDate && !endDate) {
 			callBack();
 		}

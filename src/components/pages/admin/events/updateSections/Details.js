@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
-import { withStyles, Grid, Collapse, Hidden } from "@material-ui/core";
+import { withStyles, Grid, Collapse, Hidden, ListItemText, TextField } from "@material-ui/core";
 import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
@@ -12,9 +12,22 @@ import SelectGroup from "../../../../common/form/SelectGroup";
 import Bigneon from "../../../../../helpers/bigneon";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import Bn from "bn-api-node";
-import { updateTimezonesInObjects } from "../../../../../helpers/time";
+import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
+import { secondaryHex } from "../../../../styles/theme";
 
-const styles = theme => ({});
+const styles = theme => ({
+	selectedAgeLimitContainer: {
+		flex: 1,
+		display: "flex",
+		alignItems: "center"
+	},
+	ageLimitContainer: {
+		paddingTop: "14px"
+	},
+	superText: {
+		color: secondaryHex
+	}
+});
 
 export const DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME = 24; //For lack of a better var name
 
@@ -96,7 +109,7 @@ const formatDataForSaving = (event, organizationId) => {
 	const eventDetails = {
 		name,
 		organization_id: organizationId,
-		age_limit: Number(ageLimit),
+		age_limit: ageLimit,
 		additional_info: additionalInfo,
 		top_line_info: topLineInfo,
 		is_external: isExternal,
@@ -222,7 +235,7 @@ const formatDataForInputs = (event) => {
 		doorTimeHours,
 		publishDate,
 		redeemDate,
-		ageLimit: age_limit || "",
+		ageLimit: age_limit,
 		venueId: venue_id || "",
 		additionalInfo: additional_info || "",
 		topLineInfo: top_line_info ? top_line_info : "",
@@ -260,7 +273,9 @@ class Details extends Component {
 		super(props);
 
 		this.state = {
-			venues: null
+			venues: null,
+			selectedAgeLimitOption: null,
+			ageLimits: {}
 		};
 
 		this.changeDetails = this.changeDetails.bind(this);
@@ -362,30 +377,90 @@ class Details extends Component {
 		);
 	}
 
-	renderAgeLimits() {
-		const { errors = {}, validateFields } = this.props;
+	renderAgeInput() {
+		const { ageLimit } = eventUpdateStore.event;
+		const { errors = {}, validateFields, classes } = this.props;
+
+		return (
+			<InputGroup
+				error={errors.ageLimit}
+				value={ageLimit}
+				name="age-limit"
+				label="Age Limit"
+				labelProps={{
+					classes: {
+						superText: classes.superText
+					},
+					superText: `Select Age Limit`,
+					onSuperTextClick: () => {
+						this.setState({ isCustom: false });
+						this.changeDetails({ ageLimit: "0" });
+					}
+				}}
+				placeholder="Age Limit"
+				onChange={e => {
+					const ageLimit = e.target.value;
+					this.changeDetails({ ageLimit });
+				}}
+			/>
+		);
+	}
+
+	renderAgeSelect() {
+		const { classes } = this.props;
 		let { ageLimit } = eventUpdateStore.event;
-		ageLimit = (ageLimit || "0") + "";
+
+		ageLimit = (ageLimit === undefined ? "0" : ageLimit + "");
 
 		const ageLimits = [
 			{ value: "0", label: "This event is all ages" },
-			{ value: "21", label: "This event is 21 and over" },
-			{ value: "18", label: "This event is 18 and over" }
+			{ value: "18", label: "This event is 18 and over" },
+			{ value: "21", label: "This event is 21 and over" }
 		];
 
 		return (
 			<SelectGroup
 				value={ageLimit}
 				items={ageLimits}
-				error={errors.ageLimit}
 				name={"age-limit"}
-				label={"Age Limit *"}
+				label={"Age Limit"}
+				labelProps={{
+					classes: {
+						superText: classes.superText
+					},
+					superText: `Custom Age Limit`,
+					onSuperTextClick: () => {
+						this.setState({ isCustom: true });
+						this.changeDetails({ ageLimit: "" });
+					}
+				}}
 				onChange={e => {
 					const ageLimit = e.target.value;
 					this.changeDetails({ ageLimit });
 				}}
-				onBlur={validateFields}
 			/>
+		);
+	}
+
+	renderAgeLimits() {
+		let { isCustom = false } = this.state;
+		const { ageLimit } = eventUpdateStore.event;
+
+		isCustom = isCustom || isNaN(ageLimit);
+
+		//TODO There is definitely a better way to do this using an autocomplete
+		return (
+			<div>
+				{isCustom === true ?
+					(
+						this.renderAgeInput()
+					) :
+					(
+						this.renderAgeSelect()
+
+					)
+				}
+			</div>
 		);
 	}
 

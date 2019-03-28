@@ -487,7 +487,7 @@ class ExternalAccess extends Component {
 		};
 
 		return (
-			<Container eventId={this.eventId} subheading={"tools"}>
+			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{this.renderAreYouSureDialog}
 				{this.renderInviteForm}
 				<div>

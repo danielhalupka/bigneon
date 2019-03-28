@@ -10,6 +10,7 @@ import notifications from "../../stores/notifications";
 import selectedEvent from "../../stores/selectedEvent";
 import { primaryHex } from "../styles/theme";
 import Loader from "../elements/loaders/Loader";
+import { displayAgeLimit } from "../../helpers/ageLimit";
 
 const styles = theme => ({
 	card: {
@@ -76,6 +77,7 @@ class EventQR extends Component {
 			displayDoorTime,
 			displayShowTime
 		} = event;
+		const ageLimit = displayAgeLimit(age_limit);
 
 		return (
 			<div className={classes.card}>
@@ -114,9 +116,7 @@ class EventQR extends Component {
 							Doors: {displayDoorTime} / Show: {displayShowTime}
 						</Typography>
 						<Typography variant="body1">
-							{age_limit
-								? `This event is ${age_limit}+`
-								: "This event is all ages"}
+							{ageLimit}
 						</Typography>
 
 						<div style={{ marginBottom: 30 }}/>

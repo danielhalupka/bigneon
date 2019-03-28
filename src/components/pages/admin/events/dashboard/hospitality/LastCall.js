@@ -158,7 +158,7 @@ class LastCall extends Component {
 		const { canTrigger } = this.state;
 
 		return (
-			<Container eventId={this.eventId} subheading={"tools"}>
+			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{this.renderConfirmDialog()}
 				<Typography className={classes.parentHeading}>Hospitality</Typography>
 				<Typography className={classes.heading}>Last call notification</Typography>

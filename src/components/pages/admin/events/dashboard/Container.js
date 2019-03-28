@@ -20,6 +20,10 @@ import VisitEventPage from "../../../../elements/VisitEventPage";
 import Loader from "../../../../elements/loaders/Loader";
 
 const styles = theme => ({
+	container: {
+		padding: theme.spacing.unit * 4,
+		marginBottom: theme.spacing.unit
+	},
 	rightHeaderOptions: {
 		display: "flex",
 		justifyContent: "flex-end",
@@ -355,15 +359,15 @@ class EventDashboardContainer extends Component {
 
 	render() {
 		const { event } = this.state;
-		const { classes, children, subheading } = this.props;
+		const { classes, children, subheading, useCardContainer } = this.props;
 
 		if (!event) {
 			return <Loader/>;
 		}
 
 		const { publish_date, on_sale, localized_times } = event;
-		const isPublished = moment.utc(publish_date) < moment.utc();
-		const isOnSale = isPublished && moment.utc(on_sale) < moment.utc();
+		const isPublished = moment.utc(publish_date).isBefore(moment.utc());
+		const isOnSale = isPublished && moment.utc(on_sale).isBefore(moment.utc());
 
 		let eventEnded = false;
 		if (localized_times && localized_times.event_end) {
@@ -470,18 +474,20 @@ class EventDashboardContainer extends Component {
 					</div>
 				</Card>
 
-				<Card variant="block">
-					<div className={classes.innerCard}>
-						{children}
+				{useCardContainer ? (
+					<Card variant={"block"}>
+						<div className={classes.container}>
+							{children}
+						</div>
+					</Card>
+				) : children}
 
-						{event ? (
-							<VisitEventPage
-								id={event.id}
-								style={{ marginTop: 40, marginBottom: 20 }}
-							/>
-						) : null}
-					</div>
-				</Card>
+				{event ? (
+					<VisitEventPage
+						id={event.id}
+						style={{ marginTop: 40, marginBottom: 20 }}
+					/>
+				) : null}
 			</div>
 		);
 	}
@@ -492,7 +498,8 @@ EventDashboardContainer.propTypes = {
 	eventId: PropTypes.string.isRequired,
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array])
 		.isRequired,
-	subheading: PropTypes.string.isRequired
+	subheading: PropTypes.string.isRequired,
+	useCardContainer: PropTypes.bool
 };
 
 export default withStyles(styles)(EventDashboardContainer);

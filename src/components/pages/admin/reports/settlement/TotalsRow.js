@@ -51,28 +51,35 @@ const styles = theme => {
 };
 
 const TotalsRow = props => {
-	const { heading, gray, darkGray, children, onClick, classes, total, ...rest } = props;
+	const { heading, gray, darkGray, children, onClick, classes, total, columnStyles, ...rest } = props;
 
-	const columnStyles = [
-		{ flex: 4, textAlign: "left" },
-		{ flex: 2, textAlign: "right" }
-	];
+	const columns = children.map((child, index) => {
+		if (typeof child === "string") {
+			return (
+				<Typography
+					noWrap
+					className={classNames({
+						[classes.headingText]: heading,
+						[classes.text]: !heading,
+						[classes.totalText]: total
+					})}
+					key={index}
+					style={columnStyles[index]}
+				>
+					{child}
+				</Typography>
+			);
+		}
 
-	const columns = children.map((text, index) => {
 		return (
-			<Typography
-				noWrap
-				className={classNames({
-					[classes.headingText]: heading,
-					[classes.text]: !heading,
-					[classes.totalText]: total
-				})}
+			<span
 				key={index}
 				style={columnStyles[index]}
 			>
-				{text}
-			</Typography>
+				{child}
+			</span>
 		);
+
 	});
 
 	return (
@@ -80,6 +87,7 @@ const TotalsRow = props => {
 			className={classNames({
 				[classes.root]: true,
 				[classes.gray]: gray,
+				[classes.darkGray]: darkGray,
 				[classes.total]: total,
 				[classes.heading]: heading
 			})}
@@ -91,13 +99,21 @@ const TotalsRow = props => {
 	);
 };
 
+TotalsRow.defaultProps = {
+	columnStyles: [
+		{ flex: 4, textAlign: "left" },
+		{ flex: 2, textAlign: "right" }
+	]
+};
+
 TotalsRow.propTypes = {
 	classes: PropTypes.object.isRequired,
 	children: PropTypes.array.isRequired,
 	gray: PropTypes.bool,
 	darkGray: PropTypes.bool,
 	total: PropTypes.bool,
-	heading: PropTypes.bool
+	heading: PropTypes.bool,
+	columnStyles: PropTypes.array
 };
 
 export default withStyles(styles)(TotalsRow);

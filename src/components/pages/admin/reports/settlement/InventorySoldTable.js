@@ -4,9 +4,9 @@ import EventSettlementRow from "./EventSettlementRow";
 import { dollars } from "../../../../../helpers/money";
 
 const InventorySoldTable = props => {
-	const { ticketSales, totalSales, totalOrdersDue } = props;
+	const { tickets, totals } = props;
 
-	const ticketTypeIds = Object.keys(ticketSales);
+	const ticketTypeIds = Object.keys(tickets);
 
 	return (
 		<div>
@@ -23,16 +23,31 @@ const InventorySoldTable = props => {
 			</EventSettlementRow>
 
 			{ticketTypeIds.map((ticketTypeId, index) => {
-				const ticketTypeData = ticketSales[ticketTypeId];
+				const ticketTypeData = tickets[ticketTypeId];
+
 				const {
 					name,
-					pricings,
-					onlineCount,
-					boxOfficeCount,
-					totalSold,
-					totalComps,
-					totalOwedInCents
+					sales,
+					counts,
+					totals
 				} = ticketTypeData;
+
+				const {
+					totalAllocation,
+					totalBoxOfficeCount,
+					totalCompsCount,
+					totalGross,
+					totalHoldsCount,
+					totalOnlineClientFeesInCents,
+					totalOpenCount,
+					totalOrders,
+					totalOrdersBoxOffice,
+					totalOrdersOnline,
+					totalRedeemedCount,
+					totalReservedCount,
+					totalSoldCount,
+					totalSoldOnlineCount
+				} = totals;
 
 				//Summary Row of counts
 				return (
@@ -41,34 +56,55 @@ const InventorySoldTable = props => {
 							{[
 								name,
 								"",
-								onlineCount,
-								boxOfficeCount,
-								totalSold,
-								totalComps,
-								dollars(totalOwedInCents)
+								totalSoldOnlineCount,
+								totalBoxOfficeCount,
+								totalSoldCount,
+								totalCompsCount,
+								dollars(totalGross) //TODO confirm correct field
 							]}
 						</EventSettlementRow>
-						{pricings.map((pricing, pricingIndex) => {
+						{sales.map((sale, pricingIndex) => {
 							const {
-								name,
-								priceInCents,
-								onlineCount,
-								boxOfficeCount,
-								totalSold,
-								totalComps,
-								totalOwedInCents
-							} = pricing;
+								organization_id,
+								event_id,
+								ticket_type_id,
+								ticket_pricing_id,
+								hold_id,
+								ticket_name,
+								ticket_status,
+								event_name,
+								hold_name,
+								ticket_pricing_name,
+								ticket_pricing_price_in_cents,
+								box_office_order_count,
+								online_order_count,
+								box_office_refunded_count,
+								online_refunded_count,
+								box_office_sales_in_cents,
+								online_sales_in_cents,
+								box_office_sale_count,
+								online_sale_count,
+								comp_sale_count,
+								total_box_office_fees_in_cents,
+								total_online_fees_in_cents,
+								company_box_office_fees_in_cents,
+								client_box_office_fees_in_cents,
+								company_online_fees_in_cents,
+								client_online_fees_in_cents,
+								total_sold_count,
+								total_sold_in_cents
+							} = sale;
 
 							return (
 								<EventSettlementRow key={pricingIndex}>
 									{[
-										name,
-										dollars(priceInCents),
-										onlineCount,
-										boxOfficeCount,
-										totalSold,
-										totalComps,
-										dollars(totalOwedInCents)
+										ticket_pricing_name,
+										dollars(ticket_pricing_price_in_cents),
+										online_order_count,
+										box_office_order_count,
+										total_sold_count,
+										comp_sale_count,
+										dollars(total_sold_in_cents) //TODO confirm correct field
 									]}
 								</EventSettlementRow>
 							);
@@ -77,15 +113,15 @@ const InventorySoldTable = props => {
 				);
 			})}
 
-			<EventSettlementRow subHeading>
+			<EventSettlementRow totalNoRadius>
 				{[
 					"Total sales",
 					"",
-					totalSales.onlineCount,
-					totalSales.boxOfficeCount,
-					totalSales.totalSold,
-					totalSales.totalComps,
-					dollars(totalSales.totalOwedInCents)
+					totals.totalSoldCount,
+					totals.totalBoxOfficeCount,
+					totals.totalSoldCount,
+					totals.totalCompsCount,
+					dollars(totals.totalGross) //TODO confirm correct field
 				]}
 			</EventSettlementRow>
 
@@ -93,11 +129,11 @@ const InventorySoldTable = props => {
 				{[
 					"Total orders due",
 					"",
-					totalOrdersDue.onlineCount,
-					totalOrdersDue.boxOfficeCount,
-					totalOrdersDue.totalSold,
-					"",
-					dollars(totalOrdersDue.totalOwedInCents)
+					totals.totalOrdersOnline,
+					totals.totalOrdersBoxOffice,
+					totals.totalOrders,
+					totals.totalCompsCount,
+					dollars(totals.totalGross) //TODO confirm correct field
 				]}
 			</EventSettlementRow>
 		</div>
@@ -105,9 +141,8 @@ const InventorySoldTable = props => {
 };
 
 InventorySoldTable.propTypes = {
-	ticketSales: PropTypes.object.isRequired,
-	totalSales: PropTypes.object.isRequired,
-	totalOrdersDue: PropTypes.object.isRequired
+	tickets: PropTypes.object.isRequired,
+	totals: PropTypes.object.isRequired
 };
 
 export default InventorySoldTable;

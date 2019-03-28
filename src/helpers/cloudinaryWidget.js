@@ -12,7 +12,10 @@ export default (onResult, onError, tags = [], options = {}) => {
 		},
 		(error, result) => {
 			if (error) {
-				onError(error);
+				//Skip error not worth reporting
+				if (error.message !== "User closed widget") {
+					onError(error);
+				}
 			} else {
 				onResult(result);
 			}

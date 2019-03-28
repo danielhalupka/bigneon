@@ -10,6 +10,7 @@ import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
 import DateFlag from "./DateFlag";
 import user from "../../../stores/user";
 import nl2br from "../../../helpers/nl2br";
+import { displayAgeLimit } from "../../../helpers/ageLimit";
 
 const styles = theme => ({
 	coverImageContainer: {
@@ -175,6 +176,7 @@ const EventHeaderImage = props => {
 		);
 	}
 
+	const ageLimit = displayAgeLimit(age_limit);
 	return (
 		<div>
 			{/* DESKTOP */}
@@ -232,9 +234,7 @@ const EventHeaderImage = props => {
 									<br/>
 									Doors {displayDoorTime} - Show {displayShowTime}
 									<br/>
-									{age_limit
-										? `This event is ${age_limit}+`
-										: "This event is all ages"}
+									{ageLimit}
 								</Typography>
 							</div>
 						) : null}
@@ -256,9 +256,7 @@ const EventHeaderImage = props => {
 									<br/>
 									Doors {displayDoorTime} - Show {displayShowTime}
 									<br/>
-									{age_limit
-										? `This event is ${age_limit}+`
-										: "This event is all ages"}
+									{ageLimit}
 								</Typography>
 
 								<Typography className={classes.smallDetailsText}>
@@ -383,9 +381,7 @@ const EventHeaderImage = props => {
 								<br/>
 								Doors {displayDoorTime} - Show {displayShowTime}
 								<br/>
-								{age_limit
-									? `This event is ${age_limit}+`
-									: "This event is all ages"}
+								{ageLimit}
 							</Typography>
 						</div>
 					) : null}
@@ -426,9 +422,7 @@ const EventHeaderImage = props => {
 								<br/>
 								Doors {displayDoorTime} - Show {displayShowTime}
 								<br/>
-								{age_limit
-									? `This event is ${age_limit}+`
-									: "This event is all ages"}
+								{ageLimit}
 							</Typography>
 
 							<Typography className={classes.smallDetailsText}>
@@ -462,7 +456,7 @@ EventHeaderImage.propTypes = {
 	displayEventStartDate: PropTypes.string.isRequired,
 	displayDoorTime: PropTypes.string.isRequired,
 	displayShowTime: PropTypes.string.isRequired,
-	age_limit: PropTypes.number.isRequired
+	age_limit: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default withStyles(styles)(EventHeaderImage);

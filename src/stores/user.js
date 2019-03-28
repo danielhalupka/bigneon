@@ -7,6 +7,7 @@ import cart from "./cart";
 import orders from "./orders";
 import errorReporting from "../helpers/errorReporting";
 import maskString from "../helpers/maskString";
+import { logoutFB } from "../components/pages/authentication/social/FacebookButton";
 
 class User {
 	@observable
@@ -53,6 +54,9 @@ class User {
 
 	@observable
 	organizations = {};
+
+	@observable
+	organizationsTimezone = {};
 
 	@observable
 	showRequiresAuthDialog = false;
@@ -237,11 +241,14 @@ class User {
 			.then(response => {
 				const { data } = response.data;
 				const organizations = {};
-				data.forEach(organization => {
-					organizations[organization.id] = organization.name;
+				const organizationsTimezone = {};
+				data.forEach(({ id, name, timezone }) => {
+					organizations[id] = name;
+					organizationsTimezone[id] = timezone;
 				});
 
 				this.organizations = organizations;
+				this.organizationsTimezone = organizationsTimezone;
 			})
 			.catch(error => {
 				if (error.response && error.response.status !== 401) {
@@ -253,9 +260,25 @@ class User {
 			});
 	}
 
+	@computed
+	get currentOrgTimezone() {
+		if (!this.organizationsTimezone || !this.currentOrganizationId) {
+			return null;
+		}
+
+		return this.organizationsTimezone[this.currentOrganizationId];
+	}
+
 	//After logout
 	@action
 	onLogout() {
+		if (localStorage.getItem("access_token")) {
+			errorReporting.addBreadcrumb("User logging out out.");
+		}
+
+		localStorage.removeItem("access_token");
+		localStorage.removeItem("refresh_token");
+
 		this.token = false;
 		this.id = null;
 		this.firstName = "";
@@ -271,20 +294,9 @@ class User {
 		this.profilePicUrl = "";
 		this.organizations = {};
 
-		localStorage.removeItem("access_token");
-		localStorage.removeItem("refresh_token");
-
 		//If they logged in with facebook, kill that session also
-		if (window.FB) {
-			window.FB.getLoginStatus(({ status }) => {
-				if (status === "connected") {
-					window.FB.logout(() => {});
-				}
-			});
-		}
+		logoutFB();
 
-		errorReporting.addBreadcrumb("User logged out.");
-		
 		cart.emptyCart();
 	}
 

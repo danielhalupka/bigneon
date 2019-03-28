@@ -10,7 +10,7 @@ import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
 import Card from "../../elements/Card";
 import AppButton from "../../elements/AppButton";
 import SMSLinkForm from "../../elements/SMSLinkForm";
@@ -28,7 +28,7 @@ const styles = theme => ({
 		backgroundColor: theme.palette.background.default
 	},
 	cardContent: {
-		padding: theme.spacing.unit
+		padding: theme.spacing.unit * 2
 	},
 	appDetails: {
 		paddingTop: theme.spacing.unit * 2
@@ -40,9 +40,18 @@ const styles = theme => ({
 		marginBottom: theme.spacing.unit
 	},
 	appDetail: {
+		fontSize: theme.typography.fontSize * 0.9,
+		marginBottom: theme.spacing.unit
+	},
+	appDetailBold: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.9,
 		marginBottom: theme.spacing.unit
+	},
+	appDetailsHighlight: {
+		fontFamily: fontFamilyDemiBold,
+		fontSize: theme.typography.fontSize * 0.9,
+		color: secondaryHex
 	},
 	appButtonContainer: {
 		display: "flex",
@@ -124,7 +133,6 @@ class CheckoutSuccess extends Component {
 			displayEventStartDate,
 			additional_info,
 			top_line_info,
-			age_limit,
 			promo_image_url,
 			displayDoorTime,
 			displayShowTime,
@@ -137,12 +145,15 @@ class CheckoutSuccess extends Component {
 			<div>
 				<div className={classes.appDetails}>
 					<Typography className={classes.appHeading}>
-							Get the bigNEON app
+						TO ACCESS YOUR TICKETS
 						<br/>
-							to access your tickets
+						GET THE BIG NEON APP
 					</Typography>
 					<Typography className={classes.appDetail}>
-							The mobile app is required to use your tickets at the show
+						<span className={classes.appDetailsHighlight}>Speed through the entrance, share tickets with friends, and extend your experience using the Big Neon app</span>, or bring your ID and order confirmation and look for the will call line at the venue.
+					</Typography>
+					<Typography className={classes.appDetailBold}>
+						To protect you from fraud and the spread of counterfeit tickets, <span className={classes.appDetailsHighlight}>printable tickets are not available.</span>
 					</Typography>
 					<br/>
 
@@ -182,7 +193,7 @@ class CheckoutSuccess extends Component {
 				/>
 
 				{/* Desktop */}
-				<div>
+				<div style={{ minHeight: 200 }}>
 					<Hidden smDown implementation="css">
 						<EventDetailsOverlayCard
 							style={{
@@ -208,8 +219,8 @@ class CheckoutSuccess extends Component {
 						<EventDetailsOverlayCard
 							style={{
 								width: "100%",
-								paddingLeft: 20,
-								paddingRight: 20,
+								paddingLeft: 15,
+								paddingRight: 15,
 								top: 500
 							}}
 						>

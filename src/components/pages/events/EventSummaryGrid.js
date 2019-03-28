@@ -4,6 +4,7 @@ import { Typography, withStyles, CardMedia, Grid } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Divider from "../../common/Divider";
 import SupportingArtistsLabel from "./SupportingArtistsLabel";
+import { displayAgeLimit } from "../../../helpers/ageLimit";
 
 const styles = theme => ({
 	descriptionDiv: {
@@ -28,6 +29,7 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 		promo_image_url
 	} = event;
 
+	const ageLimit = displayAgeLimit(age_limit);
 	return (
 		<Grid container spacing={24}>
 			<Grid item xs={12} sm={8} lg={8}>
@@ -50,9 +52,7 @@ const EventSummaryGrid = ({ classes, event, venue, organization, artists }) => {
 					Doors: {displayDoorTime} / Show: {displayShowTime}
 				</Typography>
 				<Typography variant="body1">
-					{age_limit
-						? `This event is ${age_limit}+`
-						: "This event is all ages"}
+					{ageLimit}
 				</Typography>
 
 				<div style={{ marginBottom: 30 }}/>
