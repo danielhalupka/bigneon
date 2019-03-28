@@ -59,7 +59,7 @@ const SelectGroup = props => {
 		>
 			{label ? (
 				<InputLabel shrink htmlFor={name}>
-					<FormatInputLabel>{label}</FormatInputLabel>
+					<FormatInputLabel {...labelProps}>{label}</FormatInputLabel>
 				</InputLabel>
 			) : null}
 			<Select
