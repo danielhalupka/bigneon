@@ -143,10 +143,15 @@ class EventDashboardContainer extends Component {
 						Smart holds
 					</MenuItem>
 				</Link>
+				<Link to={`/admin/events/${event.id}/dashboard/codes`}>
+					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+						Discount codes
+					</MenuItem>
+				</Link>
 				{user.hasScope("org:users") ? (
 					<Link to={`/admin/events/${event.id}/external-access`}>
 						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-							Promoter Access
+							Promoter access
 						</MenuItem>
 					</Link>
 				) : (
@@ -477,11 +482,11 @@ class EventDashboardContainer extends Component {
 
 				{useCardContainer ? (
 					<Card variant={"block"}>
-						<div className={classes.container}>
-							{children}
-						</div>
+						<div className={classes.container}>{children}</div>
 					</Card>
-				) : children}
+				) : (
+					children
+				)}
 
 				{event ? (
 					<VisitEventPage
