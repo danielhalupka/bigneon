@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "../Card";
 import MaintainAspectRatio from "../MaintainAspectRatio";
+import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
 
 const styles = theme => ({
 	root: {
@@ -33,7 +34,7 @@ class EventDetailsOverlayCard extends Component {
 		super(props);
 
 		this.containerDiv = React.createRef();
-		this.updateDimensions =  this.updateDimensions.bind(this);
+		this.updateDimensions = this.updateDimensions.bind(this);
 
 		this.currentDivHeight = 0;
 	}
@@ -55,7 +56,8 @@ class EventDetailsOverlayCard extends Component {
 		const { onHeightChange } = this.props;
 
 		if (onHeightChange && this.containerDiv) {
-			const divHeight = this.containerDiv.current.getBoundingClientRect().height;
+			const divHeight = this.containerDiv.current.getBoundingClientRect()
+				.height;
 
 			//Hard limit just in case an update/render loop creeps in
 			if (divHeight > 50000) {
@@ -70,8 +72,9 @@ class EventDetailsOverlayCard extends Component {
 	}
 
 	render() {
-		const { classes, imageSrc, children, style } = this.props;
+		const { classes, children, style } = this.props;
 
+		const imageSrc = optimizedImageUrl(this.props.imageSrc);
 		return (
 			<div ref={this.containerDiv} className={classes.root} style={style}>
 				<Card variant="subCard">
