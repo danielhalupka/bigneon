@@ -43,7 +43,13 @@ const CodeRow = props => {
 	const { heading, gray, active, children, classes, actions, ...rest } = props;
 
 	const columnStyles = [
-		{ flex: 3, textAlign: "left" },
+		{
+			flex: 3,
+			textAlign: "left",
+			overflow: "hidden",
+			whiteSpace: "nowrap",
+			textOverflow: "ellipsis"
+		},
 		{
 			flex: 2,
 			textAlign: "left",
@@ -58,10 +64,10 @@ const CodeRow = props => {
 			textOverflow: "ellipsis"
 		},
 
-		{ flex: 2, textAlign: "center" },
-		{ flex: 2, textAlign: "center" },
-		{ flex: 2, textAlign: "left" },
-		{ flex: 2, textAlign: "left" }
+		{ flex: 2, textAlign: "right" },
+		{ flex: 2, textAlign: "right" },
+		{ flex: 2, textAlign: "right" },
+		{ flex: 2, textAlign: "center" }
 	];
 
 	const columns = children.map((text, index) => {

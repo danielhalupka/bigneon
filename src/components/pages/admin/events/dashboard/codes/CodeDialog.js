@@ -21,53 +21,80 @@ const formatCodeForSaving = values => {
 		quantity,
 		discount_in_cents,
 		discountInDollars,
-		maxPerOrder,
+		maxTicketsPerUser,
 		event_id,
 		id,
-		redemption_code,
+		redemption_codes,
 		ticket_type_id,
 		name,
-		end_at,
+		start_date,
+		end_date,
 		...rest
 	} = values;
 
 	const result = {
-		id,
+		//id,
 		name,
-		quantity: Number(quantity),
+		code_type: "Discount",
+		max_uses: Number(quantity),
 		discount_in_cents: discountInDollars
 			? Number(discountInDollars) * 100
 			: discount_in_cents,
-		end_at,
-		max_per_order: Number(maxPerOrder),
+		start_date: moment
+			.utc(start_date)
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+		end_date: moment.utc(end_date).format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+
+		max_tickets_per_user: Number(maxTicketsPerUser),
 		event_id,
-		redemption_code,
-		ticket_type_id
+		redemption_codes,
+		ticket_type_ids: [ticket_type_id]
 	};
 
 	return result;
 };
 
 const createCodeForInput = (values = {}) => {
-	const { discount_in_cents, max_per_order, end_at } = values;
+	const {
+		discount_in_cents,
+		max_tickets_per_user,
+		end_date,
+		start_date
+	} = values;
 	return {
 		id: "",
 		event_id: "",
 		name: "",
 		ticket_type_id: "",
 		quantity: 0,
-		redemption_code: "",
+		redemption_codes: [""],
 		discountInDollars: discount_in_cents
 			? (discount_in_cents / 100).toFixed(2)
 			: "",
-		maxPerOrder: max_per_order || "",
-		endAtTimeKey: end_at ? "custom" : "never", //TODO get the correct value based on the current event's dates
-		endAt: end_at
-			? moment.utc(end_at, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		maxTicketsPerUser: max_tickets_per_user || "",
+		startDate: start_date
+			? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 			: null,
+		endDate: end_date
+			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+			: null,
+		// endAtTimeKey: end_at ? "custom" : "never", //TODO get the correct value based on the current event's dates
+		// endAt: end_at
+		// 	? moment.utc(end_at, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
+		// 	: null,
 		...values
 	};
 };
+
+const startAtTimeOptions = [
+	{
+		value: "event_start_time",
+		label: "Event start time",
+		startAtDateString: ({ event_start }, date) => {
+			return event_start;
+		}
+	}
+];
 
 const endAtTimeOptions = [
 	{
@@ -209,17 +236,23 @@ class CodeDialog extends React.Component {
 		}
 
 		//Get the calculated end_date using the event dates
-		const { endAtTimeKey, endAt } = code;
-		const endAtOption = endAtTimeOptions.find(
-			option => option.value === endAtTimeKey
-		);
+		const { endAtTimeKey, endDate, startDate } = code;
+		// const endAtOption = endAtTimeOptions.find(
+		// 	option => option.value === endAtTimeKey
+		// );
 		Bigneon()
 			.events.read({ id: eventId })
 			.then(response => {
 				const event = response.data;
-				const end_at = endAtOption.endAtDateString(event, endAt);
+				//const end_date = endAtOption.endAtDateString(event, endAt);
 
-				const formattedCode = formatCodeForSaving({ ...code, end_at });
+				const end_date = endDate;
+				const start_date = startDate;
+				const formattedCode = formatCodeForSaving({
+					...code,
+					end_date,
+					start_date
+				});
 
 				storeFunction(formattedCode)
 					.then(response => {
@@ -252,7 +285,7 @@ class CodeDialog extends React.Component {
 			});
 	}
 
-	renderTicketTypesOrMaxPerOrder() {
+	renderTicketTypesOrMaxTicketsPerUser() {
 		const { codeType, ticketTypes } = this.props;
 
 		const { code, errors } = this.state;
@@ -324,19 +357,36 @@ class CodeDialog extends React.Component {
 				</Grid>
 				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
-						error={errors.maxPerOrder}
-						value={code.maxPerOrder}
-						name="maxPerOrder"
+						error={errors.maxTicketsPerUser}
+						value={code.maxTicketsPerUser}
+						name="maxTicketsPerUser"
 						label="Max Per Order"
 						placeholder="1-"
 						type="number"
 						onChange={e => {
-							code.maxPerOrder = e.target.value;
+							code.maxTicketsPerUser = e.target.value;
 							this.setState({ code });
 						}}
 					/>
 				</Grid>
 			</Grid>
+		);
+	}
+
+	renderStartAtTimeOptions() {
+		const { code } = this.state;
+
+		return (
+			<SelectGroup
+				value={code.startAtTimeKey || "never"}
+				items={startAtTimeOptions}
+				name={"startAtTimeOptions"}
+				label={"Starts"}
+				onChange={e => {
+					code.startAtTimeKey = e.target.value;
+					this.setState({ code });
+				}}
+			/>
 		);
 	}
 
@@ -357,31 +407,95 @@ class CodeDialog extends React.Component {
 		);
 	}
 
-	renderCustomEndAtDates() {
+	renderCustomStartAtDates() {
 		const { code, errors } = this.state;
 
-		if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
-			return null;
-		}
+		// if (!code.startAtTimeKey || code.startAtTimeKey !== "custom") {
+		// 	return null;
+		// }
 
-		const { endAt } = code;
+		const { startDate } = code;
 
 		return (
 			<Grid container spacing={16}>
 				<Grid item xs={12} md={6} lg={6}>
 					<DateTimePickerGroup
 						type={"date"}
-						error={errors.endAt}
-						value={code.endAt}
+						error={errors.startDate}
+						value={code.startDate}
+						name="startAtDate"
+						label="Starts"
+						onChange={newStartAtDate => {
+							if (startDate) {
+								//Take the time from current date
+								newStartAtDate.set({
+									hour: startDate.get("hour"),
+									minute: startDate.get("minute"),
+									second: startDate.get("second")
+								});
+							} else {
+								newStartAtDate.set({
+									hour: 12,
+									minute: 0,
+									second: 0
+								});
+							}
+
+							code.startDate = newStartAtDate;
+
+							this.setState({ code });
+						}}
+					/>
+				</Grid>
+				<Grid item xs={12} md={6} lg={6}>
+					<DateTimePickerGroup
+						type={"time"}
+						error={errors.startDate}
+						value={code.startDate}
+						name="startAtTime"
+						label="at"
+						onChange={newStartAtTime => {
+							if (startDate) {
+								startDate.set({
+									hour: newStartAtTime.get("hour"),
+									minute: newStartAtTime.get("minute"),
+									second: newStartAtTime.get("second")
+								});
+
+								code.startDate = startDate;
+							} else {
+								code.startDate = newStartAtTime;
+							}
+
+							this.setState({ code });
+						}}
+					/>
+				</Grid>
+			</Grid>
+		);
+	}
+
+	renderCustomEndAtDates() {
+		const { code, errors } = this.state;
+
+		const { endDate } = code;
+
+		return (
+			<Grid container spacing={16}>
+				<Grid item xs={12} md={6} lg={6}>
+					<DateTimePickerGroup
+						type={"date"}
+						error={errors.endDate}
+						value={code.endDate}
 						name="endAtDate"
 						label="Ends (custom)"
 						onChange={newEndAtDate => {
-							if (endAt) {
+							if (endDate) {
 								//Take the time from current date
 								newEndAtDate.set({
-									hour: endAt.get("hour"),
-									minute: endAt.get("minute"),
-									second: endAt.get("second")
+									hour: endDate.get("hour"),
+									minute: endDate.get("minute"),
+									second: endDate.get("second")
 								});
 							} else {
 								newEndAtDate.set({
@@ -391,7 +505,7 @@ class CodeDialog extends React.Component {
 								});
 							}
 
-							code.endAt = newEndAtDate;
+							code.endDate = newEndAtDate;
 
 							this.setState({ code });
 						}}
@@ -405,16 +519,16 @@ class CodeDialog extends React.Component {
 						name="endAtTime"
 						label="at"
 						onChange={newEndAtTime => {
-							if (endAt) {
-								endAt.set({
+							if (endDate) {
+								endDate.set({
 									hour: newEndAtTime.get("hour"),
 									minute: newEndAtTime.get("minute"),
 									second: newEndAtTime.get("second")
 								});
 
-								code.endAt = endAt;
+								code.endDate = endDate;
 							} else {
-								code.endAt = newEndAtTime;
+								code.endDate = newEndAtTime;
 							}
 
 							this.setState({ code });
@@ -476,18 +590,18 @@ class CodeDialog extends React.Component {
 					/>
 					<InputGroup
 						error={errors.redemption_codes}
-						value={code.redemption_codes}
+						value={code.redemption_codes[0]}
 						name="redemption_code"
 						label="Codes"
 						placeholder="- Please enter code (min 6 chars)"
 						type="text"
 						onChange={e => {
-							code.redemption_code = e.target.value.toUpperCase();
+							code.redemption_codes = [e.target.value.toUpperCase()];
 							this.setState({ code });
 						}}
 					/>
 
-					{this.renderTicketTypesOrMaxPerOrder()}
+					{this.renderTicketTypesOrMaxTicketsPerUser()}
 					<Grid container spacing={16}>
 						<Grid item xs={12} md={6} lg={6}>
 							<InputGroup
@@ -509,9 +623,20 @@ class CodeDialog extends React.Component {
 							/>
 						</Grid>
 						<Grid item xs={12} md={6} lg={6}>
+							Discount perc
+						</Grid>
+					</Grid>
+					{/* <Grid container spacing={16}>
+						<Grid item xs={12} md={6} lg={6}>
+							{this.renderStartAtTimeOptions()}
+						</Grid>
+						<Grid item xs={12} md={6} lg={6}>
 							{this.renderEndAtTimeOptions()}
 						</Grid>
 					</Grid>
+					 */}
+
+					{this.renderCustomStartAtDates()}
 					{this.renderCustomEndAtDates()}
 
 					{this.renderQuantities()}

@@ -10,7 +10,7 @@ import Dialog from "../../../../../elements/Dialog";
 import Loader from "../../../../../elements/loaders/Loader";
 import user from "../../../../../../stores/user";
 import CodeRow from "./CodeRow";
-import CodeDialog from "./CodeDialog";
+import CodeDialog, { CODE_TYPES } from "./CodeDialog";
 
 const styles = theme => ({
 	root: {}
@@ -76,7 +76,8 @@ class CodeList extends Component {
 	onAddCode() {
 		this.setState({
 			activeCodeId: null,
-			showCodeDialog: "-1"
+			showCodeDialog: "-1",
+			codeType: CODE_TYPES.NEW
 		});
 	}
 
@@ -110,6 +111,7 @@ class CodeList extends Component {
 				"Name",
 				"Codes",
 				"Ticket Types",
+				"Discount",
 				"Used",
 				"Remaining",
 				"Action"
@@ -193,14 +195,15 @@ class CodeList extends Component {
 	}
 
 	renderDialog() {
-		const { ticketTypes, activeCodeId } = this.state;
+		const { ticketTypes, activeCodeId, codeType } = this.state;
 
 		return (
 			<CodeDialog
+				codeType={codeType}
 				open={true}
 				eventId={this.eventId}
 				codeId={activeCodeId}
-				ticketTypes={ticketTypes}
+				ticketTypes={Object.values(ticketTypes)}
 				onSuccess={id => {
 					this.refreshCodes();
 					this.setState({ showCodeDialog: null });
