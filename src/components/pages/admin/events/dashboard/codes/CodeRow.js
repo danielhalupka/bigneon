@@ -51,7 +51,7 @@ const CodeRow = props => {
 			textOverflow: "ellipsis"
 		},
 		{
-			flex: 2,
+			flex: 3,
 			textAlign: "left",
 			overflow: "hidden",
 			textOverflow: "ellipsis"
@@ -65,10 +65,9 @@ const CodeRow = props => {
 		},
 
 		{ flex: 2, textAlign: "right" },
-		{ flex: 2, textAlign: "right" },
-		{ flex: 2, textAlign: "right" },
-		{ flex: 2, textAlign: "center" }
+		{ flex: 2, textAlign: "right" }
 	];
+	const actionStyle = { flex: 1, textAlign: "center" };
 
 	const columns = children.map((text, index) => {
 		const className = heading
@@ -83,10 +82,10 @@ const CodeRow = props => {
 		);
 	});
 
-	let actionButtons = <span>&nbsp;</span>;
+	let actionButtons = <span style={actionStyle}>&nbsp;</span>;
 	if (actions) {
 		actionButtons = (
-			<span>
+			<span style={actionStyle}>
 				{actions.map(({ id, name, iconUrl, onClick }) => (
 					<span
 						key={name}

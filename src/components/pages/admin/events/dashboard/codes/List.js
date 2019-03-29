@@ -107,21 +107,14 @@ class CodeList extends Component {
 		}
 
 		if (codes && codes.length > 0) {
-			const ths = [
-				"Name",
-				"Codes",
-				"Ticket Types",
-				"Discount",
-				"Used",
-				"Remaining",
-				"Action"
-			];
+			const ths = ["Name", "Codes", "Ticket Types", "Discount", "Available"];
 
 			const onAction = (id, action) => {
 				if (action === "Edit") {
 					return this.setState({
 						activeCodeId: id,
-						showCodeDialog: true
+						showCodeDialog: true,
+						codeType: CODE_TYPES.EDIT
 					});
 				}
 
@@ -140,8 +133,7 @@ class CodeList extends Component {
 							redemption_codes,
 							ticket_type_ids,
 							discount_in_cents,
-							quantity,
-							available
+							max_uses
 						} = c;
 
 						const tds = [
@@ -150,9 +142,8 @@ class CodeList extends Component {
 							Object.keys(ticketTypes).length === 0
 								? null
 								: ticket_type_ids.map(id => ticketTypes[id].name),
-							discount_in_cents,
-							quantity - available,
-							available
+							(discount_in_cents / 100).toFixed(2),
+							max_uses
 						];
 
 						const active = activeCodeId === id && showCodeDialog;

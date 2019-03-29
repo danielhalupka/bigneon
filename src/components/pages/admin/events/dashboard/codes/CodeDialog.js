@@ -18,7 +18,7 @@ import notifications from "../../../../../../stores/notifications";
 
 const formatCodeForSaving = values => {
 	const {
-		quantity,
+		maxUses,
 		discount_in_cents,
 		discountInDollars,
 		maxTicketsPerUser,
@@ -33,10 +33,10 @@ const formatCodeForSaving = values => {
 	} = values;
 
 	const result = {
-		//id,
+		id,
 		name,
 		code_type: "Discount",
-		max_uses: Number(quantity),
+		max_uses: Number(maxUses),
 		discount_in_cents: discountInDollars
 			? Number(discountInDollars) * 100
 			: discount_in_cents,
@@ -57,16 +57,19 @@ const formatCodeForSaving = values => {
 const createCodeForInput = (values = {}) => {
 	const {
 		discount_in_cents,
+		max_uses,
 		max_tickets_per_user,
 		end_date,
-		start_date
+		start_date,
+		ticket_type_ids
 	} = values;
 	return {
 		id: "",
 		event_id: "",
 		name: "",
-		ticket_type_id: "",
-		quantity: 0,
+		ticket_type_id:
+			ticket_type_ids && ticket_type_ids.length > 0 ? ticket_type_ids[0] : "",
+		maxUses: max_uses || 0,
 		redemption_codes: [""],
 		discountInDollars: discount_in_cents
 			? (discount_in_cents / 100).toFixed(2)
@@ -78,6 +81,7 @@ const createCodeForInput = (values = {}) => {
 		endDate: end_date
 			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 			: null,
+
 		// endAtTimeKey: end_at ? "custom" : "never", //TODO get the correct value based on the current event's dates
 		// endAt: end_at
 		// 	? moment.utc(end_at, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
@@ -231,7 +235,7 @@ class CodeDialog extends React.Component {
 				storeFunction = Bigneon().events.codes.create;
 				break;
 			case CODE_TYPES.EDIT:
-				storeFunction = Bigneon().code.update;
+				storeFunction = Bigneon().codes.update;
 				break;
 		}
 
@@ -309,7 +313,7 @@ class CodeDialog extends React.Component {
 			<AutoCompleteGroup
 				value={selectedTicketType}
 				items={ticketTypeHash}
-				label={"Ticket Type"}
+				label={"Ticket Type*"}
 				name={"ticket-types"}
 				onChange={(ticketTypeId, label) => {
 					if (!ticketTypeId) {
@@ -342,17 +346,16 @@ class CodeDialog extends React.Component {
 			<Grid container spacing={16}>
 				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
-						error={errors.quantity}
-						value={code.quantity}
-						name="quantity"
+						error={errors.maxUses}
+						value={code.maxUses}
+						name="maxUses"
 						label="Uses*"
 						placeholder="100"
 						type="number"
 						onChange={e => {
-							code.quantity = e.target.value;
+							code.maxUses = e.target.value;
 							this.setState({ code });
 						}}
-						// onBlur={this.validateFields.bind(this)}
 					/>
 				</Grid>
 				<Grid item xs={12} md={6} lg={6}>
@@ -360,8 +363,8 @@ class CodeDialog extends React.Component {
 						error={errors.maxTicketsPerUser}
 						value={code.maxTicketsPerUser}
 						name="maxTicketsPerUser"
-						label="Max Per Order"
-						placeholder="1-"
+						label="Limit per user"
+						placeholder="4"
 						type="number"
 						onChange={e => {
 							code.maxTicketsPerUser = e.target.value;
@@ -514,8 +517,8 @@ class CodeDialog extends React.Component {
 				<Grid item xs={12} md={6} lg={6}>
 					<DateTimePickerGroup
 						type={"time"}
-						error={errors.endAt}
-						value={code.endAt}
+						error={errors.endDate}
+						value={code.endDate}
 						name="endAtTime"
 						label="at"
 						onChange={newEndAtTime => {
@@ -554,7 +557,7 @@ class CodeDialog extends React.Component {
 
 		const iconUrl = "/icons/tickets-white.svg";
 		let title = "Create";
-		const nameField = "Name (For Reports)";
+		const nameField = "Name (For Reports)*";
 		let saveButtonText = "Create";
 		switch (codeType) {
 			case CODE_TYPES.NEW:
@@ -592,7 +595,7 @@ class CodeDialog extends React.Component {
 						error={errors.redemption_codes}
 						value={code.redemption_codes[0]}
 						name="redemption_code"
-						label="Codes"
+						label="Codes*"
 						placeholder="- Please enter code (min 6 chars)"
 						type="text"
 						onChange={e => {
@@ -613,7 +616,7 @@ class CodeDialog extends React.Component {
 								error={errors.discountInDollars}
 								value={code.discountInDollars}
 								name="discountInDollars"
-								label="Discount"
+								label="Discount*"
 								placeholder=""
 								type="number"
 								onChange={e => {
@@ -622,9 +625,7 @@ class CodeDialog extends React.Component {
 								}}
 							/>
 						</Grid>
-						<Grid item xs={12} md={6} lg={6}>
-							Discount perc
-						</Grid>
+						<Grid item xs={12} md={6} lg={6}/>
 					</Grid>
 					{/* <Grid container spacing={16}>
 						<Grid item xs={12} md={6} lg={6}>
