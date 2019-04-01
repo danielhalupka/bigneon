@@ -6,6 +6,7 @@ import Bigneon from "./helpers/bigneon";
 import analytics from "./helpers/analytics";
 import errorReporting from "./helpers/errorReporting";
 
+window.bigneonVersion = REACT_APP_VERSION;
 console.debug("BigNeon Version: ", REACT_APP_VERSION);
 
 Bigneon({}, {});
