@@ -138,16 +138,24 @@ class EventDashboardContainer extends Component {
 				open={open}
 				onClose={this.handleToolsMenuClose.bind(this)}
 			>
-				<Link to={`/admin/events/${event.id}/dashboard/holds`}>
-					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-						Smart holds
-					</MenuItem>
-				</Link>
-				<Link to={`/admin/events/${event.id}/dashboard/codes`}>
-					<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-						Discount codes
-					</MenuItem>
-				</Link>
+				{user.hasScope("hold:read") ? (
+					<Link to={`/admin/events/${event.id}/dashboard/holds`}>
+						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+							Smart holds
+						</MenuItem>
+					</Link>
+				) : (
+					<span/>
+				)}
+				{user.hasScope("code:read") ? (
+					<Link to={`/admin/events/${event.id}/dashboard/codes`}>
+						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
+							Discount codes
+						</MenuItem>
+					</Link>
+				) : (
+					<span/>
+				)}
 				{user.hasScope("org:users") ? (
 					<Link to={`/admin/events/${event.id}/external-access`}>
 						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
