@@ -123,7 +123,7 @@ class CheckoutSelection extends Component {
 
 			if (!ticketSelection[id]) {
 				ticketSelection[id] = {
-					quantity: 1
+					quantity: 2
 				};
 			}
 		}

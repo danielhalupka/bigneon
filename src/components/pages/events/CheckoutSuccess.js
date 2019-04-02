@@ -104,7 +104,7 @@ const styles = theme => {
 			lineHeight: 0.95
 		},
 		cardSpacer: {
-			marginTop: 160,
+			marginTop: 140,
 			[iPhone5MediaQuery]: {
 				marginTop: 80
 			}
@@ -429,16 +429,6 @@ class CheckoutSuccess extends Component {
 											>
 												Get my tickets
 											</AppButton>
-
-											{/*<Button*/}
-											{/*iconUrl={"/icons/close-white.svg"}*/}
-											{/*href={process.env.REACT_APP_DOWNLOAD_APP}*/}
-											{/*size="mediumLarge"*/}
-											{/*variant="callToAction"*/}
-											{/*style={{ width: "100%" }}*/}
-											{/*>*/}
-											{/*Get my tickets*/}
-											{/*</Button>*/}
 										</div>
 										<div className={classes.cardSpacer}/>
 										<Typography className={classes.mobileFooterText}>
