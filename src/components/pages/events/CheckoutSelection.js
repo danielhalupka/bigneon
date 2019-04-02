@@ -325,11 +325,7 @@ class CheckoutSelection extends Component {
 			.filter(item => !!item);
 
 		if (!ticketTypeRendered.length) {
-			return (
-				<Typography variant="subheading">
-					Tickets currently unavailable
-				</Typography>
-			);
+			return null;
 		}
 		return ticketTypeRendered;
 	}

@@ -194,9 +194,10 @@ class ViewEvent extends Component {
 	get callToActionButtonDetails() {
 		const { event, hasAvailableTickets } = selectedEvent;
 
-		if (hasAvailableTickets === false && !event.is_external) {
-			return { ctaText: "No available tickets", enabled: false };
-		}
+		//TODO check why api is returning null for 'override_status' when it should be 'UseAccessCode'
+		// if (hasAvailableTickets === false && !event.is_external) {
+		// 	return { ctaText: "No available tickets", enabled: false };
+		// }
 
 		switch (event.override_status) {
 			case "PurchaseTickets":
