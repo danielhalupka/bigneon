@@ -23,3 +23,6 @@ yarn-error.log*
 yarn.lock
 .vscode
 ui-tests/node_modules
+
+
+*firebase*

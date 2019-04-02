@@ -13,7 +13,10 @@ const styles = theme => {
 			alignItems: "center",
 			height: "100%",
 			maxHeight: 40,
-			maxWidth: 180
+			maxWidth: 180,
+			[theme.breakpoints.down("xs")]: {
+				maxWidth: 80
+			}
 		},
 		value: {
 			fontSize: theme.typography.fontSize * 2.1,
@@ -25,6 +28,10 @@ const styles = theme => {
 			[theme.breakpoints.down("sm")]: {
 				paddingTop: 2,
 				fontSize: theme.typography.fontSize * 1.8
+			},
+			[theme.breakpoints.down("xs")]: {
+				paddingTop: 4,
+				fontSize: theme.typography.fontSize * 1.5
 			}
 		},
 		button: {
@@ -35,7 +42,13 @@ const styles = theme => {
 			display: "flex",
 			justifyContent: "center",
 			alignItems: "center",
-			paddingTop: 3
+			paddingTop: 3,
+			[theme.breakpoints.down("xs")]: {
+				width: 20,
+				height: 20,
+				borderRadius: 20,
+				paddingTop: 2
+			}
 		},
 		minusContainer: {
 			backgroundColor: "#f5f6f7"

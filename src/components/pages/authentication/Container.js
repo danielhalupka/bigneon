@@ -40,9 +40,12 @@ const styles = theme => ({
 		backgroundImage: `url(/images/intro-background-dark.png)`
 	},
 	paper: {
-		padding: theme.spacing.unit * 2,
+		padding: theme.spacing.unit * 4,
 		marginBottom: theme.spacing.unit * 25,
-		textAlign: "center"
+		textAlign: "center",
+		[theme.breakpoints.down("sm")]: {
+			padding: theme.spacing.unit * 2
+		}
 	},
 	headerImage: {
 		width: "100%"

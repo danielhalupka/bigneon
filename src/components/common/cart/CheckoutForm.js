@@ -16,7 +16,7 @@ import RadioButton from "../../elements/form/RadioButton";
 
 const styles = theme => ({
 	paymentContainer: {
-		padding: theme.spacing.unit * 2,
+		//padding: theme.spacing.unit * 2,
 		marginTop: theme.spacing.unit * 3
 		// borderStyle: "solid",
 		// borderWidth: 0.5,
@@ -36,7 +36,8 @@ const styles = theme => ({
 	},
 	heading: {
 		fontFamily: fontFamilyDemiBold,
-		fontSize: theme.typography.fontSize * 1.2
+		fontSize: theme.typography.fontSize * 1.2,
+		marginBottom: theme.spacing.unit * 2
 	},
 	paymentOptionContainer: {
 		display: "flex",
@@ -137,7 +138,7 @@ class CheckoutForm extends Component {
 		const { statusMessage } = this.state;
 
 		return (
-			<Dialog open={!!statusMessage} title={statusMessage || ""}>
+			<Dialog iconUrl={"/icons/credit-card-white.svg"} open={!!statusMessage} title={statusMessage || ""}>
 				<div/>
 			</Dialog>
 		);
@@ -192,6 +193,7 @@ class CheckoutForm extends Component {
 			};
 			return (
 				<Grid item xs={12} sm={12} lg={12} className={classes.cardInput}>
+					{this.header}
 					<CardElement style={stripeStyle}/>
 				</Grid>
 			);
@@ -207,39 +209,55 @@ class CheckoutForm extends Component {
 			Stripe: ["credit-card-gray.svg"],
 			Globee: cryptoIcons
 		};
+
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
 				{this.renderProcessingDialog()}
 				<Grid className={classes.paymentContainer} item xs={12} sm={12} lg={12}>
-					{this.header}
-					<br/>
 					{allowedPaymentMethods ? allowedPaymentMethods.map((method, index) => {
 						const onClick = () =>
 							this.onPaymentMethodChanged(
 								method.method + "|" + method.provider
 							);
+
+						let showSelectOption = true;
+						let showRadio = true;
+						if (allowedPaymentMethods.length === 1 && method) {
+							if (method.method === "Card") {
+								showSelectOption = false;
+							} else if (method.method === "Provider") {
+								showRadio = false;
+							}
+						}
+
 						return (
 							<div key={method.method + "|" + method.provider}>
-								<div onClick={onClick} className={classes.paymentOptionContainer}>
-									<RadioButton
-										active={
-											paymentMethod === method.method + "|" + method.provider
-										}
+								{showSelectOption ? (
+									<div
 										onClick={onClick}
-									/>
-
-									{iconSrc[method.provider].map(icon => {
-										return (
-											<img
-												width="30"
-												height="30"
-												src={"/icons/" + icon}
-												key={icon}
-												style={{ marginRight: 2 }}
+										className={classes.paymentOptionContainer}
+										style={!showRadio ? { display: "flex", justifyContent: "center" } : {}}
+									>
+										{showRadio ? (
+											<RadioButton
+												active={paymentMethod === method.method + "|" + method.provider}
+												onClick={onClick}
 											/>
-										);
-									})}
-								</div>
+										) : null }
+
+										{iconSrc[method.provider].map(icon => {
+											return (
+												<img
+													width="30"
+													height="30"
+													src={"/icons/" + icon}
+													key={icon}
+													style={{ marginRight: 2 }}
+												/>
+											);
+										})}
+									</div>
+								) : null }
 
 								{this.renderPaymentSpecificDetails(
 									method.method + "|" + method.provider

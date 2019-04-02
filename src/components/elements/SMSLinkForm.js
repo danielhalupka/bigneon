@@ -147,7 +147,7 @@ class SMSLinkForm extends Component {
 							type="submit"
 							disabled={isSubmitting}
 							style={{ width: "100%" }}
-							variant="callToAction"
+							variant="secondary"
 						>
 							{isSubmitting ? "Sending..." : "Text me the link"}
 						</Button>

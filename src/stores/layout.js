@@ -9,6 +9,9 @@ class Layout {
 	showFooter = false;
 
 	@observable
+	belowFooterPadding = false;
+
+	@observable
 	includeContainerPadding = true;
 
 	@observable
@@ -34,6 +37,11 @@ class Layout {
 	}
 
 	@action
+	toggleBelowFooterPadding(state) {
+		this.belowFooterPadding = state;
+	}
+
+	@action
 	toggleContainerPadding(state) {
 		this.includeContainerPadding = state;
 	}
@@ -56,6 +64,17 @@ class Layout {
 	@action
 	toggleBottomMobileCartBar(state) {
 		this.showBottomMobileCartBar = state;
+	}
+
+	@action
+	toggleFloatingHelpIcon(state) {
+		if (typeof zE !== "undefined") {
+			if (state) {
+				zE.show ? zE.show() : null;
+			} else {
+				zE.show ? zE.hide() : null;
+			}
+		}
 	}
 
 	@computed

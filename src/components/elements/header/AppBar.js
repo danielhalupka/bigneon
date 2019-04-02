@@ -25,6 +25,13 @@ const styles = theme => {
 			position: "absolute",
 			padding: 0
 		},
+		headerLinkContainer: {
+			[theme.breakpoints.down("sm")]: {
+				flex: 1,
+				display: "flex",
+				justifyContent: "flex-start"
+			}
+		},
 		toolBar: {
 			paddingRight: theme.spacing.unit * 2,
 			paddingLeft: theme.spacing.unit * 2,
@@ -52,7 +59,7 @@ const CustomAppBar = observer(props => {
 		<AppBar className={classes.appBar}>
 			<Toolbar className={classes.toolBar}>
 				{handleDrawerToggle ? (
-					<Hidden mdUp implementation="css">
+					<Hidden mdUp>
 						{layout.showSideMenu ? (
 							<IconButton
 								color="inherit"
@@ -67,13 +74,14 @@ const CustomAppBar = observer(props => {
 						)}
 					</Hidden>
 				) : null}
-				<div>
+
+				<div className={classes.headerLinkContainer}>
 					<Link to={"/"}>
 						<AppBarLogo/>
 					</Link>
 				</div>
 
-				<Hidden smDown implementation="css">
+				<Hidden smDown>
 					<SearchToolBarInput history={history}/>
 				</Hidden>
 

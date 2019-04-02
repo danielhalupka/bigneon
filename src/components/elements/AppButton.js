@@ -4,16 +4,18 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import classNames from "classnames";
-
-const minWidth = 160;
+import { callToActionBackground, fontFamilyBold, fontFamilyDemiBold } from "../styles/theme";
 
 const styles = theme => {
 	return {
 		button: {
-			minWidth,
+			minWidth: 180,
 			paddingTop: theme.spacing.unit * 1.5,
 			paddingBottom: theme.spacing.unit * 1.5,
-			borderRadius: 8
+			borderRadius: 8,
+			[theme.breakpoints.down("xs")]: {
+				minWidth: 120
+			}
 			// WebkitBorderImage:
 			// 	"-webkit-gradient(linear, left top, left bottom, from(#00abeb), to(#fff), color-stop(0.5, #fff), color-stop(0.5, #66cc00)) 21 30 30 21 repeat repeat"
 		},
@@ -26,11 +28,17 @@ const styles = theme => {
 		white: {
 			border: `solid 0.5px #FFFFFF`
 		},
+		callToAction: {
+			background: callToActionBackground,
+			color: "#FFF",
+			boxShadow: "0 2px 7.5px 1px rgba(112, 124, 237, 0.47)",
+			backgroundRepeat: "no-repeat"
+		},
 		leftIcon: {
 			marginRight: theme.spacing.unit,
 			marginBottom: 2,
-			width: 25,
-			height: 25
+			width: "auto",
+			height: "100%"
 		},
 		whiteLabel: {
 			color: "#FFFFFF",
@@ -44,8 +52,29 @@ const styles = theme => {
 			color: "#FFFFFF",
 			textTransform: "capitalize"
 		},
+		callToActionLabel: {
+			color: "#FFFFFF",
+			textTransform: "capitalize",
+			fontFamily: fontFamilyBold
+		},
 		hover: {
 			backgroundColor: "red"
+		},
+		buttonContents: {
+			display: "flex",
+			justifyContent: "center",
+			alignItems: "center"
+		},
+		iconContainer: {
+			display: "flex",
+			justifyContent: "flex-start"
+		},
+		labelContainer: {
+			flex: 1,
+			paddingTop: 2,
+			fontFamily: "inherit",
+			fontSize: "inherit",
+			font: "inherit"
 		}
 	};
 };
@@ -53,21 +82,32 @@ const styles = theme => {
 const AppButton = props => {
 	const { classes, children, variant, color, ...rest } = props;
 
-	const iconColor = color === "blackBackground" ? "white" : color;
+	const iconColor = color === "blackBackground" || color === "callToAction" ? "white" : color;
 
-	const iconUrl = `/icons/${variant}-${iconColor}.svg`;
+	const iconUrl = variant ? `/icons/${variant}-${iconColor}.svg` : null;
+
+	let labelStyle = { paddingRight: variant ? "5%" : 0 };
+	if (typeof children === "string" && children.toLowerCase() === "ios") {
+		labelStyle = { ...labelStyle, textTransform: "none" };
+	}
 
 	return (
 		<Button
 			classes={{
-				root: classNames({ [classes.button]: true, [classes[color]]: true }),
+				root: classNames({ [classes.button]: true, [classes[color]]: true, [classes.buttonContents]: true }),
 				label: classes[`${color}Label`]
 			}}
 			target="_blank"
 			{...rest}
 		>
-			<img alt={children} className={classes.leftIcon} src={iconUrl}/>
-			{children}
+			{iconUrl ? (
+				<div className={classes.iconContainer}>
+					<img className={classes.leftIcon} src={iconUrl}/>
+				</div>
+			) : null }
+			<div className={classes.labelContainer} style={labelStyle}>
+				{children}
+			</div>
 		</Button>
 	);
 };
@@ -78,9 +118,9 @@ AppButton.defaultProps = {
 };
 
 AppButton.propTypes = {
-	color: PropTypes.oneOf(["white", "black", "blackBackground"]),
+	color: PropTypes.oneOf(["white", "black", "blackBackground", "callToAction"]),
 	classes: PropTypes.object.isRequired,
-	variant: PropTypes.oneOf(["ios", "android"]),
+	variant: PropTypes.oneOf(["ios", "android", false]),
 	children: PropTypes.oneOfType([
 		PropTypes.string
 		// PropTypes.element,

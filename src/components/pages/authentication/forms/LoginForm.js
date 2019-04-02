@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles, Grid } from "@material-ui/core";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
 
 import InputGroup from "../../../common/form/InputGroup";
 import Button from "../../../elements/Button";
@@ -147,7 +145,7 @@ class LoginForm extends Component {
 					email={email}
 				/>
 				<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-					<CardContent>
+					<div>
 						{process.env.REACT_APP_FACEBOOK_APP_ID ? (
 							<div>
 								<FacebookButton onSuccess={this.props.onSuccess}>
@@ -180,36 +178,27 @@ class LoginForm extends Component {
 							callback={this.handleRecaptchaVerify}
 							expiredCallback={this.handleRecaptchaExpire}
 						/>
-					</CardContent>
-					<CardActions>
-						<Grid container spacing={24}>
-							<Grid item xs={12} sm={12} lg={12}>
-								<Button
-									disabled={isSubmitting}
-									type="submit"
-									style={{ width: "100%" }}
-									variant="callToAction"
-								>
-									{isSubmitting ? "Logging in..." : "Login"}
-								</Button>
-							</Grid>
-
-							<Grid
-								item
-								xs={12}
-								sm={12}
-								lg={12}
-								style={{ justifyContent: "center" }}
-							>
-								<Button
-									onClick={() => this.setState({ resetOpen: true })}
-									variant="text"
-								>
-									Forgot your password?
-								</Button>
-							</Grid>
-						</Grid>
-					</CardActions>
+					</div>
+					<br/>
+					<div>
+						<Button
+							disabled={isSubmitting}
+							type="submit"
+							style={{ width: "100%" }}
+							variant="callToAction"
+						>
+							{isSubmitting ? "Logging in..." : "Login"}
+						</Button>
+					</div>
+					<br/>
+					<div style={{ justifyContent: "center" }}>
+						<Button
+							onClick={() => this.setState({ resetOpen: true })}
+							variant="text"
+						>
+							Forgot your password?
+						</Button>
+					</div>
 				</form>
 			</div>
 		);

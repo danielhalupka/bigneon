@@ -70,6 +70,9 @@ const styles = theme => ({
 		[theme.breakpoints.down("xs")]: {
 			padding: theme.spacing.unit
 		}
+	},
+	belowFooterPadding: {
+		marginBottom: 80
 	}
 });
 
@@ -162,7 +165,7 @@ class Container extends React.Component {
 						</SwipeableDrawer>
 					</Hidden>
 					{showSideMenu ? (
-						<Hidden smDown implementation="css">
+						<Hidden smDown>
 							<Drawer
 								variant="permanent"
 								open
@@ -219,6 +222,8 @@ class Container extends React.Component {
 						) : (
 							<div className={classes.footerPlaceholder}/>
 						)}
+
+						{layout.belowFooterPadding ? <div className={classes.belowFooterPadding}/> : null}
 					</main>
 				</div>
 				<CartMobileBottomBar/>

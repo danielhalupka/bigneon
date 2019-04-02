@@ -19,7 +19,12 @@ const removeContainerRoutes = [
 
 const hideBottomMobileCartBar = [
 	"/tickets",
-	"/tickets/confirmation"
+	"/tickets/confirmation",
+	"/events/"
+];
+
+const hideFloatingHelpButton = [
+	"/tickets/success"
 ];
 
 class OnRouteChange extends Component {
@@ -49,6 +54,7 @@ class OnRouteChange extends Component {
 		let useContainer = true;
 		let showStudioLogo = false;
 		let showBottomMobileCartBar = true;
+		let showFloatingHelpButton = true;
 
 		showStudioLogoRoutes.forEach(path => {
 			if (window.location.pathname.startsWith(path)) {
@@ -103,6 +109,13 @@ class OnRouteChange extends Component {
 					return;
 				}
 			});
+
+			hideFloatingHelpButton.forEach(path => {
+				if (window.location.pathname.indexOf(path) !== -1) {
+					showFloatingHelpButton = false;
+					return;
+				}
+			});
 		}
 
 		//Set layout based on above checks
@@ -113,6 +126,7 @@ class OnRouteChange extends Component {
 		layout.toggleContainer(useContainer);
 		layout.toggleShowStudioLogo(showStudioLogo);
 		layout.toggleBottomMobileCartBar(showBottomMobileCartBar);
+		layout.toggleFloatingHelpIcon(showFloatingHelpButton);
 	}
 
 	render() {
