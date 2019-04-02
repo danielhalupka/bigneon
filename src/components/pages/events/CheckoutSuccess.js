@@ -104,7 +104,7 @@ const styles = theme => {
 			lineHeight: 0.95
 		},
 		cardSpacer: {
-			marginTop: 140,
+			marginTop: 100,
 			[iPhone5MediaQuery]: {
 				marginTop: 80
 			}
