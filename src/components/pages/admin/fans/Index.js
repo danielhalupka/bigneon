@@ -172,7 +172,8 @@ class FanList extends Component {
 
 		Bigneon()
 			.organizations.fans.index({
-				organization_id, page,
+				organization_id,
+				page,
 				limit: 20
 				//sort?: ""
 			})
