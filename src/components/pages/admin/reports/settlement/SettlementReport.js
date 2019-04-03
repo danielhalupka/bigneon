@@ -335,6 +335,8 @@ class SettlementReport extends Component {
 			return <Loader/>;
 		}
 
+		const { currentOrgTimezone } = user;
+
 		return (
 			<Card variant={"block"}>
 				<div className={classes.root}>
@@ -362,7 +364,14 @@ class SettlementReport extends Component {
 
 					{!isViewOnlyReport ? (
 						<div>
-							<ReportsDate defaultStartDaysBack={7} onChange={this.refreshData.bind(this)} onChangeButton/>
+							{currentOrgTimezone ? (
+								<ReportsDate
+									timezone={currentOrgTimezone}
+									onChange={this.refreshData.bind(this)}
+									defaultStartTimeBeforeNow={{ value: 7, unit: "d" }}
+									onChangeButton
+								/>
+							) : null }
 						</div>
 					) : null}
 
