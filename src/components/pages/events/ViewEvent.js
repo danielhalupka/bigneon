@@ -30,6 +30,8 @@ import EventDescriptionBody from "./EventDescriptionBody";
 import addressLineSplit from "../../../helpers/addressLineSplit";
 import layout from "../../../stores/layout";
 
+const ADDITIONAL_INFO_CHAR_LIMIT = 300;
+
 const styles = theme => {
 	return ({
 		root: {},
@@ -454,10 +456,13 @@ class ViewEvent extends Component {
 							<div>
 								<EventDetail classes={classes} iconUrl={"/icons/event-detail-black.svg"}>
 									<Typography className={classes.eventDetailText}>
-										{showAllAdditionalInfo ? nl2br(additional_info) : nl2br(ellipsis(additional_info, 300))}
-										<span className={classes.eventDetailLinkText} onClick={this.showHideMoreAdditionalInfo.bind(this)}>
-											{showAllAdditionalInfo ? "Read less" : "Read more"}
-										</span>
+										{showAllAdditionalInfo ? nl2br(additional_info) : nl2br(ellipsis(additional_info, ADDITIONAL_INFO_CHAR_LIMIT))}
+
+										{additional_info && additional_info.length > ADDITIONAL_INFO_CHAR_LIMIT ? (
+											<span className={classes.eventDetailLinkText} onClick={this.showHideMoreAdditionalInfo.bind(this)}>
+												{showAllAdditionalInfo ? "Read less" : "Read more"}
+											</span>
+										) : null}
 									</Typography>
 								</EventDetail>
 
