@@ -792,7 +792,7 @@ class Details extends Component {
 						type="text"
 						onChange={e => this.changeDetails({ videoUrl: e.target.value })}
 						onBlur={validateFields}
-						placeholder="https//vimeo.com/event-video-html"
+						placeholder="https://vimeo.com/event-video-html"
 					/>
 				</Grid>
 			</Grid>

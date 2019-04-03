@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Grid, Typography, withStyles } from "@material-ui/core";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import Divider from "../../../common/Divider";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
@@ -33,7 +33,7 @@ const styles = theme => ({
 	}
 });
 
-const URL_DATE_FORMAT = "MM-DD-YYYY";
+const URL_DATE_FORMAT = moment.HTML5_FMT.DATETIME_LOCAL_MS;
 
 class ReportsDate extends Component {
 	constructor(props) {
@@ -46,6 +46,8 @@ class ReportsDate extends Component {
 	}
 
 	componentDidMount() {
+		const { timezone } = this.props;
+
 		const fromString = getUrlParam("start_utc") || "";
 		const toString = getUrlParam("end_utc") || "";
 
@@ -53,25 +55,25 @@ class ReportsDate extends Component {
 		let endDate = null;
 
 		if (fromString) {
-			startDate =  moment(fromString, URL_DATE_FORMAT);
+			startDate =  moment.utc(fromString, URL_DATE_FORMAT).tz(timezone);
 			if (!startDate.isValid()) {
 				startDate = null;
 			}
 		}
 
 		if (toString) {
-			endDate =  moment(toString, URL_DATE_FORMAT);
+			endDate =  moment.utc(toString, URL_DATE_FORMAT).tz(timezone);
 			if (!endDate.isValid()) {
 				endDate = null;
 			}
 		}
 
 		if (startDate === null && endDate === null) {
-			const { defaultStartDaysBack } = this.props;
+			const { defaultStartTimeBeforeNow } = this.props;
 			//Used for weekly settlement reports to default dates to be for the past week
-			if (defaultStartDaysBack) {
-				startDate = moment().subtract(defaultStartDaysBack, "d");
-				endDate = moment();
+			if (defaultStartTimeBeforeNow) {
+				startDate = moment.utc().subtract(defaultStartTimeBeforeNow.value, defaultStartTimeBeforeNow.unit).tz(timezone);
+				endDate = moment.utc().tz(timezone);
 			}
 		}
 
@@ -85,18 +87,21 @@ class ReportsDate extends Component {
 				return this.setState({ errors: { startDate: "From date needs to be before to date." } });
 			}
 
-			changeUrlParam("start_utc", startDate.format(URL_DATE_FORMAT));
-			changeUrlParam("end_utc", endDate.format(URL_DATE_FORMAT));
-
 			//Inclusive of whole days
 			const startOfStartDate = startDate.startOf("day");
 			const endOfEndDate = endDate.endOf("day");
 
+			const start_utc = moment.utc(startOfStartDate).format(URL_DATE_FORMAT);
+			const end_utc = moment.utc(endOfEndDate).format(URL_DATE_FORMAT);
+
+			changeUrlParam("start_utc", start_utc);
+			changeUrlParam("end_utc", end_utc);
+
 			callBack({
 				startDate: startOfStartDate,
 				endDate: endOfEndDate,
-				start_utc: startOfStartDate.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-				end_utc: endOfEndDate.format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+				start_utc: moment.utc(startOfStartDate).format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_utc: moment.utc(endOfEndDate).format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			});
 		} else if (!startDate && !endDate) {
 			callBack();
@@ -114,7 +119,7 @@ class ReportsDate extends Component {
 	}
 
 	render() {
-		const { classes, onChangeButton } = this.props;
+		const { classes, onChangeButton, timezone } = this.props;
 		const { startDate, endDate, errors } = this.state;
 
 		let columnSizes = [
@@ -208,13 +213,17 @@ class ReportsDate extends Component {
 }
 
 ReportsDate.defaultProps = {
-	defaultStartDaysBack: 7
+	defaultStartTimeBeforeNow: { value: 7, unit: "d" }
 };
 
 ReportsDate.propTypes = {
 	classes: PropTypes.object.isRequired,
+	timezone: PropTypes.string.isRequired,
 	onChange: PropTypes.func.isRequired,
-	defaultStartDaysBack: PropTypes.number, //Pass this through for reports like weekly settlements that needs to be the past week by default
+	defaultStartTimeBeforeNow: PropTypes.shape({
+		value: PropTypes.number.isRequired,
+		unit: PropTypes.oneOf(["M", "d"])
+	}), //Pass this through for reports like weekly settlements that needs to be the past week by default
 	onChangeButton: PropTypes.bool //Pass this through if you want onChange to be called here and not automatically when the date is changed
 };
 

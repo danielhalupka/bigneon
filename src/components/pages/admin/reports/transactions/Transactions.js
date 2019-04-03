@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Grid, Typography, withStyles } from "@material-ui/core";
-import moment from "moment";
+import moment from "moment-timezone";
 import PropTypes from "prop-types";
 
 import notifications from "../../../../../stores/notifications";
@@ -18,6 +18,8 @@ import boxOffice from "../../../../../stores/boxOffice";
 import Card from "../../../../elements/Card";
 import { Pagination, urlPageParam } from "../../../../elements/Pagination";
 import InputWithButton from "../../../../common/form/InputWithButton";
+import user from "../../../../../stores/user";
+import { observer } from "mobx-react";
 
 const styles = theme => ({
 	root: {
@@ -38,6 +40,7 @@ const styles = theme => ({
 const LINE_LIMIT_PER_PAGE = 20;
 const DEBOUNCE_DELAY = 500;
 
+@observer
 class Transactions extends Component {
 	constructor(props) {
 		super(props);
@@ -213,7 +216,7 @@ class Transactions extends Component {
 				data.forEach(item => {
 					const formattedDate = moment
 						.utc(item.transaction_date)
-						.local()
+						.tz(user.currentOrgTimezone)
 						.format("MM/DD/YYYY h:mm:A");
 					items.push({ ...item, formattedDate });
 				});
@@ -364,6 +367,8 @@ class Transactions extends Component {
 
 		const { isLoading, paging, searchQuery } = this.state;
 
+		const { currentOrgTimezone } = user;
+
 		return (
 			<Card variant={"block"}>
 				<div className={classes.root}>
@@ -410,7 +415,14 @@ class Transactions extends Component {
 						</Grid>
 					</Grid>
 
-					<ReportsDate onChange={this.refreshData.bind(this)} defaultStartDaysBack={30} onChangeButton/>
+					{currentOrgTimezone ? (
+						<ReportsDate
+							timezone={currentOrgTimezone}
+							onChange={this.refreshData.bind(this)}
+							defaultStartTimeBeforeNow={{ value: 1, unit: "M" }}
+							onChangeButton
+						/>
+					) : null }
 
 					{this.renderDialog()}
 					{this.renderList()}

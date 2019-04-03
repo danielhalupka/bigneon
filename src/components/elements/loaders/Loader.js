@@ -37,7 +37,7 @@ const Loader = props => {
 	return (
 		<div className={classes.root} style={style}>
 			<img className={classnames(classes.icon, "loader-image")} alt={children} src={loadingImage}/>
-			<Typography className={classes.text}>{children}</Typography>
+			{children ? <Typography className={classes.text}>{children}</Typography> : null}
 		</div>
 	);
 };

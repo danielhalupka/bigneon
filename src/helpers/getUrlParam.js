@@ -16,21 +16,4 @@ export default (key) => {
 	}
 
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
-
-	//Alternative solution
-	// let value = false;
-	// try {
-	// 	const url = new URL(window.location.href);
-	// 	const searchParam = url.searchParams.get(key);
-	// 	value = searchParam ? searchParam : false;
-	// } catch(err) {
-	// 	console.error(err);
-	// 	//Attempt 2
-	// 	const params = new URLSearchParams(window.location.search);
-	//
-	// 	const searchParam = params.get(key);
-	// 	value = searchParam ? searchParam : false;
-	// }
-	//
-	// return value;
 };
