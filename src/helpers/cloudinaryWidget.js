@@ -1,4 +1,16 @@
 export default (onResult, onError, tags = [], options = {}) => {
+	if (window.cloudinary) {
+		returnWidget(onResult, onError, tags, options);
+
+	} else {
+		document.querySelector("#cloudinary-js").addEventListener("load", () => {
+			returnWidget(onResult, onError, tags, options);
+		});
+	}
+
+};
+
+const returnWidget = (onResult, onError, tags = [], options = {}) => {
 	cloudinary.openUploadWidget(
 		{
 			resource_type: "image",
