@@ -112,7 +112,7 @@ class Routes extends Component {
 		}
 
 		//Upload widget for cloudinary (Can be removed when we switch to S3)
-		this.insertScript("//widget.cloudinary.com/global/all.js");
+		this.insertScript("//widget.cloudinary.com/global/all.js", "cloudinary-js");
 		this.insertScript("https://js.stripe.com/v3/", "stripe-js");
 
 	}
@@ -136,6 +136,7 @@ class Routes extends Component {
 		}
 
 		script.async = true;
+		script.crossorigin = true;
 		script.src = url;
 		document.body.appendChild(script);
 	}
