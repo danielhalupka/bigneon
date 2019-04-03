@@ -33,6 +33,15 @@ const ga = {
 		// https://developers.google.com/analytics/devguides/collection/analyticsjs/cookies-user-id#user_id
 		ReactGA.set("userId", user.id);
 		ReactGA.ga("send", "event", "authentication", "user-id available");
+	},
+
+	trackLoadTime(milliseconds) {
+		ReactGA.timing({
+			category: "Initial Load",
+			variable: "load",
+			value: milliseconds, // in milliseconds
+			label: "First component mount"
+		});
 	}
 };
 
@@ -281,4 +290,10 @@ const identify = user => {
 	enabledProviders.forEach(p => p.identify(user));
 };
 
-export default { init, addTrackingKey, getProvider, removeTrackingKey, page, identify };
+//Track load times if a provider has the `trackLoadTime` function
+const trackPageLoadTime = (milliseconds) => {
+	const enabledProviders = providers.filter(p => p.enabled);
+	enabledProviders.forEach(p => p.trackLoadTime ? p.trackLoadTime(milliseconds) : null);
+};
+
+export default { init, addTrackingKey, getProvider, removeTrackingKey, page, identify, trackPageLoadTime };

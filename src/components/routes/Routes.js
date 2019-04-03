@@ -74,6 +74,7 @@ import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import ReceiveTransfer from "../pages/myevents/ReceiveTransfer";
 import GuestList from "../pages/boxoffice/guests/Index";
+import analytics from "../../helpers/analytics";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -103,6 +104,11 @@ class Routes extends Component {
 
 		// Signal that js is ready for prerendering
 		window.prerenderReady = true;
+
+		const startLoadTime = window.startLoadTime;
+		if (startLoadTime) {
+			analytics.trackPageLoadTime((Date.now() - startLoadTime));
+		}
 	}
 
 	componentWillUnmount() {
