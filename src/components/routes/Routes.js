@@ -111,10 +111,6 @@ class Routes extends Component {
 			analytics.trackPageLoadTime((Date.now() - startLoadTime));
 		}
 
-		//Upload widget for cloudinary (Can be removed when we switch to S3)
-		this.insertScript("//widget.cloudinary.com/global/all.js", "cloudinary-js");
-		this.insertScript("https://js.stripe.com/v3/", "stripe-js");
-
 	}
 
 	componentWillUnmount() {
@@ -126,19 +122,6 @@ class Routes extends Component {
 	componentDidCatch(error, errorInfo) {
 		//Capturing all global react crashes
 		errorReporting.captureCaughtComponentError(error, errorInfo);
-	}
-
-	insertScript(url, id) {
-		const script = document.createElement("script");
-
-		if (id) {
-			script.id = id;
-		}
-
-		script.async = true;
-		script.crossorigin = true;
-		script.src = url;
-		document.body.appendChild(script);
 	}
 
 	render() {
