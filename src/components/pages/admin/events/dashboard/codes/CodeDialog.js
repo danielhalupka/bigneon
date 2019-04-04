@@ -4,6 +4,12 @@ import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import moment from "moment";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Input from "@material-ui/core/Input/Input";
+import Chip from '@material-ui/core/Chip';
 
 import Dialog from "../../../../../elements/Dialog";
 import InputGroup from "../../../../../common/form/InputGroup";
@@ -16,53 +22,77 @@ import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup"
 import SelectGroup from "../../../../../common/form/SelectGroup";
 import notifications from "../../../../../../stores/notifications";
 
+const ITEM_PADDING_TOP = 8;
+
 const formatCodeForSaving = values => {
 	const {
 		maxUses,
+		discount_type,
 		discount_in_cents,
 		discountInDollars,
+		discountAsPercentage,
 		maxTicketsPerUser,
 		event_id,
 		id,
 		redemption_codes,
-		ticket_type_id,
+		ticket_type_ids,
 		name,
 		start_date,
 		end_date,
 		...rest
 	} = values;
 
+	let discount;
+	if (discount_type === "Absolute") {
+		discount = {
+			discount_in_cents: discountInDollars
+				? Number(discountInDollars) * 100
+				: discount_in_cents
+		};
+	} else {
+		discount = {
+			discount_as_percentage: Number(discountAsPercentage)
+		};
+	}
+
+	let max_per_users = {};
+	if (maxTicketsPerUser && Number(maxTicketsPerUser) > 0) {
+		max_per_users = { max_tickets_per_user: (maxTicketsPerUser) };
+	}
+
 	const result = {
 		id,
 		name,
 		code_type: "Discount",
 		max_uses: Number(maxUses),
-		discount_in_cents: discountInDollars
-			? Number(discountInDollars) * 100
-			: discount_in_cents,
 		start_date: moment
 			.utc(start_date)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 		end_date: moment.utc(end_date).format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-
-		max_tickets_per_user: Number(maxTicketsPerUser),
 		event_id,
 		redemption_codes,
-		ticket_type_ids: [ticket_type_id]
+		ticket_type_ids: ticket_type_ids,
+		...discount,
+		...max_per_users
 	};
-
+	console.log("YAAAS");
+	console.log(result);
+	console.log("----------------------");
 	return result;
 };
 
 const createCodeForInput = (values = {}) => {
 	const {
 		discount_in_cents,
+		discount_as_percentage,
 		max_uses,
 		max_tickets_per_user,
 		end_date,
 		start_date,
-		ticket_type_ids
+		ticket_type_ids,
+		event_start
 	} = values;
+
 	return {
 		id: "",
 		event_id: "",
@@ -71,21 +101,22 @@ const createCodeForInput = (values = {}) => {
 			ticket_type_ids && ticket_type_ids.length > 0 ? ticket_type_ids[0] : "",
 		maxUses: max_uses || 0,
 		redemption_codes: [""],
+		discount_type: discount_as_percentage
+			? "Percentage"
+			: "Absolute",
 		discountInDollars: discount_in_cents
 			? (discount_in_cents / 100).toFixed(2)
+			: "",
+		discountAsPercentage: discount_as_percentage
+			? discount_as_percentage
 			: "",
 		maxTicketsPerUser: max_tickets_per_user || "",
 		startDate: start_date
 			? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-			: null,
+			: moment.utc().local(),
 		endDate: end_date
 			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-			: null,
-
-		// endAtTimeKey: end_at ? "custom" : "never", //TODO get the correct value based on the current event's dates
-		// endAt: end_at
-		// 	? moment.utc(end_at, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-		// 	: null,
+			: moment(event_start).local(),
 		...values
 	};
 };
@@ -207,21 +238,33 @@ class CodeDialog extends React.Component {
 	loadCode() {
 		const { codeId, eventId, ticketTypes } = this.props;
 
-		if (codeId) {
-			Bigneon()
-				.codes.read({ id: codeId })
-				.then(response => {
-					const code = response.data;
-					this.setState({ code: createCodeForInput(code) });
+		Bigneon()
+			.events.read({ id: eventId })
+			.then(response => {
+				const event_start = response.data.event_start;
+				if (codeId) {
+					Bigneon()
+						.codes.read({ id: codeId })
+						.then(response => {
+							const code = response.data;
+							this.setState( { code: createCodeForInput({ event_start_date: event_start, ...code }) } );
+						});
+
+				} else {
+					this.setState({
+						code: createCodeForInput({
+							event_id: eventId,
+							event_start: event_start
+						})
+					});
+				}
+			}).catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					defaultMessage: "Loading event details failed.",
+					error
 				});
-		} else {
-			this.setState({
-				code: createCodeForInput({
-					event_id: eventId,
-					endAt: null //moment().add(1, "year")
-				})
 			});
-		}
 	}
 
 	onSubmit() {
@@ -289,46 +332,54 @@ class CodeDialog extends React.Component {
 			});
 	}
 
-	renderTicketTypesOrMaxTicketsPerUser() {
+	renderTicketTypes() {
 		const { codeType, ticketTypes } = this.props;
-
 		const { code, errors } = this.state;
 
 		const ticketTypeHash = {};
 		ticketTypes.forEach(ticketType => {
 			ticketTypeHash[ticketType.id] = ticketType.name;
 		});
-
+		console.log(code);
 		let selectedTicketType;
-		if (code.ticket_type_id) {
-			selectedTicketType = {
-				value: code.ticket_type_id,
-				label: ticketTypeHash[code.ticket_type_id] || ""
-			};
+		if (code.ticket_type_ids) {
+			selectedTicketType = code.ticket_type_ids || [""];
 		} else {
-			selectedTicketType = "";
+			selectedTicketType = [""];
 		}
 
+		let items = <MenuItem disabled>{"No ticket types found"}</MenuItem>;
+		if (ticketTypes.length > 0) {
+			items = Object.keys(ticketTypeHash).map(key => (
+				<MenuItem key={key} value={key}>
+					{ticketTypeHash[key]}
+				</MenuItem>
+			));
+		}
+		console.log(selectedTicketType);
 		return (
-			<AutoCompleteGroup
-				value={selectedTicketType}
-				items={ticketTypeHash}
-				label={"Ticket Type*"}
-				name={"ticket-types"}
-				onChange={(ticketTypeId, label) => {
-					if (!ticketTypeId) {
-						selectedTicketType = "";
-						code.ticket_type_id = "";
-					} else {
-						selectedTicketType = {};
-						selectedTicketType.label = label;
-						selectedTicketType.value = ticketTypeId;
-						code.ticket_type_id = ticketTypeId;
-					}
-
-					this.setState({ code });
-				}}
-			/>
+			<FormControl style={{ width: "100%" }}>
+				<InputLabel shrink htmlFor="ticket-types-label-placeholder">
+					Ticket Types*
+				</InputLabel>
+				<Select
+					multiple
+					value={selectedTicketType}
+					onChange={e => {
+						code.ticket_type_ids = e.target.value;
+						code.ticket_type_ids = code.ticket_type_ids.filter(id => {
+							return id !== "";
+						});
+						console.log(code);
+						this.setState({ code });
+					}}
+					input={<Input id="select-multiple-ticket-types"/>}
+					name="ticket-types"
+					displayEmpty
+				>
+					{items}
+				</Select>
+			</FormControl>
 		);
 	}
 
@@ -349,7 +400,7 @@ class CodeDialog extends React.Component {
 						error={errors.maxUses}
 						value={code.maxUses}
 						name="maxUses"
-						label="Uses*"
+						label="Uses (0 = unlimited uses)*"
 						placeholder="100"
 						type="number"
 						onChange={e => {
@@ -364,7 +415,7 @@ class CodeDialog extends React.Component {
 						value={code.maxTicketsPerUser}
 						name="maxTicketsPerUser"
 						label="Limit per user"
-						placeholder="4"
+						placeholder="1"
 						type="number"
 						onChange={e => {
 							code.maxTicketsPerUser = e.target.value;
@@ -374,6 +425,51 @@ class CodeDialog extends React.Component {
 				</Grid>
 			</Grid>
 		);
+	}
+
+	renderDiscounts() {
+		const { code, errors } = this.state;
+		if (code.discount_type === "Absolute") {
+			return (
+				<InputGroup
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position="start">$</InputAdornment>
+						)
+					}}
+					error={errors.discountInDollars}
+					value={code.discountInDollars}
+					name={"discountInDollars"}
+					label={"Discount in dollars*"}
+					placeholder=""
+					type="number"
+					onChange={e => {
+						code.discountInDollars = e.target.value;
+						this.setState({code});
+					}}
+				/>
+			);
+		} else {
+			return (
+				<InputGroup
+					InputProps={{
+						endAdornment: (
+							<InputAdornment position="end">%</InputAdornment>
+						)
+					}}
+					error={errors.discount_as_percentage}
+					value={code.discountAsPercentage}
+					name={"discountAsPercentage"}
+					label={"Discount as percentage*"}
+					placeholder=""
+					type="number"
+					onChange={e => {
+						code.discountAsPercentage = e.target.value;
+						this.setState({code});
+					}}
+				/>
+			);
+		}
 	}
 
 	renderStartAtTimeOptions() {
@@ -491,7 +587,7 @@ class CodeDialog extends React.Component {
 						error={errors.endDate}
 						value={code.endDate}
 						name="endAtDate"
-						label="Ends (custom)"
+						label="Ends"
 						onChange={newEndAtDate => {
 							if (endDate) {
 								//Take the time from current date
@@ -604,38 +700,49 @@ class CodeDialog extends React.Component {
 						}}
 					/>
 
-					{this.renderTicketTypesOrMaxTicketsPerUser()}
+					{this.renderTicketTypes()}
+
 					<Grid container spacing={16}>
-						<Grid item xs={12} md={6} lg={6}>
-							<InputGroup
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position="start">$</InputAdornment>
-									)
-								}}
-								error={errors.discountInDollars}
-								value={code.discountInDollars}
-								name="discountInDollars"
-								label="Discount*"
-								placeholder=""
-								type="number"
-								onChange={e => {
-									code.discountInDollars = e.target.value;
-									this.setState({ code });
-								}}
-							/>
+						<Grid item xs={12} md={12} lg={12}>
+							<div className={classes.radioGroup}>
+								<RadioButton
+									active={code.discount_type === "Absolute"}
+									onClick={() => {
+										this.setState({
+											code: {
+												...code,
+												discount_type: "Absolute",
+												discountInDollars: code.discountInDollars
+											}
+										});
+									}}
+								>
+									Discount in dollars
+								</RadioButton>
+
+								<RadioButton
+									active={code.discount_type === "Percentage"}
+									onClick={() => {
+										this.setState({
+											code: {
+												...code,
+												discount_type: "Percentage",
+												discountAsPercentage: code.discountAsPercentage
+											}
+										});
+									}}
+								>
+									Discount as percentage
+								</RadioButton>
+							</div>
 						</Grid>
-						<Grid item xs={12} md={6} lg={6}/>
+						<Grid container spacing={16}>
+							<Grid item xs={12} md={6} lg={6}>
+								{this.renderDiscounts()}
+							</Grid>
+							<Grid item xs={12} md={6} lg={6}/>
+						</Grid>
 					</Grid>
-					{/* <Grid container spacing={16}>
-						<Grid item xs={12} md={6} lg={6}>
-							{this.renderStartAtTimeOptions()}
-						</Grid>
-						<Grid item xs={12} md={6} lg={6}>
-							{this.renderEndAtTimeOptions()}
-						</Grid>
-					</Grid>
-					 */}
 
 					{this.renderCustomStartAtDates()}
 					{this.renderCustomEndAtDates()}
