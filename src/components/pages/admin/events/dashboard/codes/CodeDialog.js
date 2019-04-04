@@ -4,12 +4,12 @@ import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import moment from "moment";
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input/Input";
-import Chip from '@material-ui/core/Chip';
+import Chip from "@material-ui/core/Chip";
 
 import Dialog from "../../../../../elements/Dialog";
 import InputGroup from "../../../../../common/form/InputGroup";
@@ -445,7 +445,7 @@ class CodeDialog extends React.Component {
 					type="number"
 					onChange={e => {
 						code.discountInDollars = e.target.value;
-						this.setState({code});
+						this.setState({ code });
 					}}
 				/>
 			);
@@ -465,7 +465,7 @@ class CodeDialog extends React.Component {
 					type="number"
 					onChange={e => {
 						code.discountAsPercentage = e.target.value;
-						this.setState({code});
+						this.setState({ code });
 					}}
 				/>
 			);

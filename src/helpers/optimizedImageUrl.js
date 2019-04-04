@@ -11,7 +11,7 @@ export default (url, quality = "low", size = "f_auto") => {
 	}
 
 	//Only manipulate urls served from cloudinary and ones that have not already been manipulated
-	if (url.indexOf("res.cloudinary.com") === -1 || url.indexOf('/q_auto:') > -1) {
+	if (url.indexOf("res.cloudinary.com") === -1 || url.indexOf("/q_auto:") > -1) {
 		return url;
 	}
 

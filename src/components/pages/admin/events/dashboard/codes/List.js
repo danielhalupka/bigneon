@@ -101,7 +101,7 @@ class CodeList extends Component {
 
 	renderList() {
 		const { codes, activeCodeId, showCodeDialog, ticketTypes } = this.state;
-		console.log(ticketTypes);
+
 		if (codes === null) {
 			return <Loader/>;
 		}
