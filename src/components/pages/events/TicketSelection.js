@@ -7,6 +7,7 @@ import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
 import Divider from "../../common/Divider";
 import NumberSelect from "../../elements/form/NumberSelect";
 import nl2br from "../../../helpers/nl2br";
+import { dollars } from "../../../helpers/money";
 
 const styles = theme => ({
 	container: {
@@ -69,7 +70,8 @@ class TicketSelection extends Component {
 			increment,
 			onNumberChange,
 			validateFields,
-			limitPerPerson
+			limitPerPerson,
+			discount
 		} = this.props;
 
 		const { showDescription } = this.state;
@@ -96,12 +98,11 @@ class TicketSelection extends Component {
 						<Typography variant="caption" style={{ color: "red" }}>
 							{lppText}
 						</Typography>
-						{description ? (
+						{description && !discount ? (
 							<Typography className={classes.readMoreLessText} onClick={this.readMoreLess.bind(this)}>
 								{showDescription ? "Read Less" : "Read More"}
 							</Typography>
 						) : null}
-
 					</Grid>
 
 					<Grid item xs={3} sm={3} md={3} lg={3}>
@@ -137,14 +138,15 @@ class TicketSelection extends Component {
 					</Grid>
 				</Grid>
 
-				{showDescription ? (
+				{showDescription || discount ? (
 					<Grid
 						justify="flex-end"
 						alignItems="flex-end"
 						container
 					>
 						<Grid item xs={9} sm={9} md={8} lg={9} className={classes.detailContainer}>
-							<Typography className={classes.description}>{nl2br(description)}</Typography>
+							{discount ? <Typography className={classes.description}>Discount applied: {dollars(discount)}</Typography> : null}
+							{description ? <Typography className={classes.description}>{nl2br(description)}</Typography> : null}
 						</Grid>
 					</Grid>
 				) : null }
@@ -161,6 +163,7 @@ TicketSelection.propTypes = {
 	name: PropTypes.string.isRequired,
 	description: PropTypes.string,
 	price: PropTypes.number.isRequired,
+	discount: PropTypes.number,
 	error: PropTypes.string,
 	amount: PropTypes.number,
 	increment: PropTypes.number.isRequired,

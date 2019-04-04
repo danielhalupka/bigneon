@@ -176,20 +176,35 @@ class CheckoutSelection extends Component {
 		}
 
 		this.setState({ isSubmittingPromo: true }, () => {
-			selectedEvent.applyRedemptionCode(code, error => {
-				this.setState({ isSubmittingPromo: false });
+			selectedEvent.applyRedemptionCode(code,
+				(appliedCodes) => {
+					if (appliedCodes && Object.keys(appliedCodes).length > 0) {
+						this.setState(({ ticketSelection }) => {
+							Object.keys(appliedCodes).forEach((id) => {
+								if (ticketSelection[id]) {
+									ticketSelection[id].redemption_code = appliedCodes[id];
+								}
+							});
+							return { ticketSelection };
+						});
 
-				let defaultMessage = "Failed to apply promo code.";
+					}
+					//after applying, update redemption_code in ticketSelection
 
-				if (error.response.status === 404) {
-					defaultMessage = "Promo code does not exist.";
-				}
+				}, error => {
+					this.setState({ isSubmittingPromo: false });
 
-				notifications.showFromErrorResponse({
-					defaultMessage,
-					error
+					let defaultMessage = "Failed to apply promo code.";
+
+					if (error.response.status === 404) {
+						defaultMessage = "Promo code does not exist.";
+					}
+
+					notifications.showFromErrorResponse({
+						defaultMessage,
+						error
+					});
 				});
-			});
 		});
 	}
 
@@ -267,18 +282,20 @@ class CheckoutSelection extends Component {
 
 		const ticketTypeRendered = ticket_types
 			.map(
-				({
-					 id,
-					 name,
-					 ticket_pricing,
-					 increment,
-					 limit_per_person,
-					 start_date,
-					 end_date,
-					 redemption_code,
-					 available,
-					 description
-				 }) => {
+				(ticketType) => {
+					const {
+						id,
+						name,
+						ticket_pricing,
+						increment,
+						limit_per_person,
+						start_date,
+						end_date,
+						redemption_code,
+						available,
+						description
+					} = ticketType;
+
 					const nowIsValidTime = moment
 						.utc()
 						.isBetween(moment.utc(start_date), moment.utc(end_date));
@@ -289,9 +306,11 @@ class CheckoutSelection extends Component {
 
 					let price = 0;
 					let ticketsAvailable = false;
+					let discount = 0;
 					if (ticket_pricing) {
 						price = ticket_pricing.price_in_cents / 100;
 						ticketsAvailable = available > 0;
+						discount = ticket_pricing.discount_in_cents || 0;
 					} else {
 						//description = "(Tickets currently unavailable)";
 					}
@@ -308,6 +327,7 @@ class CheckoutSelection extends Component {
 							amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}
 							increment={increment}
 							limitPerPerson={limitPerPerson}
+							discount={discount}
 							onNumberChange={amount =>
 								this.setState(({ ticketSelection }) => {
 									ticketSelection[id] = {

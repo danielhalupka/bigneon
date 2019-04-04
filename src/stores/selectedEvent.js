@@ -217,24 +217,54 @@ class SelectedEvent {
 	}
 
 	@action
-	applyRedemptionCode(redemptionCode, onError = error => {}) {
+	applyRedemptionCode(redemptionCode, onSuccess = () => {}, onError = () => {}) {
 		Bigneon()
 			.redemptionCodes.read({ code: redemptionCode })
 			.then(
 				response => {
 					const { data } = response;
+					const appliedCodes = {};
 
-					this.ticket_types.forEach((tt, index) => {
-						if (data.ticket_type && tt.id === data.ticket_type.id) {
-							this.ticket_types[index] = data.ticket_type;
-							data.ticket_type = null;
+					//For holds (TODO will be removed and work the same way as promo codes)
+					if (data.ticket_type) {
+						this.ticket_types.forEach((tt, index) => {
+							if (tt.id === data.ticket_type.id) {
+								appliedCodes[tt.id] = data.ticket_type.redemption_code;
+								this.ticket_types[index] = data.ticket_type;
+								data.ticket_type = null;
+							}
+						});
+
+						// if the ticket type is not already present, and the event is
+						// this event, add it.
+						if (data.ticket_type.event_id === this.event.id) {
+							this.ticket_types.push(data.ticket_type);
 						}
-					});
-					// if the ticket type is not already present, and the event is
-					// this event, add it.
-					if (data.ticket_type && data.ticket_type.event_id === this.event.id) {
-						this.ticket_types.push(data.ticket_type);
 					}
+
+					//For promo codes (New data format)
+					if (data.ticket_types && typeof data.ticket_types === "object") {
+						data.ticket_types.forEach(codeTicketType => {
+							let existingTicketTypeIndex = null;
+							this.ticket_types.forEach((et, index) => {
+								if (et.id == codeTicketType.id) {
+									existingTicketTypeIndex = index;
+								}
+							});
+
+							//Overwrite existing ticket type
+							if (existingTicketTypeIndex !== null) {
+								this.ticket_types[existingTicketTypeIndex] = codeTicketType;
+							} else {
+								//Add missing ticket type, it's revealed with a code
+								this.ticket_types.push(codeTicketType);
+							}
+
+							appliedCodes[codeTicketType.id] = codeTicketType.redemption_code;
+						});
+					}
+
+					onSuccess(appliedCodes);
 				},
 				error => {
 					onError(error);
