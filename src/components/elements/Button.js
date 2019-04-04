@@ -80,6 +80,9 @@ const styles = theme => {
 			height: 30
 		},
 		medium: {},
+		mediumLarge: {
+			height: 50
+		},
 		large: {
 			height: 55
 		}
@@ -94,8 +97,16 @@ const CustomButton = props => {
 		disabled,
 		iconUrl,
 		size,
+		style,
 		...rest
 	} = props;
+
+	const rootStyle = style || {};
+	if (size === "small") {
+		rootStyle.paddingTop = 8;
+	} else if (size === "mediumLarge") {
+		rootStyle.paddingTop = 14;
+	}
 
 	return (
 		<Button
@@ -111,6 +122,7 @@ const CustomButton = props => {
 						: classes.boldLabel
 			}}
 			disabled={disabled}
+			style={rootStyle}
 			{...rest}
 		>
 			{iconUrl ? (
@@ -144,7 +156,7 @@ CustomButton.propTypes = {
 		"text",
 		"additional"
 	]),
-	size: PropTypes.oneOf(["small", "medium", "large"]),
+	size: PropTypes.oneOf(["small", "medium", "mediumLarge", "large"]),
 	disabled: PropTypes.bool,
 	children: PropTypes.oneOfType([
 		PropTypes.string,

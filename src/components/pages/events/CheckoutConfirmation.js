@@ -29,17 +29,13 @@ import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
 import PrivateEventDialog from "./PrivateEventDialog";
 import NotFound from "../../common/NotFound";
+import TwoColumnLayout from "./TwoColumnLayout";
+import EventDescriptionBody from "./EventDescriptionBody";
 
 const styles = theme => ({
 	root: {
 		paddingBottom: theme.spacing.unit * 10
 	},
-	eventSubCardContent: {
-		paddingLeft: theme.spacing.unit * 4,
-		paddingRight: theme.spacing.unit * 4,
-		paddingBottom: theme.spacing.unit * 4
-	},
-	eventSubCardRow1: {},
 	ticketLineEntry: {
 		marginTop: theme.spacing.unit * 2,
 		marginBottom: theme.spacing.unit
@@ -52,32 +48,35 @@ const styles = theme => ({
 	lineEntryText: {
 		fontFamily: fontFamilyDemiBold,
 		fontSize: theme.typography.fontSize * 0.9,
-		paddingRight: theme.spacing.unit
+		paddingRight: theme.spacing.unit / 2
+	},
+	ticketLineTotalContainer: {
+		marginTop: theme.spacing.unit * 3,
+		marginBottom: theme.spacing.unit
 	},
 	subTotal: {
 		fontFamily: fontFamily,
 		fontSize: theme.typography.fontSize * 0.9
 	},
-	userContainer: {
-		marginTop: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit * 2,
-		display: "flex",
-		alignItems: "center"
-	},
-	userIcon: {
-		color: primaryHex,
-		marginRight: theme.spacing.unit
-	},
-	userName: {
-		color: primaryHex
-		//paddingTop: 2
-	},
 	cartExpiry: {
 		color: primaryHex,
-		marginTop: theme.spacing.unit
+		marginTop: theme.spacing.unit * 2,
+		textAlign: "center"
 	},
 	backLink: {
-		color: secondaryHex
+		color: secondaryHex,
+		fontFamily: fontFamilyDemiBold
+	},
+	mobileContainer: {
+		background: "#FFFFFF",
+		padding: theme.spacing.unit * 2,
+		paddingBottom: theme.spacing.unit * 10
+	},
+	desktopContent: {
+		backgroundColor: "#FFFFFF"
+	},
+	desktopCardContent: {
+		padding: theme.spacing.unit * 2
 	}
 });
 
@@ -106,7 +105,7 @@ const TicketLineEntry = ({ col1, col2, col3, classes }) => (
 );
 
 const TicketLineTotal = ({ col1, col2, col3, classes }) => (
-	<Grid alignItems="center" container className={classes.ticketLineEntry}>
+	<Grid alignItems="center" container>
 		<Grid item xs={6} sm={6} md={6} lg={6}>
 			<Typography className={classes.lineEntryText}>{col1}</Typography>
 		</Grid>
@@ -176,11 +175,6 @@ class CheckoutConfirmation extends Component {
 				orders.refreshOrders();
 				tickets.refreshTickets();
 
-				notifications.show({
-					message: "Checkout successful",
-					variant: "success"
-				});
-
 				const { history } = this.props;
 				const { id } = selectedEvent;
 				if (id) {
@@ -225,20 +219,16 @@ class CheckoutConfirmation extends Component {
 					window.location = data.checkout_url;
 					return;
 				}
+
 				cart.refreshCart();
 				orders.refreshOrders();
 				tickets.refreshTickets();
-
-				notifications.show({
-					message: "Payment successful",
-					variant: "success"
-				});
 
 				const { history } = this.props;
 				const { id } = selectedEvent;
 				if (id) {
 					//If they're checking out for a specific event then we have a custom success page for them
-					history.push(`/events/${id}/tickets/success`);
+					history.push(`/events/${id}/tickets/success?order_id=${data.id}`);
 				} else {
 					history.push(`/`); //TODO go straight to tickets when route is available
 				}
@@ -288,7 +278,7 @@ class CheckoutConfirmation extends Component {
 						col3={`$ ${((pricePerTicketInCents / 100) * quantity).toFixed(2)}`}
 						classes={classes}
 					/>
-					<Divider style={{ marginTop: 15 }}/>
+					<Divider/>
 				</div>
 			);
 		});
@@ -307,24 +297,25 @@ class CheckoutConfirmation extends Component {
 
 		return (
 			<div>
-				<TicketLineTotal
-					col1={(
-						<Link to={`/events/${id}/tickets`}>
-							<span className={classes.backLink}>Change tickets</span>
-						</Link>
-					)}
-					col2={<span className={classes.subTotal}>Service fees:</span>}
-					col3={`$${(serviceFeesInCents / 100).toFixed(2)}`}
-					classes={classes}
-				/>
+				<div className={classes.ticketLineTotalContainer}>
+					<TicketLineTotal
+						col1={(
+							<Link to={`/events/${id}/tickets`}>
+								<span className={classes.backLink}>Change tickets</span>
+							</Link>
+						)}
+						col2={<span className={classes.subTotal}>Service fees:</span>}
+						col3={`$${(serviceFeesInCents / 100).toFixed(2)}`}
+						classes={classes}
+					/>
 
-				<TicketLineTotal
-					col1={null}
-					col2={<span className={classes.subTotal}>Order total:</span>}
-					col3={`$${(orderTotalInCents / 100).toFixed(2)}`}
-					classes={classes}
-				/>
-
+					<TicketLineTotal
+						col1={null}
+						col2={<span className={classes.subTotal}>Order total:</span>}
+						col3={`$${(orderTotalInCents / 100).toFixed(2)}`}
+						classes={classes}
+					/>
+				</div>
 				<Divider/>
 			</div>
 		);
@@ -350,7 +341,7 @@ class CheckoutConfirmation extends Component {
 			return <NotFound>Event not found.</NotFound>;
 		}
 
-		const { promo_image_url, organization_id } = event;
+		const { promo_image_url, organization_id, additional_info } = event;
 
 		let cryptoIcons;
 		//FIXME remove hardcoded org ID.
@@ -363,20 +354,18 @@ class CheckoutConfirmation extends Component {
 			return <Redirect to={`/events/${id}/tickets`}/>;
 		}
 
-		const subCardContent = (
-			<div className={classes.eventSubCardContent}>
-				<div className={classes.eventSubCardRow1}>
-					<TicketLineEntry
-						key={id}
-						col1={<span className={classes.lintEntryTitle}>Ticket</span>}
-						col2={<span className={classes.lintEntryTitle}>Price</span>}
-						col3={<span className={classes.lintEntryTitle}>Subtotal</span>}
-						classes={classes}
-					/>
+		const sharedContent = (
+			<div>
+				<TicketLineEntry
+					key={id}
+					col1={<span className={classes.lintEntryTitle}>Ticket</span>}
+					col2={<span className={classes.lintEntryTitle}>Price</span>}
+					col3={<span className={classes.lintEntryTitle}>Subtotal</span>}
+					classes={classes}
+				/>
 
-					{this.renderTickets()}
-					{this.renderTotals()}
-				</div>
+				{this.renderTickets()}
+				{this.renderTotals()}
 
 				{user.isAuthenticated && cartSummary ? (
 					<div>
@@ -396,7 +385,7 @@ class CheckoutConfirmation extends Component {
 							</Button>
 						)}
 						{formattedExpiryTime ? (
-							<Typography className={classes.cartExpiry} variant="body1">
+							<Typography className={classes.cartExpiry}>
 								Cart expires in {formattedExpiryTime}
 							</Typography>
 						) : null}
@@ -409,51 +398,41 @@ class CheckoutConfirmation extends Component {
 		const { overlayCardHeight } = this.state;
 		const overlayCardHeightAdjustment =  overlayCardHeight - 250;
 
-		const headerHeight = 600;
-
 		return (
 			<div className={classes.root}>
 				<Meta type={"checkout"} {...event}/>
-				<EventHeaderImage
-					variant="detailed"
-					height={headerHeight}
-					{...event}
-					artists={artists}
-				/>
 
-				<div style={{ minHeight: overlayCardHeightAdjustment }}>
-					{/* Desktop */}
-					<Hidden smDown>
-						<EventDetailsOverlayCard
-							style={{
-								width: "30%",
-								maxWidth: 550,
-								top: 180,
-								right: 200
-							}}
-							imageSrc={promo_image_url}
-							onHeightChange={this.onOverlayCardHeightChange.bind(this)}
-						>
-							{subCardContent}
-						</EventDetailsOverlayCard>
-					</Hidden>
+				{/*DESKTOP*/}
+				<Hidden smDown>
+					<EventHeaderImage {...event} artists={artists}/>
+					<TwoColumnLayout
+						containerClass={classes.desktopContent}
+						containerStyle={{ minHeight: overlayCardHeightAdjustment }}
+						col1={<EventDescriptionBody artists={artists}>{additional_info}</EventDescriptionBody>}
+						col2={(
+							<EventDetailsOverlayCard
+								style={{
+									width: "100%",
+									top: -310,
+									position: "relative"
+								}}
+								imageSrc={promo_image_url}
+								onHeightChange={this.onOverlayCardHeightChange.bind(this)}
+							>
+								<div className={classes.desktopCardContent}>
+									{sharedContent}
+								</div>
+							</EventDetailsOverlayCard>
+						)}
+					/>
+				</Hidden>
 
-					{/* Mobile */}
-					<Hidden mdUp>
-						<EventDetailsOverlayCard
-							style={{
-								width: "100%",
-								paddingLeft: 20,
-								paddingRight: 20,
-								top: 480
-							}}
-							imageSrc={promo_image_url}
-							onHeightChange={this.onOverlayCardHeightChange.bind(this)}
-						>
-							{subCardContent}
-						</EventDetailsOverlayCard>
-					</Hidden>
-				</div>
+				{/*MOBILE*/}
+				<Hidden mdUp>
+					<div className={classes.mobileContainer}>
+						{sharedContent}
+					</div>
+				</Hidden>
 			</div>
 		);
 	}

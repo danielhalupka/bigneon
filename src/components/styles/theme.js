@@ -2,7 +2,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 
 const primaryHex = "#707CED";
 const secondaryHex = "#FF20B1";
-const textColorPrimary = "#1E1E1E";
+const textColorPrimary = "#656D78";
 const textColorSecondary = "#4EB0E5";
 const warningHex = "#ff6333";
 const borderRadius = 3;

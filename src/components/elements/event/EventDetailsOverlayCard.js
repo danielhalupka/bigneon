@@ -7,9 +7,7 @@ import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
 
 const styles = theme => ({
 	root: {
-		position: "absolute",
-		top: 220,
-		zIndex: 1000 //In case there's still an overlay issue, make sure call to action elements are on top
+
 	},
 	media: {
 		width: "100%",
@@ -72,7 +70,7 @@ class EventDetailsOverlayCard extends Component {
 	}
 
 	render() {
-		const { classes, children, style } = this.props;
+		const { classes, children, header, style } = this.props;
 
 		const imageSrc = this.props.imageSrc ? optimizedImageUrl(this.props.imageSrc) : null;
 		return (
@@ -86,6 +84,7 @@ class EventDetailsOverlayCard extends Component {
 							/>
 						</MaintainAspectRatio>
 					) : null}
+					{header || null}
 
 					<div className={classes.content}>{children}</div>
 				</Card>
@@ -95,13 +94,15 @@ class EventDetailsOverlayCard extends Component {
 }
 
 EventDetailsOverlayCard.defaultProps = {
-	style: {}
+	style: {},
+	floating: true
 };
 
 EventDetailsOverlayCard.propTypes = {
 	classes: PropTypes.object.isRequired,
+	style: PropTypes.object,
 	imageSrc: PropTypes.string,
-	top: PropTypes.number,
+	header: PropTypes.any,
 	onHeightChange: PropTypes.func,
 	children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired
 };

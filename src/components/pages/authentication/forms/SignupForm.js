@@ -233,7 +233,7 @@ class SignupForm extends Component {
 
 		return (
 			<form noValidate autoComplete="off" onSubmit={this.onSubmit.bind(this)}>
-				<CardContent>
+				<div>
 					<Grid container spacing={8}>
 						{process.env.REACT_APP_FACEBOOK_APP_ID ?  (
 							<Grid item xs={12} sm={12} lg={12}>
@@ -317,37 +317,34 @@ class SignupForm extends Component {
 							/>
 						</Grid>
 					</Grid>
-				</CardContent>
-				<CardActions>
-					<Grid container spacing={24}>
-						<Grid item xs={12} sm={12} lg={12}>
-							<Typography className={classes.privacy}>
-								By signing up I agree to BigNeon's{" "}
-								<StyledLink underlined thin href="/terms.html" target="_blank">
-									terms of service
-								</StyledLink>{" "}
-								&{" "}
-								<StyledLink
-									underlined
-									thin
-									href="/privacy.html"
-									target="_blank"
-								>
-									privacy policy
-								</StyledLink>
-							</Typography>
+				</div>
+				<br/>
+				<div>
+					<Typography className={classes.privacy}>
+						By signing up I agree to BigNeon's{" "}
+						<StyledLink underlined thin href="/terms.html" target="_blank">
+							terms of service
+						</StyledLink>{" "}
+							&{" "}
+						<StyledLink
+							underlined
+							thin
+							href="/privacy.html"
+							target="_blank"
+						>
+							privacy policy
+						</StyledLink>
+					</Typography>
 
-							<Button
-								disabled={isSubmitting}
-								type="submit"
-								style={{ marginRight: 10, width: "100%" }}
-								variant="callToAction"
-							>
-								{isSubmitting ? "Submitting..." : <span>Create</span>}
-							</Button>
-						</Grid>
-					</Grid>
-				</CardActions>
+					<Button
+						disabled={isSubmitting}
+						type="submit"
+						style={{ marginRight: 10, width: "100%" }}
+						variant="callToAction"
+					>
+						{isSubmitting ? "Submitting..." : <span>Create</span>}
+					</Button>
+				</div>
 			</form>
 		);
 	}

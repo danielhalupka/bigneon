@@ -8,13 +8,15 @@ import { fontFamilyDemiBold } from "../../styles/theme";
 
 const height = 40;
 
+const borderColor = "#D1D1D1";
+
 const styles = theme => {
 	return {
 		root: {
 			width: "100%",
 			display: "flex",
 			borderStyle: "solid",
-			borderColor: "#000000",
+			borderColor: borderColor,
 			borderRadius: 8,
 			borderWidth: 0.5,
 			height,
@@ -41,7 +43,7 @@ const styles = theme => {
 			alignItems: "center",
 
 			flex: 1,
-			borderLeft: "0.5px solid #000000",
+			borderLeft: `0.5px solid ${borderColor}`,
 			cursor: "pointer",
 			textTransform: "uppercase"
 		},

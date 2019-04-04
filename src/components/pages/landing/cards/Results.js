@@ -9,6 +9,9 @@ import EventResultCard from "../../../elements/event/EventResultCard";
 import Button from "../../../elements/Button";
 
 const styles = theme => ({
+	root: {
+		marginBottom: theme.spacing.unit * 10
+	},
 	subHeading: {
 		marginBottom: theme.spacing.unit,
 		textAlign: "center"
@@ -80,7 +83,7 @@ const Results = observer(props => {
 	}
 
 	return (
-		<div>
+		<div className={classes.root}>
 			<ResultsRegionFilter/>
 
 			{hasResults === true ? <EventsList events={events}/> : null}

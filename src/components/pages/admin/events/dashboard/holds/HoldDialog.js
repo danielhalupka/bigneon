@@ -21,7 +21,7 @@ const formatHoldForSaving = values => {
 		quantity,
 		discount_in_cents,
 		discountInDollars,
-		maxPerOrder,
+		maxPerUser,
 		event_id,
 		hold_type,
 		id,
@@ -41,7 +41,7 @@ const formatHoldForSaving = values => {
 			? Number(discountInDollars) * 100
 			: discount_in_cents,
 		end_at,
-		max_per_order: Number(maxPerOrder),
+		max_per_user: Number(maxPerUser),
 		event_id,
 		redemption_code,
 		ticket_type_id,
@@ -53,7 +53,7 @@ const formatHoldForSaving = values => {
 };
 
 const createHoldForInput = (values = {}) => {
-	const { discount_in_cents, max_per_order, end_at } = values;
+	const { discount_in_cents, max_per_user, end_at } = values;
 	return {
 		id: "",
 		event_id: "",
@@ -65,7 +65,7 @@ const createHoldForInput = (values = {}) => {
 		discountInDollars: discount_in_cents
 			? (discount_in_cents / 100).toFixed(2)
 			: "",
-		maxPerOrder: max_per_order || "",
+		maxPerUser: max_per_user || "",
 		endAtTimeKey: end_at ? "custom" : "never", //TODO get the correct value based on the current event's dates
 		endAt: end_at ? moment.utc(end_at, moment.HTML5_FMT.DATETIME_LOCAL_MS).local() : null,
 		...values
@@ -292,7 +292,7 @@ class HoldDialog extends React.Component {
 
 	}
 
-	renderTicketTypesOrMaxPerOrder() {
+	renderTicketTypesOrMaxPerUser() {
 		const { holdType, ticketTypes } = this.props;
 		const { hold, errors } = this.state;
 
@@ -300,14 +300,14 @@ class HoldDialog extends React.Component {
 			return (
 				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
-						error={errors.maxPerOrder}
-						value={hold.maxPerOrder}
-						name="maxPerOrder"
-						label="Max Per Order"
+						error={errors.maxPerUser}
+						value={hold.maxPerUser}
+						name="maxPerUser"
+						label="Max Per User"
 						placeholder="1"
 						type="text"
 						onChange={e => {
-							hold.maxPerOrder = e.target.value;
+							hold.maxPerUser = e.target.value;
 							this.setState({ hold });
 						}}
 					/>
@@ -420,14 +420,14 @@ class HoldDialog extends React.Component {
 				</Grid>
 				<Grid item xs={12} md={6} lg={6}>
 					<InputGroup
-						error={errors.maxPerOrder}
-						value={hold.maxPerOrder}
-						name="maxPerOrder"
-						label="Max Per Order"
+						error={errors.maxPerUser}
+						value={hold.maxPerUser}
+						name="maxPerUser"
+						label="Max Per User"
 						placeholder="1"
 						type="number"
 						onChange={e => {
-							hold.maxPerOrder = e.target.value;
+							hold.maxPerUser = e.target.value;
 							this.setState({ hold });
 						}}
 					/>
@@ -592,7 +592,7 @@ class HoldDialog extends React.Component {
 						// onBlur={this.validateFields.bind(this)}
 					/>
 
-					{this.renderTicketTypesOrMaxPerOrder()}
+					{this.renderTicketTypesOrMaxPerUser()}
 					<Grid container spacing={16}>
 						<Grid item xs={12} md={12} lg={12}>
 							<div className={classes.radioGroup}>

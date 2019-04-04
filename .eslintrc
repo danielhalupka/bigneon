@@ -91,6 +91,7 @@
     "google": false,
     "Promise": false,
     "cloudinary": false,
-    "branch": false
+    "branch": false,
+	"zE": false
   }
 }

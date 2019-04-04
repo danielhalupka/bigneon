@@ -24,7 +24,7 @@ const styles = theme => ({
 		flexDirection: "column",
 		justifyContent: "space-between",
 
-		paddingLeft: theme.spacing.unit * 2,
+		paddingLeft: theme.spacing.unit,
 		paddingBottom: theme.spacing.unit
 	},
 	mediaTopRow: {},
@@ -33,7 +33,14 @@ const styles = theme => ({
 		justifyContent: "space-between"
 	},
 	socialLinks: {
-		paddingRight: theme.spacing.unit * 4
+		paddingRight: theme.spacing.unit * 4,
+
+		[theme.breakpoints.down("xl")]: {
+			paddingRight: theme.spacing.unit * 2
+		},
+		[theme.breakpoints.down("lg")]: {
+			paddingRight: theme.spacing.unit / 2
+		}
 	},
 	name: {
 		color: "#FFFFFF",
@@ -41,7 +48,10 @@ const styles = theme => ({
 		fontSize: theme.typography.fontSize * 1.5
 	},
 	content: {
-		padding: theme.spacing.unit * 2
+		padding: theme.spacing.unit * 2,
+		[theme.breakpoints.down("lg")]: {
+			padding: theme.spacing.unit
+		}
 	},
 	bio: {
 		lineHeight: 1.5,

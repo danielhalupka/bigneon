@@ -7,7 +7,8 @@ export default ({
 	style = {},
 	dashed = false,
 	light = false,
-	height = null
+	height = null,
+	...rest
 }) => {
 	let dashedStyle = {};
 	if (dashed) {
@@ -38,6 +39,7 @@ export default ({
 				display: "flex",
 				...style
 			}}
+			{...rest}
 		>
 			<Hr/>
 			{children ? (

@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Hidden from "@material-ui/core/Hidden";
 import { observer } from "mobx-react";
 import PropTypes from "prop-types";
+import moment from "moment";
 
 import Button from "../../elements/Button";
 import notifications from "../../../stores/notifications";
@@ -15,37 +16,32 @@ import EventHeaderImage from "../../elements/event/EventHeaderImage";
 import { fontFamilyDemiBold } from "../../styles/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import InputWithButton from "../../common/form/InputWithButton";
-import moment from "moment";
 import Meta from "./Meta";
 import Loader from "../../elements/loaders/Loader";
 import PrivateEventDialog from "./PrivateEventDialog";
+import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
+import Divider from "../../common/Divider";
+import TwoColumnLayout from "./TwoColumnLayout";
+import EventDescriptionBody from "./EventDescriptionBody";
 
 const styles = theme => ({
 	root: {},
-	eventSubCardContent: {
-		paddingLeft: theme.spacing.unit * 4,
-		paddingRight: theme.spacing.unit * 4,
-		paddingBottom: theme.spacing.unit * 4,
-		[theme.breakpoints.down("sm")]: {
-			paddingLeft: theme.spacing.unit * 2,
-			paddingRight: theme.spacing.unit * 2
-		}
+	mobileContainer: {
+		background: "#FFFFFF",
+		padding: theme.spacing.unit * 2,
+		paddingBottom: theme.spacing.unit * 10
 	},
-	eventSubCardRow1: {
-		// display: "flex",
-		// justifyContent: "space-between"
-	},
-	eventSubCardHeading: {
-		fontSize: theme.typography.fontSize * 1.5,
+	mobileHeading: {
+		fontSize: theme.typography.fontSize * 1.25,
 		fontFamily: fontFamilyDemiBold,
-		marginTop: theme.spacing.unit * 4
+		marginTop: theme.spacing.unit,
+		marginBottom: theme.spacing.unit
 	},
-	eventSubCardDescription: {
-		marginTop: theme.spacing.unit * 2,
-		marginBottom: theme.spacing.unit * 2,
-		fontSize: theme.typography.fontSize * 0.8,
-		color: "#9da3b4",
-		lineHeight: 1.5
+	desktopContent: {
+		backgroundColor: "#FFFFFF"
+	},
+	desktopCardContent: {
+		padding: theme.spacing.unit * 2
 	}
 });
 
@@ -73,15 +69,15 @@ class CheckoutSelection extends Component {
 				this.setTicketSelectionFromExistingCart(cart.items);
 			}, error => {
 				//If they're not logged in, assume an empty cart
-				if (!user.isAuthenticated) {
-					this.setState({ ticketSelection: {} });
-				} else {
-					this.setState({ ticketSelection: {} });
-
+				if (user.isAuthenticated) {
 					notifications.showFromErrorResponse({
-						defaultMessage: "Failed to existing cart items.",
+						defaultMessage: "Failed add to existing cart items.",
 						error
 					});
+				}
+
+				if (!this.state.ticketSelection) {
+					this.setState({ ticketSelection: {} });
 				}
 			});
 		}
@@ -118,6 +114,18 @@ class CheckoutSelection extends Component {
 					};
 				}
 			});
+		}
+
+		//Auto add one ticket if there is only one
+		const { ticket_types } = selectedEvent;
+		if ((items === undefined || items.length === 0) && ticket_types && ticket_types.length === 1) {
+			const { id } = ticket_types[0];
+
+			if (!ticketSelection[id]) {
+				ticketSelection[id] = {
+					quantity: 2
+				};
+			}
 		}
 
 		this.setState({ ticketSelection });
@@ -317,11 +325,7 @@ class CheckoutSelection extends Component {
 			.filter(item => !!item);
 
 		if (!ticketTypeRendered.length) {
-			return (
-				<Typography variant="subheading">
-					Tickets currently unavailable
-				</Typography>
-			);
+			return null;
 		}
 		return ticketTypeRendered;
 	}
@@ -351,28 +355,30 @@ class CheckoutSelection extends Component {
 			additional_info,
 			top_line_info,
 			age_limit,
-			promo_image_url,
 			displayDoorTime,
 			displayShowTime,
 			eventStartDateMoment
 		} = event;
 
-		let subCardContent;
+		const promo_image_url = event.promo_image_url ? optimizedImageUrl(event.promo_image_url) : null;
+
+		const mobilePromoImageStyle = {};
+		if (promo_image_url) {
+			mobilePromoImageStyle.backgroundImage = `url(${promo_image_url})`;
+		}
+
+		let sharedContent;
 
 		if (ticketSelection === null) {
-			subCardContent = <Loader style={{ marginTop: 40, marginBottom: 40 }}>Loading cart...</Loader>;
+			sharedContent = <Loader style={{ marginTop: 40, marginBottom: 40 }}>Loading cart...</Loader>;
 		} else {
-			subCardContent = (
-				<div className={classes.eventSubCardContent}>
-					<div className={classes.eventSubCardRow1}>
-						<Typography className={classes.eventSubCardHeading}>
-							Purchase tickets
-						</Typography>
+			sharedContent = (
+				<div>
+					<Typography className={classes.mobileHeading}>
+						Select tickets
+					</Typography>
 
-						{/*<Typography className={classes.eventSubCardDescription}>*/}
-						{/*{additional_info}*/}
-						{/*</Typography>*/}
-					</div>
+					<Divider style={{ margin: 0 }}/>
 
 					{this.renderTicketPricing()}
 
@@ -393,7 +399,7 @@ class CheckoutSelection extends Component {
 						style={{ width: "100%" }}
 						variant="callToAction"
 					>
-						{isSubmitting ? "Adding..." : "Select tickets"}
+						{isSubmitting ? "Adding..." : "Continue"}
 					</Button>
 				</div>
 			);
@@ -403,52 +409,41 @@ class CheckoutSelection extends Component {
 		const { overlayCardHeight } = this.state;
 		const overlayCardHeightAdjustment =  overlayCardHeight - 150;
 
-		const headerHeight = 600;
-
 		return (
 			<div>
 				<Meta type={"selection"} {...event}/>
 
-				<EventHeaderImage
-					variant="detailed"
-					height={headerHeight}
-					{...event}
-					artists={artists}
-				/>
+				{/*DESKTOP*/}
+				<Hidden smDown>
+					<EventHeaderImage {...event} artists={artists}/>
+					<TwoColumnLayout
+						containerClass={classes.desktopContent}
+						containerStyle={{ minHeight: overlayCardHeightAdjustment }}
+						col1={<EventDescriptionBody artists={artists}>{additional_info}</EventDescriptionBody>}
+						col2={(
+							<EventDetailsOverlayCard
+								style={{
+									width: "100%",
+									top: -310,
+									position: "relative"
+								}}
+								imageSrc={promo_image_url}
+								onHeightChange={this.onOverlayCardHeightChange.bind(this)}
+							>
+								<div className={classes.desktopCardContent}>
+									{sharedContent}
+								</div>
+							</EventDetailsOverlayCard>
+						)}
+					/>
+				</Hidden>
 
-				<div style={{ minHeight: overlayCardHeightAdjustment }}>
-					{/* Desktop */}
-					<Hidden smDown>
-						<EventDetailsOverlayCard
-							style={{
-								width: "30%",
-								maxWidth: 550,
-								top: 180,
-								right: 200
-							}}
-							imageSrc={promo_image_url}
-							onHeightChange={this.onOverlayCardHeightChange.bind(this)}
-						>
-							{subCardContent}
-						</EventDetailsOverlayCard>
-					</Hidden>
-
-					{/* Mobile */}
-					<Hidden mdUp>
-						<EventDetailsOverlayCard
-							style={{
-								width: "100%",
-								paddingLeft: 20,
-								paddingRight: 20,
-								top: 480
-							}}
-							imageSrc={promo_image_url}
-							onHeightChange={this.onOverlayCardHeightChange.bind(this)}
-						>
-							{subCardContent}
-						</EventDetailsOverlayCard>
-					</Hidden>
-				</div>
+				{/*MOBILE*/}
+				<Hidden mdUp>
+					<div className={classes.mobileContainer}>
+						{sharedContent}
+					</div>
+				</Hidden>
 			</div>
 		);
 	}

@@ -177,7 +177,7 @@ class TicketSales extends Component {
 				available,
 				discount_in_cents,
 				hold_type,
-				max_per_order,
+				max_per_user,
 				ticket_type_id,
 				redemption_code,
 				price_in_cents,

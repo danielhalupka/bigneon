@@ -62,6 +62,9 @@ const styles = theme => ({
 		width: 380,
 		[theme.breakpoints.up("sm")]: {
 			width: 600
+		},
+		[theme.breakpoints.down("xs")]: {
+			width: 300
 		}
 	}
 });
@@ -93,8 +96,7 @@ const Hero = ({ classes }) => (
 					color="white"
 					href={process.env.REACT_APP_STORE_IOS}
 					style={{ 
-						minWidth: 180,
-						marginRight: 10
+						marginRight: 5
 					}}
 				>
 					iOS
@@ -104,7 +106,9 @@ const Hero = ({ classes }) => (
 					variant="android"
 					color="white"
 					href={process.env.REACT_APP_STORE_ANDROID}
-					style={{ minWidth: 180 }}
+					style={{
+						marginLeft: 5
+					}}
 				>
 					Android
 				</AppButton>

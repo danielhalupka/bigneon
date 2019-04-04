@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
 import { fontFamilyDemiBold } from "../../../../styles/theme";
@@ -14,6 +14,8 @@ import { dollars } from "../../../../../helpers/money";
 import Bigneon from "../../../../../helpers/bigneon";
 import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
 import Card from "../../../../elements/Card";
+import user from "../../../../../stores/user";
+import { observer } from "mobx-react";
 
 //Temp solution to group price points if they have the same name and price
 //If the API performs this function in the future, this code can be removed
@@ -250,6 +252,7 @@ const styles = theme => ({
 	}
 });
 
+@observer
 class SummaryAudit extends Component {
 	constructor(props) {
 		super(props);
@@ -258,7 +261,8 @@ class SummaryAudit extends Component {
 			eventSales: null,
 			salesTotals: null,
 			todayEventSales: null,
-			todaySalesTotals: null
+			todaySalesTotals: null,
+			isLoading: false
 		};
 
 		this.state = this.initialState;
@@ -274,7 +278,7 @@ class SummaryAudit extends Component {
 	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
-		this.setState({ ...this.initialState, startDate, endDate });
+		this.setState({ ...this.initialState, startDate, endDate, isLoading: true });
 
 		const { eventId, organizationId } = this.props;
 		const summaryQueryParams = { organization_id: organizationId, event_id: eventId, start_utc, end_utc };
@@ -283,11 +287,11 @@ class SummaryAudit extends Component {
 		eventSummaryData(
 			summaryQueryParams,
 			({ eventSales, salesTotals }) => {
-				this.setState({ eventSales, salesTotals });
+				this.setState({ eventSales, salesTotals, isLoading: false });
 			},
 			(error) => {
 				console.error(error);
-				this.setState({ eventSales: false });
+				this.setState({ eventSales: false, isLoading: false });
 
 				notifications.showFromErrorResponse({
 					error,
@@ -298,12 +302,15 @@ class SummaryAudit extends Component {
 		//Refresh today's summary
 		const yesterday_utc = moment
 			.utc()
+			.tz(user.currentOrgTimezone)
 			.startOf("day")
 			//.subtract(1, "days")
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 
 		const today_utc = moment
 			.utc()
+			.tz(user.currentOrgTimezone)
+			.endOf("day")
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 
 		const todayQueryParams = {
@@ -383,13 +390,9 @@ class SummaryAudit extends Component {
 	renderTodayEventSales() {
 		const { todayEventSales, todaySalesTotals } = this.state;
 
-		if (todayEventSales === false) {
+		if (!todayEventSales) {
 			//Query failed
 			return null;
-		}
-
-		if (todayEventSales === null) {
-			return <Loader/>;
 		}
 
 		if (todayEventSales.length === 0) {
@@ -409,13 +412,9 @@ class SummaryAudit extends Component {
 	renderDateRangeEventSales() {
 		const { eventSales, salesTotals, startDate, endDate } = this.state;
 
-		if (eventSales === false) {
+		if (!eventSales) {
 			//Query failed
 			return null;
-		}
-
-		if (eventSales === null) {
-			return <Loader/>;
 		}
 
 		if (eventSales.length === 0) {
@@ -446,6 +445,9 @@ class SummaryAudit extends Component {
 			);
 		}
 
+		const { currentOrgTimezone } = user;
+		const { isLoading } = this.state;
+
 		return (
 			<Card variant={"block"}>
 				<div className={classes.root}>
@@ -474,13 +476,25 @@ class SummaryAudit extends Component {
 						Export PDF
 						</Button>
 					</div>
-					<ReportsDate onChange={this.refreshData.bind(this)}/>
 
-					{this.renderTodayEventSales()}
+					{currentOrgTimezone ? (
+						<ReportsDate
+							timezone={currentOrgTimezone}
+							onChange={this.refreshData.bind(this)}
+							onChangeButton
+						/>
+					) : null }
 
-					<div style={{ marginTop: 40 }}/>
+					{isLoading ? <Loader/> : (
+						<div>
+							{this.renderTodayEventSales()}
 
-					{this.renderDateRangeEventSales()}
+							<div style={{ marginTop: 40 }}/>
+
+							{this.renderDateRangeEventSales()}
+
+						</div>
+					)}
 
 					<div style={{ marginBottom: 40 }}/>
 				</div>

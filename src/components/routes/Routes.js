@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { observer } from "mobx-react";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
+import asyncComponent from "../../components/AsyncComponent";
 
 import errorReporting from "../../helpers/errorReporting";
 import CustomPickerUtils from "../../helpers/customPickerUtils";
@@ -35,35 +36,35 @@ import MobileStripeAuth from "../pages/authentication/MobileStripeAuth";
 import ElementShowcase from "../pages/development/ElementShowCase";
 
 //Admin
-import AdminOrganizationsList from "../pages/admin/organizations/List";
-import AdminOrganization from "../pages/admin/organizations/Organization";
-import AdminVenuesList from "../pages/admin/venues/List";
-import AdminVenue from "../pages/admin/venues/Venue";
-import AdminArtistsList from "../pages/admin/artists/List";
-import AdminArtist from "../pages/admin/artists/Artist";
-import AdminEventsList from "../pages/admin/events/List";
-import AdminEventDashboardSummary from "../pages/admin/events/dashboard/Summary";
-import AdminEventDashboardHolds from "../pages/admin/events/dashboard/holds/List";
-import AdminEventDashboardCodes from "../pages/admin/events/dashboard/codes/List";
-import AdminEventDashboardComps from "../pages/admin/events/dashboard/comps/List";
-import AdminEventDashboardReports from "../pages/admin/events/dashboard/reports/Index";
-import AdminEventDashboardMarketing from "../pages/admin/events/dashboard/marketing/Index";
-import AdminEventExportGuestList from "../pages/admin/events/dashboard/guests/Export";
-import AdminEventDashboardExternalAccess from "../pages/admin/events/dashboard/external/ExternalAccess";
-import AdminEventUpdate from "../pages/admin/events/EventUpdate";
-import AdminFanList from "../pages/admin/fans/Index";
-import AdminFanDetails from "../pages/admin/fans/FanDetails";
-import AdminMarketing from "../pages/admin/marketing/Index";
-import AdminReports from "../pages/admin/reports/Index";
-import AdminEventRefunds from "../pages/admin/events/dashboard/refunds/Refunds";
-import AdminLastCall from "../pages/admin/events/dashboard/hospitality/LastCall";
-import AdminReportExportPDF from "../pages/admin/reports/ExportPDF";
+const AdminOrganizationsList = asyncComponent(() => import("../pages/admin/organizations/List"));
+const AdminOrganization = asyncComponent(() => import("../pages/admin/organizations/Organization"));
+const AdminVenuesList = asyncComponent(() => import("../pages/admin/venues/List"));
+const AdminVenue = asyncComponent(() => import("../pages/admin/venues/Venue"));
+const AdminArtistsList = asyncComponent(() => import("../pages/admin/artists/List"));
+const AdminArtist = asyncComponent(() => import("../pages/admin/artists/Artist"));
+const AdminEventsList = asyncComponent(() => import("../pages/admin/events/List"));
+const AdminEventDashboardSummary = asyncComponent(() => import("../pages/admin/events/dashboard/Summary"));
+const AdminEventDashboardHolds = asyncComponent(() => import("../pages/admin/events/dashboard/holds/List"));
+const AdminEventDashboardCodes = asyncComponent(() => import("../pages/admin/events/dashboard/codes/List"));
+const AdminEventDashboardComps = asyncComponent(() => import("../pages/admin/events/dashboard/comps/List"));
+const AdminEventDashboardReports = asyncComponent(() => import("../pages/admin/events/dashboard/reports/Index"));
+const AdminEventDashboardMarketing = asyncComponent(() => import("../pages/admin/events/dashboard/marketing/Index"));
+const AdminEventExportGuestList = asyncComponent(() => import("../pages/admin/events/dashboard/guests/Export"));
+const AdminEventDashboardExternalAccess = asyncComponent(() => import("../pages/admin/events/dashboard/external/ExternalAccess"));
+const AdminEventUpdate = asyncComponent(() => import("../pages/admin/events/EventUpdate"));
+const AdminFanList = asyncComponent(() => import("../pages/admin/fans/Index"));
+const AdminFanDetails = asyncComponent(() => import("../pages/admin/fans/FanDetails"));
+const AdminMarketing = asyncComponent(() => import("../pages/admin/marketing/Index"));
+const AdminReports = asyncComponent(() => import("../pages/admin/reports/Index"));
+const AdminEventRefunds = asyncComponent(() => import("../pages/admin/events/dashboard/refunds/Refunds"));
+const AdminLastCall = asyncComponent(() => import("../pages/admin/events/dashboard/hospitality/LastCall"));
+const AdminReportExportPDF = asyncComponent(() => import("../pages/admin/reports/ExportPDF"));
 
 //Box office
-import BoxOfficeTicketSales from "../pages/boxoffice/sales/Index";
+const BoxOfficeTicketSales = asyncComponent(() => import("../pages/boxoffice/sales/Index"));
 
-import InviteDecline from "../pages/admin/invites/Decline";
-import InviteAccept from "../pages/admin/invites/Accept";
+const InviteDecline = asyncComponent(() => import("../pages/admin/invites/Decline"));
+const InviteAccept = asyncComponent(() => import("../pages/admin/invites/Accept"));
 
 //Embedded widgets
 import EventQR from "../widgets/EventQR";
@@ -74,6 +75,7 @@ import AuthenticateCheckDialog from "../common/AuthenticateCheckDialog";
 import WidgetLinkBuilder from "../widgets/LinkBuilder";
 import ReceiveTransfer from "../pages/myevents/ReceiveTransfer";
 import GuestList from "../pages/boxoffice/guests/Index";
+import analytics from "../../helpers/analytics";
 
 const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => {
 	//If isAuthenticated is null then we're still checking the state
@@ -103,6 +105,16 @@ class Routes extends Component {
 
 		// Signal that js is ready for prerendering
 		window.prerenderReady = true;
+
+		const startLoadTime = window.startLoadTime;
+		if (startLoadTime) {
+			analytics.trackPageLoadTime((Date.now() - startLoadTime));
+		}
+
+		//Upload widget for cloudinary (Can be removed when we switch to S3)
+		this.insertScript("//widget.cloudinary.com/global/all.js", "cloudinary-js");
+		this.insertScript("https://js.stripe.com/v3/", "stripe-js");
+
 	}
 
 	componentWillUnmount() {
@@ -114,6 +126,19 @@ class Routes extends Component {
 	componentDidCatch(error, errorInfo) {
 		//Capturing all global react crashes
 		errorReporting.captureCaughtComponentError(error, errorInfo);
+	}
+
+	insertScript(url, id) {
+		const script = document.createElement("script");
+
+		if (id) {
+			script.id = id;
+		}
+
+		script.async = true;
+		script.crossorigin = true;
+		script.src = url;
+		document.body.appendChild(script);
 	}
 
 	render() {

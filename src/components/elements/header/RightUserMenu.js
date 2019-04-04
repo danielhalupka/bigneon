@@ -194,9 +194,14 @@ class RightHeaderMenu extends React.Component {
 		const { classes } = this.props;
 
 		return (
-			<span className={classes.menuButton} style={{ paddingTop: 4 }}>
+			<span className={classes.menuButton}>
 				<Link to="/login" className={classes.menuLink}>
-					<Button variant="callToAction">Sign In</Button>
+					<Hidden mdUp>
+						<Button variant="callToAction" size={"small"}>Sign In</Button>
+					</Hidden>
+					<Hidden smDown>
+						<Button variant="callToAction">Sign In</Button>
+					</Hidden>
 				</Link>
 			</span>
 		);

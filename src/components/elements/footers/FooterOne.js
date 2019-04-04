@@ -31,7 +31,7 @@ const styles = theme => ({
 		flex: 1,
 		display: "flex",
 		justifyContent: "center",
-		marginTop: theme.spacing.unit * 10,
+		//marginTop: theme.spacing.unit * 10,
 		textAlign: "center",
 		backgroundColor: "#FFFFFF"
 	},
@@ -108,8 +108,6 @@ const Footer = props => {
 						className={classes.logo}
 					/>
 				</div>
-
-				<img/>
 
 				<div className={classes.linksContainer}>
 					{links.map(({ label, href }, index) => (
