@@ -109,7 +109,7 @@ const PaginationBlock = props => {
 	const totalPages = Math.ceil(total / limit);
 
 	//Must be even int
-	const maxPageBlocks = 10; //TODO make 10
+	const maxPageBlocks = 10;
 	const maxStartRange = maxPageBlocks / 2;
 	const maxEndRange = totalPages - (maxPageBlocks / 2);
 
@@ -120,7 +120,7 @@ const PaginationBlock = props => {
 		if (pageIndex <= maxStartRange || pageIndex + 1 >= maxEndRange) {
 			const active = page === pageIndex;
 			numberBlocks.push(
-				<NumberBlock onClick={!active ? () => onPageChange(pageIndex) : null} key={pageIndex} active={active} classes={classes}>
+				<NumberBlock onClick={!active ? () => onPageChange(pageIndex) : null} key={pageIndex} active={active && !isLoading} classes={classes}>
 					{pageIndex + 1}
 				</NumberBlock>
 			);

@@ -16,6 +16,8 @@ import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeadin
 import BoxInput from "../../../../elements/form/BoxInput";
 import boxOffice from "../../../../../stores/boxOffice";
 import Card from "../../../../elements/Card";
+import { Pagination, urlPageParam } from "../../../../elements/Pagination";
+import InputWithButton from "../../../../common/form/InputWithButton";
 import user from "../../../../../stores/user";
 import { observer } from "mobx-react";
 
@@ -35,6 +37,9 @@ const styles = theme => ({
 	}
 });
 
+const LINE_LIMIT_PER_PAGE = 20;
+const DEBOUNCE_DELAY = 500;
+
 @observer
 class Transactions extends Component {
 	constructor(props) {
@@ -43,8 +48,11 @@ class Transactions extends Component {
 		this.state = {
 			items: null,
 			isLoading: false,
+			paging: null,
 			searchQuery: ""
 		};
+
+		this.currentDateParams = {};
 	}
 
 	componentDidMount() {
@@ -52,6 +60,10 @@ class Transactions extends Component {
 		if (printVersion) {
 			this.refreshData();
 		}
+	}
+
+	componentWillUnmount() {
+		this.clearDebounceTimer();
 	}
 
 	exportCSV() {
@@ -152,32 +164,63 @@ class Transactions extends Component {
 		downloadCSV(csvRows, "transaction-report");
 	}
 
-	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }) {
+	clearDebounceTimer() {
+		if (this.debounceTimeout) {
+			clearTimeout(this.debounceTimeout);
+		}
+	}
+
+	onSearch(e) {
+		const searchQuery = e.target.value;
+		this.setState({ searchQuery }, () => {
+			const { startDate = null, endDate = null, start_utc = null, end_utc = null } = this.currentDateParams;
+
+			this.clearDebounceTimer();
+			this.debounceTimeout = setTimeout(() => this.refreshData({ start_utc, end_utc, startDate, endDate }, 0), DEBOUNCE_DELAY);
+		});
+	}
+
+	changePage(page = urlPageParam()) {
+		const { startDate = null, endDate = null, start_utc = null, end_utc = null } = this.currentDateParams;
+		this.refreshData({ start_utc, end_utc, startDate, endDate }, page);
+	}
+
+	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }, page = 0) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
-		const { eventId, organizationId, onLoad } = this.props;
+		this.currentDateParams = dataParams;
 
-		let queryParams = { organization_id: organizationId, start_utc, end_utc };
+		const { eventId, organizationId, onLoad } = this.props;
+		const { searchQuery } = this.state;
+
+		let queryParams = {
+			organization_id: organizationId,
+			start_utc,
+			end_utc,
+			page,
+			limit: LINE_LIMIT_PER_PAGE,
+			query: searchQuery
+		};
 
 		if (eventId) {
 			queryParams = { ...queryParams, event_id: eventId };
 		}
 
 		this.setState({ startDate, endDate, items: null, isLoading: true });
-
+		
 		Bigneon()
 			.reports.transactionDetails(queryParams)
 			.then(response => {
+				const { data, paging } = response.data;
 				const items = [];
-				const eventFees = {};
-				response.data.forEach(item => {
+				data.forEach(item => {
 					const formattedDate = moment
 						.utc(item.transaction_date)
 						.tz(user.currentOrgTimezone)
 						.format("MM/DD/YYYY h:mm:A");
 					items.push({ ...item, formattedDate });
 				});
-				
+
 				items.sort((a, b) => {
 					//Gte the dates we need to compare
 					if (moment(a.transaction_date).diff(moment(b.transaction_date)) < 0) {
@@ -187,7 +230,7 @@ class Transactions extends Component {
 					}
 				});
 
-				this.setState({ items, isLoading: false }, () => {
+				this.setState({ items, paging, isLoading: false }, () => {
 					onLoad ? onLoad() : null;
 				});
 			})
@@ -202,67 +245,8 @@ class Transactions extends Component {
 			});
 	}
 
-	//TODO this should move to the API
-	filteredItems() {
-		const { items } = this.state;
-		if (!items) {
-			return items;
-		}
-
-		const { searchQuery } = this.state;
-
-		//Filtering required
-		const filteredItems = [];
-		items.forEach(item => {
-			const {
-				event_name,
-				gross,
-				order_type,
-				quantity,
-				ticket_name,
-				formattedDate,
-				unit_price_in_cents,
-				gross_fee_in_cents_total,
-				event_fee_gross_in_cents_total,
-				first_name,
-				last_name,
-				email,
-				refunded_quantity,
-				order_id
-			} = item;
-
-			if (
-				this.stringContainedInArray(
-					[`${first_name} ${last_name}`, email, event_name, ticket_name, order_id],
-					searchQuery
-				)
-			) {
-				filteredItems.push(item);
-			}
-		});
-
-		return filteredItems;
-	}
-
-	stringContainedInArray(strList, searchQuery) {
-		for (let index = 0; index < strList.length; index++) {
-			const str = strList[index] ? strList[index].toLowerCase() : "";
-
-			if (str.includes(searchQuery.toLowerCase())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	filterRowsOnQuery(e) {
-		this.setState({ searchQuery: e.target.value });
-	}
-
 	renderDialog() {
-		const { activeIndex } = this.state;
-		const items = this.filteredItems();
+		const { activeIndex, items } = this.state;
 
 		let userId = null;
 		let activeItem = null;
@@ -305,8 +289,6 @@ class Transactions extends Component {
 			return <Typography>No transactions found.</Typography>;
 		}
 
-		const filteredItems = this.filteredItems();
-
 		//If we're showing this on an org level then we need to show event names
 		const includeEventName = !this.props.eventId;
 
@@ -327,7 +309,7 @@ class Transactions extends Component {
 			<div>
 				<TransactionRow heading>{ths}</TransactionRow>
 
-				{filteredItems.map((item, index) => {
+				{items.map((item, index) => {
 					const {
 						event_name,
 						gross,
@@ -383,7 +365,7 @@ class Transactions extends Component {
 			return this.renderList();
 		}
 
-		const { searchQuery } = this.state;
+		const { isLoading, paging, searchQuery } = this.state;
 
 		const { currentOrgTimezone } = user;
 
@@ -397,12 +379,21 @@ class Transactions extends Component {
 							</Typography>
 						</Grid>
 						<Grid item xs={12} sm={12} md={4} lg={4}>
+
 							<BoxInput
 								name="Search"
 								value={searchQuery}
-								placeholder="Search by guest name, email or event name #"
-								onChange={this.filterRowsOnQuery.bind(this)}
+								placeholder="Search by guest name, email or event name"
+								onChange={this.onSearch.bind(this)}
 							/>
+							{/*<InputWithButton*/}
+							{/*// style={{ marginBottom: 20, marginTop: 20 }}*/}
+							{/*name={"tx-report-search"}*/}
+							{/*placeholder="Search by guest name, email or event name"*/}
+							{/*buttonText="Search"*/}
+							{/*onSubmit={this.onSearch.bind(this)}*/}
+							{/*disabled={isLoading}*/}
+							{/*/>*/}
 						</Grid>
 
 						<Grid item xs={12} sm={12} md={4} lg={4} className={classes.exportButtonContainer}>
@@ -435,6 +426,8 @@ class Transactions extends Component {
 
 					{this.renderDialog()}
 					{this.renderList()}
+
+					{paging ? <Pagination isLoading={isLoading} paging={paging} onChange={this.changePage.bind(this)}/> : null}
 				</div>
 			</Card>
 		);
