@@ -101,7 +101,7 @@ class CodeList extends Component {
 
 	renderList() {
 		const { codes, activeCodeId, showCodeDialog, ticketTypes } = this.state;
-		console.log(ticketTypes);
+
 		if (codes === null) {
 			return <Loader/>;
 		}
@@ -133,17 +133,33 @@ class CodeList extends Component {
 							redemption_codes,
 							ticket_type_ids,
 							discount_in_cents,
+							discount_as_percentage,
 							max_uses
 						} = c;
+
+						const ticketTypesList = [];
+						let ticketTypeDisplayList = "";
+						if (Object.keys(ticketTypes).length > 0) {
+							ticket_type_ids.forEach((id) => {
+								ticketTypesList.push(ticketTypes[id].name);
+							});
+							ticketTypesList.sort();
+							ticketTypesList.forEach((name, idx) => {
+								ticketTypeDisplayList += name;
+								if (idx < ticketTypesList.length - 1) {
+									ticketTypeDisplayList += ", ";
+								}
+							});
+						}
 
 						const tds = [
 							name,
 							redemption_codes,
 							Object.keys(ticketTypes).length === 0
 								? null
-								: ticket_type_ids.map(id => ticketTypes[id].name),
-							(discount_in_cents / 100).toFixed(2),
-							max_uses
+								: ticketTypeDisplayList,
+							discount_in_cents ? "$ " + (discount_in_cents / 100).toFixed(2) : discount_as_percentage + "%",
+							max_uses === 0 ? "Unlimited" : max_uses
 						];
 
 						const active = activeCodeId === id && showCodeDialog;
