@@ -159,7 +159,7 @@ class CodeList extends Component {
 								? null
 								: ticketTypeDisplayList,
 							discount_in_cents ? "$ " + (discount_in_cents / 100).toFixed(2) : discount_as_percentage + "%",
-							max_uses === 0 ? "∞" : max_uses
+							max_uses === 0 ? "Unlimited" : max_uses
 						];
 
 						const active = activeCodeId === id && showCodeDialog;

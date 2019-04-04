@@ -20,6 +20,9 @@ import RadioButton from "../../../../../elements/form/RadioButton";
 import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../../common/form/SelectGroup";
 import notifications from "../../../../../../stores/notifications";
+import removePhoneFormatting from "../../../../../../helpers/removePhoneFormatting";
+import { validEmail, validPhone } from "../../../../../../validators";
+import { FormHelperText } from "@material-ui/core";
 
 const formatCodeForSaving = values => {
 	const {
@@ -202,11 +205,12 @@ const endAtTimeOptions = [
 	}
 ];
 
-const styles = {
+const styles = theme => ({
 	radioGroup: {
-		display: "flex"
+		display: "flex",
+		marginTop: theme.spacing.unit * 2
 	}
-};
+});
 
 export const CODE_TYPES = {
 	EDIT: "edit",
@@ -227,6 +231,44 @@ class CodeDialog extends React.Component {
 
 	componentWillMount(nextProps) {
 		this.loadCode();
+	}
+
+	validateFields() {
+		//Don't validate every field if the user has not tried to submit at least once
+		if (!this.submitAttempted) {
+			return true;
+		}
+
+		const errors = {};
+
+		//TODO
+		const { code } = this.state;
+		const { startDate, ticket_type_ids, discount_type, discountAsPercentage } = code;
+
+		if (!startDate) {
+			errors.startDate = "Missing start date.";
+		}
+
+		if (discount_type !== "Absolute") {
+			const percent = Number(discountAsPercentage);
+			if (percent < 0 || percent > 100) {
+				errors.discountAsPercentage = "Invalid percent.";
+			}
+		}
+
+		console.log(ticket_type_ids);
+
+		if (!ticket_type_ids || typeof ticket_type_ids !== "object" || ticket_type_ids[0] === "") {
+			errors.ticket_type_ids = "Missing ticket types.";
+		}
+
+		this.setState({ errors });
+
+		if (Object.keys(errors).length > 0) {
+			return false;
+		}
+
+		return true;
 	}
 
 	loadCode() {
@@ -262,6 +304,12 @@ class CodeDialog extends React.Component {
 	}
 
 	onSubmit() {
+		this.submitAttempted = true;
+
+		if (!this.validateFields()) {
+			return false;
+		}
+
 		const { code } = this.state;
 		const { codeType, onSuccess, eventId } = this.props;
 
@@ -352,11 +400,13 @@ class CodeDialog extends React.Component {
 		}
 
 		return (
-			<FormControl style={{ width: "100%" }}>
+			<FormControl style={{ width: "100%" }} error={!!errors.ticket_type_ids}>
 				<InputLabel shrink htmlFor="ticket-types-label-placeholder">
 					Ticket Types*
 				</InputLabel>
 				<Select
+					onBlur={this.validateFields.bind(this)}
+					error={!!errors.ticket_type_ids}
 					multiple
 					value={selectedTicketType}
 					onChange={e => {
@@ -372,6 +422,7 @@ class CodeDialog extends React.Component {
 				>
 					{items}
 				</Select>
+				<FormHelperText id={`${name}-error-text`}>{errors.ticket_type_ids}</FormHelperText>
 			</FormControl>
 		);
 	}
@@ -450,7 +501,7 @@ class CodeDialog extends React.Component {
 							<InputAdornment position="end">%</InputAdornment>
 						)
 					}}
-					error={errors.discount_as_percentage}
+					error={errors.discountAsPercentage}
 					value={code.discountAsPercentage}
 					name={"discountAsPercentage"}
 					label={"Discount as percentage*"}
@@ -695,7 +746,7 @@ class CodeDialog extends React.Component {
 
 					{this.renderTicketTypes()}
 
-					<Grid container spacing={16}>
+					<Grid container>
 						<Grid item xs={12} md={12} lg={12}>
 							<div className={classes.radioGroup}>
 								<RadioButton
