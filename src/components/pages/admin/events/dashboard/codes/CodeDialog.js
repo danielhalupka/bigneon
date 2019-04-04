@@ -9,20 +9,17 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input/Input";
-import Chip from "@material-ui/core/Chip";
 
 import Dialog from "../../../../../elements/Dialog";
 import InputGroup from "../../../../../common/form/InputGroup";
 import Bigneon from "../../../../../../helpers/bigneon";
 import notification from "../../../../../../stores/notifications";
-import AutoCompleteGroup from "../../../../../common/form/AutoCompleteGroup";
+
 import Button from "../../../../../elements/Button";
 import RadioButton from "../../../../../elements/form/RadioButton";
 import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../../common/form/SelectGroup";
 import notifications from "../../../../../../stores/notifications";
-
-const ITEM_PADDING_TOP = 8;
 
 const formatCodeForSaving = values => {
 	const {
@@ -75,9 +72,6 @@ const formatCodeForSaving = values => {
 		...discount,
 		...max_per_users
 	};
-	console.log("YAAAS");
-	console.log(result);
-	console.log("----------------------");
 	return result;
 };
 
@@ -340,7 +334,7 @@ class CodeDialog extends React.Component {
 		ticketTypes.forEach(ticketType => {
 			ticketTypeHash[ticketType.id] = ticketType.name;
 		});
-		console.log(code);
+
 		let selectedTicketType;
 		if (code.ticket_type_ids) {
 			selectedTicketType = code.ticket_type_ids || [""];
@@ -356,7 +350,7 @@ class CodeDialog extends React.Component {
 				</MenuItem>
 			));
 		}
-		console.log(selectedTicketType);
+
 		return (
 			<FormControl style={{ width: "100%" }}>
 				<InputLabel shrink htmlFor="ticket-types-label-placeholder">
@@ -370,7 +364,6 @@ class CodeDialog extends React.Component {
 						code.ticket_type_ids = code.ticket_type_ids.filter(id => {
 							return id !== "";
 						});
-						console.log(code);
 						this.setState({ code });
 					}}
 					input={<Input id="select-multiple-ticket-types"/>}
