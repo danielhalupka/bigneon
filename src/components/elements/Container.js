@@ -21,6 +21,8 @@ import { toolBarHeight } from "../../components/styles/theme";
 import layout from "../../stores/layout";
 import BoxOfficeAppBar from "./header/BoxOfficeAppBar";
 import Footer from "./footers/FooterOne";
+import CaptureMissingEmail from "../pages/authentication/social/FacebookButton";
+import CaptureMissingEmailDialog from "../pages/authentication/CaptureMissingEmailDialog";
 
 const drawerWidth = 240;
 
@@ -215,6 +217,7 @@ class Container extends React.Component {
 							open={user.showRequiresAuthDialog}
 							onClose={() => user.hideAuthRequiredDialog()}
 						/>
+						<CaptureMissingEmailDialog open={user.userMissingEmail} onSuccess={() => user.refreshUser()}/>
 						<Notification/>
 
 						{layout.showFooter ? (

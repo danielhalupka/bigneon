@@ -61,6 +61,9 @@ class User {
 	@observable
 	showRequiresAuthDialog = false;
 
+	@observable
+	userMissingEmail = false;
+
 	@action
 	refreshUser(onSuccess = null, onError = null) {
 		const token = localStorage.getItem("access_token");
@@ -109,6 +112,7 @@ class User {
 						this.organizationRoles = organization_roles;
 						this.organizationScopes = organization_scopes;
 						this.profilePicUrl = profile_pic_url;
+						this.userMissingEmail = !email;
 
 						this.loadAllPossibleOrgs();
 						this.loadCachedOrganizationRoles();

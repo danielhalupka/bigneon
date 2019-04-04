@@ -2,7 +2,7 @@
 export default (error, defaultMessage = "An an error occurred.") => {
 	const result = { message: "", list: [] };
 
-	if (error.response && error.response.data && error.response.data.error) {
+	if (error && error.response && error.response.data && error.response.data.error) {
 		console.log(error.response.data);
 
 		const { fields } = error.response.data;

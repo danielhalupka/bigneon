@@ -71,6 +71,10 @@ class FacebookButtonDisplay extends Component {
 		};
 	}
 
+	componentDidMount() {
+		initFB(this.onFBSignIn.bind(this));
+	}
+
 	onFBSignIn(response) {
 		const { status, authResponse } = response;
 		const authenticated = status === "connected";
@@ -88,7 +92,9 @@ class FacebookButtonDisplay extends Component {
 						localStorage.setItem("refresh_token", refresh_token);
 
 						//Pull user data with our new token
-						user.refreshUser(() => {
+						user.refreshUser(({ email }) => {
+							console.log(email);
+
 							this.props.onSuccess();
 						});
 					} else {
@@ -114,10 +120,6 @@ class FacebookButtonDisplay extends Component {
 
 	fbLogout() {
 		logoutFB(this.onFBSignIn.bind(this));
-	}
-
-	componentDidMount() {
-		initFB(this.onFBSignIn.bind(this));
 	}
 
 	render() {
@@ -146,18 +148,20 @@ class FacebookButtonDisplay extends Component {
 		}
 
 		return (
-			<Button
-				size="large"
-				style={{ ...style, width: "100%" }}
-				onClick={onClick}
-				disabled={isAuthenticating}
-			>
-				<img
-					className={classNames(classes.leftIcon, classes.iconSmall)}
-					src={"/images/social/facebook-icon-white.svg"}
-				/>
-				{text}
-			</Button>
+			<div>
+				<Button
+					size="large"
+					style={{ ...style, width: "100%" }}
+					onClick={onClick}
+					disabled={isAuthenticating}
+				>
+					<img
+						className={classNames(classes.leftIcon, classes.iconSmall)}
+						src={"/images/social/facebook-icon-white.svg"}
+					/>
+					{text}
+				</Button>
+			</div>
 		);
 	}
 }

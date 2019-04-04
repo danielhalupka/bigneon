@@ -120,6 +120,7 @@ class SignupForm extends Component {
 		if (recaptchaResponse) {
 			params["g-recaptcha-response"] = recaptchaResponse;
 		}
+
 		//Successful signup, now get a token
 		Bigneon()
 			.auth.authenticate(params)
@@ -154,18 +155,9 @@ class SignupForm extends Component {
 				console.error(error);
 				this.setState({ isSubmitting: false });
 
-				let message = "Signup failed.";
-				if (
-					error.response &&
-					error.response.data &&
-					error.response.data.error
-				) {
-					message = error.response.data.error;
-				}
-
-				notifications.show({
-					message,
-					variant: "error"
+				notifications.showFromErrorResponse({
+					defaultMessage: "Authentication failed.",
+					error
 				});
 			});
 	}

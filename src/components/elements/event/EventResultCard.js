@@ -102,7 +102,7 @@ const EventResultCard = ({
 }) => {
 	const style = {};
 	if (promo_image_url) {
-		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${optimizedImageUrl(promo_image_url, "low", {w: 430})})`;
+		style.backgroundImage = `linear-gradient(to top, #000000, rgba(0, 0, 0, 0)), url(${optimizedImageUrl(promo_image_url, "low", { w: 430 })})`;
 	}
 	venueTimezone = venueTimezone || "America/Los_Angeles";
 	const eventStartDateMoment = moment.utc(event_start);
