@@ -68,7 +68,7 @@ const formatCodeForSaving = values => {
 		start_date: moment
 			.utc(start_date)
 			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-		end_date: moment.utc(end_date).format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+		end_date: end_date,
 		event_id,
 		redemption_codes,
 		ticket_type_ids: ticket_type_ids,
@@ -111,91 +111,50 @@ const createCodeForInput = (values = {}) => {
 		startDate: start_date
 			? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 			: moment.utc().local(),
+		startAtTimeKey: start_date ? "custom" : "now",
 		endDate: end_date
 			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-			: moment(event_start).local(),
+			: moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local(),
+		endAtTimeKey: end_date ? "custom" : "sales_end",
 		...values
 	};
 };
 
 const startAtTimeOptions = [
 	{
-		value: "event_start_time",
-		label: "Event start time",
-		startAtDateString: ({ event_start }, date) => {
-			return event_start;
+		value: "now",
+		label: "Now",
+		startAtDateString: (startDate) => {
+			return moment.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+		}
+	},
+	{
+		value: "custom",
+		label: "Custom",
+		startAtDateString: (startDate) => {
+			if (!startDate) {
+				return null;
+			}
+
+			return moment
+				.utc(startDate)
+				.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 		}
 	}
 ];
 
 const endAtTimeOptions = [
 	{
-		value: "never",
-		label: "Never",
-		endAtDateString: (event, endAt) => {
+		value: "sales_end",
+		label: "When sales end",
+		endAtDateString: (endAt) => {
 			return null;
-		}
-	},
-	{
-		value: "event_start_time",
-		label: "Event start time",
-		endAtDateString: ({ event_start }, endAt) => {
-			return event_start;
-		}
-	},
-	{
-		value: "event_door_time",
-		label: "Event Door time",
-		endAtDateString: ({ door_time }, endAt) => {
-			return door_time;
-		}
-	},
-	{
-		value: "day_of_event",
-		label: "Day of the Event (8am)",
-		endAtDateString: ({ event_start }, endAt) => {
-			if (!event_start) {
-				return null;
-			}
-
-			const eventDate = moment
-				.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-				.local();
-
-			eventDate.set({
-				hour: 8,
-				minute: 0,
-				second: 0
-			});
-
-			return moment.utc(eventDate).format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
-		}
-	},
-	{
-		value: "one_day_before",
-		label: "1 Day Before the Event (8am)",
-		endAtDateString: ({ event_start }, endAt) => {
-			if (!event_start) {
-				return null;
-			}
-
-			const eventDate = moment
-				.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS)
-				.local();
-
-			eventDate.subtract(1, "d").set({
-				hour: 8,
-				minute: 0,
-				second: 0
-			});
-
-			return moment.utc(eventDate).format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
 		}
 	},
 	{
 		value: "custom",
 		label: "Custom",
-		endAtDateString: (event, endAt) => {
+		endAtDateString: (endAt) => {
 			if (!endAt) {
 				return null;
 			}
@@ -325,53 +284,40 @@ class CodeDialog extends React.Component {
 		}
 
 		//Get the calculated end_date using the event dates
-		const { endAtTimeKey, endDate, startDate } = code;
-		// const endAtOption = endAtTimeOptions.find(
-		// 	option => option.value === endAtTimeKey
-		// );
-		Bigneon()
-			.events.read({ id: eventId })
+		const { endAtTimeKey, startAtTimeKey, endDate, startDate} = code;
+		const endAtOption = endAtTimeOptions.find(option => option.value === endAtTimeKey);
+		const startAtOption = startAtTimeOptions.find(option => option.value === startAtTimeKey);
+		const end_date = endAtOption.endAtDateString(endDate);
+		const start_date = startAtOption.startAtDateString(startDate);
+
+		const formattedCode = formatCodeForSaving({
+			...code,
+			end_date,
+			start_date
+		});
+
+		storeFunction(formattedCode)
 			.then(response => {
-				const event = response.data;
-				//const end_date = endAtOption.endAtDateString(event, endAt);
-
-				const end_date = endDate;
-				const start_date = startDate;
-				const formattedCode = formatCodeForSaving({
-					...code,
-					end_date,
-					start_date
+				const { id } = response.data;
+				this.setState({ isSubmitting: false });
+				const message = `Successfully ${
+					code.id ? "updated" : "created"
+				} code`;
+				notification.show({
+					message,
+					variant: "success"
 				});
-
-				storeFunction(formattedCode)
-					.then(response => {
-						const { id } = response.data;
-						this.setState({ isSubmitting: false });
-						const message = `Successfully ${
-							code.id ? "updated" : "created"
-						} code`;
-						notification.show({
-							message,
-							variant: "success"
-						});
-						onSuccess(id);
-					})
-					.catch(error => {
-						this.setState({ isSubmitting: false });
-						console.error(error);
-						notification.showFromErrorResponse({
-							error,
-							defaultMessage: `${code.id ? "Update" : "Create"} code failed.`
-						});
-					});
+				onSuccess(id);
 			})
 			.catch(error => {
+				this.setState({ isSubmitting: false });
 				console.error(error);
-				notifications.showFromErrorResponse({
-					defaultMessage: "Loading event details failed.",
-					error
+				notification.showFromErrorResponse({
+					error,
+					defaultMessage: `${code.id ? "Update" : "Create"} code failed.`
 				});
 			});
+
 	}
 
 	renderTicketTypes() {
@@ -521,7 +467,7 @@ class CodeDialog extends React.Component {
 
 		return (
 			<SelectGroup
-				value={code.startAtTimeKey || "never"}
+				value={code.startAtTimeKey || "now"}
 				items={startAtTimeOptions}
 				name={"startAtTimeOptions"}
 				label={"Starts"}
@@ -538,7 +484,7 @@ class CodeDialog extends React.Component {
 
 		return (
 			<SelectGroup
-				value={code.endAtTimeKey || "never"}
+				value={code.endAtTimeKey || "sales_end"}
 				items={endAtTimeOptions}
 				name={"endAtTimeOptions"}
 				label={"Ends"}
@@ -553,9 +499,9 @@ class CodeDialog extends React.Component {
 	renderCustomStartAtDates() {
 		const { code, errors } = this.state;
 
-		// if (!code.startAtTimeKey || code.startAtTimeKey !== "custom") {
-		// 	return null;
-		// }
+		if (!code.startAtTimeKey || code.startAtTimeKey !== "custom") {
+			return null;
+		}
 
 		const { startDate } = code;
 
@@ -622,6 +568,10 @@ class CodeDialog extends React.Component {
 		const { code, errors } = this.state;
 
 		const { endDate } = code;
+
+		if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
+			return null;
+		}
 
 		return (
 			<Grid container spacing={16}>
@@ -788,7 +738,10 @@ class CodeDialog extends React.Component {
 						</Grid>
 					</Grid>
 
+					{this.renderStartAtTimeOptions()}
 					{this.renderCustomStartAtDates()}
+
+					{this.renderEndAtTimeOptions()}
 					{this.renderCustomEndAtDates()}
 
 					{this.renderQuantities()}
