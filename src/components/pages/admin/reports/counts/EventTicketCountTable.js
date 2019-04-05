@@ -11,7 +11,7 @@ const styles = theme => {
 };
 
 const EventTicketCountTable = props => {
-	const { ticketCounts, classes } = props;
+	const { ticketCounts, classes, hideDetails } = props;
 	const {
 		totalAllocation = 0,
 		totalSoldOnlineCount = 0,
@@ -59,6 +59,7 @@ const EventTicketCountTable = props => {
 				} = totals;
 				//Summary Row of counts
 				const { name } = ticketData;
+
 				return (
 					<div key={index}>
 						<TicketCountRow subHeading>
@@ -75,33 +76,48 @@ const EventTicketCountTable = props => {
 								dollars(totalGross)
 							]}
 						</TicketCountRow>
-						{sales.map((row, salesIndex) => {
-							const {
-								ticket_pricing_id,
-								ticket_pricing_name,
-								online_sale_count,
-								box_office_sale_count,
-								total_sold_count,
-								comp_sale_count,
-								total_sold_in_cents
-							} = row;
-							return (
-								<TicketCountRow key={`${salesIndex}-${ticket_pricing_id}`}>
-									{[
+						{
+							!hideDetails ?
+
+								sales.map((row, salesIndex) => {
+
+									const {
+										ticket_pricing_id,
 										ticket_pricing_name,
-										" ",
 										online_sale_count,
 										box_office_sale_count,
 										total_sold_count,
 										comp_sale_count,
-										" ",
-										" ",
-										" ",
-										dollars(total_sold_in_cents)
-									]}
-								</TicketCountRow>
-							);
-						})}
+										total_sold_in_cents,
+										promo_code_discounted_ticket_price,
+										promo_redemption_code,
+										hold_name
+									} = row;
+									let rowName = ticket_pricing_name;
+									if (hold_name) {
+										rowName = (promo_redemption_code ? "Promo - " : "Hold - ") + hold_name;
+									}
+									return (
+										<TicketCountRow key={`${salesIndex}-${ticket_pricing_id}`}>
+											{[
+												rowName,
+												" ",
+												online_sale_count,
+												box_office_sale_count,
+												total_sold_count,
+												comp_sale_count,
+												" ",
+												" ",
+												" ",
+												dollars(total_sold_in_cents)
+											]}
+										</TicketCountRow>
+									);
+								})
+
+								: null
+						}
+
 					</div>
 				);
 			})}
@@ -125,7 +141,8 @@ const EventTicketCountTable = props => {
 };
 
 EventTicketCountTable.propTypes = {
-	classes: PropTypes.object.isRequired
+	classes: PropTypes.object.isRequired,
+	hideDetails: PropTypes.bool
 };
 
 export default withStyles(styles)(EventTicketCountTable);

@@ -212,6 +212,8 @@ export class TicketCountReport {
 			"online_refunded_count",
 			"box_office_sale_count",
 			"online_sale_count",
+			"box_office_face_sale_count",
+			"online_face_sale_count",
 			"comp_sale_count",
 			"total_box_office_fees_in_cents",
 			"total_online_fees_in_cents",

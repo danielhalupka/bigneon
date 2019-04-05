@@ -139,19 +139,22 @@ class EventSummary extends Component {
 								]}
 							</EventSummaryRow>
 
-							{sales.map((pricePoint, priceIndex) => (
-								<EventSummaryRow key={priceIndex}>
-									{[
-										pricePoint.ticket_pricing_name,
-										dollars(pricePoint.ticket_pricing_price_in_cents),
-										dollars(pricePoint.client_online_fees_in_cents),
-										pricePoint.online_sale_count,
-										" ",
-										" ",
-										dollars(pricePoint.client_online_fees_in_cents)
-									]}
-								</EventSummaryRow>
-							))}
+							{sales.map((pricePoint, priceIndex) => {
+
+								return (
+									<EventSummaryRow key={priceIndex}>
+										{[
+											pricePoint.ticket_pricing_name,
+											dollars(pricePoint.ticket_pricing_price_in_cents),
+											dollars(pricePoint.client_online_fees_in_cents),
+											pricePoint.online_sale_count,
+											" ",
+											" ",
+											dollars(pricePoint.client_online_fees_in_cents)
+										]}
+									</EventSummaryRow>
+								);
+							})}
 						</div>
 					);
 				})}
@@ -202,7 +205,7 @@ class EventSummary extends Component {
 							variant="text"
 							onClick={this.exportCSV.bind(this)}
 						>
-						Export CSV
+							Export CSV
 						</Button>
 						<Button
 							href={`/exports/reports/?type=summary&event_id=${this.props.eventId}`}
@@ -210,7 +213,7 @@ class EventSummary extends Component {
 							iconUrl="/icons/pdf-active.svg"
 							variant="text"
 						>
-						Export PDF
+							Export PDF
 						</Button>
 					</div>
 					<Divider style={{ marginBottom: 40 }}/>

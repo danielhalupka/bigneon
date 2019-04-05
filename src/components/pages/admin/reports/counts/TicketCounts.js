@@ -47,7 +47,7 @@ const styles = theme => ({
 class TicketCounts extends Component {
 	constructor(props) {
 		super(props);
-		
+
 		this.state = {};
 	}
 
@@ -103,7 +103,7 @@ class TicketCounts extends Component {
 			const ticketCounts = eventDataResults[eventId];
 			return (
 				<div>
-					<EventTicketCountTable ticketCounts={ticketCounts}/>
+					<EventTicketCountTable hideDetails={true} ticketCounts={ticketCounts}/>
 				</div>
 			);
 		}

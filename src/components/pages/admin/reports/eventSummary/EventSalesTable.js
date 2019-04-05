@@ -65,19 +65,33 @@ const EventSalesTableView = props => {
 							]}
 						</EventSummaryRow>
 
-						{sales.map((pricePoint, priceIndex) => (
-							<EventSummaryRow key={priceIndex}>
-								{[
-									pricePoint.ticket_pricing_name,
-									dollars(pricePoint.ticket_pricing_price_in_cents),
-									pricePoint.online_sale_count,
-									pricePoint.box_office_sale_count,
-									pricePoint.total_sold_count,
-									pricePoint.comp_sale_count,
-									dollars(pricePoint.total_sold_in_cents)
-								]}
-							</EventSummaryRow>
-						))}
+						{sales.map((pricePoint, priceIndex) => {
+							const {
+								ticket_pricing_name,
+								hold_name,
+								promo_redemption_code,
+								ticket_pricing_price_in_cents,
+								promo_code_discounted_ticket_price
+							} = pricePoint;
+							let rowName = ticket_pricing_name;
+							if (hold_name) {
+								rowName = (promo_redemption_code ? "Promo - " : "Hold - ") + hold_name;
+							}
+							const price = ticket_pricing_price_in_cents + promo_code_discounted_ticket_price;
+							return (
+								<EventSummaryRow key={priceIndex}>
+									{[
+										rowName,
+										dollars(price),
+										pricePoint.online_sale_count,
+										pricePoint.box_office_sale_count,
+										pricePoint.total_sold_count,
+										pricePoint.comp_sale_count,
+										dollars(pricePoint.total_sold_in_cents)
+									]}
+								</EventSummaryRow>
+							);
+						})}
 					</div>
 				);
 			})}
