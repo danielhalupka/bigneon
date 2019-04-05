@@ -264,7 +264,7 @@ class CodeList extends Component {
 					<Typography variant="title">Promo Codes</Typography>
 					<span style={{ flex: 1 }}/>
 					{user.hasScope("code:write") ? (
-						<Button onClick={e => this.onAddCode()}>New Promo Code</Button>
+						<Button onClick={e => this.onAddCode()}>New Discount Code</Button>
 					) : (
 						<span/>
 					)}
