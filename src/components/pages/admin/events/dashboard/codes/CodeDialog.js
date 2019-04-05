@@ -65,9 +65,7 @@ const formatCodeForSaving = values => {
 		name,
 		code_type: "Discount",
 		max_uses: Number(maxUses),
-		start_date: moment
-			.utc(start_date)
-			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+		start_date: start_date,
 		end_date: end_date,
 		event_id,
 		redemption_codes,
@@ -89,14 +87,15 @@ const createCodeForInput = (values = {}) => {
 		ticket_type_ids,
 		event_start
 	} = values;
-
+	console.log("event_start: " + event_start);
+	console.log(values);
 	return {
 		id: "",
 		event_id: "",
 		name: "",
 		ticket_type_id:
 			ticket_type_ids && ticket_type_ids.length > 0 ? ticket_type_ids[0] : "",
-		maxUses: max_uses || 0,
+		maxUses: max_uses || "",
 		redemption_codes: [""],
 		discount_type: discount_as_percentage
 			? "Percentage"
@@ -115,7 +114,7 @@ const createCodeForInput = (values = {}) => {
 		endDate: end_date
 			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 			: moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local(),
-		endAtTimeKey: end_date ? "custom" : "sales_end",
+		endAtTimeKey: end_date ? "custom" : "never",
 		...values
 	};
 };
@@ -125,7 +124,7 @@ const startAtTimeOptions = [
 		value: "now",
 		label: "Now",
 		startAtDateString: (startDate) => {
-			return moment.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+			return null;
 		}
 	},
 	{
@@ -145,8 +144,8 @@ const startAtTimeOptions = [
 
 const endAtTimeOptions = [
 	{
-		value: "sales_end",
-		label: "When sales end",
+		value: "never",
+		label: "Never",
 		endAtDateString: (endAt) => {
 			return null;
 		}
@@ -242,7 +241,7 @@ class CodeDialog extends React.Component {
 						.codes.read({ id: codeId })
 						.then(response => {
 							const code = response.data;
-							this.setState( { code: createCodeForInput({ event_start_date: event_start, ...code }) } );
+							this.setState( { code: createCodeForInput({ event_start: event_start, ...code }) } );
 						});
 
 				} else {
@@ -284,7 +283,7 @@ class CodeDialog extends React.Component {
 		}
 
 		//Get the calculated end_date using the event dates
-		const { endAtTimeKey, startAtTimeKey, endDate, startDate} = code;
+		const { endAtTimeKey, startAtTimeKey, endDate, startDate } = code;
 		const endAtOption = endAtTimeOptions.find(option => option.value === endAtTimeKey);
 		const startAtOption = startAtTimeOptions.find(option => option.value === startAtTimeKey);
 		const end_date = endAtOption.endAtDateString(endDate);
@@ -295,7 +294,7 @@ class CodeDialog extends React.Component {
 			end_date,
 			start_date
 		});
-				console.log(formattedCode);
+
 		storeFunction(formattedCode)
 			.then(response => {
 				const { id } = response.data;
@@ -348,7 +347,7 @@ class CodeDialog extends React.Component {
 		return (
 			<FormControl style={{ width: "100%" }} error={!!errors.ticket_type_ids}>
 				<InputLabel shrink htmlFor="ticket-types-label-placeholder">
-					Ticket Types*
+					Select Ticket Types*
 				</InputLabel>
 				<Select
 					onBlur={this.validateFields.bind(this)}
@@ -390,8 +389,8 @@ class CodeDialog extends React.Component {
 						error={errors.maxUses}
 						value={code.maxUses}
 						name="maxUses"
-						label="Uses (0 = unlimited uses)*"
-						placeholder="100"
+						label="Total Uses*"
+						placeholder="Unlimited"
 						type="number"
 						onChange={e => {
 							code.maxUses = e.target.value;
@@ -404,7 +403,7 @@ class CodeDialog extends React.Component {
 						error={errors.maxTicketsPerUser}
 						value={code.maxTicketsPerUser}
 						name="maxTicketsPerUser"
-						label="Limit per user"
+						label="Limit per customer"
 						placeholder="1"
 						type="number"
 						onChange={e => {
@@ -430,7 +429,6 @@ class CodeDialog extends React.Component {
 					error={errors.discountInDollars}
 					value={code.discountInDollars}
 					name={"discountInDollars"}
-					label={"Discount in dollars*"}
 					placeholder=""
 					type="number"
 					onChange={e => {
@@ -450,7 +448,6 @@ class CodeDialog extends React.Component {
 					error={errors.discountAsPercentage}
 					value={code.discountAsPercentage}
 					name={"discountAsPercentage"}
-					label={"Discount as percentage*"}
 					placeholder=""
 					type="number"
 					onChange={e => {
@@ -484,7 +481,7 @@ class CodeDialog extends React.Component {
 
 		return (
 			<SelectGroup
-				value={code.endAtTimeKey || "sales_end"}
+				value={code.endAtTimeKey || "never"}
 				items={endAtTimeOptions}
 				name={"endAtTimeOptions"}
 				label={"Ends"}
@@ -572,7 +569,7 @@ class CodeDialog extends React.Component {
 		if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
 			return null;
 		}
-
+		console.log("endDate: " +  endDate);
 		return (
 			<Grid container spacing={16}>
 				<Grid item xs={12} md={6} lg={6}>
@@ -673,7 +670,7 @@ class CodeDialog extends React.Component {
 						value={code.name}
 						name="name"
 						label={nameField}
-						placeholder="- Please enter code name"
+						placeholder="Please name this promo code"
 						autofocus={true}
 						type="text"
 						onChange={e => {
@@ -685,8 +682,8 @@ class CodeDialog extends React.Component {
 						error={errors.redemption_codes}
 						value={code.redemption_codes[0]}
 						name="redemption_code"
-						label="Codes*"
-						placeholder="- Please enter code (min 6 chars)"
+						label="Promo Code*"
+						placeholder="Please enter code (min 6 chars)"
 						type="text"
 						onChange={e => {
 							code.redemption_codes = [e.target.value.toUpperCase()];

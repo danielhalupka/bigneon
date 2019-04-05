@@ -107,7 +107,7 @@ class CodeList extends Component {
 		}
 
 		if (codes && codes.length > 0) {
-			const ths = ["Name", "Codes", "Ticket Types", "Discount", "Available"];
+			const ths = ["Name", "Codes", "Ticket Types", "Discount", "Total Used"];
 
 			const onAction = (id, action) => {
 				if (action === "Edit") {
@@ -160,7 +160,7 @@ class CodeList extends Component {
 								? null
 								: ticketTypeDisplayList,
 							discount_in_cents ? "$ " + (discount_in_cents / 100).toFixed(2) : discount_as_percentage + "%",
-							max_uses === 0 ? "Unlimited" : available
+							max_uses === 0 ? "Unlimited" : (max_uses - available)
 						];
 
 						const active = activeCodeId === id && showCodeDialog;
@@ -261,10 +261,10 @@ class CodeList extends Component {
 				{showCodeDialog && this.renderDialog()}
 				{this.renderDeleteDialog()}
 				<div style={{ display: "flex" }}>
-					<Typography variant="title">Discount Codes</Typography>
+					<Typography variant="title">Promo Codes</Typography>
 					<span style={{ flex: 1 }}/>
 					{user.hasScope("code:write") ? (
-						<Button onClick={e => this.onAddCode()}>New Discount Code</Button>
+						<Button onClick={e => this.onAddCode()}>New Promo Code</Button>
 					) : (
 						<span/>
 					)}
