@@ -57,9 +57,7 @@ class Transactions extends Component {
 
 	componentDidMount() {
 		const { printVersion } = this.props;
-		if (printVersion) {
-			this.refreshData();
-		}
+		this.refreshData();
 	}
 
 	componentWillUnmount() {
@@ -91,11 +89,14 @@ class Transactions extends Component {
 
 		csvRows.push([
 			"Order ID",
+			"First Name",
+			"Last Name",
+			"Email",
 			"Event",
 			"Ticket type",
 			"Order type",
-			"Payment method",
 			"Transaction date",
+			"Payment method",
 			"Redemption code",
 			"Order type",
 			"Payment method",
@@ -105,10 +106,9 @@ class Transactions extends Component {
 			"Unit price",
 			"Face value",
 			"Service fees",
-			"Gross",
-			"First Name",
-			"Last Name",
-			"Email"
+			"Discount",
+			"Gross"
+
 		]);
 
 		items.forEach(item => {
@@ -127,6 +127,7 @@ class Transactions extends Component {
 				quantity,
 				refunded_quantity,
 				redemption_code,
+				promo_redemption_code,
 				ticket_name,
 				formattedDate,
 				unit_price_in_cents,
@@ -135,17 +136,23 @@ class Transactions extends Component {
 				event_fee_gross_in_cents_total,
 				first_name,
 				last_name,
-				email
+				email,
+				promo_quantity,
+				promo_discount_value_in_cents
 			} = item;
 
 			csvRows.push([
 				order_id.slice(-8),
+				first_name,
+				last_name,
+				email,
 				event_name,
 				ticket_name,
 				order_type,
-				payment_method,
 				formattedDate,
-				redemption_code,
+				payment_method,
+
+				redemption_code || promo_redemption_code,
 				order_type,
 				payment_method,
 				quantity,
@@ -154,10 +161,9 @@ class Transactions extends Component {
 				dollars(unit_price_in_cents),
 				dollars((quantity - refunded_quantity) * unit_price_in_cents), //Face value
 				dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
-				dollars(gross),
-				first_name,
-				last_name,
-				email
+				dollars(promo_quantity * promo_discount_value_in_cents),
+				dollars(gross)
+
 			]);
 		});
 
@@ -176,7 +182,12 @@ class Transactions extends Component {
 			const { startDate = null, endDate = null, start_utc = null, end_utc = null } = this.currentDateParams;
 
 			this.clearDebounceTimer();
-			this.debounceTimeout = setTimeout(() => this.refreshData({ start_utc, end_utc, startDate, endDate }, 0), DEBOUNCE_DELAY);
+			this.debounceTimeout = setTimeout(() => this.refreshData({
+				start_utc,
+				end_utc,
+				startDate,
+				endDate
+			}, 0), DEBOUNCE_DELAY);
 		});
 	}
 
@@ -207,7 +218,7 @@ class Transactions extends Component {
 		}
 
 		this.setState({ startDate, endDate, items: null, isLoading: true });
-		
+
 		Bigneon()
 			.reports.transactionDetails(queryParams)
 			.then(response => {
@@ -422,12 +433,21 @@ class Transactions extends Component {
 							defaultStartTimeBeforeNow={{ value: 1, unit: "M" }}
 							onChangeButton
 						/>
-					) : null }
+					) : null}
 
 					{this.renderDialog()}
 					{this.renderList()}
 
-					{paging ? <Pagination isLoading={isLoading} paging={paging} onChange={this.changePage.bind(this)}/> : null}
+					{
+						paging ?
+							(
+								<Pagination
+									isLoading={isLoading}
+									paging={paging}
+									onChange={this.changePage.bind(this)}
+								/>
+							) : null
+					}
 				</div>
 			</Card>
 		);

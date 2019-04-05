@@ -103,7 +103,7 @@ class Reports extends Component {
 
 		const { hasTransactionReports, hasTicketCountReports, currentOrganizationId, currentOrgTimezone } = user;
 
-		if (!currentOrganizationId) {
+		if (!currentOrganizationId || !currentOrgTimezone) {
 			return <Loader/>;
 		}
 
