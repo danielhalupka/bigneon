@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import moment from "moment";
+import moment from "moment-timezone";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
@@ -20,9 +20,8 @@ import RadioButton from "../../../../../elements/form/RadioButton";
 import DateTimePickerGroup from "../../../../../common/form/DateTimePickerGroup";
 import SelectGroup from "../../../../../common/form/SelectGroup";
 import notifications from "../../../../../../stores/notifications";
-import removePhoneFormatting from "../../../../../../helpers/removePhoneFormatting";
-import { validEmail, validPhone } from "../../../../../../validators";
 import { FormHelperText } from "@material-ui/core";
+import Loader from "../../../../../elements/loaders/Loader";
 
 const formatCodeForSaving = values => {
 	const {
@@ -76,7 +75,7 @@ const formatCodeForSaving = values => {
 	return result;
 };
 
-const createCodeForInput = (values = {}) => {
+const createCodeForInput = (values = {}, timezone) => {
 	const {
 		discount_in_cents,
 		discount_as_percentage,
@@ -87,8 +86,7 @@ const createCodeForInput = (values = {}) => {
 		ticket_type_ids,
 		event_start
 	} = values;
-	console.log("event_start: " + event_start);
-	console.log(values);
+
 	return {
 		id: "",
 		event_id: "",
@@ -108,12 +106,12 @@ const createCodeForInput = (values = {}) => {
 			: "",
 		maxTicketsPerUser: max_tickets_per_user || "",
 		startDate: start_date
-			? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-			: moment.utc().local(),
+			? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).tz(timezone)
+			: moment.utc().tz(timezone),
 		startAtTimeKey: start_date ? "custom" : "now",
 		endDate: end_date
-			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
-			: moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).local(),
+			? moment.utc(end_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).tz(timezone)
+			: moment.utc(event_start, moment.HTML5_FMT.DATETIME_LOCAL_MS).tz(timezone),
 		endAtTimeKey: end_date ? "custom" : "never",
 		...values
 	};
@@ -180,14 +178,15 @@ class CodeDialog extends React.Component {
 		super(props);
 
 		this.state = {
-			code: createCodeForInput(),
+			code: null,
 			errors: {},
 			isSubmitting: false,
+			timezone: null,
 			totalAvailablePerTicketType: {} // {ticketTypeId: count}
 		};
 	}
 
-	componentWillMount(nextProps) {
+	componentDidMount() {
 		this.loadCode();
 	}
 
@@ -214,8 +213,6 @@ class CodeDialog extends React.Component {
 			}
 		}
 
-		console.log(ticket_type_ids);
-
 		if (!ticket_type_ids || typeof ticket_type_ids !== "object" || ticket_type_ids[0] === "") {
 			errors.ticket_type_ids = "Missing ticket types.";
 		}
@@ -235,23 +232,31 @@ class CodeDialog extends React.Component {
 		Bigneon()
 			.events.read({ id: eventId })
 			.then(response => {
-				const event_start = response.data.event_start;
-				if (codeId) {
-					Bigneon()
-						.codes.read({ id: codeId })
-						.then(response => {
-							const code = response.data;
-							this.setState( { code: createCodeForInput({ event_start: event_start, ...code }) } );
-						});
+				const { event_start, venue } = response.data;
+				const { timezone } = venue;
 
-				} else {
-					this.setState({
-						code: createCodeForInput({
-							event_id: eventId,
-							event_start: event_start
-						})
-					});
-				}
+				this.setState({ timezone },  () => {
+					if (codeId) {
+						Bigneon()
+							.codes.read({ id: codeId })
+							.then(response => {
+								const code = response.data;
+								this.setState( { code: createCodeForInput({ event_start: event_start, ...code }, timezone) } );
+							}).catch(error => {
+								notification.showFromErrorResponse({
+									defaultMessage: "Failed to load code.",
+									error
+								});
+							});
+					} else {
+						this.setState({
+							code: createCodeForInput({
+								event_id: eventId,
+								event_start: event_start
+							}, timezone)
+						});
+					}
+				});
 			}).catch(error => {
 				console.error(error);
 				notifications.showFromErrorResponse({
@@ -508,7 +513,7 @@ class CodeDialog extends React.Component {
 					<DateTimePickerGroup
 						type={"date"}
 						error={errors.startDate}
-						value={code.startDate}
+						value={startDate}
 						name="startAtDate"
 						label="Starts"
 						onChange={newStartAtDate => {
@@ -569,7 +574,7 @@ class CodeDialog extends React.Component {
 		if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
 			return null;
 		}
-		console.log("endDate: " +  endDate);
+
 		return (
 			<Grid container spacing={16}>
 				<Grid item xs={12} md={6} lg={6}>
@@ -657,6 +662,111 @@ class CodeDialog extends React.Component {
 		}
 
 		const { code, errors } = this.state;
+
+		const content = code ? (
+			<div>
+				<InputGroup
+					error={errors.name}
+					value={code.name}
+					name="name"
+					label={nameField}
+					placeholder="Please name this promo code"
+					autofocus={true}
+					type="text"
+					onChange={e => {
+						code.name = e.target.value;
+						this.setState({ code });
+					}}
+				/>
+				<InputGroup
+					error={errors.redemption_codes}
+					value={code.redemption_codes[0]}
+					name="redemption_code"
+					label="Promo Code*"
+					placeholder="Please enter code (min 6 chars)"
+					type="text"
+					onChange={e => {
+						code.redemption_codes = [e.target.value.toUpperCase()];
+						this.setState({ code });
+					}}
+				/>
+
+				{this.renderTicketTypes()}
+
+				<Grid container>
+					<Grid item xs={12} md={12} lg={12}>
+						<div className={classes.radioGroup}>
+							<RadioButton
+								active={code.discount_type === "Absolute"}
+								onClick={() => {
+									this.setState({
+										code: {
+											...code,
+											discount_type: "Absolute",
+											discountInDollars: code.discountInDollars
+										}
+									});
+								}}
+							>
+							Discount in dollars
+							</RadioButton>
+
+							<RadioButton
+								active={code.discount_type === "Percentage"}
+								onClick={() => {
+									this.setState({
+										code: {
+											...code,
+											discount_type: "Percentage",
+											discountAsPercentage: code.discountAsPercentage
+										}
+									});
+								}}
+							>
+							Discount as percentage
+							</RadioButton>
+						</div>
+					</Grid>
+					<Grid container spacing={16}>
+						<Grid item xs={12} md={6} lg={6}>
+							{this.renderDiscounts()}
+						</Grid>
+						<Grid item xs={12} md={6} lg={6}/>
+					</Grid>
+				</Grid>
+
+				{this.renderStartAtTimeOptions()}
+				{this.renderCustomStartAtDates()}
+
+				{this.renderEndAtTimeOptions()}
+				{this.renderCustomEndAtDates()}
+
+				{this.renderQuantities()}
+
+				<div style={{ display: "flex" }}>
+					<Button
+						size="large"
+						style={{ marginRight: 10, flex: 1 }}
+						onClick={onClose}
+						color="primary"
+						disabled={isSubmitting}
+					>
+					Cancel
+					</Button>
+					<Button
+						size="large"
+						style={{ marginLeft: 10, flex: 1 }}
+						type="submit"
+						variant="callToAction"
+						onClick={this.onSubmit.bind(this)}
+						disabled={isSubmitting}
+					>
+						{saveButtonText}
+					</Button>
+				</div>
+			</div>
+		) : <Loader/>;
+		
 		return (
 			<Dialog
 				onClose={onClose}
@@ -664,107 +774,7 @@ class CodeDialog extends React.Component {
 				title={`${title} code`}
 				{...other}
 			>
-				<div>
-					<InputGroup
-						error={errors.name}
-						value={code.name}
-						name="name"
-						label={nameField}
-						placeholder="Please name this promo code"
-						autofocus={true}
-						type="text"
-						onChange={e => {
-							code.name = e.target.value;
-							this.setState({ code });
-						}}
-					/>
-					<InputGroup
-						error={errors.redemption_codes}
-						value={code.redemption_codes[0]}
-						name="redemption_code"
-						label="Promo Code*"
-						placeholder="Please enter code (min 6 chars)"
-						type="text"
-						onChange={e => {
-							code.redemption_codes = [e.target.value.toUpperCase()];
-							this.setState({ code });
-						}}
-					/>
-
-					{this.renderTicketTypes()}
-
-					<Grid container>
-						<Grid item xs={12} md={12} lg={12}>
-							<div className={classes.radioGroup}>
-								<RadioButton
-									active={code.discount_type === "Absolute"}
-									onClick={() => {
-										this.setState({
-											code: {
-												...code,
-												discount_type: "Absolute",
-												discountInDollars: code.discountInDollars
-											}
-										});
-									}}
-								>
-									Discount in dollars
-								</RadioButton>
-
-								<RadioButton
-									active={code.discount_type === "Percentage"}
-									onClick={() => {
-										this.setState({
-											code: {
-												...code,
-												discount_type: "Percentage",
-												discountAsPercentage: code.discountAsPercentage
-											}
-										});
-									}}
-								>
-									Discount as percentage
-								</RadioButton>
-							</div>
-						</Grid>
-						<Grid container spacing={16}>
-							<Grid item xs={12} md={6} lg={6}>
-								{this.renderDiscounts()}
-							</Grid>
-							<Grid item xs={12} md={6} lg={6}/>
-						</Grid>
-					</Grid>
-
-					{this.renderStartAtTimeOptions()}
-					{this.renderCustomStartAtDates()}
-
-					{this.renderEndAtTimeOptions()}
-					{this.renderCustomEndAtDates()}
-
-					{this.renderQuantities()}
-
-					<div style={{ display: "flex" }}>
-						<Button
-							size="large"
-							style={{ marginRight: 10, flex: 1 }}
-							onClick={onClose}
-							color="primary"
-							disabled={isSubmitting}
-						>
-							Cancel
-						</Button>
-						<Button
-							size="large"
-							style={{ marginLeft: 10, flex: 1 }}
-							type="submit"
-							variant="callToAction"
-							onClick={this.onSubmit.bind(this)}
-							disabled={isSubmitting}
-						>
-							{saveButtonText}
-						</Button>
-					</div>
-				</div>
+				{content}
 			</Dialog>
 		);
 	}
