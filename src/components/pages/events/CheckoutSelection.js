@@ -55,7 +55,8 @@ class CheckoutSelection extends Component {
 			ticketSelection: null,
 			isSubmitting: false,
 			isSubmittingPromo: false,
-			overlayCardHeight: 600
+			overlayCardHeight: 600,
+			promoCodeApplied: false
 		};
 	}
 
@@ -167,6 +168,24 @@ class CheckoutSelection extends Component {
 		return true;
 	}
 
+	clearAppliedPromoCodes() {
+		//Remove codes from selected tickets to not apply them when adding to cart
+		this.setState(({ ticketSelection }) => {
+			if (ticketSelection) {
+				Object.keys(ticketSelection).forEach((id) => {
+					if (ticketSelection[id]) {
+						delete ticketSelection[id].redemption_code;
+					}
+				});
+			}
+
+			return { ticketSelection, promoCodeApplied: false };
+		});
+
+		//Remove from ticket types in store
+		selectedEvent.removePromoCodesFromTicketTypes();
+	}
+
 	onSubmitPromo(code) {
 		if (!code) {
 			return notifications.show({
@@ -176,8 +195,9 @@ class CheckoutSelection extends Component {
 		}
 
 		this.setState({ isSubmittingPromo: true }, () => {
-			selectedEvent.applyRedemptionCode(code,
+			selectedEvent.applyRedemptionCode(code, null,
 				(appliedCodes) => {
+					//after applying, update redemption_code in ticketSelection
 					if (appliedCodes && Object.keys(appliedCodes).length > 0) {
 						this.setState(({ ticketSelection }) => {
 							Object.keys(appliedCodes).forEach((id) => {
@@ -185,25 +205,13 @@ class CheckoutSelection extends Component {
 									ticketSelection[id].redemption_code = appliedCodes[id];
 								}
 							});
-							return { ticketSelection };
+
+							return { ticketSelection, promoCodeApplied: true, isSubmittingPromo: false };
 						});
-
 					}
-					//after applying, update redemption_code in ticketSelection
 
-				}, error => {
+				}, () => {
 					this.setState({ isSubmittingPromo: false });
-
-					let defaultMessage = "Failed to apply promo code.";
-
-					if (error.response.status === 404) {
-						defaultMessage = "Promo code does not exist.";
-					}
-
-					notifications.showFromErrorResponse({
-						defaultMessage,
-						error
-					});
 				});
 		});
 	}
@@ -304,13 +312,13 @@ class CheckoutSelection extends Component {
 						return;
 					}
 
-					let price = 0;
+					let price_in_cents = 0;
 					let ticketsAvailable = false;
-					let discount = 0;
+					let discount_in_cents = 0;
 					if (ticket_pricing) {
-						price = ticket_pricing.price_in_cents / 100;
+						price_in_cents = ticket_pricing.price_in_cents;
 						ticketsAvailable = available > 0;
-						discount = ticket_pricing.discount_in_cents || 0;
+						discount_in_cents = ticket_pricing.discount_in_cents || 0;
 					} else {
 						//description = "(Tickets currently unavailable)";
 					}
@@ -322,12 +330,13 @@ class CheckoutSelection extends Component {
 							name={name}
 							description={description}
 							available={ticketsAvailable}
-							price={price}
+							price_in_cents={price_in_cents}
 							error={errors[id]}
 							amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}
 							increment={increment}
 							limitPerPerson={limitPerPerson}
-							discount={discount}
+							discount_in_cents={discount_in_cents}
+							redemption_code={redemption_code}
 							onNumberChange={amount =>
 								this.setState(({ ticketSelection }) => {
 									ticketSelection[id] = {
@@ -352,7 +361,7 @@ class CheckoutSelection extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { isSubmitting, isSubmittingPromo, ticketSelection } = this.state;
+		const { isSubmitting, isSubmittingPromo, ticketSelection, promoCodeApplied } = this.state;
 
 		const { event, venue, artists, organization, id } = selectedEvent;
 
@@ -403,6 +412,12 @@ class CheckoutSelection extends Component {
 					{this.renderTicketPricing()}
 
 					<InputWithButton
+						clearText={"Remove"}
+						onClear={this.clearAppliedPromoCodes.bind(this)}
+						successState={promoCodeApplied}
+						showClearButton={promoCodeApplied}
+						iconUrl={promoCodeApplied ? "/icons/checkmark-active.svg" : null}
+						iconStyle={{ height: 15, width: "auto" }}
 						style={{ marginBottom: 20, marginTop: 20 }}
 						name={"promoCode"}
 						placeholder="Enter a promo code"

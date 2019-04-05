@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import { Typography } from "@material-ui/core";
 
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
 
 const height = 40;
 
@@ -23,6 +23,10 @@ const styles = theme => {
 			alignItems: "center",
 			backgroundColor: "#FFFFFF"
 		},
+		successStateRoot: {
+			borderColor: secondaryHex,
+			borderWidth: 1
+		},
 		inputContainer: {
 			flex: 3,
 			padding: theme.spacing.unit / 2,
@@ -37,23 +41,26 @@ const styles = theme => {
 		buttonContainer: {
 			marginTop: theme.spacing.unit * 1.5,
 			marginBottom: theme.spacing.unit * 1.5,
-
+			paddingLeft: theme.spacing.unit * 1.5,
+			paddingRight: theme.spacing.unit * 1.5,
 			display: "flex",
 			justifyContent: "center",
 			alignItems: "center",
-
 			flex: 1,
 			borderLeft: `0.5px solid ${borderColor}`,
 			cursor: "pointer",
 			textTransform: "uppercase"
 		},
 		buttonText: {
-			marginTop: 4,
-			fontSize: theme.typography.fontSize * 0.95,
+			marginTop: 5,
+			fontSize: theme.typography.fontSize * 1.1,
 			fontFamily: fontFamilyDemiBold
 		},
 		buttonTextDisabled: {
 			color: "gray"
+		},
+		buttonTextSuccessState: {
+			color: secondaryHex
 		},
 		icon: {
 			height: height * 0.65,
@@ -96,12 +103,15 @@ class InputWithButton extends Component {
 			onSubmit,
 			toUpperCase,
 			onClear,
-			showClearButton
+			showClearButton,
+			successState,
+			clearText,
+			iconStyle
 		} = this.props;
 
 		return (
-			<div className={classes.root} style={style}>
-				{iconUrl ? <img className={classes.icon} src={iconUrl}/> : null}
+			<div className={classNames({ [classes.root]: true, [classes.successStateRoot]: successState })} style={style}>
+				{iconUrl ? <img className={classes.icon} style={iconStyle} src={iconUrl}/> : null}
 				<div className={classes.inputContainer}>
 					<input
 						className={classes.input}
@@ -138,10 +148,11 @@ class InputWithButton extends Component {
 					<Typography
 						className={classNames({
 							[classes.buttonText]: true,
+							[classes.buttonTextSuccessState]: successState,
 							[classes.buttonTextDisabled]: disabled
 						})}
 					>
-						{showClearButton ? "Clear" : buttonText}
+						{showClearButton ? clearText : buttonText}
 					</Typography>
 				</div>
 			</div>
@@ -151,7 +162,9 @@ class InputWithButton extends Component {
 
 InputWithButton.defaultPropTypes = {
 	buttonText: "Submit",
-	style: {}
+	style: {},
+	clearText: "clear",
+	iconStyle: {}
 };
 
 InputWithButton.propTypes = {
@@ -166,7 +179,10 @@ InputWithButton.propTypes = {
 	toUpperCase: PropTypes.bool,
 	disabled: PropTypes.bool,
 	onClear: PropTypes.func,
-	showClearButton: PropTypes.bool
+	showClearButton: PropTypes.bool,
+	successState: PropTypes.bool,
+	clearText: PropTypes.string,
+	iconStyle: PropTypes.object
 };
 
 export default withStyles(styles)(InputWithButton);

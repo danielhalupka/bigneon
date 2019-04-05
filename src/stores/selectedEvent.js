@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 import createGoogleMapsLink from "../helpers/createGoogleMapsLink";
 import Bigneon from "../helpers/bigneon";
 import changeUrlParam from "../helpers/changeUrlParam";
-import notification from "./notifications";
+import notifications from "./notifications";
 import errorReporting from "../helpers/errorReporting";
 import getUrlParam from "../helpers/getUrlParam";
 
@@ -38,6 +38,9 @@ class SelectedEvent {
 	@observable
 	privateAccessCodeError = "";
 
+	@observable
+	appliedRedemptionCode = null;
+
 	@action
 	refreshResult(id, onError = () => {}) {
 		//If we're updating the state to a different event just reset the values first so it doesn't load old data in components observing this
@@ -50,6 +53,7 @@ class SelectedEvent {
 			this.private_access_code = null;
 			this.showPrivateAccessCodeInputDialog = false;
 			this.privateAccessCodeError = "";
+			this.appliedRedemptionCode = null;
 		}
 
 		this.id = id;
@@ -145,7 +149,7 @@ class SelectedEvent {
 					user_is_interested
 				} = event;
 
-				this.ticket_types = ticket_types;
+				// this.ticket_types = ticket_types;
 				this.organization = organization;
 				this.user_is_interested = user_is_interested;
 				this.artists = artists;
@@ -172,6 +176,14 @@ class SelectedEvent {
 					displayShowTime,
 					promo_image_url: promo_image_url || "/images/event-placeholder.png"
 				};
+
+				//If we have a promo code, load it first to apply to the new ticket types retrieved
+				if (this.appliedRedemptionCode) {
+					this.applyRedemptionCode(this.appliedRedemptionCode, ticket_types, () => {}, () => {});
+				} else {
+					//If we're not using a promo code, just set the ticket types as is
+					this.ticket_types = ticket_types;
+				}
 
 				//If we got the code from this store, append it to the url for any route changes
 				if (private_access_code) {
@@ -207,7 +219,7 @@ class SelectedEvent {
 
 		this.refreshResult(this.id, (error) => {
 			console.log("Code attempt failed");
-			notification.showFromErrorResponse({
+			notifications.showFromErrorResponse({
 				defaultMessage: "Failed to load event with access code.",
 				error
 			});
@@ -217,7 +229,9 @@ class SelectedEvent {
 	}
 
 	@action
-	applyRedemptionCode(redemptionCode, onSuccess = () => {}, onError = () => {}) {
+	applyRedemptionCode(redemptionCode, ticketTypes, onSuccess = () => {}, onError = () => {}) {
+		const updatedTicketTypes = ticketTypes || this.ticket_types;
+
 		Bigneon()
 			.redemptionCodes.read({ code: redemptionCode })
 			.then(
@@ -225,28 +239,21 @@ class SelectedEvent {
 					const { data } = response;
 					const appliedCodes = {};
 
-					//For holds (TODO will be removed and work the same way as promo codes)
-					if (data.ticket_type) {
-						this.ticket_types.forEach((tt, index) => {
-							if (tt.id === data.ticket_type.id) {
-								appliedCodes[tt.id] = data.ticket_type.redemption_code;
-								this.ticket_types[index] = data.ticket_type;
-								data.ticket_type = null;
-							}
-						});
-
-						// if the ticket type is not already present, and the event is
-						// this event, add it.
-						if (data.ticket_type.event_id === this.event.id) {
-							this.ticket_types.push(data.ticket_type);
-						}
-					}
-
 					//For promo codes (New data format)
 					if (data.ticket_types && typeof data.ticket_types === "object") {
 						data.ticket_types.forEach(codeTicketType => {
+							//Validate the code is for this event
+							const { event_id } = codeTicketType;
+							if (event_id !== this.id) {
+								onError();
+								return notifications.show({
+									message: "Promo code not valid for this event.",
+									variant: "warning"
+								});
+							}
+
 							let existingTicketTypeIndex = null;
-							this.ticket_types.forEach((et, index) => {
+							updatedTicketTypes.forEach((et, index) => {
 								if (et.id == codeTicketType.id) {
 									existingTicketTypeIndex = index;
 								}
@@ -254,22 +261,49 @@ class SelectedEvent {
 
 							//Overwrite existing ticket type
 							if (existingTicketTypeIndex !== null) {
-								this.ticket_types[existingTicketTypeIndex] = codeTicketType;
+								updatedTicketTypes[existingTicketTypeIndex] = codeTicketType;
 							} else {
 								//Add missing ticket type, it's revealed with a code
-								this.ticket_types.push(codeTicketType);
+								updatedTicketTypes.push(codeTicketType);
 							}
 
 							appliedCodes[codeTicketType.id] = codeTicketType.redemption_code;
 						});
 					}
 
+					this.appliedRedemptionCode = redemptionCode;
+
+					this.ticket_types = updatedTicketTypes;
 					onSuccess(appliedCodes);
 				},
 				error => {
-					onError(error);
+					this.ticket_types = updatedTicketTypes;
+
+					onError();
+
+					if (error.response.status === 404) {
+						notifications.show({
+							message: "Promo code does not exist.",
+							variant: "warning"
+						});
+					} else {
+						notifications.showFromErrorResponse({
+							defaultMessage: "Failed to apply promo code.",
+							error
+						});
+					}
 				}
 			);
+	}
+
+	@action
+	removePromoCodesFromTicketTypes() {
+		if (this.ticket_types) {
+			this.ticket_types.forEach((tt, index) => {
+				delete tt.redemption_code;
+				this.ticket_types[index] = tt;
+			});
+		}
 	}
 
 	@action

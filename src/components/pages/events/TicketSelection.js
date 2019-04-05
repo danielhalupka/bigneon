@@ -42,6 +42,19 @@ const styles = theme => ({
 		color: secondaryHex,
 		cursor: "pointer",
 		fontSize: theme.typography.fontSize * 0.75
+	},
+	promoAppliedText: {
+		backgroundColor: secondaryHex,
+		color: "#FFFFFF",
+		borderRadius: 4,
+		paddingTop: 8,
+		paddingBottom: 3,
+		paddingLeft: 14,
+		paddingRight: 14,
+		display: "inline-block",
+		marginBottom: 4,
+		fontSize: theme.typography.fontSize * 0.8125,
+		textTransform: "capitalize"
 	}
 });
 
@@ -65,13 +78,14 @@ class TicketSelection extends Component {
 			error,
 			name,
 			description,
-			price,
+			price_in_cents,
 			amount,
 			increment,
 			onNumberChange,
 			validateFields,
 			limitPerPerson,
-			discount
+			discount_in_cents,
+			redemption_code
 		} = this.props;
 
 		const { showDescription } = this.state;
@@ -84,13 +98,22 @@ class TicketSelection extends Component {
 				? `there is a ${limitPerPerson} ticket limit`
 				: "";
 
+		const calculatedPriceInCents = redemption_code && discount_in_cents ? price_in_cents - discount_in_cents : price_in_cents;
+
 		return (
 			<div>
-
 				<Grid alignItems="center" className={classes.container} container>
+					{redemption_code ? (
+						<Grid item xs={12} sm={12} md={12} lg={12}>
+							<Typography className={classes.promoAppliedText}>
+								{discount_in_cents ? `${dollars(discount_in_cents)} Discount applied` : "Code applied"}
+							</Typography>
+						</Grid>
+					) : null}
+
 					<Grid item xs={3} sm={3} md={4} lg={3}>
 						<Typography className={classes.price}>
-							{available ? `$${price}` : ""}
+							{available ? `${dollars(calculatedPriceInCents, true)}` : ""}
 						</Typography>
 					</Grid>
 					<Grid item xs={6} sm={6} md={5} lg={6} className={classes.detailContainer}>
@@ -98,7 +121,7 @@ class TicketSelection extends Component {
 						<Typography variant="caption" style={{ color: "red" }}>
 							{lppText}
 						</Typography>
-						{description && !discount ? (
+						{description && !discount_in_cents ? (
 							<Typography className={classes.readMoreLessText} onClick={this.readMoreLess.bind(this)}>
 								{showDescription ? "Read Less" : "Read More"}
 							</Typography>
@@ -138,14 +161,13 @@ class TicketSelection extends Component {
 					</Grid>
 				</Grid>
 
-				{showDescription || discount ? (
+				{showDescription ? (
 					<Grid
 						justify="flex-end"
 						alignItems="flex-end"
 						container
 					>
 						<Grid item xs={9} sm={9} md={8} lg={9} className={classes.detailContainer}>
-							{discount ? <Typography className={classes.description}>Discount applied: {dollars(discount)}</Typography> : null}
 							{description ? <Typography className={classes.description}>{nl2br(description)}</Typography> : null}
 						</Grid>
 					</Grid>
@@ -162,8 +184,9 @@ TicketSelection.propTypes = {
 	onNumberChange: PropTypes.func.isRequired,
 	name: PropTypes.string.isRequired,
 	description: PropTypes.string,
-	price: PropTypes.number.isRequired,
-	discount: PropTypes.number,
+	price_in_cents: PropTypes.number.isRequired,
+	discount_in_cents: PropTypes.number,
+	redemption_code: PropTypes.string,
 	error: PropTypes.string,
 	amount: PropTypes.number,
 	increment: PropTypes.number.isRequired,

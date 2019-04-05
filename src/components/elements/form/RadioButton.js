@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
 
 const styles = theme => {
 	return {
@@ -27,10 +27,11 @@ const styles = theme => {
 		activeCircle: {
 			marginRight: theme.spacing.unit,
 			borderStyle: "solid",
-			borderColor: theme.palette.secondary.main,
+			borderColor: secondaryHex,
 			width: 16,
 			height: 16,
-			borderRadius: 10
+			borderRadius: 10,
+			backgroundColor: secondaryHex
 		}
 	};
 };
