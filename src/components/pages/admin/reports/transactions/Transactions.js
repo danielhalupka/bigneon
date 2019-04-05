@@ -227,7 +227,7 @@ class Transactions extends Component {
 				data.forEach(item => {
 					const formattedDate = moment
 						.utc(item.transaction_date)
-						.tz(user.currentOrgTimezone || moment.tz.guess())
+						.tz(user.currentOrgTimezone)
 						.format("MM/DD/YYYY h:mm:A");
 					items.push({ ...item, formattedDate });
 				});
