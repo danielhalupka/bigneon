@@ -57,7 +57,7 @@ const formatCodeForSaving = values => {
 
 	let max_per_users = {};
 	if (maxTicketsPerUser && Number(maxTicketsPerUser) > 0) {
-		max_per_users = { max_per_user: (maxTicketsPerUser) };
+		max_per_users = { max_tickets_per_user: Number(maxTicketsPerUser) };
 	}
 
 	const result = {
@@ -83,7 +83,7 @@ const createCodeForInput = (values = {}) => {
 		discount_in_cents,
 		discount_as_percentage,
 		max_uses,
-		max_per_user,
+		max_tickets_per_user,
 		end_date,
 		start_date,
 		ticket_type_ids,
@@ -107,7 +107,7 @@ const createCodeForInput = (values = {}) => {
 		discountAsPercentage: discount_as_percentage
 			? discount_as_percentage
 			: "",
-		maxTicketsPerUser: max_per_user || "",
+		maxTicketsPerUser: max_tickets_per_user || "",
 		startDate: start_date
 			? moment.utc(start_date, moment.HTML5_FMT.DATETIME_LOCAL_MS).local()
 			: moment.utc().local(),
@@ -295,7 +295,7 @@ class CodeDialog extends React.Component {
 			end_date,
 			start_date
 		});
-
+				console.log(formattedCode);
 		storeFunction(formattedCode)
 			.then(response => {
 				const { id } = response.data;
