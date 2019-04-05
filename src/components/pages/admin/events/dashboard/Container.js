@@ -150,7 +150,7 @@ class EventDashboardContainer extends Component {
 				{user.hasScope("code:read") ? (
 					<Link to={`/admin/events/${event.id}/dashboard/codes`}>
 						<MenuItem onClick={this.handleToolsMenuClose.bind(this)}>
-							Discount codes
+							Promo codes
 						</MenuItem>
 					</Link>
 				) : (

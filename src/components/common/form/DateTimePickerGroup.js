@@ -76,6 +76,10 @@ class DateTimePickerGroup extends Component {
 		};
 	}
 
+	componentDidMount() {
+		this.setDisplayTimezone();
+	}
+
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		const { value } = this.props;
 
@@ -98,7 +102,14 @@ class DateTimePickerGroup extends Component {
 			});
 		}
 
+		this.setDisplayTimezone(prevState);
+	}
+
+	setDisplayTimezone(prevState = {}) {
+		const { value } = this.props;
+
 		const displayTimezone = value && value.isValid() ? value.format("z") : "";
+
 		if (displayTimezone && prevState.displayTimezone !== displayTimezone) {
 			//Set the timezone display if exists and has changed
 			this.setState({ displayTimezone });
