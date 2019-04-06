@@ -452,7 +452,7 @@ const TicketDetails = observer(props => {
 							}}
 							active={isPrivate}
 						>
-							Private (Can only be sold via holds)
+							Private (Can only be sold via holds or access codes)
 						</CheckBox>
 					</div>
 				</div>

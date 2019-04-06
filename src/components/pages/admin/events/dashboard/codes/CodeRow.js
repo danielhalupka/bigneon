@@ -65,6 +65,7 @@ const CodeRow = props => {
 		},
 
 		{ flex: 2, textAlign: "right" },
+		{ flex: 2, textAlign: "right" },
 		{ flex: 2, textAlign: "right" }
 	];
 	const actionStyle = { flex: 2, textAlign: "center" };

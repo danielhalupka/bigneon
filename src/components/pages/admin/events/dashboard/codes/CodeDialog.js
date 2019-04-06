@@ -38,6 +38,8 @@ const formatCodeForSaving = values => {
 		name,
 		start_date,
 		end_date,
+		codeType,
+		code_type,
 		...rest
 	} = values;
 
@@ -54,6 +56,14 @@ const formatCodeForSaving = values => {
 		};
 	}
 
+	let db_code_type;
+	if (codeType === CODE_TYPES.NEW_ACCESS || (code_type && code_type === "Access")) {
+		discount = { discount_in_cents: 0 };
+		db_code_type = "Access";
+	} else {
+		db_code_type = "Discount";
+	}
+
 	let max_per_users = {};
 	if (maxTicketsPerUser && Number(maxTicketsPerUser) > 0) {
 		max_per_users = { max_tickets_per_user: Number(maxTicketsPerUser) };
@@ -62,7 +72,7 @@ const formatCodeForSaving = values => {
 	const result = {
 		id,
 		name,
-		code_type: "Discount",
+		code_type: db_code_type,
 		max_uses: Number(maxUses),
 		start_date: start_date,
 		end_date: end_date,
@@ -84,7 +94,8 @@ const createCodeForInput = (values = {}, timezone) => {
 		end_date,
 		start_date,
 		ticket_type_ids,
-		event_start
+		event_start,
+		code_type
 	} = values;
 
 	return {
@@ -169,8 +180,9 @@ const styles = theme => ({
 });
 
 export const CODE_TYPES = {
-	EDIT: "edit",
-	NEW: "new"
+	NEW_ACCESS: "new_access",
+	NEW_DISCOUNT: "new_discount",
+	EDIT: "edit"
 };
 
 class CodeDialog extends React.Component {
@@ -279,7 +291,8 @@ class CodeDialog extends React.Component {
 		this.setState({ isSubmitting: true });
 		let storeFunction;
 		switch (codeType) {
-			case CODE_TYPES.NEW:
+			case CODE_TYPES.NEW_ACCESS:
+			case CODE_TYPES.NEW_DISCOUNT :
 				storeFunction = Bigneon().events.codes.create;
 				break;
 			case CODE_TYPES.EDIT:
@@ -288,7 +301,7 @@ class CodeDialog extends React.Component {
 		}
 
 		//Get the calculated end_date using the event dates
-		const { endAtTimeKey, startAtTimeKey, endDate, startDate } = code;
+		const { endAtTimeKey, startAtTimeKey, endDate, startDate, code_type } = code;
 		const endAtOption = endAtTimeOptions.find(option => option.value === endAtTimeKey);
 		const startAtOption = startAtTimeOptions.find(option => option.value === startAtTimeKey);
 		const end_date = endAtOption.endAtDateString(endDate);
@@ -297,7 +310,9 @@ class CodeDialog extends React.Component {
 		const formattedCode = formatCodeForSaving({
 			...code,
 			end_date,
-			start_date
+			start_date,
+			codeType,
+			code_type
 		});
 
 		storeFunction(formattedCode)
@@ -421,7 +436,56 @@ class CodeDialog extends React.Component {
 		);
 	}
 
-	renderDiscounts() {
+	renderDiscounts(codeType, classes) {
+		const { code, code_type } = this.state;
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+			return (
+				<Grid container>
+					<Grid item xs={12} md={12} lg={12}>
+						<div className={classes.radioGroup}>
+							<RadioButton
+								active={code.discount_type === "Absolute"}
+								onClick={() => {
+									this.setState({
+										code: {
+											...code,
+											discount_type: "Absolute",
+											discountInDollars: code.discountInDollars
+										}
+									});
+								}}
+							>
+								Discount in dollars
+							</RadioButton>
+
+							<RadioButton
+								active={code.discount_type === "Percentage"}
+								onClick={() => {
+									this.setState({
+										code: {
+											...code,
+											discount_type: "Percentage",
+											discountAsPercentage: code.discountAsPercentage
+										}
+									});
+								}}
+							>
+								Discount as percentage
+							</RadioButton>
+						</div>
+					</Grid>
+					<Grid container spacing={16}>
+						<Grid item xs={12} md={6} lg={6}>
+							{this.renderDiscountInput()}
+						</Grid>
+						<Grid item xs={12} md={6} lg={6}/>
+					</Grid>
+				</Grid>
+			);
+		}
+	}
+
+	renderDiscountInput() {
 		const { code, errors } = this.state;
 		if (code.discount_type === "Absolute") {
 			return (
@@ -464,179 +528,198 @@ class CodeDialog extends React.Component {
 		}
 	}
 
-	renderStartAtTimeOptions() {
-		const { code } = this.state;
+	renderStartAtTimeOptions(codeType) {
+		const { code_type } = this.state;
 
-		return (
-			<SelectGroup
-				value={code.startAtTimeKey || "now"}
-				items={startAtTimeOptions}
-				name={"startAtTimeOptions"}
-				label={"Starts"}
-				onChange={e => {
-					code.startAtTimeKey = e.target.value;
-					this.setState({ code });
-				}}
-			/>
-		);
-	}
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+			const { code } = this.state;
 
-	renderEndAtTimeOptions() {
-		const { code } = this.state;
-
-		return (
-			<SelectGroup
-				value={code.endAtTimeKey || "never"}
-				items={endAtTimeOptions}
-				name={"endAtTimeOptions"}
-				label={"Ends"}
-				onChange={e => {
-					code.endAtTimeKey = e.target.value;
-					this.setState({ code });
-				}}
-			/>
-		);
-	}
-
-	renderCustomStartAtDates() {
-		const { code, errors } = this.state;
-
-		if (!code.startAtTimeKey || code.startAtTimeKey !== "custom") {
-			return null;
+			return (
+				<SelectGroup
+					value={code.startAtTimeKey || "now"}
+					items={startAtTimeOptions}
+					name={"startAtTimeOptions"}
+					label={"Starts"}
+					onChange={e => {
+						code.startAtTimeKey = e.target.value;
+						this.setState({ code });
+					}}
+				/>
+			);
 		}
-
-		const { startDate } = code;
-
-		return (
-			<Grid container spacing={16}>
-				<Grid item xs={12} md={6} lg={6}>
-					<DateTimePickerGroup
-						type={"date"}
-						error={errors.startDate}
-						value={startDate}
-						name="startAtDate"
-						label="Starts"
-						onChange={newStartAtDate => {
-							if (startDate) {
-								//Take the time from current date
-								newStartAtDate.set({
-									hour: startDate.get("hour"),
-									minute: startDate.get("minute"),
-									second: startDate.get("second")
-								});
-							} else {
-								newStartAtDate.set({
-									hour: 12,
-									minute: 0,
-									second: 0
-								});
-							}
-
-							code.startDate = newStartAtDate;
-
-							this.setState({ code });
-						}}
-					/>
-				</Grid>
-				<Grid item xs={12} md={6} lg={6}>
-					<DateTimePickerGroup
-						type={"time"}
-						error={errors.startDate}
-						value={code.startDate}
-						name="startAtTime"
-						label="at"
-						onChange={newStartAtTime => {
-							if (startDate) {
-								startDate.set({
-									hour: newStartAtTime.get("hour"),
-									minute: newStartAtTime.get("minute"),
-									second: newStartAtTime.get("second")
-								});
-
-								code.startDate = startDate;
-							} else {
-								code.startDate = newStartAtTime;
-							}
-
-							this.setState({ code });
-						}}
-					/>
-				</Grid>
-			</Grid>
-		);
 	}
 
-	renderCustomEndAtDates() {
-		const { code, errors } = this.state;
+	renderEndAtTimeOptions(codeType) {
+		const { code_type } = this.state;
 
-		const { endDate } = code;
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+			const { code } = this.state;
 
-		if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
-			return null;
+			return (
+				<SelectGroup
+					value={code.endAtTimeKey || "never"}
+					items={endAtTimeOptions}
+					name={"endAtTimeOptions"}
+					label={"Ends"}
+					onChange={e => {
+						code.endAtTimeKey = e.target.value;
+						this.setState({ code });
+					}}
+				/>
+			);
 		}
+	}
 
-		return (
-			<Grid container spacing={16}>
-				<Grid item xs={12} md={6} lg={6}>
-					<DateTimePickerGroup
-						type={"date"}
-						error={errors.endDate}
-						value={code.endDate}
-						name="endAtDate"
-						label="Ends"
-						onChange={newEndAtDate => {
-							if (endDate) {
-								//Take the time from current date
-								newEndAtDate.set({
-									hour: endDate.get("hour"),
-									minute: endDate.get("minute"),
-									second: endDate.get("second")
-								});
-							} else {
-								newEndAtDate.set({
-									hour: 12,
-									minute: 0,
-									second: 0
-								});
-							}
+	renderCustomStartAtDates(codeType) {
+		const { code_type } = this.state;
 
-							code.endDate = newEndAtDate;
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+			const { code, errors } = this.state;
 
-							this.setState({ code });
-						}}
-					/>
+			if (!code.startAtTimeKey || code.startAtTimeKey !== "custom") {
+				return null;
+			}
+
+			const { startDate } = code;
+
+			return (
+				<Grid container spacing={16}>
+					<Grid item xs={12} md={6} lg={6}>
+						<DateTimePickerGroup
+							type={"date"}
+							error={errors.startDate}
+							value={code.startDate}
+							name="startAtDate"
+							label="Starts"
+							onChange={newStartAtDate => {
+								if (startDate) {
+									//Take the time from current date
+									newStartAtDate.set({
+										hour: startDate.get("hour"),
+										minute: startDate.get("minute"),
+										second: startDate.get("second")
+									});
+								} else {
+									newStartAtDate.set({
+										hour: 12,
+										minute: 0,
+										second: 0
+									});
+								}
+
+								code.startDate = newStartAtDate;
+
+								this.setState({ code });
+							}}
+						/>
+					</Grid>
+					<Grid item xs={12} md={6} lg={6}>
+						<DateTimePickerGroup
+							type={"time"}
+							error={errors.startDate}
+							value={code.startDate}
+							name="startAtTime"
+							label="at"
+							onChange={newStartAtTime => {
+								if (startDate) {
+									startDate.set({
+										hour: newStartAtTime.get("hour"),
+										minute: newStartAtTime.get("minute"),
+										second: newStartAtTime.get("second")
+									});
+
+									code.startDate = startDate;
+								} else {
+									code.startDate = newStartAtTime;
+								}
+
+								this.setState({ code });
+							}}
+						/>
+					</Grid>
 				</Grid>
-				<Grid item xs={12} md={6} lg={6}>
-					<DateTimePickerGroup
-						type={"time"}
-						error={errors.endDate}
-						value={code.endDate}
-						name="endAtTime"
-						label="at"
-						onChange={newEndAtTime => {
-							if (endDate) {
-								endDate.set({
-									hour: newEndAtTime.get("hour"),
-									minute: newEndAtTime.get("minute"),
-									second: newEndAtTime.get("second")
-								});
+			);
+		}
+	}
 
-								code.endDate = endDate;
-							} else {
-								code.endDate = newEndAtTime;
-							}
+	renderCustomEndAtDates(codeType) {
+		const { code_type } = this.state;
 
-							this.setState({ code });
-						}}
-					/>
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+			const { code, errors } = this.state;
+
+			const { endDate } = code;
+			if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
+				return null;
+			}
+
+			if (!code.endAtTimeKey || code.endAtTimeKey !== "custom") {
+				return null;
+			}
+
+			return (
+				<Grid container spacing={16}>
+					<Grid item xs={12} md={6} lg={6}>
+						<DateTimePickerGroup
+							type={"date"}
+							error={errors.endDate}
+							value={code.endDate}
+							name="endAtDate"
+							label="Ends"
+							onChange={newEndAtDate => {
+								if (endDate) {
+									//Take the time from current date
+									newEndAtDate.set({
+										hour: endDate.get("hour"),
+										minute: endDate.get("minute"),
+										second: endDate.get("second")
+									});
+								} else {
+									newEndAtDate.set({
+										hour: 12,
+										minute: 0,
+										second: 0
+									});
+								}
+
+								code.endDate = newEndAtDate;
+
+								this.setState({ code });
+							}}
+						/>
+					</Grid>
+					<Grid item xs={12} md={6} lg={6}>
+						<DateTimePickerGroup
+							type={"time"}
+							error={errors.endDate}
+							value={code.endDate}
+							name="endAtTime"
+							label="at"
+							onChange={newEndAtTime => {
+								if (endDate) {
+									endDate.set({
+										hour: newEndAtTime.get("hour"),
+										minute: newEndAtTime.get("minute"),
+										second: newEndAtTime.get("second")
+									});
+
+									code.endDate = endDate;
+								} else {
+									code.endDate = newEndAtTime;
+								}
+
+								this.setState({ code });
+							}}
+						/>
+					</Grid>
 				</Grid>
-			</Grid>
-		);
+			);
+		}
 	}
 
 	render() {
 		const {
-			codeType = CODE_TYPES.NEW,
+			codeType = CODE_TYPES.NEW_DISCOUNT,
 			onClose,
 			classes,
 			codeId,
@@ -652,18 +735,25 @@ class CodeDialog extends React.Component {
 		const nameField = "Name (For Reports)*";
 		let saveButtonText = "Create";
 		switch (codeType) {
-			case CODE_TYPES.NEW:
-				title = "Create";
+			case CODE_TYPES.NEW_ACCESS:
+				title = "New Access Code";
+				break;
+			case CODE_TYPES.NEW_DISCOUNT:
+				title = "New Discount Code";
 				break;
 			case CODE_TYPES.EDIT:
-				title = "Update";
+				title = "Update Discount Code";
 				saveButtonText = "Update";
 				break;
 		}
 
+		if (code && code.code_type == "Access") {
+			title = "Update Access code";
+		}
+
 		const { code, errors } = this.state;
 
-		const content = code ? (
+		const content =  code ? (
 			<div>
 				<InputGroup
 					error={errors.name}
@@ -693,53 +783,13 @@ class CodeDialog extends React.Component {
 
 				{this.renderTicketTypes()}
 
-				<Grid container>
-					<Grid item xs={12} md={12} lg={12}>
-						<div className={classes.radioGroup}>
-							<RadioButton
-								active={code.discount_type === "Absolute"}
-								onClick={() => {
-									this.setState({
-										code: {
-											...code,
-											discount_type: "Absolute",
-											discountInDollars: code.discountInDollars
-										}
-									});
-								}}
-							>
-							Discount in dollars
-							</RadioButton>
+				{this.renderDiscounts(codeType, classes)}
 
-							<RadioButton
-								active={code.discount_type === "Percentage"}
-								onClick={() => {
-									this.setState({
-										code: {
-											...code,
-											discount_type: "Percentage",
-											discountAsPercentage: code.discountAsPercentage
-										}
-									});
-								}}
-							>
-							Discount as percentage
-							</RadioButton>
-						</div>
-					</Grid>
-					<Grid container spacing={16}>
-						<Grid item xs={12} md={6} lg={6}>
-							{this.renderDiscounts()}
-						</Grid>
-						<Grid item xs={12} md={6} lg={6}/>
-					</Grid>
-				</Grid>
+				{this.renderStartAtTimeOptions(codeType)}
+				{this.renderCustomStartAtDates(codeType)}
 
-				{this.renderStartAtTimeOptions()}
-				{this.renderCustomStartAtDates()}
-
-				{this.renderEndAtTimeOptions()}
-				{this.renderCustomEndAtDates()}
+				{this.renderEndAtTimeOptions(codeType)}
+				{this.renderCustomEndAtDates(codeType)}
 
 				{this.renderQuantities()}
 
@@ -766,12 +816,12 @@ class CodeDialog extends React.Component {
 				</div>
 			</div>
 		) : <Loader/>;
-		
+
 		return (
 			<Dialog
 				onClose={onClose}
 				iconUrl={iconUrl}
-				title={`${title} code`}
+				title={`${title}`}
 				{...other}
 			>
 				{content}

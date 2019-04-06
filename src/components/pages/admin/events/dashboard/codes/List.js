@@ -73,12 +73,20 @@ class CodeList extends Component {
 			});
 	}
 
-	onAddCode() {
-		this.setState({
-			activeCodeId: null,
-			showCodeDialog: "-1",
-			codeType: CODE_TYPES.NEW
-		});
+	onAddCode(type) {
+		if (type === "discount") {
+			this.setState({
+				activeCodeId: null,
+				showCodeDialog: "-1",
+				codeType: CODE_TYPES.NEW_DISCOUNT
+			});
+		} else {
+			this.setState({
+				activeCodeId: null,
+				showCodeDialog: "-1",
+				codeType: CODE_TYPES.NEW_ACCESS
+			});
+		}
 	}
 
 	deleteCode(id) {
@@ -107,7 +115,7 @@ class CodeList extends Component {
 		}
 
 		if (codes && codes.length > 0) {
-			const ths = ["Name", "Codes", "Ticket Types", "Discount", "Total Used"];
+			const ths = ["Name", "Codes", "Ticket Types", "Type",  "Total Used", "Discount", ""];
 
 			const onAction = (id, action) => {
 				if (action === "Edit") {
@@ -135,7 +143,8 @@ class CodeList extends Component {
 							discount_in_cents,
 							discount_as_percentage,
 							max_uses,
-							available
+							available,
+							code_type
 						} = c;
 
 						const ticketTypesList = [];
@@ -153,14 +162,27 @@ class CodeList extends Component {
 							});
 						}
 
+						let discount_type;
+						if (code_type === "Discount") {
+							discount_type = discount_in_cents ? "$ " + (discount_in_cents / 100).toFixed(2) : discount_as_percentage + "%";
+						} else {
+							discount_type = "Access";
+						}
+
+						let discount = "None";
+						if (discount_in_cents) {
+							discount = `$${(discount_in_cents / 100).toFixed(2)}`;
+						} else if (discount_as_percentage) {
+							discount = `${discount_as_percentage}%`;
+						}
+
 						const tds = [
 							name,
 							redemption_codes,
-							Object.keys(ticketTypes).length === 0
-								? null
-								: ticketTypeDisplayList,
-							discount_in_cents ? "$ " + (discount_in_cents / 100).toFixed(2) : discount_as_percentage + "%",
-							max_uses - available
+							ticketTypeDisplayList,
+							discount_type,
+							max_uses - available,
+							discount
 						];
 
 						const active = activeCodeId === id && showCodeDialog;
@@ -260,14 +282,18 @@ class CodeList extends Component {
 			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{showCodeDialog && this.renderDialog()}
 				{this.renderDeleteDialog()}
-				<div style={{ display: "flex" }}>
+				<div style={{ display: "flex", justifyContent: "space-between" }}>
 					<Typography variant="title">Promo Codes</Typography>
-					<span style={{ flex: 1 }}/>
-					{user.hasScope("code:write") ? (
-						<Button onClick={e => this.onAddCode()}>New Discount Code</Button>
-					) : (
-						<span/>
-					)}
+					<div>
+						{user.hasScope("code:write") ? (
+							<Button onClick={e => this.onAddCode("discount")} style={{ marginRight: 10 }}>New Discount Code</Button>
+						) : null}
+
+						{user.hasScope("code:write") ? (
+							<Button onClick={e => this.onAddCode("access")}>New Access Code</Button>
+						) : null}
+					</div>
+
 				</div>
 
 				<Divider style={{ marginBottom: 40 }}/>
