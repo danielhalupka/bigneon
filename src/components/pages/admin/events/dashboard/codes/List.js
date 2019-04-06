@@ -164,7 +164,7 @@ class CodeList extends Component {
 
 						let discount_type;
 						if (code_type === "Discount") {
-							discount_type = discount_in_cents ? "$ " + (discount_in_cents / 100).toFixed(2) : discount_as_percentage + "%";
+							discount_type = "Discount";
 						} else {
 							discount_type = "Access";
 						}
