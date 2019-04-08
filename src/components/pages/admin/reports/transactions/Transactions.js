@@ -57,7 +57,9 @@ class Transactions extends Component {
 
 	componentDidMount() {
 		const { printVersion } = this.props;
-		this.refreshData();
+		if (printVersion) {
+			this.refreshData();
+		}
 	}
 
 	componentWillUnmount() {
@@ -432,22 +434,20 @@ class Transactions extends Component {
 							onChange={this.refreshData.bind(this)}
 							defaultStartTimeBeforeNow={{ value: 1, unit: "M" }}
 							onChangeButton
+							onChangeOnLoad
 						/>
 					) : null}
 
 					{this.renderDialog()}
 					{this.renderList()}
 
-					{
-						paging ?
-							(
-								<Pagination
-									isLoading={isLoading}
-									paging={paging}
-									onChange={this.changePage.bind(this)}
-								/>
-							) : null
-					}
+					{paging ? (
+						<Pagination
+							isLoading={isLoading}
+							paging={paging}
+							onChange={this.changePage.bind(this)}
+						/>
+					) : null}
 				</div>
 			</Card>
 		);
