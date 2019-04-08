@@ -38,7 +38,30 @@ const styles = theme => ({
 });
 
 const LINE_LIMIT_PER_PAGE = 20;
+const UNLIMITED_LINE_LIMIT = 999999999;
 const DEBOUNCE_DELAY = 500;
+
+const formatItems = (data) => {
+	const items = [];
+	data.forEach(item => {
+		const formattedDate = moment
+			.utc(item.transaction_date)
+			.tz(user.currentOrgTimezone)
+			.format("MM/DD/YYYY h:mm:A");
+		items.push({ ...item, formattedDate });
+	});
+
+	items.sort((a, b) => {
+		//Gte the dates we need to compare
+		if (moment(a.transaction_date).diff(moment(b.transaction_date)) < 0) {
+			return 1;
+		} else {
+			return -1;
+		}
+	});
+
+	return items;
+};
 
 @observer
 class Transactions extends Component {
@@ -49,7 +72,8 @@ class Transactions extends Component {
 			items: null,
 			isLoading: false,
 			paging: null,
-			searchQuery: ""
+			searchQuery: "",
+			isExportingCSV: false
 		};
 
 		this.currentDateParams = {};
@@ -58,7 +82,7 @@ class Transactions extends Component {
 	componentDidMount() {
 		const { printVersion } = this.props;
 		if (printVersion) {
-			this.refreshData();
+			this.refreshData({}, 0, UNLIMITED_LINE_LIMIT); //TODO api needs to allow for all
 		}
 	}
 
@@ -67,109 +91,131 @@ class Transactions extends Component {
 	}
 
 	exportCSV() {
-		const { items, startDate, endDate } = this.state;
+		this.setState({ isExportingCSV: true });
 
-		if (!items || items.length < 1) {
-			return notifications.show({
-				message: "No rows to export.",
-				variant: "warning"
+		const { eventName, eventId, organizationId } = this.props;
+
+		Bigneon()
+			.reports.transactionDetails({
+				organization_id: organizationId,
+				page: 0,
+				limit: UNLIMITED_LINE_LIMIT,
+				query: ""
+			})
+			.then(response => {
+				const { data } = response.data;
+				const items = formatItems(data);
+
+				const { startDate, endDate } = this.state;
+
+				if (!items || items.length < 1) {
+					return notifications.show({
+						message: "No rows to export.",
+						variant: "warning"
+					});
+				}
+
+				const csvRows = [];
+
+				let title = "Transaction details report";
+				if (eventName) {
+					title = `${title} - ${eventName}`;
+				}
+
+				csvRows.push([title]);
+				csvRows.push([`Transactions occurring ${reportDateRangeHeading(startDate, endDate)}`]);
+				csvRows.push([""]);
+
+				csvRows.push([
+					"Order ID",
+					"First Name",
+					"Last Name",
+					"Email",
+					"Event",
+					"Ticket type",
+					"Order type",
+					"Transaction date",
+					"Payment method",
+					"Redemption code",
+					"Order type",
+					"Payment method",
+					"Quantity Sold",
+					"Quantity Refunded",
+					"Actual Quantity",
+					"Unit price",
+					"Face value",
+					"Service fees",
+					"Discount",
+					"Gross"
+
+				]);
+
+				items.forEach(item => {
+					const {
+						client_fee_in_cents,
+						company_fee_in_cents,
+						event_fee_gross_in_cents,
+						event_fee_company_in_cents,
+						event_fee_client_in_cents,
+						event_id,
+						event_name,
+						gross,
+						order_id,
+						order_type,
+						payment_method,
+						quantity,
+						refunded_quantity,
+						redemption_code,
+						promo_redemption_code,
+						ticket_name,
+						formattedDate,
+						unit_price_in_cents,
+						user_id,
+						gross_fee_in_cents_total,
+						event_fee_gross_in_cents_total,
+						first_name,
+						last_name,
+						email,
+						promo_quantity,
+						promo_discount_value_in_cents
+					} = item;
+
+					csvRows.push([
+						order_id.slice(-8),
+						first_name,
+						last_name,
+						email,
+						event_name,
+						ticket_name,
+						order_type,
+						formattedDate,
+						payment_method,
+
+						redemption_code || promo_redemption_code,
+						order_type,
+						payment_method,
+						quantity,
+						refunded_quantity,
+						quantity - refunded_quantity,
+						dollars(unit_price_in_cents),
+						dollars((quantity - refunded_quantity) * unit_price_in_cents), //Face value
+						dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
+						dollars(promo_quantity * promo_discount_value_in_cents),
+						dollars(gross)
+
+					]);
+				});
+
+				downloadCSV(csvRows, "transaction-report");
+				this.setState({ isExportingCSV: false });
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					error,
+					defaultMessage: "Exporting event transaction report failed."
+				});
 			});
-		}
-
-		const { eventName, eventId } = this.props;
-
-		const csvRows = [];
-
-		let title = "Transaction details report";
-		if (eventName) {
-			title = `${title} - ${eventName}`;
-		}
-
-		csvRows.push([title]);
-		csvRows.push([`Transactions occurring ${reportDateRangeHeading(startDate, endDate)}`]);
-		csvRows.push([""]);
-
-		csvRows.push([
-			"Order ID",
-			"First Name",
-			"Last Name",
-			"Email",
-			"Event",
-			"Ticket type",
-			"Order type",
-			"Transaction date",
-			"Payment method",
-			"Redemption code",
-			"Order type",
-			"Payment method",
-			"Quantity Sold",
-			"Quantity Refunded",
-			"Actual Quantity",
-			"Unit price",
-			"Face value",
-			"Service fees",
-			"Discount",
-			"Gross"
-
-		]);
-
-		items.forEach(item => {
-			const {
-				client_fee_in_cents,
-				company_fee_in_cents,
-				event_fee_gross_in_cents,
-				event_fee_company_in_cents,
-				event_fee_client_in_cents,
-				event_id,
-				event_name,
-				gross,
-				order_id,
-				order_type,
-				payment_method,
-				quantity,
-				refunded_quantity,
-				redemption_code,
-				promo_redemption_code,
-				ticket_name,
-				formattedDate,
-				unit_price_in_cents,
-				user_id,
-				gross_fee_in_cents_total,
-				event_fee_gross_in_cents_total,
-				first_name,
-				last_name,
-				email,
-				promo_quantity,
-				promo_discount_value_in_cents
-			} = item;
-
-			csvRows.push([
-				order_id.slice(-8),
-				first_name,
-				last_name,
-				email,
-				event_name,
-				ticket_name,
-				order_type,
-				formattedDate,
-				payment_method,
-
-				redemption_code || promo_redemption_code,
-				order_type,
-				payment_method,
-				quantity,
-				refunded_quantity,
-				quantity - refunded_quantity,
-				dollars(unit_price_in_cents),
-				dollars((quantity - refunded_quantity) * unit_price_in_cents), //Face value
-				dollars(event_fee_gross_in_cents_total + gross_fee_in_cents_total),
-				dollars(promo_quantity * promo_discount_value_in_cents),
-				dollars(gross)
-
-			]);
-		});
-
-		downloadCSV(csvRows, "transaction-report");
 	}
 
 	clearDebounceTimer() {
@@ -198,7 +244,7 @@ class Transactions extends Component {
 		this.refreshData({ start_utc, end_utc, startDate, endDate }, page);
 	}
 
-	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }, page = 0) {
+	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }, page = 0, limit = LINE_LIMIT_PER_PAGE) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
 		this.currentDateParams = dataParams;
@@ -211,7 +257,7 @@ class Transactions extends Component {
 			start_utc,
 			end_utc,
 			page,
-			limit: LINE_LIMIT_PER_PAGE,
+			limit,
 			query: searchQuery
 		};
 
@@ -225,23 +271,7 @@ class Transactions extends Component {
 			.reports.transactionDetails(queryParams)
 			.then(response => {
 				const { data, paging } = response.data;
-				const items = [];
-				data.forEach(item => {
-					const formattedDate = moment
-						.utc(item.transaction_date)
-						.tz(user.currentOrgTimezone)
-						.format("MM/DD/YYYY h:mm:A");
-					items.push({ ...item, formattedDate });
-				});
-
-				items.sort((a, b) => {
-					//Gte the dates we need to compare
-					if (moment(a.transaction_date).diff(moment(b.transaction_date)) < 0) {
-						return 1;
-					} else {
-						return -1;
-					}
-				});
+				const items = formatItems(data);
 
 				this.setState({ items, paging, isLoading: false }, () => {
 					onLoad ? onLoad() : null;
@@ -378,7 +408,7 @@ class Transactions extends Component {
 			return this.renderList();
 		}
 
-		const { isLoading, paging, searchQuery } = this.state;
+		const { isLoading, paging, searchQuery, isExportingCSV } = this.state;
 
 		const { currentOrgTimezone } = user;
 
@@ -414,8 +444,9 @@ class Transactions extends Component {
 								iconUrl="/icons/csv-active.svg"
 								variant="text"
 								onClick={this.exportCSV.bind(this)}
+								disabled={isExportingCSV}
 							>
-								Export CSV
+								{isExportingCSV ? "Exporting..." : "Export CSV"}
 							</Button>
 							<Button
 								href={`/exports/reports/?type=transactions${eventId ? `&event_id=${eventId}` : ""}`}
