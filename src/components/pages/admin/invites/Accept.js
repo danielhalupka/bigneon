@@ -7,7 +7,7 @@ import user from "../../../../stores/user";
 import Bigneon from "../../../../helpers/bigneon";
 import Dialog from "../../../elements/Dialog";
 import Button from "../../../elements/Button";
-import { fontFamilyDemiBold } from "../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../config/theme";
 import getUrlParam from "../../../../helpers/getUrlParam";
 
 const styles = theme => ({

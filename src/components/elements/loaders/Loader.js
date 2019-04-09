@@ -4,7 +4,7 @@ import classnames from "classnames";
 import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import "./loader.css";
 const loadingImage = require("./loading.svg");
 

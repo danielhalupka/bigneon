@@ -4,6 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Card from "../Card";
 import MaintainAspectRatio from "../MaintainAspectRatio";
 import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
+import settings from "../../../config/settings";
 
 const styles = theme => ({
 	root: {
@@ -77,7 +78,7 @@ class EventDetailsOverlayCard extends Component {
 			<div ref={this.containerDiv} className={classes.root} style={style}>
 				<Card variant="subCard">
 					{imageSrc ? (
-						<MaintainAspectRatio heightRatio={0.5}>
+						<MaintainAspectRatio aspectRatio={settings().promoImageAspectRatio}>
 							<div
 								className={classes.media}
 								style={{ backgroundImage: `url(${imageSrc})` }}

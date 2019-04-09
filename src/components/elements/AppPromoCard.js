@@ -5,7 +5,7 @@ import Card from "@material-ui/core/Card";
 import classNames from "classnames";
 import { Typography, Hidden } from "@material-ui/core";
 import AppButton from "./AppButton";
-import { fontFamilyDemiBold } from "../styles/theme";
+import { fontFamilyDemiBold } from "../../config/theme";
 
 const styles = theme => ({
 	root: {

@@ -9,7 +9,7 @@ import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
-import { fontFamilyBold, fontFamilyDemiBold, secondaryHex, textColorPrimary } from "../../styles/theme";
+import { fontFamilyBold, fontFamilyDemiBold, secondaryHex, textColorPrimary } from "../../../config/theme";
 import Card from "../../elements/Card";
 import AppButton from "../../elements/AppButton";
 import SMSLinkForm from "../../elements/SMSLinkForm";

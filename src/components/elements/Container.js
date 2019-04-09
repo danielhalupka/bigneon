@@ -17,7 +17,7 @@ import Notification from "../common/Notification";
 import user from "../../stores/user";
 import CartMobileBottomBar from "../common/cart/CartMobileBottomBar";
 import RequiresAuthDialog from "../pages/authentication/RequiresAuthDialog";
-import { toolBarHeight } from "../../components/styles/theme";
+import { toolBarHeight } from "../../config/theme";
 import layout from "../../stores/layout";
 import BoxOfficeAppBar from "./header/BoxOfficeAppBar";
 import Footer from "./footers/FooterOne";

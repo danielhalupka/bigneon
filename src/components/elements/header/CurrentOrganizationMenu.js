@@ -8,8 +8,8 @@ import Menu from "@material-ui/core/Menu";
 import Hidden from "@material-ui/core/Hidden";
 
 import user from "../../../stores/user";
-import { primaryHex } from "../../styles/theme";
-import { toolBarHeight } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
+import { toolBarHeight } from "../../../config/theme";
 
 const styles = theme => ({
 	root: {

@@ -6,7 +6,7 @@ import { Typography } from "@material-ui/core";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 import Dialog from "../../../../elements/Dialog";
-import { fontFamilyDemiBold, fontFamilyBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold, fontFamilyBold } from "../../../../../config/theme";
 import StyledLink from "../../../../elements/StyledLink";
 import { dollars } from "../../../../../helpers/money";
 

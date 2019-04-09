@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles, Typography, Collapse } from "@material-ui/core";
 
 import Card from "../../../../../elements/Card";
-import { fontFamilyDemiBold, secondaryHex } from "../../../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../../../config/theme";
 import GuestTicketRow from "./GuestTicketRow";
 import CheckBox from "../../../../../elements/form/CheckBox";
 

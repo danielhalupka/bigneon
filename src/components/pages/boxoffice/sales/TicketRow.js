@@ -4,7 +4,7 @@ import { withStyles, Typography, Hidden } from "@material-ui/core";
 
 import Card from "../../../elements/Card";
 import NumberSelect from "../../../elements/form/NumberSelect";
-import { fontFamilyDemiBold } from "../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../config/theme";
 
 const styles = theme => ({
 	root: {

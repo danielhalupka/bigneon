@@ -10,8 +10,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import moment from "moment";
 
 import user from "../../../stores/user";
-import { primaryHex, fontFamilyDemiBold } from "../../styles/theme";
-import { toolBarHeight } from "../../styles/theme";
+import { primaryHex, fontFamilyDemiBold } from "../../../config/theme";
+import { toolBarHeight } from "../../../config/theme";
 import boxOffice from "../../../stores/boxOffice";
 
 const displayTime = ({ event_start, door_time }) => {

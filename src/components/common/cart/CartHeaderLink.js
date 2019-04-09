@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import TimerIcon from "@material-ui/icons/Timer";
 import cart from "../../../stores/cart";
-import { primaryHex } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
 
 const styles = theme => ({
 	menuButton: {

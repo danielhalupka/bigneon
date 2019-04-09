@@ -507,7 +507,7 @@ class Event extends Component {
 					<PromoImage
 						src={event.promoImageUrl}
 						alt="Event promo image"
-						caption="Recommended image size 2160px x 1080px"
+						caption="Recommended image size 1920px x 1080px"
 						onUrlUpdate={promoImageUrl => {
 							eventUpdateStore.updateEvent({ promoImageUrl });
 						}}

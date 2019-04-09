@@ -5,7 +5,7 @@ import notifications from "../../../../../../stores/notifications";
 import Button from "../../../../../elements/Button";
 import Bigneon from "../../../../../../helpers/bigneon";
 import Container from "../Container";
-import { fontFamilyDemiBold, primaryHex, secondaryHex } from "../../../../../styles/theme";
+import { fontFamilyDemiBold, primaryHex, secondaryHex } from "../../../../../../config/theme";
 import Dialog from "../../../../../elements/Dialog";
 import Loader from "../../../../../elements/loaders/Loader";
 

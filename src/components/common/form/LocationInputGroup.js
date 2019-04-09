@@ -10,7 +10,7 @@ import PlacesAutocomplete, {
 	getLatLng
 } from "react-places-autocomplete";
 import AddressBlock from "../../common/form/AddressBlock";
-import { primaryHex } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
 import Button from "../../elements/Button";
 import Loader from "../../elements/loaders/Loader";
 import loadGoogleMaps from "../../../helpers/loadGoogleMaps";

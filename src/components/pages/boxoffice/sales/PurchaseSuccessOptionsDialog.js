@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Bigneon from "../../../../helpers/bigneon";
 import notification from "../../../../stores/notifications";
 import Dialog from "../../../elements/Dialog";
-import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../config/theme";
 import { validPhone, validEmail } from "../../../../validators";
 import Button from "../../../elements/Button";
 import notifications from "../../../../stores/notifications";

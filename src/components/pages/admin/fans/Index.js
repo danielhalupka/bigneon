@@ -9,7 +9,7 @@ import PageHeading from "../../../elements/PageHeading";
 import layout from "../../../../stores/layout";
 import FanRow from "./FanRow";
 import Card from "../../../elements/Card";
-import { fontFamilyDemiBold, primaryHex } from "../../../styles/theme";
+import { fontFamilyDemiBold, primaryHex } from "../../../../config/theme";
 import user from "../../../../stores/user";
 import Button from "../../../elements/Button";
 import downloadCSV from "../../../../helpers/downloadCSV";

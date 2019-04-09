@@ -12,7 +12,7 @@ import {
 	warningHex,
 	callToActionBackground,
 	fontFamilyDemiBold
-} from "../styles/theme";
+} from "../../config/theme";
 
 const styles = theme => {
 	return {

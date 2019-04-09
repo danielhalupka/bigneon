@@ -32,19 +32,19 @@ class MaintainAspectRatio extends Component {
 
 	render() {
 		const { divWidth }  = this.state;
-		const { heightRatio, ...props } = this.props;
-		const height = divWidth * heightRatio;
+		const { aspectRatio, ...props } = this.props;
+		const height = divWidth / aspectRatio;
 
 		return <div style={{ height }} ref={this.containerDiv} {...props}/>;
 	}
 }
 
 MaintainAspectRatio.defaultProps = {
-	heightRatio: 1
+	aspectRatio: 1
 };
 
 MaintainAspectRatio.propTypes = {
-	heightRatio: PropTypes.number.isRequired
+	aspectRatio: PropTypes.number
 };
 
 export default MaintainAspectRatio;

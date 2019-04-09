@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import TotalsRow from "./TotalsRow";
 import { dollars } from "../../../../../helpers/money";
 import { Typography, withStyles } from "@material-ui/core";
-import { fontFamilyDemiBold, secondaryHex } from "../../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../../config/theme";
 
 const styles = theme => ({
 	root: {},

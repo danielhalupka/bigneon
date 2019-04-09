@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Typography, Hidden } from "@material-ui/core";
 
-import { secondaryHex } from "../../styles/theme";
+import { secondaryHex } from "../../../config/theme";
 import StyledLink from "../StyledLink";
 
 const styles = theme => ({

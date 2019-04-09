@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyBold, fontFamilyDemiBold } from "../../../config/theme";
 import SocialIconLink from "../social/SocialIconLink";
 import createGoogleMapsLink from "../../../helpers/createGoogleMapsLink";
 import Button from "../Button";

@@ -4,7 +4,7 @@ import { withStyles, Typography } from "@material-ui/core";
 import classNames from "classnames";
 
 import Card from "../../../../../elements/Card";
-import { fontFamilyDemiBold } from "../../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../../config/theme";
 
 const styles = theme => ({
 	root: {

@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import QRCode from "qrcode.react";
 
-import { primaryHex } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
 import Bigneon from "../../../helpers/bigneon";
 import notification from "../../../stores/notifications";
 import Dialog from "../../elements/Dialog";

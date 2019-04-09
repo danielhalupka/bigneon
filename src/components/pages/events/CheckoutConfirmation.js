@@ -20,7 +20,7 @@ import {
 	primaryHex,
 	secondaryHex,
 	fontFamily
-} from "../../styles/theme";
+} from "../../../config/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import Divider from "../../common/Divider";
 import orders from "../../../stores/orders";

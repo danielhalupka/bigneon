@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import MenuIcon from "@material-ui/icons/Menu";
 
-import { secondaryHex, toolBarHeight } from "../../styles/theme";
+import { secondaryHex, toolBarHeight } from "../../../config/theme";
 import RightUserMenu from "./RightUserMenu";
 import SearchToolBarInput from "./SearchToolBarInput";
 import CartHeaderLink from "../../common/cart/CartHeaderLink";

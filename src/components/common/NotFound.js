@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import Button from "../elements/Button";
 import { Typography, withStyles } from "@material-ui/core";
-import { fontFamilyDemiBold } from "../styles/theme";
+import { fontFamilyDemiBold } from "../../config/theme";
 import errorReporting from "../../helpers/errorReporting";
 
 const styles = theme => ({

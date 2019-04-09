@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Card from "../../elements/Card";
 
 import AppBar from "../../elements/header/AppBar";
-import { toolBarHeight } from "../../styles/theme";
+import { toolBarHeight } from "../../../config/theme";
 
 const styles = theme => ({
 	root: {

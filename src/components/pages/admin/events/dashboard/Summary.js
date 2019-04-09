@@ -8,7 +8,7 @@ import moment from "moment-timezone";
 import TicketTypeSalesBarChart from "../../../../elements/charts/TicketTypeSalesBarChart";
 import Card from "../../../../elements/Card";
 import Divider from "../../../../common/Divider";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 import VerticalBarChart from "../../../../elements/charts/VerticalBarChart";
 import Container from "./Container";
 import Bigneon from "../../../../../helpers/bigneon";

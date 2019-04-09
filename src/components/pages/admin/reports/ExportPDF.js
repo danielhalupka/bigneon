@@ -8,7 +8,7 @@ import Loader from "../../../elements/loaders/Loader";
 import Bigneon from "../../../../helpers/bigneon";
 import NotFound from "../../../common/NotFound";
 import notification from "../../../../stores/notifications";
-import { fontFamilyDemiBold } from "../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../config/theme";
 import ExportMetaTags from "./ExportMetaTags";
 import { EventSummaryReport } from "./eventSummary/EventSummary";
 import Transactions from "./transactions/Transactions";

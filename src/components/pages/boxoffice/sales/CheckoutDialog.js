@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import { observer } from "mobx-react";
 
 import Dialog from "../../../elements/Dialog";
-import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../config/theme";
 import Divider from "../../../common/Divider";
 import PaymentOptionCard from "../../../elements/PaymentOptionCard";
 import { Grid, InputAdornment } from "@material-ui/core";

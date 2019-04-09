@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { fontFamilyDemiBold, textColorPrimary } from "../../styles/theme";
+import { fontFamilyDemiBold, textColorPrimary } from "../../../config/theme";
 import classNames from "classnames";
 
 const styles = theme => {

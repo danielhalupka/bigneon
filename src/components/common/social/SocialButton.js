@@ -8,7 +8,7 @@ import {
 	textColorSecondary,
 	primaryHex,
 	secondaryHex
-} from "../../styles/theme";
+} from "../../../config/theme";
 
 const styles = theme => {
 	return {

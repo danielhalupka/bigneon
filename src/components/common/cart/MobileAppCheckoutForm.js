@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { Grid } from "@material-ui/core";
 import Button from "../../elements/Button";
 import user from "../../../stores/user";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import Dialog from "../../elements/Dialog";
 
 const styles = theme => ({

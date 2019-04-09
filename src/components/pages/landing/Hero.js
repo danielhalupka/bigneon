@@ -1,7 +1,7 @@
 import React from "react";
 import { withStyles, Typography } from "@material-ui/core";
 import classnames from "classnames";
-import { fontFamilyBold } from "../../styles/theme";
+import { fontFamilyBold } from "../../../config/theme";
 import AppButton from "../../elements/AppButton";
 
 const styles = theme => ({

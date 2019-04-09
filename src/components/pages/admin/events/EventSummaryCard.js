@@ -7,7 +7,7 @@ import Collapse from "@material-ui/core/Collapse";
 import moment from "moment-timezone";
 import { Link } from "react-router-dom";
 
-import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../config/theme";
 import ColorTag from "../../../elements/ColorTag";
 import Card from "../../../elements/Card";
 import HorizontalBreakdownBar from "../../../elements/charts/HorizontalBreakdownBar";

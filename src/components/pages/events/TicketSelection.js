@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
-import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../config/theme";
 import Divider from "../../common/Divider";
 import NumberSelect from "../../elements/form/NumberSelect";
 import nl2br from "../../../helpers/nl2br";

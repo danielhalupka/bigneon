@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import QRCode from "qrcode.react";
 
-import { primaryHex } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
 import Button from "../../elements/Button";
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail, validPhone } from "../../../validators";

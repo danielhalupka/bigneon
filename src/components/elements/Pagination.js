@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
-import { fontFamilyDemiBold, secondaryHex } from "../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../config/theme";
 import changeUrlParam from "../../helpers/changeUrlParam";
 import getUrlParam from "../../helpers/getUrlParam";
 

@@ -6,7 +6,7 @@ import classNames from "classnames";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import SupportingArtistsLabel from "../../pages/events/SupportingArtistsLabel";
-import { fontFamilyBold, fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyBold, fontFamilyDemiBold } from "../../../config/theme";
 import DateFlag from "./DateFlag";
 import user from "../../../stores/user";
 import nl2br from "../../../helpers/nl2br";

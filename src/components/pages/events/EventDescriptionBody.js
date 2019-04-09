@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 
 import nl2br from "../../../helpers/nl2br";
-import { textColorPrimary } from "../../styles/theme";
+import { textColorPrimary } from "../../../config/theme";
 import ArtistSummary from "../../elements/event/ArtistSummary";
 
 const styles = theme => ({

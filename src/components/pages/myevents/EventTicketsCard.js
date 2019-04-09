@@ -11,7 +11,7 @@ import Collapse from "@material-ui/core/Collapse";
 
 import Card from "../../elements/Card";
 import StyledLink from "../../elements/StyledLink";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import EventTicketRow from "./EventTicketRow";
 import CheckBox from "../../elements/form/CheckBox";
 import DateFlag from "../../elements/event/DateFlag";

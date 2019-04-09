@@ -5,9 +5,10 @@ import moment from "moment-timezone";
 import { Link } from "react-router-dom";
 
 import Card from "../Card";
-import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../config/theme";
 import MaintainAspectRatio from "../MaintainAspectRatio";
 import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
+import settings from "../../../config/settings";
 
 const styles = theme => ({
 	card: {
@@ -115,7 +116,7 @@ const EventResultCard = ({
 	return (
 		<Link to={`/events/${id}`}>
 			<Card borderLess variant="default">
-				<MaintainAspectRatio heightRatio={0.5}>
+				<MaintainAspectRatio aspectRatio={settings().promoImageAspectRatio}>
 					<div className={classes.media} style={style}>
 						<PriceTag
 							min={min_ticket_price}

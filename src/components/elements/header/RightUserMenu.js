@@ -12,8 +12,8 @@ import Hidden from "@material-ui/core/Hidden";
 
 import user from "../../../stores/user";
 import NotificationList from "../../common/NotificationList";
-import { primaryHex } from "../../styles/theme";
-import { toolBarHeight } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
+import { toolBarHeight } from "../../../config/theme";
 import Button from "../Button";
 
 const styles = theme => ({

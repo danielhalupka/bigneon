@@ -12,7 +12,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import notifications from "../../../../../stores/notifications";
 import Loader from "../../../../elements/loaders/Loader";
 import reportDateRangeHeading from "../../../../../helpers/reportDateRangeHeading";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 
 const styles = theme => ({
 	root: {},

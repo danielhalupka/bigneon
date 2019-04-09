@@ -10,7 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Bigneon from "../../../../../../helpers/bigneon";
 import notifications from "../../../../../../stores/notifications";
 import CheckBox from "../../../../../elements/form/CheckBox";
-import { fontFamilyBold, fontFamilyDemiBold } from "../../../../../styles/theme";
+import { fontFamilyBold, fontFamilyDemiBold } from "../../../../../../config/theme";
 import Loader from "../../../../../elements/loaders/Loader";
 
 const styles = theme => ({

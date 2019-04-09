@@ -8,7 +8,7 @@ import { Typography, Hidden } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 import cart from "../../../stores/cart";
-import { primaryHex } from "../../styles/theme";
+import { primaryHex } from "../../../config/theme";
 import layout from "../../../stores/layout";
 
 const styles = theme => {

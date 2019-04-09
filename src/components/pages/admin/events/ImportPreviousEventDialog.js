@@ -14,7 +14,7 @@ import eventUpdateStore from "../../../../stores/eventUpdate";
 import { updateTimezonesInObjects } from "../../../../helpers/time";
 import createGoogleMapsLink from "../../../../helpers/createGoogleMapsLink";
 import Loader from "../../../elements/loaders/Loader";
-import { fontFamilyDemiBold, textColorPrimary } from "../../../styles/theme";
+import { fontFamilyDemiBold, textColorPrimary } from "../../../../config/theme";
 import { DEFAULT_END_TIME_HOURS_AFTER_SHOW_TIME } from "./updateSections/Details";
 
 const displayTime = (event_start, timezone) => {

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 
-import { callToActionBackground, fontFamilyDemiBold } from "../../styles/theme";
+import { callToActionBackground, fontFamilyDemiBold } from "../../../config/theme";
 import AppButton from "../AppButton";
 
 //TODO change external links

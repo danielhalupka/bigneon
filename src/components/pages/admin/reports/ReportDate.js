@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 
 import Divider from "../../../common/Divider";
 import DateTimePickerGroup from "../../../common/form/DateTimePickerGroup";
-import { fontFamilyDemiBold } from "../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../config/theme";
 import changeUrlParam from "../../../../helpers/changeUrlParam";
 import PropTypes from "prop-types";
 import Button from "../../../elements/Button";

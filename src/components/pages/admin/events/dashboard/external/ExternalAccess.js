@@ -8,7 +8,7 @@ import notifications from "../../../../../../stores/notifications";
 import { validEmail } from "../../../../../../validators";
 import Bigneon from "../../../../../../helpers/bigneon";
 import Bn from "bn-api-node";
-import { fontFamilyDemiBold, primaryHex } from "../../../../../styles/theme";
+import { fontFamilyDemiBold, primaryHex } from "../../../../../../config/theme";
 import UserRow from "./UserRow";
 import Grid from "@material-ui/core/Grid/Grid";
 import user from "../../../../../../stores/user";

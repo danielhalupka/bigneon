@@ -4,7 +4,7 @@ import { withStyles, Typography } from "@material-ui/core";
 
 import moment from "moment";
 import Card from "../../../elements/Card";
-import { fontFamilyDemiBold, secondaryHex } from "../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../config/theme";
 
 const styles = theme => ({
 	root: {

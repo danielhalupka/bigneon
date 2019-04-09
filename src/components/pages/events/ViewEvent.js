@@ -11,7 +11,7 @@ import Divider from "../../common/Divider";
 import notifications from "../../../stores/notifications";
 import selectedEvent from "../../../stores/selectedEvent";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
-import { fontFamilyBold, secondaryHex, textColorPrimary } from "../../styles/theme";
+import { fontFamilyBold, secondaryHex, textColorPrimary } from "../../../config/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import nl2br from "../../../helpers/nl2br";
 import Meta from "./Meta";
@@ -29,6 +29,7 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import EventDescriptionBody from "./EventDescriptionBody";
 import addressLineSplit from "../../../helpers/addressLineSplit";
 import layout from "../../../stores/layout";
+import settings from "../../../config/settings";
 
 const ADDITIONAL_INFO_CHAR_LIMIT = 300;
 
@@ -430,7 +431,7 @@ class ViewEvent extends Component {
 
 				{/*MOBILE*/}
 				<Hidden mdUp>
-					<MaintainAspectRatio heightRatio={0.5}>
+					<MaintainAspectRatio aspectRatio={settings().promoImageAspectRatio}>
 						<div className={classes.mobileHeaderImage} style={mobilePromoImageStyle}/>
 					</MaintainAspectRatio>
 					<div className={classes.mobileContainer}>

@@ -7,7 +7,7 @@ import Bigneon from "../../../helpers/bigneon";
 import PageHeading from "../../elements/PageHeading";
 import layout from "../../../stores/layout";
 import Card from "../../elements/Card";
-import { fontFamilyDemiBold, fontFamily } from "../../styles/theme";
+import { fontFamilyDemiBold, fontFamily } from "../../../config/theme";
 import AppPromoCard from "../../elements/AppPromoCard";
 import Divider from "../../common/Divider";
 import Loader from "../../elements/loaders/Loader";

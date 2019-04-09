@@ -8,7 +8,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import grey from "@material-ui/core/colors/grey";
 
-import { primaryHex } from "../styles/theme";
+import { primaryHex } from "../../config/theme";
 import Dialog from "../elements/Dialog";
 
 const styles = {

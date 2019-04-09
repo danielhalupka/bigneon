@@ -8,7 +8,7 @@ import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
 import Card from "./Card";
-import { fontFamilyBold } from "../styles/theme";
+import { fontFamilyBold } from "../../config/theme";
 import TopCardIcon from "./TopCardIcon";
 import iosScrollBackgroundHack from "../../helpers/iosScrollBackgroundHack";
 import getScreenWidth from "../../helpers/getScreenWidth";

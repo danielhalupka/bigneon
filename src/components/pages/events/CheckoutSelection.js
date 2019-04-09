@@ -13,7 +13,7 @@ import selectedEvent from "../../../stores/selectedEvent";
 import cart from "../../../stores/cart";
 import user from "../../../stores/user";
 import EventHeaderImage from "../../elements/event/EventHeaderImage";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import EventDetailsOverlayCard from "../../elements/event/EventDetailsOverlayCard";
 import InputWithButton from "../../common/form/InputWithButton";
 import Meta from "./Meta";

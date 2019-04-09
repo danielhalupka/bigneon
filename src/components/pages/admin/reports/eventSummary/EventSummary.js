@@ -5,7 +5,7 @@ import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import EventSummaryRow from "./EventSummaryRow";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 import { EventSalesTable } from "./EventSalesTable";
 import Loader from "../../../../elements/loaders/Loader";
 import summaryReport from "../../../../../stores/reports/summaryReport";

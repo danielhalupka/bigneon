@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles, Typography } from "@material-ui/core";
 import classNames from "classnames";
-import { fontFamilyDemiBold, primaryHex } from "../../../../styles/theme";
+import { fontFamilyDemiBold, primaryHex } from "../../../../../config/theme";
 
 const styles = theme => {
 	return {

@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import { Typography } from "@material-ui/core";
 
-import { fontFamilyDemiBold, secondaryHex } from "../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../config/theme";
 
 const height = 40;
 

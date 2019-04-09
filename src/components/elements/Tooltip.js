@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Zoom from "@material-ui/core/Zoom";
-import { fontFamilyDemiBold } from "../styles/theme";
+import { fontFamilyDemiBold } from "../../config/theme";
 import { Typography } from "@material-ui/core";
 
 const styles = theme => ({

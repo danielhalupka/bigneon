@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import InputLabel from "@material-ui/core/InputLabel";
 
-import { secondaryHex } from "../../styles/theme";
+import { secondaryHex } from "../../../config/theme";
 
 const styles = theme => {
 	return {

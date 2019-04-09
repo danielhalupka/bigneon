@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import Tooltip from "../Tooltip";
 
 const styles = {

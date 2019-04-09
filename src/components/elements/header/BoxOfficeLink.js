@@ -6,7 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Hidden from "@material-ui/core/Hidden";
 
-import { toolBarHeight } from "../../styles/theme";
+import { toolBarHeight } from "../../../config/theme";
 import layout from "../../../stores/layout";
 import user from "../../../stores/user";
 

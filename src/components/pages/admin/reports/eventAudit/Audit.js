@@ -3,7 +3,7 @@ import { Typography, withStyles } from "@material-ui/core";
 import PropTypes from "prop-types";
 import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 import notifications from "../../../../../stores/notifications";
 import { EventSalesTable } from "../eventSummary/EventSalesTable";
 import EventTicketCountTable from "../counts/EventTicketCountTable";

@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Grow from "@material-ui/core/Grow";
 
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import Card from "../Card";
 
 const chartHeight = 100;

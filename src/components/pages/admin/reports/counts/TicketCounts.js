@@ -7,7 +7,7 @@ import Divider from "../../../../common/Divider";
 import Button from "../../../../elements/Button";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import EventTicketCountTable from "./EventTicketCountTable";
-import { fontFamilyDemiBold, secondaryHex } from "../../../../styles/theme";
+import { fontFamilyDemiBold, secondaryHex } from "../../../../../config/theme";
 import ticketCountReport from "../../../../../stores/reports/ticketCountReport";
 import { observer } from "mobx-react";
 import Loader from "../../../../elements/loaders/Loader";

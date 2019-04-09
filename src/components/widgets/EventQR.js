@@ -8,7 +8,7 @@ import QRCode from "qrcode.react";
 
 import notifications from "../../stores/notifications";
 import selectedEvent from "../../stores/selectedEvent";
-import { primaryHex } from "../styles/theme";
+import { primaryHex } from "../../config/theme";
 import Loader from "../elements/loaders/Loader";
 import { displayAgeLimit } from "../../helpers/ageLimit";
 

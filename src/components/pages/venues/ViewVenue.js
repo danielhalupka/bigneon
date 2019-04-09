@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 
 import notifications from "../../../stores/notifications";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import Bigneon from "../../../helpers/bigneon";
 import VenueHeaderImage from "../../elements/venue/VenueHeaderImage";
 import EventResultCard from "../../elements/event/EventResultCard";

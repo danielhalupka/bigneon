@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import classNames from "classnames";
-import { callToActionBackground, fontFamilyBold, fontFamilyDemiBold } from "../styles/theme";
+import { callToActionBackground, fontFamilyBold, fontFamilyDemiBold } from "../../config/theme";
 
 const styles = theme => {
 	return {

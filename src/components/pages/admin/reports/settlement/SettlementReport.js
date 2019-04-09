@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 
 import Button from "../../../../elements/Button";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 import notifications from "../../../../../stores/notifications";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import ReportsDate from "../ReportDate";

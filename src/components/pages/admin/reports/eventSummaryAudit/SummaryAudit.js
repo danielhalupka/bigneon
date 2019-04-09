@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import moment from "moment-timezone";
 
 import Button from "../../../../elements/Button";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 import notifications from "../../../../../stores/notifications";
 import downloadCSV from "../../../../../helpers/downloadCSV";
 import ReportsDate from "../ReportDate";

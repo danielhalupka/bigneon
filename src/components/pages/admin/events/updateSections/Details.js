@@ -13,7 +13,7 @@ import Bigneon from "../../../../../helpers/bigneon";
 import eventUpdateStore from "../../../../../stores/eventUpdate";
 import Bn from "bn-api-node";
 import AutoCompleteGroup from "../../../../common/form/AutoCompleteGroup";
-import { secondaryHex } from "../../../../styles/theme";
+import { secondaryHex } from "../../../../../config/theme";
 
 const styles = theme => ({
 	selectedAgeLimitContainer: {

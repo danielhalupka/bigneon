@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import Typography from "@material-ui/core/Typography";
-import { fontFamilyDemiBold, primaryHex, secondaryHex } from "../styles/theme";
+import { fontFamilyDemiBold, primaryHex, secondaryHex } from "../../config/theme";
 
 const styles = theme => ({
 	root: {

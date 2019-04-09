@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import Button from "../../elements/Button";
 import user from "../../../stores/user";
-import { fontFamilyDemiBold } from "../../styles/theme";
+import { fontFamilyDemiBold } from "../../../config/theme";
 import Dialog from "../../elements/Dialog";
 import RadioButton from "../../elements/form/RadioButton";
 

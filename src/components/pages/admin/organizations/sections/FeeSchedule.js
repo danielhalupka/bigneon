@@ -15,7 +15,7 @@ import Button from "../../../../elements/Button";
 import notifications from "../../../../../stores/notifications";
 import Bigneon from "../../../../../helpers/bigneon";
 import FeeRow from "./FeeRow";
-import { fontFamilyDemiBold } from "../../../../styles/theme";
+import { fontFamilyDemiBold } from "../../../../../config/theme";
 import Dialog from "../../../../elements/Dialog";
 import Loader from "../../../../elements/loaders/Loader";
 
