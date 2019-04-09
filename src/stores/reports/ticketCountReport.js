@@ -230,12 +230,15 @@ export class TicketCountReport {
 				const ticketSalesPricing = tickets[ticketTypeId].sales;
 				const tmpGroupByPrice = {};
 				ticketSalesPricing.forEach(row => {
-					const ticketPricingPriceInCents = row.ticket_pricing_price_in_cents;
-					if (!tmpGroupByPrice.hasOwnProperty(ticketPricingPriceInCents)) {
-						tmpGroupByPrice[ticketPricingPriceInCents] = row;
+					//Group by price, but if there's a hold_id, group by that as well
+					const groupingKey = `pricekey-${row.ticket_pricing_price_in_cents}${row.hold_id ? `-hold-${row.hold_id}` : ""}`;
+
+					//const ticketPricingPriceInCents = row.ticket_pricing_price_in_cents;
+					if (!tmpGroupByPrice.hasOwnProperty(groupingKey)) {
+						tmpGroupByPrice[groupingKey] = row;
 					} else {
 						groupByPriceTallyKeys.forEach(key => {
-							tmpGroupByPrice[ticketPricingPriceInCents][key] += row[key];
+							tmpGroupByPrice[groupingKey][key] += row[key] ? row[key] : 0; //Some values are undefined which results in NaN
 						});
 					}
 				});

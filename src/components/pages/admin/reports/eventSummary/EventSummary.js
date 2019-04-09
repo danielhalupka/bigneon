@@ -140,17 +140,30 @@ class EventSummary extends Component {
 							</EventSummaryRow>
 
 							{sales.map((pricePoint, priceIndex) => {
+								const {
+									ticket_pricing_price_in_cents,
+									client_online_fees_in_cents,
+									online_sale_count,
+									ticket_pricing_name,
+									hold_name,
+									promo_redemption_code
+								} = pricePoint;
+
+								let rowName = ticket_pricing_name;
+								if (hold_name) {
+									rowName = (promo_redemption_code ? "Promo - " : "Hold - ") + hold_name;
+								}
 
 								return (
 									<EventSummaryRow key={priceIndex}>
 										{[
-											pricePoint.ticket_pricing_name,
-											dollars(pricePoint.ticket_pricing_price_in_cents),
-											dollars(pricePoint.client_online_fees_in_cents),
-											pricePoint.online_sale_count,
+											rowName,
+											dollars(ticket_pricing_price_in_cents),
+											dollars(client_online_fees_in_cents),
+											online_sale_count,
 											" ",
 											" ",
-											dollars(pricePoint.client_online_fees_in_cents)
+											dollars(client_online_fees_in_cents)
 										]}
 									</EventSummaryRow>
 								);

@@ -55,6 +55,7 @@ const groupPricePointsByNameAndPrice = (data) => {
 };
 
 export const eventSummaryData = (queryParams, onSuccess, onError) => {
+	//TODO can probably use ticket count report
 	Bigneon()
 		.reports.eventSummary(queryParams)
 		.then(response => {

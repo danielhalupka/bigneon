@@ -43,8 +43,13 @@ export class SummaryReport extends TicketCountReport {
 			const { totals, sales, name } = ticketSale;
 
 			sales.forEach((pricePoint, priceIndex) => {
+				let priceName = pricePoint.ticket_pricing_name;
+				if (pricePoint.hold_name) {
+					priceName = (pricePoint.promo_redemption_code ? "Promo - " : "Hold - ") + pricePoint.hold_name;
+				}
+
 				csvRows.push([
-					`${name} - ${pricePoint.ticket_pricing_name}`,
+					`${name} - ${priceName}`,
 					dollars(pricePoint.ticket_pricing_price_in_cents),
 					dollars(pricePoint.client_online_fees_in_cents),
 					pricePoint.online_sale_count,
@@ -82,8 +87,13 @@ export class SummaryReport extends TicketCountReport {
 			const { totals, sales, name: ticketName } = ticketSale;
 
 			sales.forEach(pricePoint => {
+				let priceName = pricePoint.ticket_pricing_name;
+				if (pricePoint.hold_name) {
+					priceName = (pricePoint.promo_redemption_code ? "Promo - " : "Hold - ") + pricePoint.hold_name;
+				}
+
 				csvRows.push([
-					`${ticketName} - ${pricePoint.ticket_pricing_name}`,
+					`${ticketName} - ${priceName}`,
 					dollars(pricePoint.ticket_pricing_price_in_cents),
 					pricePoint.online_sale_count,
 					pricePoint.box_office_sale_count,

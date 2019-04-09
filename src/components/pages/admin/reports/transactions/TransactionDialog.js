@@ -75,7 +75,10 @@ class TransactionDialog extends React.Component {
 			redemption_code,
 			formattedDate,
 			unit_price_in_cents,
-			refunded_quantity
+			refunded_quantity,
+			promo_code_name,
+			promo_redemption_code,
+			...rest
 		} = item;
 
 		return (
@@ -116,9 +119,15 @@ class TransactionDialog extends React.Component {
 					{order_type}
 				</Detail>
 
-				{redemption_code ? (
+				{promo_code_name ? (
+					<Detail label={"Promo name"} classes={classes}>
+						{promo_code_name}
+					</Detail>
+				) : null}
+
+				{redemption_code || promo_redemption_code ? (
 					<Detail label={"Redemption code"} classes={classes}>
-						{redemption_code}
+						{redemption_code || promo_redemption_code}
 					</Detail>
 				) : null}
 
