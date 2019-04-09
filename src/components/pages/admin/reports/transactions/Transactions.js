@@ -47,7 +47,7 @@ const formatItems = (data) => {
 		const formattedDate = moment
 			.utc(item.transaction_date)
 			.tz(user.currentOrgTimezone)
-			.format("MM/DD/YYYY h:mm:A");
+			.format("MM/DD/YYYY h:mm A");
 		items.push({ ...item, formattedDate });
 	});
 
