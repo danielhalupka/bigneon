@@ -64,11 +64,6 @@ const formatCodeForSaving = values => {
 		db_code_type = "Discount";
 	}
 
-	let max_per_users = {};
-	if (maxTicketsPerUser && Number(maxTicketsPerUser) > 0) {
-		max_per_users = { max_tickets_per_user: Number(maxTicketsPerUser) };
-	}
-
 	const result = {
 		id,
 		name,
@@ -79,8 +74,8 @@ const formatCodeForSaving = values => {
 		event_id,
 		redemption_codes,
 		ticket_type_ids: ticket_type_ids,
-		...discount,
-		...max_per_users
+		max_tickets_per_user: Number(maxTicketsPerUser) ? Number(maxTicketsPerUser) : null,
+		...discount
 	};
 	return result;
 };
@@ -182,7 +177,8 @@ const styles = theme => ({
 export const CODE_TYPES = {
 	NEW_ACCESS: "new_access",
 	NEW_DISCOUNT: "new_discount",
-	EDIT: "edit"
+	EDIT_DISCOUNT: "edit_discount",
+	EDIT_ACCESS: "edit_access"
 };
 
 class CodeDialog extends React.Component {
@@ -295,7 +291,8 @@ class CodeDialog extends React.Component {
 			case CODE_TYPES.NEW_DISCOUNT :
 				storeFunction = Bigneon().events.codes.create;
 				break;
-			case CODE_TYPES.EDIT:
+			case CODE_TYPES.EDIT_ACCESS:
+			case CODE_TYPES.EDIT_DISCOUNT:
 				storeFunction = Bigneon().codes.update;
 				break;
 		}
@@ -424,7 +421,7 @@ class CodeDialog extends React.Component {
 						value={code.maxTicketsPerUser}
 						name="maxTicketsPerUser"
 						label="Limit per customer"
-						placeholder="1"
+						placeholder="Unlimited"
 						type="number"
 						onChange={e => {
 							code.maxTicketsPerUser = e.target.value;
@@ -437,8 +434,8 @@ class CodeDialog extends React.Component {
 	}
 
 	renderDiscounts(codeType, classes) {
-		const { code, code_type } = this.state;
-		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+		const { code, errors } = this.state;
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || codeType === CODE_TYPES.EDIT_DISCOUNT) {
 			return (
 				<Grid container>
 					<Grid item xs={12} md={12} lg={12}>
@@ -529,9 +526,7 @@ class CodeDialog extends React.Component {
 	}
 
 	renderStartAtTimeOptions(codeType) {
-		const { code_type } = this.state;
-
-		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || codeType === CODE_TYPES.EDIT_DISCOUNT) {
 			const { code } = this.state;
 
 			return (
@@ -550,9 +545,7 @@ class CodeDialog extends React.Component {
 	}
 
 	renderEndAtTimeOptions(codeType) {
-		const { code_type } = this.state;
-
-		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || codeType === CODE_TYPES.EDIT_DISCOUNT) {
 			const { code } = this.state;
 
 			return (
@@ -571,9 +564,7 @@ class CodeDialog extends React.Component {
 	}
 
 	renderCustomStartAtDates(codeType) {
-		const { code_type } = this.state;
-
-		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || codeType === CODE_TYPES.EDIT_DISCOUNT) {
 			const { code, errors } = this.state;
 
 			if (!code.startAtTimeKey || code.startAtTimeKey !== "custom") {
@@ -643,9 +634,7 @@ class CodeDialog extends React.Component {
 	}
 
 	renderCustomEndAtDates(codeType) {
-		const { code_type } = this.state;
-
-		if (codeType === CODE_TYPES.NEW_DISCOUNT || (code_type && code_type === "Discount" )) {
+		if (codeType === CODE_TYPES.NEW_DISCOUNT || codeType === CODE_TYPES.EDIT_DISCOUNT) {
 			const { code, errors } = this.state;
 
 			const { endDate } = code;
@@ -741,14 +730,14 @@ class CodeDialog extends React.Component {
 			case CODE_TYPES.NEW_DISCOUNT:
 				title = "New Discount Code";
 				break;
-			case CODE_TYPES.EDIT:
+			case CODE_TYPES.EDIT_DISCOUNT:
 				title = "Update Discount Code";
 				saveButtonText = "Update";
 				break;
-		}
-
-		if (code && code.code_type == "Access") {
-			title = "Update Access code";
+			case CODE_TYPES.EDIT_ACCESS:
+				title = "Update Access Code";
+				saveButtonText = "Update";
+				break;
 		}
 
 		const { code, errors } = this.state;

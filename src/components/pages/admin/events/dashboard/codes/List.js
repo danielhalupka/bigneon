@@ -118,11 +118,19 @@ class CodeList extends Component {
 			const ths = ["Name", "Codes", "Ticket Types", "Type",  "Total Used", "Discount", ""];
 
 			const onAction = (id, action) => {
-				if (action === "Edit") {
+				if (action === "EditDiscount") {
 					return this.setState({
 						activeCodeId: id,
 						showCodeDialog: true,
-						codeType: CODE_TYPES.EDIT
+						codeType: CODE_TYPES.EDIT_DISCOUNT
+					});
+				}
+
+				if (action === "EditAccess") {
+					return this.setState({
+						activeCodeId: id,
+						showCodeDialog: true,
+						codeType: CODE_TYPES.EDIT_ACCESS
 					});
 				}
 
@@ -199,7 +207,7 @@ class CodeList extends Component {
 										? [
 											{
 												id: id,
-												name: "Edit",
+												name: discount_type === "Discount" ? "EditDiscount" : "EditAccess",
 												iconUrl: `/icons/edit-${iconColor}.svg`,
 												onClick: onAction.bind(this)
 											},
