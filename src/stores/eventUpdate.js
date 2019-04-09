@@ -83,7 +83,7 @@ class EventUpdate {
 	loadTicketTypes(event, updateTimezones) {
 		if (!this.id) {
 			//No event yet, add one ticket by default
-			//this.addTicketType();
+			this.addTicketType();
 			updateTimezones();
 		}
 		Bigneon()
@@ -101,9 +101,9 @@ class EventUpdate {
 				this.ticketTypeActiveIndex = ticketTypes.length - 1;
 
 				//If there are no ticketType, add one
-				// if (this.ticketTypes.length < 1) {
-				// 	this.addTicketType();
-				// }
+				if (this.ticketTypes.length < 1) {
+					this.addTicketType();
+				}
 
 				updateTimezones();
 			})
@@ -493,7 +493,7 @@ class EventUpdate {
 		this.ticketTypeActiveIndex = null;
 		this.timezone = "";
 
-		//this.addTicketType();
+		this.addTicketType();
 	}
 
 	loadTimezone(id) {

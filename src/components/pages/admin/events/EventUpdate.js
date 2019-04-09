@@ -582,7 +582,6 @@ class Event extends Component {
 					) : (
 						<div style={{ marginTop: 30 }}>
 							<Tickets
-								disabled={!!eventUpdateStore.id}
 								errors={errors.ticketTypes}
 								onChangeDate={() => {
 									this.setState({ ticketTimesDirty: true });
@@ -591,7 +590,6 @@ class Event extends Component {
 								eventStartDate={eventDate}
 								ticketTimesDirty={ticketTimesDirty}
 							/>
-
 						</div>
 					)}
 

@@ -28,8 +28,7 @@ const formatForSaving = (ticketTypes, event) => {
 			priceForDisplay,
 			soldOutBehavior,
 			isPrivate,
-			description,
-			parentId
+			description
 		} = ticketType;
 
 		let { startDate, endDate } = ticketType;
@@ -74,50 +73,44 @@ const formatForSaving = (ticketTypes, event) => {
 		}
 
 		const ticket_pricing = [];
-		if (!parentId) {
-			pricing.forEach(pricePoint => {
-				const { id, name, startTime, endTime, value } = pricePoint;
+		pricing.forEach(pricePoint => {
+			const { id, name, startTime, endTime, value } = pricePoint;
 
-				let { startDate, endDate } = pricePoint;
+			let { startDate, endDate } = pricePoint;
 
-				startDate = moment(startDate);
-				if (startTime) {
-					startDate = startDate.set({
-						hour: startTime.get("hour"),
-						minute: startTime.get("minute"),
-						second: startTime.get("second")
-					});
-				}
-
-				endDate = moment(endDate);
-				if (endTime) {
-					endDate = endDate.set({
-						hour: endTime.get("hour"),
-						minute: endTime.get("minute"),
-						second: endTime.get("second")
-					});
-				}
-
-				ticket_pricing.push({
-					id: id ? id : undefined,
-					name,
-					price_in_cents: Math.round(Number(value) * 100),
-					start_date: startDate
-						.utc()
-						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-					end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
+			startDate = moment(startDate);
+			if (startTime) {
+				startDate = startDate.set({
+					hour: startTime.get("hour"),
+					minute: startTime.get("minute"),
+					second: startTime.get("second")
 				});
+			}
+
+			endDate = moment(endDate);
+			if (endTime) {
+				endDate = endDate.set({
+					hour: endTime.get("hour"),
+					minute: endTime.get("minute"),
+					second: endTime.get("second")
+				});
+			}
+
+			ticket_pricing.push({
+				id: id ? id : undefined,
+				name,
+				price_in_cents: Math.round(Number(value) * 100),
+				start_date: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+				end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			});
-		}
+		});
 
 		ticket_types.push({
 			id,
 			name,
 			capacity: Number(capacity),
 			increment: Number(increment),
-			start_date: parentId
-				? null
-				: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			start_date: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			limit_per_person:
 				limitPerPerson === "" ? undefined : Number(limitPerPerson),
@@ -125,8 +118,7 @@ const formatForSaving = (ticketTypes, event) => {
 			ticket_pricing,
 			sold_out_behavior: soldOutBehavior,
 			is_private: isPrivate,
-			description,
-			parent_id: parentId
+			description
 		});
 	});
 
@@ -149,8 +141,7 @@ const formatForInput = (ticket_types, event) => {
 			price_in_cents,
 			status,
 			sold_out_behavior,
-			is_private,
-			parent_id
+			is_private
 		} = ticket_type;
 
 		const pricing = [];
@@ -211,8 +202,7 @@ const formatForInput = (ticket_types, event) => {
 			capacity: capacity ? capacity : 0,
 			increment: increment ? increment : 1,
 			limitPerPerson: limit_per_person ? limit_per_person : "",
-			saleStartTimeOption: parent_id ? "parent" : "custom",
-			startDate: ticketStartDate ? ticketStartDate.clone() : null,
+			startDate: ticketStartDate.clone(),
 			startTime: ticketStartDate,
 			saleEndTimeOption,
 			endDate: ticketEndDate.clone(),
@@ -223,8 +213,7 @@ const formatForInput = (ticket_types, event) => {
 			priceForDisplay: price_in_cents / 100,
 			status,
 			soldOutBehavior: sold_out_behavior,
-			isPrivate: is_private,
-			parentId: parent_id
+			isPrivate: is_private
 		};
 
 		ticketTypes.push(ticketType);
@@ -564,8 +553,7 @@ class EventTickets extends Component {
 			validateFields,
 			errors,
 			ticketTimesDirty,
-			eventStartDate,
-			disabled
+			eventStartDate
 		} = this.props;
 		const { ticketTypes, ticketTypeActiveIndex } = eventUpdateStore;
 
@@ -602,29 +590,21 @@ class EventTickets extends Component {
 								errors={ticketTypeErrors}
 								ticketTimesDirty={ticketTimesDirty}
 								eventStartDate={eventStartDate}
-								ticketTypes={ticketTypes}
 								{...ticketType}
 							/>
 						</LeftAlignedSubCard>
 					);
 				})}
-				{disabled ? (
-					<div
-						className={classes.addTicketType}
-						onClick={() => eventUpdateStore.addTicketType()}
-					>
-						<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
-						<Typography className={classes.addText} variant="body2">
-							Add another ticket type
-						</Typography>
-					</div>
-				) : (
-					<div className={classes.addTicketType}>
-						<Typography className={classes.addText} variant="body2">
-							Save to start adding tickets
-						</Typography>
-					</div>
-				)}
+
+				<div
+					className={classes.addTicketType}
+					onClick={() => eventUpdateStore.addTicketType()}
+				>
+					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
+					<Typography className={classes.addText} variant="body2">
+						Add another ticket type
+					</Typography>
+				</div>
 			</div>
 		);
 	}
@@ -637,8 +617,7 @@ EventTickets.propTypes = {
 	errors: PropTypes.object,
 	ticketTimesDirty: PropTypes.bool,
 	onChangeDate: PropTypes.func,
-	onDeleteTicketType: PropTypes.func,
-	disabled: PropTypes.bool
+	onDeleteTicketType: PropTypes.func
 };
 
 export const Tickets = withStyles(styles)(EventTickets);
