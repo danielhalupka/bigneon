@@ -281,7 +281,7 @@ class SelectedEvent {
 
 					onError();
 
-					if (error.response.status === 404) {
+					if (error && error.response && error.response.status === 404) {
 						notifications.show({
 							message: "Promo code does not exist.",
 							variant: "warning"

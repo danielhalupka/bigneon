@@ -110,8 +110,8 @@ class ReportsDate extends Component {
 	}
 
 	onDateChange() {
-		const { onChange, onChangeButton } = this.props;
-		if (!onChangeButton) {
+		const { onChange, onChangeButton, onChangeOnLoad } = this.props;
+		if (!onChangeButton || onChangeOnLoad) {
 			this.onChange(onChange);
 		} else {
 			this.onChange();
@@ -224,7 +224,8 @@ ReportsDate.propTypes = {
 		value: PropTypes.number.isRequired,
 		unit: PropTypes.oneOf(["M", "d"])
 	}), //Pass this through for reports like weekly settlements that needs to be the past week by default
-	onChangeButton: PropTypes.bool //Pass this through if you want onChange to be called here and not automatically when the date is changed
+	onChangeButton: PropTypes.bool, //Pass this through if you want onChange to be called here and not automatically when the date is changed
+	onChangeOnLoad: PropTypes.bool //Use this to trigger onChange the first time the current dates are loaded
 };
 
 export default withStyles(styles)(ReportsDate);
