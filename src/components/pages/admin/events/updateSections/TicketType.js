@@ -197,6 +197,19 @@ const TicketDetails = observer(props => {
 		}
 	}
 
+	const parentTicketTypes = ticketTypes
+		.map((tt, i) => {
+			return { index: i, inner: tt };
+		})
+		// Cannot choose yourself, and cannot choose a ticket type that is parented to yourself
+		.filter(
+			tt =>
+				tt.index !== index &&
+				tt.inner.parentId !== index &&
+				tt.inner.parentId !== id &&
+				tt.inner.status !== "Cancelled"
+		);
+
 	const onShowAdditionalOptions = () =>
 		updateTicketType(index, { showAdditionalOptions: true });
 
@@ -287,16 +300,25 @@ const TicketDetails = observer(props => {
 						<SelectGroup
 							disabled={isCancelled}
 							value={saleStartTimeOption || "custom"}
-							items={[
-								{ value: "parent", label: "When sales end for..." },
+							items={
+								parentTicketTypes.length > 0
+									? [
+										{ value: "parent", label: "When sales end for..." },
 
-								{ value: "custom", label: "At a specific time" }
-							]}
+										{ value: "custom", label: "At a specific time" }
+									  ]
+									: [{ value: "custom", label: "At a specific time" }]
+							}
 							name={"sales-start-times"}
 							label={"Sales start *"}
 							onChange={e => {
 								updateTicketType(index, {
-									saleStartTimeOption: e.target.value
+									saleStartTimeOption: e.target.value,
+									parentId:
+										e.target.value === "parent"
+											? parentTicketTypes[0].inner.id ||
+											  parentTicketTypes[0].index
+											: null
 								});
 							}}
 						/>
@@ -344,23 +366,12 @@ const TicketDetails = observer(props => {
 								value={parentId}
 								name="parentId"
 								label="Ticket *"
-								items={ticketTypes
-									.map((tt, i) => {
-										return { index: i, inner: tt };
-									})
-									// Cannot choose yourself, and cannot choose a ticket type that is parented to yourself
-									.filter(
-										tt =>
-											tt.index !== index &&
-											tt.inner.parentId !== index &&
-											tt.inner.parentId !== id
-									)
-									.map(tt => {
-										return {
-											value: tt.inner.id || tt.index,
-											label: tt.inner.name
-										};
-									})}
+								items={parentTicketTypes.map(tt => {
+									return {
+										value: tt.inner.id || tt.index,
+										label: tt.inner.name
+									};
+								})}
 								onChange={e =>
 									updateTicketType(index, {
 										parentId: e.target.value,
