@@ -29,7 +29,10 @@ const groupPricePointsByNameAndPrice = (data) => {
 		pricePoints.forEach(pricePoint => {
 			let existingIndex = -1;
 			mergedPricePoints.forEach((mergedPoint, index) => {
-				if (mergedPoint.pricing_name === pricePoint.pricing_name && mergedPoint.price_in_cents === pricePoint.price_in_cents) {
+				if (mergedPoint.pricing_name === pricePoint.pricing_name &&
+					mergedPoint.price_in_cents === pricePoint.price_in_cents &&
+					mergedPoint.hold_id === pricePoint.hold_id
+				) {
 					existingIndex = index;
 				}
 			});
