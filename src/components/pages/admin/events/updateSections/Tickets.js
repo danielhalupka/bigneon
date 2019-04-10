@@ -290,6 +290,7 @@ const validateFields = ticketTypes => {
 			id,
 			eventId,
 			name,
+			saleStartTimeOption,
 			startTime,
 			saleEndTimeOption,
 			endTime,
@@ -298,6 +299,7 @@ const validateFields = ticketTypes => {
 			pricing,
 			priceForDisplay,
 			status,
+			parentId,
 			soldOutBehavior,
 			isPrivate
 		} = ticket;
@@ -337,8 +339,14 @@ const validateFields = ticketTypes => {
 			ticketErrors.name = "Missing ticket name.";
 		}
 
-		if (!startDate) {
-			ticketErrors.startDate = "Specify the ticket start time.";
+		if (saleStartTimeOption === "custom") {
+			if (!startDate) {
+				ticketErrors.startDate = "Specify the ticket start time.";
+			}
+		} else {
+			if (saleStartTimeOption === "parent" && !parentId) {
+				ticketErrors.parentId = "Specify the ticket to start after.";
+			}
 		}
 
 		if (saleEndTimeOption === "custom") {
