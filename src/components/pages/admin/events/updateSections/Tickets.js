@@ -564,8 +564,7 @@ class EventTickets extends Component {
 			validateFields,
 			errors,
 			ticketTimesDirty,
-			eventStartDate,
-			disabled
+			eventStartDate
 		} = this.props;
 		const { ticketTypes, ticketTypeActiveIndex } = eventUpdateStore;
 
@@ -608,23 +607,16 @@ class EventTickets extends Component {
 						</LeftAlignedSubCard>
 					);
 				})}
-				{disabled ? (
-					<div
-						className={classes.addTicketType}
-						onClick={() => eventUpdateStore.addTicketType()}
-					>
-						<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
-						<Typography className={classes.addText} variant="body2">
-							Add another ticket type
-						</Typography>
-					</div>
-				) : (
-					<div className={classes.addTicketType}>
-						<Typography className={classes.addText} variant="body2">
-							Save to start adding tickets
-						</Typography>
-					</div>
-				)}
+
+				<div
+					className={classes.addTicketType}
+					onClick={() => eventUpdateStore.addTicketType()}
+				>
+					<img className={classes.addIcon} src="/icons/add-ticket.svg"/>
+					<Typography className={classes.addText} variant="body2">
+						Add another ticket type
+					</Typography>
+				</div>
 			</div>
 		);
 	}

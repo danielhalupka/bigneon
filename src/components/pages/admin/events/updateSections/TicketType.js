@@ -286,13 +286,13 @@ const TicketDetails = observer(props => {
 					>
 						<SelectGroup
 							disabled={isCancelled}
-							value={saleStartTimeOption || "close"}
+							value={saleStartTimeOption || "custom"}
 							items={[
 								{ value: "parent", label: "When sales end for..." },
 
 								{ value: "custom", label: "At a specific time" }
 							]}
-							name={"close-times"}
+							name={"sales-start-times"}
 							label={"Sales start *"}
 							onChange={e => {
 								updateTicketType(index, {
@@ -302,7 +302,7 @@ const TicketDetails = observer(props => {
 						/>
 					</div>
 				</div>
-				{saleStartTimeOption === "custom" ? (
+				{(saleStartTimeOption || "custom") === "custom" ? (
 					<div className={classes.additionalInputsRow}>
 						<div className={classes.additionalInputContainer}>
 							<DateTimePickerGroup
@@ -345,9 +345,21 @@ const TicketDetails = observer(props => {
 								name="parentId"
 								label="Ticket *"
 								items={ticketTypes
-									.filter(tt => tt.id !== id)
+									.map((tt, i) => {
+										return { index: i, inner: tt };
+									})
+									// Cannot choose yourself, and cannot choose a ticket type that is parented to yourself
+									.filter(
+										tt =>
+											tt.index !== index &&
+											tt.inner.parentId !== index &&
+											tt.inner.parentId !== id
+									)
 									.map(tt => {
-										return { value: tt.id, label: tt.name };
+										return {
+											value: tt.inner.id || tt.index,
+											label: tt.inner.name
+										};
 									})}
 								onChange={e =>
 									updateTicketType(index, {
@@ -620,7 +632,7 @@ TicketType.propTypes = {
 	soldOutBehavior: PropTypes.string,
 	isPrivate: PropTypes.bool,
 	isCancelled: PropTypes.bool,
-	parentId: PropTypes.string,
+	parentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 	ticketTypes: PropTypes.array
 	//id: PropTypes.string,
 	//capacity
