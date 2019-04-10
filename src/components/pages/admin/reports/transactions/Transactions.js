@@ -96,11 +96,13 @@ class Transactions extends Component {
 		const { eventName, eventId, organizationId } = this.props;
 
 		Bigneon()
-			.reports.transactionDetails({
+			.reports
+			.transactionDetails({
 				organization_id: organizationId,
 				page: 0,
 				limit: UNLIMITED_LINE_LIMIT,
-				query: ""
+				query: "",
+				event_id: eventId
 			})
 			.then(response => {
 				const { data } = response.data;
@@ -244,7 +246,12 @@ class Transactions extends Component {
 		this.refreshData({ start_utc, end_utc, startDate, endDate }, page);
 	}
 
-	refreshData(dataParams = { start_utc: null, end_utc: null, startDate: null, endDate: null }, page = 0, limit = LINE_LIMIT_PER_PAGE) {
+	refreshData(dataParams = {
+		start_utc: null,
+		end_utc: null,
+		startDate: null,
+		endDate: null
+	}, page = 0, limit = LINE_LIMIT_PER_PAGE) {
 		const { startDate, endDate, start_utc, end_utc } = dataParams;
 
 		this.currentDateParams = dataParams;
