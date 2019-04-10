@@ -205,8 +205,8 @@ const TicketDetails = observer(props => {
 		.filter(
 			tt =>
 				tt.index !== index &&
-				tt.inner.parentId !== index &&
-				tt.inner.parentId !== id &&
+				(tt.inner.parentId || -1) !== index &&
+				(tt.inner.parentId || "") !== id &&
 				tt.inner.status !== "Cancelled"
 		);
 

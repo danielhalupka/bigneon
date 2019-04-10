@@ -432,7 +432,8 @@ class EventUpdate {
 			return { result: false, error: "Event ID is not set yet" };
 		}
 
-		if (parent_id && parseInt(parent_id, 10) === parent_id) {
+		// Using != instead of !== here to check for null or undefined
+		if (parent_id != null && parseInt(parent_id, 10) === parent_id) {
 			if (!ticketTypeList[parent_id].id) {
 				// this means it's a reference to an unsaved ticket type, so save that one first
 				const result = await this.saveTicketType(

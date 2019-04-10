@@ -74,7 +74,8 @@ const formatForSaving = (ticketTypes, event) => {
 		}
 
 		const ticket_pricing = [];
-		if (!parentId) {
+		// Using != instead of !== here to check for null or undefined
+		if (parentId != null) {
 			pricing.forEach(pricePoint => {
 				const { id, name, startTime, endTime, value } = pricePoint;
 
@@ -115,9 +116,11 @@ const formatForSaving = (ticketTypes, event) => {
 			name,
 			capacity: Number(capacity),
 			increment: Number(increment),
-			start_date: parentId
-				? null
-				: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			start_date:
+				// Using != instead of !== here to check for null or undefined
+				parentId != null
+					? null
+					: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			limit_per_person:
 				limitPerPerson === "" ? undefined : Number(limitPerPerson),
@@ -344,7 +347,8 @@ const validateFields = ticketTypes => {
 				ticketErrors.startDate = "Specify the ticket start time.";
 			}
 		} else {
-			if (saleStartTimeOption === "parent" && !parentId) {
+			// Using == instead of === here to check for null or undefined
+			if (saleStartTimeOption === "parent" && parentId == null) {
 				ticketErrors.parentId = "Specify the ticket to start after.";
 			}
 		}
