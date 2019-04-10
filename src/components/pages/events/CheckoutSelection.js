@@ -23,6 +23,7 @@ import optimizedImageUrl from "../../../helpers/optimizedImageUrl";
 import Divider from "../../common/Divider";
 import TwoColumnLayout from "./TwoColumnLayout";
 import EventDescriptionBody from "./EventDescriptionBody";
+import getUrlParam from "../../../helpers/getUrlParam";
 
 const styles = theme => ({
 	root: {},
@@ -55,12 +56,14 @@ class CheckoutSelection extends Component {
 			ticketSelection: null,
 			isSubmitting: false,
 			isSubmittingPromo: false,
-			overlayCardHeight: 600,
-			promoCodeApplied: false
+			overlayCardHeight: 600
 		};
 	}
 
 	componentDidMount() {
+		const code = getUrlParam("code");
+		code ? selectedEvent.currentlyAppliedCode = code : null;
+		
 		//If we have a current cart in the store already, load that right away
 		if (cart.items && cart.items.length > 0) {
 			this.setTicketSelectionFromExistingCart(cart.items);
@@ -179,7 +182,7 @@ class CheckoutSelection extends Component {
 				});
 			}
 
-			return { ticketSelection, promoCodeApplied: false };
+			return { ticketSelection };
 		});
 
 		//Remove from ticket types in store
@@ -206,7 +209,7 @@ class CheckoutSelection extends Component {
 								}
 							});
 
-							return { ticketSelection, promoCodeApplied: true, isSubmittingPromo: false };
+							return { ticketSelection, isSubmittingPromo: false };
 						});
 					}
 
@@ -361,7 +364,7 @@ class CheckoutSelection extends Component {
 
 	render() {
 		const { classes } = this.props;
-		const { isSubmitting, isSubmittingPromo, ticketSelection, promoCodeApplied } = this.state;
+		const { isSubmitting, isSubmittingPromo, ticketSelection } = this.state;
 
 		const { event, venue, artists, organization, id } = selectedEvent;
 
@@ -396,6 +399,8 @@ class CheckoutSelection extends Component {
 			mobilePromoImageStyle.backgroundImage = `url(${promo_image_url})`;
 		}
 
+		const promoCodeApplied = !!selectedEvent.currentlyAppliedCode;
+
 		let sharedContent;
 
 		if (ticketSelection === null) {
@@ -412,6 +417,7 @@ class CheckoutSelection extends Component {
 					{this.renderTicketPricing()}
 
 					<InputWithButton
+						value={selectedEvent.currentlyAppliedCode}
 						clearText={"Remove"}
 						onClear={this.clearAppliedPromoCodes.bind(this)}
 						successState={promoCodeApplied}

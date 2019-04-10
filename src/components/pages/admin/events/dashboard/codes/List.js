@@ -11,9 +11,18 @@ import Loader from "../../../../../elements/loaders/Loader";
 import user from "../../../../../../stores/user";
 import CodeRow from "./CodeRow";
 import CodeDialog, { CODE_TYPES } from "./CodeDialog";
+import { secondaryHex } from "../../../../../../config/theme";
 
 const styles = theme => ({
-	root: {}
+	root: {},
+	shareableLinkContainer: {
+		marginTop: theme.spacing.unit * 2,
+		marginBottom: theme.spacing.unit * 2
+	},
+	shareableLinkText: {
+		color: secondaryHex,
+		fontSize: theme.typography.fontSize * 0.9
+	}
 });
 
 class CodeList extends Component {
@@ -137,6 +146,10 @@ class CodeList extends Component {
 				if (action === "Delete") {
 					return this.setState({ deleteId: id });
 				}
+
+				if (action === "Link") {
+					return this.setState({ showShareableLinkId: id });
+				}
 			};
 
 			return (
@@ -205,6 +218,12 @@ class CodeList extends Component {
 								actions={
 									user.hasScope("code:write")
 										? [
+											{
+												id: id,
+												name: "Link",
+												iconUrl: `/icons/link-${iconColor}.svg`,
+												onClick: onAction.bind(this)
+											},
 											{
 												id: id,
 												name: discount_type === "Discount" ? "EditDiscount" : "EditAccess",
@@ -282,14 +301,51 @@ class CodeList extends Component {
 		);
 	}
 
+	renderShareableLink() {
+		const { showShareableLinkId } = this.state;
+		const { classes } = this.props;
+
+		const onClose = () => this.setState({ showShareableLinkId: null });
+
+		const { codes } = this.state;
+
+		const urls = [];
+		if (showShareableLinkId) {
+			const code = codes.find(c => c.id === showShareableLinkId);
+
+			const { redemption_codes, event_id } = code;
+			redemption_codes.forEach(c => {
+				urls.push(`${window.location.protocol}//${window.location.host}/events/${event_id}/tickets?code=${c}`);
+			});
+		}
+
+		return (
+			<Dialog iconUrl={"/icons/link-white.svg"} title={`Shareable link${urls.length > 1 ? "s" : ""}`} open={!!showShareableLinkId} onClose={onClose}>
+				<div>
+					{urls.length > 0 ?
+						urls.map((url, index) => (
+							<div key={index} className={classes.shareableLinkContainer}>
+								<a href={url} target={"_blank"} className={classes.shareableLinkText}>{url}</a>
+							</div>
+						)) : null }
+					<div style={{ display: "flex" }}>
+						<Button style={{ flex: 1 }} onClick={onClose}>
+							Done
+						</Button>
+					</div>
+				</div>
+			</Dialog>
+		);
+	}
+
 	render() {
 		const { showCodeDialog } = this.state;
-		const { classes } = this.props;
 
 		return (
 			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{showCodeDialog && this.renderDialog()}
 				{this.renderDeleteDialog()}
+				{this.renderShareableLink()}
 				<div style={{ display: "flex", justifyContent: "space-between" }}>
 					<Typography variant="title">Promo Codes</Typography>
 					<div>

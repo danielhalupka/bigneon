@@ -39,12 +39,12 @@ class SelectedEvent {
 	privateAccessCodeError = "";
 
 	@observable
-	appliedRedemptionCode = null;
+	currentlyAppliedCode = null;
 
 	@action
 	refreshResult(id, onError = () => {}) {
 		//If we're updating the state to a different event just reset the values first so it doesn't load old data in components observing this
-		if (id !== this.id) {
+		if (this.id && id !== this.id) {
 			this.event = null;
 			this.venue = null;
 			this.artists = [];
@@ -53,7 +53,7 @@ class SelectedEvent {
 			this.private_access_code = null;
 			this.showPrivateAccessCodeInputDialog = false;
 			this.privateAccessCodeError = "";
-			this.appliedRedemptionCode = null;
+			this.currentlyAppliedCode = null;
 		}
 
 		this.id = id;
@@ -66,73 +66,6 @@ class SelectedEvent {
 		if (private_access_code) {
 			query.private_access_code = private_access_code;
 			this.private_access_code = private_access_code;
-		}
-		
-		//Temp fix to catch and handle the odd occasion where `Bigneon().events.read` is not a function.
-		//Attempt to instantiate again, wait a second and try the api call again.
-		//Hard limit on 10 refresh attempts and then display an error message to the user.
-		//Also adds additional sentry logging for debugging what the root cause is.
-		const readEventFunction = Bigneon().events.read;
-		if (!readEventFunction || {}.toString.call(readEventFunction) !== "[object Function]") {
-			if (isNaN(this.refreshAttempts)) {
-				this.refreshAttempts = 0;
-			}
-
-			this.refreshAttempts++;
-
-			//Try 10 times
-			if (this.refreshAttempts <= 10) {
-				errorReporting.addBreadcrumb(`refreshResult attempt ${this.refreshAttempts}`);
-
-				errorReporting.addBreadcrumb(`Bigneon() typeof: ${typeof Bigneon()}`);
-				errorReporting.addBreadcrumb(`Bigneon(): ${Bigneon()}`);
-
-				errorReporting.addBreadcrumb(`Bigneon().events typeof: ${typeof Bigneon().events}`);
-				errorReporting.addBreadcrumb(`Bigneon().events: ${Bigneon().events}`);
-
-				errorReporting.addBreadcrumb(`Bigneon().events.read typeof: ${typeof Bigneon().events.read}`);
-				errorReporting.addBreadcrumb(`Bigneon().events.read: ${Bigneon().events.read}`);
-
-				let cache = [];
-				const bnStringObj = JSON.stringify(Bigneon().events, function(key, value) {
-					if (typeof value === "object" && value !== null) {
-						if (cache.indexOf(value) !== -1) {
-							// Duplicate reference found
-							try {
-								// If this value does not reference a parent it can be deduped
-								return JSON.parse(JSON.stringify(value));
-							} catch (error) {
-								// discard key if value cannot be deduped
-								return;
-							}
-						}
-						// Store value in our collection
-						cache.push(value);
-					}
-					return value;
-				});
-				cache = null;
-
-				errorReporting.addBreadcrumb(bnStringObj);
-
-				Object.keys(Bigneon().events).forEach(key => {
-					errorReporting.addBreadcrumb(`Bigneon().events: ${key} => ${Bigneon().events[key]}`);
-				});
-
-				errorReporting.captureMessage("Bigneon().events.read is not a function. Real value in bread crumb.");
-
-				Bigneon({}, {}, null, true);
-
-				return setTimeout(() => {
-					this.refreshResult(id, onError);
-				}, 500);
-			} else {
-				//Give up, it's not happening
-				errorReporting.captureMessage(`Bigneon().events.read is not a function. Attempted ${this.refreshAttempts} times.`);
-				onError("Failed to load event. Please refresh.");
-				return;
-			}
-
 		}
 
 		Bigneon()
@@ -178,8 +111,8 @@ class SelectedEvent {
 				};
 
 				//If we have a promo code, load it first to apply to the new ticket types retrieved
-				if (this.appliedRedemptionCode) {
-					this.applyRedemptionCode(this.appliedRedemptionCode, ticket_types, () => {}, () => {});
+				if (this.currentlyAppliedCode) {
+					this.applyRedemptionCode(this.currentlyAppliedCode, ticket_types, () => {}, () => {});
 				} else {
 					//If we're not using a promo code, just set the ticket types as is
 					this.ticket_types = ticket_types;
@@ -244,6 +177,7 @@ class SelectedEvent {
 						data.ticket_types.forEach(codeTicketType => {
 							//Validate the code is for this event
 							const { event_id } = codeTicketType;
+							//TODO this stops the same code from being used for multiple events, do a find first and if it's not in there at all then fail
 							if (event_id !== this.id) {
 								onError();
 								return notifications.show({
@@ -271,7 +205,7 @@ class SelectedEvent {
 						});
 					}
 
-					this.appliedRedemptionCode = redemptionCode;
+					this.currentlyAppliedCode = redemptionCode;
 
 					this.ticket_types = updatedTicketTypes;
 					onSuccess(appliedCodes);
@@ -282,6 +216,7 @@ class SelectedEvent {
 					onError();
 
 					if (error && error.response && error.response.status === 404) {
+						this.currentlyAppliedCode = null;
 						notifications.show({
 							message: "Promo code does not exist.",
 							variant: "warning"
@@ -304,6 +239,8 @@ class SelectedEvent {
 				this.ticket_types[index] = tt;
 			});
 		}
+
+		this.currentlyAppliedCode = null;
 	}
 
 	@action
@@ -365,6 +302,11 @@ class SelectedEvent {
 
 		return hasTickets;
 	}
+
+	// @computed
+	// get currentlyAppliedCode() {
+	// 	return "FIXME";
+	// }
 }
 
 const selectedEvent = new SelectedEvent();

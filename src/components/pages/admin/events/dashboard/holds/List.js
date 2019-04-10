@@ -12,9 +12,18 @@ import Container from "../Container";
 import Dialog from "../../../../../elements/Dialog";
 import Loader from "../../../../../elements/loaders/Loader";
 import user from "../../../../../../stores/user";
+import { secondaryHex } from "../../../../../../config/theme";
 
 const styles = theme => ({
-	root: {}
+	root: {},
+	shareableLinkContainer: {
+		marginTop: theme.spacing.unit * 2,
+		marginBottom: theme.spacing.unit * 2
+	},
+	shareableLinkText: {
+		color: secondaryHex,
+		fontSize: theme.typography.fontSize * 0.9
+	}
 });
 
 class TicketHoldList extends Component {
@@ -135,6 +144,10 @@ class TicketHoldList extends Component {
 
 				if (action === "Delete") {
 					return this.setState({ deleteId: id });
+				}
+
+				if (action === "Link") {
+					return this.setState({ showShareableLinkId: id });
 				}
 			};
 
@@ -273,6 +286,38 @@ class TicketHoldList extends Component {
 		);
 	}
 
+	renderShareableLink() {
+		const { showShareableLinkId } = this.state;
+		const { classes } = this.props;
+
+		const onClose = () => this.setState({ showShareableLinkId: null });
+
+		const { holds } = this.state;
+
+		let url = null;
+		if (showShareableLinkId) {
+			const hold = holds.find(c => c.id === showShareableLinkId);
+			const { redemption_code, event_id } = hold;
+
+			url = `${window.location.protocol}//${window.location.host}/events/${event_id}/tickets?code=${redemption_code}`;
+		}
+
+		return (
+			<Dialog iconUrl={"/icons/link-white.svg"} title={"Shareable link"} open={!!showShareableLinkId} onClose={onClose}>
+				<div>
+					<div className={classes.shareableLinkContainer}>
+						<a href={url} target={"_blank"} className={classes.shareableLinkText}>{url}</a>
+					</div>
+					<div style={{ display: "flex" }}>
+						<Button style={{ flex: 1 }} onClick={onClose}>
+							Done
+						</Button>
+					</div>
+				</div>
+			</Dialog>
+		);
+	}
+
 	render() {
 		const { showHoldDialog } = this.state;
 		const { classes } = this.props;
@@ -281,6 +326,7 @@ class TicketHoldList extends Component {
 			<Container eventId={this.eventId} subheading={"tools"} useCardContainer>
 				{showHoldDialog && this.renderDialog()}
 				{this.renderDeleteDialog()}
+				{this.renderShareableLink()}
 				<div style={{ display: "flex" }}>
 					<Typography variant="title">Manage Ticket Holds</Typography>
 					<span style={{ flex: 1 }}/>
