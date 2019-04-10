@@ -83,7 +83,7 @@ class EventUpdate {
 	loadTicketTypes(event, updateTimezones) {
 		if (!this.id) {
 			//No event yet, add one ticket by default
-			this.addTicketType();
+			//this.addTicketType();
 			updateTimezones();
 		}
 		Bigneon()
@@ -101,9 +101,9 @@ class EventUpdate {
 				this.ticketTypeActiveIndex = ticketTypes.length - 1;
 
 				//If there are no ticketType, add one
-				if (this.ticketTypes.length < 1) {
-					this.addTicketType();
-				}
+				// if (this.ticketTypes.length < 1) {
+				// 	this.addTicketType();
+				// }
 
 				updateTimezones();
 			})
@@ -143,7 +143,11 @@ class EventUpdate {
 			isPrivate: false,
 			//By default the server will create a Default ticket price point, anything additional added to this array is an override.
 			pricing: [],
-			...updateTimezonesInObjects({ startDate, startTime: startDate, endDate }, this.timezone, true)
+			...updateTimezonesInObjects(
+				{ startDate, startTime: startDate, endDate },
+				this.timezone,
+				true
+			)
 		};
 
 		ticketTypes.push(ticketType);
@@ -345,7 +349,10 @@ class EventUpdate {
 			);
 			for (let index = 0; index < formattedTicketTypes.length; index++) {
 				const ticketType = formattedTicketTypes[index];
-				const saveTicketResponse = await this.saveTicketType(ticketType);
+				const saveTicketResponse = await this.saveTicketType(
+					ticketType,
+					formattedTicketTypes
+				);
 				if (!saveTicketResponse.result) {
 					return saveTicketResponse;
 				}
@@ -410,11 +417,36 @@ class EventUpdate {
 		});
 	}
 
-	async saveTicketType(ticketType) {
-		const { id } = ticketType;
+	async saveTicketType(ticketType, ticketTypeList, recursionDepth) {
+		recursionDepth = recursionDepth || 0;
+		if (recursionDepth > ticketTypeList.length) {
+			return {
+				result: false,
+				error:
+					"Cannot save ticket type because one or more ticket types reference each other"
+			};
+		}
+		const { id, parent_id } = ticketType;
 		const event_id = this.id;
 		if (!event_id) {
 			return { result: false, error: "Event ID is not set yet" };
+		}
+
+		// Using != instead of !== here to check for null or undefined
+		if (parent_id != null && parseInt(parent_id, 10) === parent_id) {
+			if (!ticketTypeList[parent_id].id) {
+				// this means it's a reference to an unsaved ticket type, so save that one first
+				const result = await this.saveTicketType(
+					ticketTypeList[parent_id],
+					ticketTypeList,
+					recursionDepth + 1
+				);
+
+				if (!result.result) {
+					return result;
+				}
+			}
+			ticketType.parent_id = ticketTypeList[parent_id].id;
 		}
 
 		if (id) {
@@ -441,6 +473,7 @@ class EventUpdate {
 						...ticketType
 					})
 					.then(result => {
+						ticketType.id = result.data.id;
 						resolve({ result, error: false });
 					})
 					.catch(error => {
@@ -493,7 +526,7 @@ class EventUpdate {
 		this.ticketTypeActiveIndex = null;
 		this.timezone = "";
 
-		this.addTicketType();
+		//this.addTicketType();
 	}
 
 	loadTimezone(id) {
