@@ -8,8 +8,7 @@ import notifications from "./notifications";
 import errorReporting from "../helpers/errorReporting";
 import getUrlParam from "../helpers/getUrlParam";
 
-class
-SelectedEvent {
+class SelectedEvent {
 	@observable
 	id = null;
 
