@@ -304,7 +304,8 @@ class CheckoutSelection extends Component {
 						end_date,
 						redemption_code,
 						available,
-						description
+						description,
+						discount_as_percentage
 					} = ticketType;
 
 					const nowIsValidTime = moment
@@ -339,6 +340,7 @@ class CheckoutSelection extends Component {
 							increment={increment}
 							limitPerPerson={limitPerPerson}
 							discount_in_cents={discount_in_cents}
+							discount_as_percentage={discount_as_percentage}
 							redemption_code={redemption_code}
 							onNumberChange={amount =>
 								this.setState(({ ticketSelection }) => {
