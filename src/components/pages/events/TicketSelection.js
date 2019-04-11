@@ -104,7 +104,7 @@ class TicketSelection extends Component {
 		if (discount_as_percentage) {
 			discount_message = discount_as_percentage + "% Discount applied";
 		} else if (discount_in_cents){
-			discount_message = "$" + discount_in_cents + " Discount applied";
+			discount_message = dollars(discount_in_cents) + " Discount applied";
 		}
 		return (
 			<div>
