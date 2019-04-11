@@ -166,7 +166,7 @@ class SelectedEvent {
 		const updatedTicketTypes = ticketTypes || this.ticket_types;
 
 		Bigneon()
-			.redemptionCodes.read({ code: redemptionCode })
+			.redemptionCodes.read({ code: redemptionCode, event_id: this.id })
 			.then(
 				response => {
 					const { data } = response;
