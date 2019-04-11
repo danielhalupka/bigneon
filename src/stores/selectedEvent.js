@@ -8,7 +8,8 @@ import notifications from "./notifications";
 import errorReporting from "../helpers/errorReporting";
 import getUrlParam from "../helpers/getUrlParam";
 
-class SelectedEvent {
+class
+SelectedEvent {
 	@observable
 	id = null;
 
@@ -185,7 +186,7 @@ class SelectedEvent {
 									variant: "warning"
 								});
 							}
-
+							codeTicketType.discount_as_percentage = data.discount_as_percentage;
 							let existingTicketTypeIndex = null;
 							updatedTicketTypes.forEach((et, index) => {
 								if (et.id == codeTicketType.id) {

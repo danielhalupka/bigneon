@@ -85,6 +85,7 @@ class TicketSelection extends Component {
 			validateFields,
 			limitPerPerson,
 			discount_in_cents,
+			discount_as_percentage,
 			redemption_code
 		} = this.props;
 
@@ -99,14 +100,19 @@ class TicketSelection extends Component {
 				: "";
 
 		const calculatedPriceInCents = redemption_code && discount_in_cents ? price_in_cents - discount_in_cents : price_in_cents;
-
+		let discount_message = "";
+		if (discount_as_percentage) {
+			discount_message = discount_as_percentage + "% Discount applied";
+		} else if (discount_in_cents){
+			discount_message = "$" + discount_in_cents + " Discount applied";
+		}
 		return (
 			<div>
 				<Grid alignItems="center" className={classes.container} container>
 					{redemption_code ? (
 						<Grid item xs={12} sm={12} md={12} lg={12}>
 							<Typography className={classes.promoAppliedText}>
-								{discount_in_cents ? `${dollars(discount_in_cents)} Discount applied` : "Code applied"}
+								{discount_message ? discount_message : "Code applied"}
 							</Typography>
 						</Grid>
 					) : null}

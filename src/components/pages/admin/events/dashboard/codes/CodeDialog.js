@@ -22,6 +22,8 @@ import SelectGroup from "../../../../../common/form/SelectGroup";
 import notifications from "../../../../../../stores/notifications";
 import { FormHelperText } from "@material-ui/core";
 import Loader from "../../../../../elements/loaders/Loader";
+import Checkbox from "@material-ui/core/Checkbox/Checkbox";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 
 const formatCodeForSaving = values => {
 	const {
@@ -345,17 +347,13 @@ class CodeDialog extends React.Component {
 			ticketTypeHash[ticketType.id] = ticketType.name;
 		});
 
-		let selectedTicketType;
-		if (code.ticket_type_ids) {
-			selectedTicketType = code.ticket_type_ids || [""];
-		} else {
-			selectedTicketType = [""];
-		}
+		const selectedTicketType = code.ticket_type_ids || [""];
 
 		let items = <MenuItem disabled>{"No ticket types found"}</MenuItem>;
 		if (ticketTypes.length > 0) {
 			items = Object.keys(ticketTypeHash).map(key => (
 				<MenuItem key={key} value={key}>
+					<Checkbox checked={selectedTicketType.indexOf(key) > -1}/>
 					{ticketTypeHash[key]}
 				</MenuItem>
 			));
@@ -380,6 +378,11 @@ class CodeDialog extends React.Component {
 					}}
 					input={<Input id="select-multiple-ticket-types"/>}
 					name="ticket-types"
+					renderValue={selected => {
+						return selected.map(s => {
+							return ticketTypeHash[s];
+						}).join(", ");
+					}}
 					displayEmpty
 				>
 					{items}
