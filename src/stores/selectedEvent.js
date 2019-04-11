@@ -172,43 +172,50 @@ class SelectedEvent {
 					const { data } = response;
 					const appliedCodes = {};
 
+					const inactiveTicketNames = [];
+
 					//For promo codes (New data format)
 					if (data.ticket_types && typeof data.ticket_types === "object") {
 						data.ticket_types.forEach(codeTicketType => {
-							//Validate the code is for this event
-							const { event_id } = codeTicketType;
-							//TODO this stops the same code from being used for multiple events, do a find first and if it's not in there at all then fail
-							if (event_id !== this.id) {
-								onError();
-								return notifications.show({
-									message: "Promo code not valid for this event.",
-									variant: "warning"
-								});
-							}
-							codeTicketType.discount_as_percentage = data.discount_as_percentage;
-							let existingTicketTypeIndex = null;
-							updatedTicketTypes.forEach((et, index) => {
-								if (et.id == codeTicketType.id) {
-									existingTicketTypeIndex = index;
-								}
-							});
-
-							//Overwrite existing ticket type
-							if (existingTicketTypeIndex !== null) {
-								updatedTicketTypes[existingTicketTypeIndex] = codeTicketType;
+							if (codeTicketType.status === "NoActivePricing") {
+								inactiveTicketNames.push(codeTicketType.name);
 							} else {
-								//Add missing ticket type, it's revealed with a code
-								updatedTicketTypes.push(codeTicketType);
-							}
+								codeTicketType.discount_as_percentage = data.discount_as_percentage;
+								let existingTicketTypeIndex = null;
+								updatedTicketTypes.forEach((et, index) => {
+									if (et.id == codeTicketType.id) {
+										existingTicketTypeIndex = index;
+									}
+								});
 
-							appliedCodes[codeTicketType.id] = codeTicketType.redemption_code;
+								//Overwrite existing ticket type
+								if (existingTicketTypeIndex !== null) {
+									updatedTicketTypes[existingTicketTypeIndex] = codeTicketType;
+								} else {
+									//Add missing ticket type, it's revealed with a code
+									updatedTicketTypes.push(codeTicketType);
+								}
+
+								appliedCodes[codeTicketType.id] = codeTicketType.redemption_code;
+							}
 						});
 					}
 
-					this.currentlyAppliedCode = redemptionCode;
+					//If we only got back tickets that had no active pricings (No successful code applications)
+					if (inactiveTicketNames.length > 0 && Object.keys(appliedCodes).length === 0 ) {
+						onError();
 
-					this.ticket_types = updatedTicketTypes;
-					onSuccess(appliedCodes);
+						notifications.show({
+							message: "Promo code is valid but ticket is currently unavailable.",
+							variant: "warning"
+						});
+
+					} else {
+						this.currentlyAppliedCode = redemptionCode;
+
+						this.ticket_types = updatedTicketTypes;
+						onSuccess(appliedCodes);
+					}
 				},
 				error => {
 					this.ticket_types = updatedTicketTypes;
