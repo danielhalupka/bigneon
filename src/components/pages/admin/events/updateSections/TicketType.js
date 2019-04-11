@@ -89,11 +89,18 @@ const TicketHeading = ({
 	onEditClick,
 	deleteTicketType,
 	active,
-   	isCancelled
+	isCancelled
 }) => (
 	<div className={classes.ticketHeader}>
-		<FormHeading className={classnames({ [classes.title]: true, [classes.inactive]: isCancelled })}>
-			{name ? `${index + 1}. ${name}${isCancelled ? " (Cancelled)" : ""}` : "Add your new ticket"}
+		<FormHeading
+			className={classnames({
+				[classes.title]: true,
+				[classes.inactive]: isCancelled
+			})}
+		>
+			{name
+				? `${index + 1}. ${name}${isCancelled ? " (Cancelled)" : ""}`
+				: "Add your new ticket"}
 		</FormHeading>
 		{isCancelled ? (
 			<div>
@@ -117,7 +124,6 @@ const TicketHeading = ({
 				</IconButton>
 			</div>
 		)}
-
 	</div>
 );
 
@@ -132,6 +138,7 @@ const InactiveContent = props => {
 
 const TicketDetails = observer(props => {
 	const {
+		id,
 		index,
 		classes,
 		errors,
@@ -139,6 +146,7 @@ const TicketDetails = observer(props => {
 		updateTicketType,
 		name,
 		capacity,
+		saleStartTimeOption,
 		startDate,
 		startTime,
 		saleEndTimeOption,
@@ -154,7 +162,9 @@ const TicketDetails = observer(props => {
 		priceForDisplay,
 		soldOutBehavior,
 		isPrivate,
-		isCancelled
+		isCancelled,
+		parentId,
+		ticketTypes
 	} = props;
 
 	let useEndDate = endDate;
@@ -186,6 +196,19 @@ const TicketDetails = observer(props => {
 			showPricing = true;
 		}
 	}
+
+	const parentTicketTypes = ticketTypes
+		.map((tt, i) => {
+			return { index: i, inner: tt };
+		})
+		// Cannot choose yourself, and cannot choose a ticket type that is parented to yourself
+		.filter(
+			tt =>
+				tt.index !== index &&
+				(tt.inner.parentId || -1) !== index &&
+				(tt.inner.parentId || "") !== id &&
+				tt.inner.status !== "Cancelled"
+		);
 
 	const onShowAdditionalOptions = () =>
 		updateTicketType(index, { showAdditionalOptions: true });
@@ -270,33 +293,96 @@ const TicketDetails = observer(props => {
 
 			<Collapse in={!!showAdditionalOptions}>
 				<div className={classes.additionalInputsRow}>
-					<div className={classes.additionalInputContainer}>
-						<DateTimePickerGroup
+					<div
+						className={classes.additionalInputContainer}
+						style={{ marginBottom: 10 }}
+					>
+						<SelectGroup
 							disabled={isCancelled}
-							error={errors.startDate}
-							value={startDate}
-							name="startDate.date"
-							label="Sale start date *"
-							type="date"
-							onChange={startDate => updateTicketType(index, { startDate })}
-							onBlur={validateFields}
-							minDate={false}
-						/>
-					</div>
-					<div className={classes.additionalInputContainer}>
-						<DateTimePickerGroup
-							disabled={isCancelled}
-							error={errors.startTime}
-							value={startTime}
-							name="startTime"
-							label="Sale start time *"
-							type="time"
-							onChange={startTime => updateTicketType(index, { startTime })}
-							onBlur={validateFields}
-							minDate={false}
+							value={saleStartTimeOption || "custom"}
+							items={
+								parentTicketTypes.length > 0
+									? [
+										{ value: "parent", label: "When sales end for..." },
+
+										{ value: "custom", label: "At a specific time" }
+									  ]
+									: [{ value: "custom", label: "At a specific time" }]
+							}
+							name={"sales-start-times"}
+							label={"Sales start *"}
+							onChange={e => {
+								updateTicketType(index, {
+									saleStartTimeOption: e.target.value,
+									parentId:
+										e.target.value === "parent"
+											? parentTicketTypes[0].inner.id ||
+											  parentTicketTypes[0].index
+											: null
+								});
+							}}
 						/>
 					</div>
 				</div>
+				{(saleStartTimeOption || "custom") === "custom" ? (
+					<div className={classes.additionalInputsRow}>
+						<div className={classes.additionalInputContainer}>
+							<DateTimePickerGroup
+								disabled={isCancelled}
+								error={errors.startDate}
+								value={startDate}
+								name="startDate.date"
+								label="Sale start date *"
+								type="date"
+								onChange={startDate =>
+									updateTicketType(index, { parentId: null, startDate })
+								}
+								onBlur={validateFields}
+								minDate={false}
+							/>
+						</div>
+						<div className={classes.additionalInputContainer}>
+							<DateTimePickerGroup
+								disabled={isCancelled}
+								error={errors.startTime}
+								value={startTime}
+								name="startTime"
+								label="Sale start time *"
+								type="time"
+								onChange={startTime =>
+									updateTicketType(index, { parentId: null, startTime })
+								}
+								onBlur={validateFields}
+								minDate={false}
+							/>
+						</div>
+					</div>
+				) : (
+					<div className={classes.additionalInputsRow}>
+						<div className={classes.additionalInputContainer}>
+							<SelectGroup
+								disabled={isCancelled}
+								error={errors.parentId}
+								value={parentId}
+								name="parentId"
+								label="Ticket *"
+								items={parentTicketTypes.map(tt => {
+									return {
+										value: tt.inner.id || tt.index,
+										label: tt.inner.name
+									};
+								})}
+								onChange={e =>
+									updateTicketType(index, {
+										parentId: e.target.value,
+										startDate: null,
+										startTime: null
+									})
+								}
+							/>
+						</div>
+					</div>
+				)}
 				<div className={classes.additionalInputsRow}>
 					<div
 						className={classes.additionalInputContainer}
@@ -457,9 +543,11 @@ const TicketDetails = observer(props => {
 					</div>
 				</div>
 
-				{!showPricing && !isCancelled ? (
+				{!showPricing && !isCancelled && saleStartTimeOption !== "parent" ? (
 					<div>
-						<FormHeading className={classes.title}>Scheduled Price Changes</FormHeading>
+						<FormHeading className={classes.title}>
+							Scheduled Price Changes
+						</FormHeading>
 
 						<Button
 							variant="additional"
@@ -521,10 +609,7 @@ const TicketDetails = observer(props => {
 						>
 							Schedule a price change
 						</Button>
-					) :
-						null
-					}
-
+					) : null}
 				</Collapse>
 			</Collapse>
 		</div>
@@ -557,7 +642,9 @@ TicketType.propTypes = {
 	startTime: PropTypes.object,
 	soldOutBehavior: PropTypes.string,
 	isPrivate: PropTypes.bool,
-	isCancelled: PropTypes.bool
+	isCancelled: PropTypes.bool,
+	parentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+	ticketTypes: PropTypes.array
 	//id: PropTypes.string,
 	//capacity
 	//endDate

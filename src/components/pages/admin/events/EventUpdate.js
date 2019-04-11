@@ -132,7 +132,12 @@ class Event extends Component {
 
 			const missingPromoImage = !promoImageUrl;
 
-			if (artistsErrors || eventDetailErrors || ticketTypeErrors || missingPromoImage) {
+			if (
+				artistsErrors ||
+				eventDetailErrors ||
+				ticketTypeErrors ||
+				missingPromoImage
+			) {
 				this.setState({
 					errors: {
 						event: eventDetailErrors,
@@ -190,7 +195,9 @@ class Event extends Component {
 			return false;
 		}
 
-		const saveResponse = await eventUpdateStore.saveEventDetails(this.updateUrl);
+		const saveResponse = await eventUpdateStore.saveEventDetails(
+			this.updateUrl
+		);
 
 		if (!saveResponse.result) {
 			return saveResponse;
@@ -478,10 +485,21 @@ class Event extends Component {
 	}
 
 	render() {
-		const { errors, isSubmitting, ticketTimesDirty, showImportPreviousEventDialog } = this.state;
+		const {
+			errors,
+			isSubmitting,
+			ticketTimesDirty,
+			showImportPreviousEventDialog
+		} = this.state;
 
 		const { id, event, artists } = eventUpdateStore;
-		const { status, isExternal, externalTicketsUrl, showCoverImage, eventDate } = event;
+		const {
+			status,
+			isExternal,
+			externalTicketsUrl,
+			showCoverImage,
+			eventDate
+		} = event;
 
 		const eventErrors = errors.event || {};
 		const { classes } = this.props;
@@ -496,7 +514,9 @@ class Event extends Component {
 					<ImportPreviousEventDialog
 						organizationId={user.currentOrganizationId}
 						open={showImportPreviousEventDialog}
-						onClose={() => this.setState({ showImportPreviousEventDialog: false })}
+						onClose={() =>
+							this.setState({ showImportPreviousEventDialog: false })
+						}
 					/>
 				) : null}
 
@@ -512,12 +532,17 @@ class Event extends Component {
 							eventUpdateStore.updateEvent({ promoImageUrl });
 						}}
 						showCoverImage={showCoverImage}
-						onChangeCoverImage={() => eventUpdateStore.updateEvent({ showCoverImage: !showCoverImage })}
+						onChangeCoverImage={() =>
+							eventUpdateStore.updateEvent({ showCoverImage: !showCoverImage })
+						}
 						noMediaTitle="Upload event image"
 					/>
 
-					{errors.missingPromoImage ?
-						<Typography className={classes.missingPromoImageError}>*Missing promo image</Typography> : null}
+					{errors.missingPromoImage ? (
+						<Typography className={classes.missingPromoImageError}>
+							*Missing promo image
+						</Typography>
+					) : null}
 
 					<div className={classes.paddedContent}>
 						<FormSubHeading>Artists</FormSubHeading>
@@ -625,7 +650,11 @@ class Event extends Component {
 									fullWidth
 									variant="callToAction"
 								>
-									{isDraft ? "Publish" : isSubmitting ? "Updating..." : "Update"}
+									{isDraft
+										? "Publish"
+										: isSubmitting
+											? "Updating..."
+											: "Update"}
 								</Button>
 							</div>
 						</div>

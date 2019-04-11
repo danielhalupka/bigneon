@@ -28,7 +28,8 @@ const formatForSaving = (ticketTypes, event) => {
 			priceForDisplay,
 			soldOutBehavior,
 			isPrivate,
-			description
+			description,
+			parentId
 		} = ticketType;
 
 		let { startDate, endDate } = ticketType;
@@ -73,44 +74,53 @@ const formatForSaving = (ticketTypes, event) => {
 		}
 
 		const ticket_pricing = [];
-		pricing.forEach(pricePoint => {
-			const { id, name, startTime, endTime, value } = pricePoint;
+		// Using != instead of !== here to check for null or undefined
+		if (parentId != null) {
+			pricing.forEach(pricePoint => {
+				const { id, name, startTime, endTime, value } = pricePoint;
 
-			let { startDate, endDate } = pricePoint;
+				let { startDate, endDate } = pricePoint;
 
-			startDate = moment(startDate);
-			if (startTime) {
-				startDate = startDate.set({
-					hour: startTime.get("hour"),
-					minute: startTime.get("minute"),
-					second: startTime.get("second")
+				startDate = moment(startDate);
+				if (startTime) {
+					startDate = startDate.set({
+						hour: startTime.get("hour"),
+						minute: startTime.get("minute"),
+						second: startTime.get("second")
+					});
+				}
+
+				endDate = moment(endDate);
+				if (endTime) {
+					endDate = endDate.set({
+						hour: endTime.get("hour"),
+						minute: endTime.get("minute"),
+						second: endTime.get("second")
+					});
+				}
+
+				ticket_pricing.push({
+					id: id ? id : undefined,
+					name,
+					price_in_cents: Math.round(Number(value) * 100),
+					start_date: startDate
+						.utc()
+						.format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+					end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 				});
-			}
-
-			endDate = moment(endDate);
-			if (endTime) {
-				endDate = endDate.set({
-					hour: endTime.get("hour"),
-					minute: endTime.get("minute"),
-					second: endTime.get("second")
-				});
-			}
-
-			ticket_pricing.push({
-				id: id ? id : undefined,
-				name,
-				price_in_cents: Math.round(Number(value) * 100),
-				start_date: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
-				end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
 			});
-		});
+		}
 
 		ticket_types.push({
 			id,
 			name,
 			capacity: Number(capacity),
 			increment: Number(increment),
-			start_date: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
+			start_date:
+				// Using != instead of !== here to check for null or undefined
+				parentId != null
+					? null
+					: startDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			end_date: endDate.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS),
 			limit_per_person:
 				limitPerPerson === "" ? undefined : Number(limitPerPerson),
@@ -118,7 +128,8 @@ const formatForSaving = (ticketTypes, event) => {
 			ticket_pricing,
 			sold_out_behavior: soldOutBehavior,
 			is_private: isPrivate,
-			description
+			description,
+			parent_id: parentId
 		});
 	});
 
@@ -141,7 +152,8 @@ const formatForInput = (ticket_types, event) => {
 			price_in_cents,
 			status,
 			sold_out_behavior,
-			is_private
+			is_private,
+			parent_id
 		} = ticket_type;
 
 		const pricing = [];
@@ -202,7 +214,8 @@ const formatForInput = (ticket_types, event) => {
 			capacity: capacity ? capacity : 0,
 			increment: increment ? increment : 1,
 			limitPerPerson: limit_per_person ? limit_per_person : "",
-			startDate: ticketStartDate.clone(),
+			saleStartTimeOption: parent_id ? "parent" : "custom",
+			startDate: ticketStartDate ? ticketStartDate.clone() : null,
 			startTime: ticketStartDate,
 			saleEndTimeOption,
 			endDate: ticketEndDate.clone(),
@@ -213,7 +226,8 @@ const formatForInput = (ticket_types, event) => {
 			priceForDisplay: price_in_cents / 100,
 			status,
 			soldOutBehavior: sold_out_behavior,
-			isPrivate: is_private
+			isPrivate: is_private,
+			parentId: parent_id
 		};
 
 		ticketTypes.push(ticketType);
@@ -279,6 +293,7 @@ const validateFields = ticketTypes => {
 			id,
 			eventId,
 			name,
+			saleStartTimeOption,
 			startTime,
 			saleEndTimeOption,
 			endTime,
@@ -287,6 +302,7 @@ const validateFields = ticketTypes => {
 			pricing,
 			priceForDisplay,
 			status,
+			parentId,
 			soldOutBehavior,
 			isPrivate
 		} = ticket;
@@ -326,8 +342,15 @@ const validateFields = ticketTypes => {
 			ticketErrors.name = "Missing ticket name.";
 		}
 
-		if (!startDate) {
-			ticketErrors.startDate = "Specify the ticket start time.";
+		if (saleStartTimeOption === "custom") {
+			if (!startDate) {
+				ticketErrors.startDate = "Specify the ticket start time.";
+			}
+		} else {
+			// Using == instead of === here to check for null or undefined
+			if (saleStartTimeOption === "parent" && parentId == null) {
+				ticketErrors.parentId = "Specify the ticket to start after.";
+			}
 		}
 
 		if (saleEndTimeOption === "custom") {
@@ -590,6 +613,7 @@ class EventTickets extends Component {
 								errors={ticketTypeErrors}
 								ticketTimesDirty={ticketTimesDirty}
 								eventStartDate={eventStartDate}
+								ticketTypes={ticketTypes}
 								{...ticketType}
 							/>
 						</LeftAlignedSubCard>
@@ -617,7 +641,8 @@ EventTickets.propTypes = {
 	errors: PropTypes.object,
 	ticketTimesDirty: PropTypes.bool,
 	onChangeDate: PropTypes.func,
-	onDeleteTicketType: PropTypes.func
+	onDeleteTicketType: PropTypes.func,
+	disabled: PropTypes.bool
 };
 
 export const Tickets = withStyles(styles)(EventTickets);
