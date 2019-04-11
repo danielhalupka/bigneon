@@ -58,7 +58,6 @@ class BoxOffice {
 	@action
 	refreshEventTickets() {
 		this.refreshTicketTypes();
-		this.refreshHolds();
 		this.refreshGuests();
 	}
 
@@ -72,13 +71,13 @@ class BoxOffice {
 			.events.read({ id: this.activeEventId })
 			.then(response => {
 				const { ticket_types } = response.data;
-
 				const ticketTypes = {};
 				ticket_types.forEach(({ id, ...ticket_type }) => {
 					ticketTypes[id] = ticket_type;
 				});
-
 				this.ticketTypes = ticketTypes;
+
+				this.refreshHolds();
 			})
 			.catch(error => {
 				console.error(error);
@@ -87,6 +86,7 @@ class BoxOffice {
 					defaultMessage: "Loading event ticket types failed."
 				});
 			});
+
 	}
 
 	@action
@@ -99,10 +99,25 @@ class BoxOffice {
 			.events.holds.index({ event_id: this.activeEventId })
 			.then(response => {
 				const { data } = response.data;
-
 				const holds = {};
 				data.forEach(({ id, ...hold }) => {
 					holds[id] = hold;
+					//Check if the ticket type exists in the ticket type list
+					//if it doesn't then add it to the list marking it as hidden.
+					if (Object.keys(this.ticketTypes).filter(tt => tt === hold.ticket_type_id).length === 0) {
+						Bigneon()
+							.redemptionCodes.read({ code: hold.redemption_code })
+							.then(
+								response => {
+									const { data } = response;
+									if (data.ticket_types && data.ticket_types.length == 1) {
+										const ticketType = { hidden: true, ...data.ticket_types[0] };
+										this.ticketTypes[data.ticket_types[0].id] = ticketType;
+									}
+								}
+							);
+					}
+
 				});
 				
 				this.holds = holds;

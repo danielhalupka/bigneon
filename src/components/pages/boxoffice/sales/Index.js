@@ -122,7 +122,7 @@ class TicketSales extends Component {
 		}
 
 		return ticketTypeIds.map(id => {
-			const { name, available, ticket_pricing, ...rest } = ticketTypes[id];
+			const { name, available, ticket_pricing, hidden,  ...rest } = ticketTypes[id];
 
 			let disabled = false;
 			let price_in_cents = 0;
@@ -130,6 +130,10 @@ class TicketSales extends Component {
 				price_in_cents = ticket_pricing.price_in_cents;
 			} else {
 				disabled = true; //No pricing yet so ticket probably not available for sale yet
+			}
+
+			if (hidden) {
+				return null;
 			}
 
 			return (
@@ -222,7 +226,7 @@ class TicketSales extends Component {
 
 		const { ticketTypes, holds } = boxOffice;
 
-		if (!ticketTypes || Object.keys(ticketTypes).length < 1) {
+		if ((!ticketTypes || Object.keys(ticketTypes).length < 1) && !holds) {
 			return null;
 		}
 
