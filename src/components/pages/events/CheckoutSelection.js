@@ -285,7 +285,7 @@ class CheckoutSelection extends Component {
 	}
 
 	renderTicketPricing() {
-		const { ticket_types, currentlyAppliedCode } = selectedEvent;
+		const { ticket_types } = selectedEvent;
 		const { ticketSelection, errors } = this.state;
 		if (!ticket_types) {
 			return <Loader>Loading tickets...</Loader>;
