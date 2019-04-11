@@ -109,9 +109,9 @@ class BoxOffice {
 							.redemptionCodes.read({ code: hold.redemption_code })
 							.then(
 								response => {
-									const {data} = response;
+									const { data } = response;
 									if (data.ticket_types && data.ticket_types.length == 1) {
-										const ticketType = {hidden: true, ...data.ticket_types[0]};
+										const ticketType = { hidden: true, ...data.ticket_types[0] };
 										this.ticketTypes[data.ticket_types[0].id] = ticketType;
 									}
 								}
