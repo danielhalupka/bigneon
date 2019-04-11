@@ -142,6 +142,7 @@ class EventSummary extends Component {
 							{sales.map((pricePoint, priceIndex) => {
 								const {
 									ticket_pricing_price_in_cents,
+									promo_code_discounted_ticket_price,
 									client_online_fees_in_cents,
 									online_sale_count,
 									ticket_pricing_name,
@@ -154,11 +155,13 @@ class EventSummary extends Component {
 									rowName = (promo_redemption_code ? "Promo - " : "Hold - ") + hold_name;
 								}
 
+								const priceInCents = ticket_pricing_price_in_cents + promo_code_discounted_ticket_price;
+
 								return (
 									<EventSummaryRow key={priceIndex}>
 										{[
 											rowName,
-											dollars(ticket_pricing_price_in_cents),
+											dollars(priceInCents),
 											dollars(client_online_fees_in_cents),
 											online_sale_count,
 											" ",
