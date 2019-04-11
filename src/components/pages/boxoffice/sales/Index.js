@@ -250,9 +250,7 @@ class TicketSales extends Component {
 				const { ticket_type_id, discount_in_cents, hold_type } = holds[id];
 
 				totalNumberSelected = totalNumberSelected + selectedHolds[id];
-				console.log("tt_id", ticket_type_id);
-				console.log("tt: ", ticketTypes);
-				console.log("tt[id]", ticketTypes[ticket_type_id]);
+
 				if (hold_type !== "Comp") {
 					const { ticket_pricing } = ticketTypes[ticket_type_id];
 					const { price_in_cents } = ticket_pricing;
