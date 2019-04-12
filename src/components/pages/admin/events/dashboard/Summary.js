@@ -279,19 +279,25 @@ class Summary extends Component {
 
 		return (
 			<Grid container spacing={32}>
-				{ticketTypes.map((tt, index) => (
-					<Grid key={index} item xs={12} sm={6} lg={4}>
-						<TicketTypeSalesBarChart
-							name={tt.name}
-							totalRevenueInCents={tt.sales_total_in_cents}
-							values={[
-								{ label: "Sold", value: tt.sold_held + tt.sold_unreserved },
-								{ label: "Open", value: tt.open },
-								{ label: "Held", value: tt.held }
-							]}
-						/>
-					</Grid>
-				))}
+				{ticketTypes.map((ticketType, index) => {
+
+					const remainingHeld = ticketType.held - ticketType.sold_held;
+					// const valueDisplay = ticketType.held > 0 ? `${remainingHeld} / ${ticketType.held}` : "";
+					return (
+
+						<Grid key={index} item xs={12} sm={6} lg={4}>
+							<TicketTypeSalesBarChart
+								name={ticketType.name}
+								totalRevenueInCents={ticketType.sales_total_in_cents}
+								values={[
+									{ label: "Sold", value: ticketType.sold_held + ticketType.sold_unreserved },
+									{ label: "Open", value: ticketType.open },
+									{ label: "Held", value: remainingHeld }
+								]}
+							/>
+						</Grid>
+					);
+				})}
 			</Grid>
 		);
 	}

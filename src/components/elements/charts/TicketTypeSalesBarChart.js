@@ -135,8 +135,8 @@ const TicketTypeSalesBarChart = props => {
 						))}
 					</div>
 					<div className={classes.labelsContainer}>
-						{values.map(({ label, value }, index) => (
-							<Label key={index} classes={classes} value={value}>
+						{values.map(({ label, value, valueDisplay }, index) => (
+							<Label key={index} classes={classes} value={valueDisplay || value}>
 								{label}
 							</Label>
 						))}
@@ -154,7 +154,8 @@ TicketTypeSalesBarChart.propTypes = {
 	values: PropTypes.arrayOf(
 		PropTypes.shape({
 			label: PropTypes.string.isRequired,
-			value: PropTypes.number.isRequired
+			value: PropTypes.number.isRequired,
+			valueDisplay: PropTypes.string
 		}).isRequired
 	)
 };
