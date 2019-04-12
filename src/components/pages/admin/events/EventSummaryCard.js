@@ -163,7 +163,12 @@ const EventSummaryCard = props => {
 
 		tags = (
 			<div className={classes.statusContainer}>
-				<ColorTag style={{ marginRight: 10 }} variant={isPublished ? "default" : "disabled"}>{isPublished ? "Published" : "Draft"}</ColorTag>
+				<ColorTag
+					style={{ marginRight: 10 }}
+					variant={isPublished ? "default" : "disabled"}
+				>
+					{isPublished ? "Published" : "Draft"}
+				</ColorTag>
 				{onSaleTag}
 			</div>
 		);
@@ -197,43 +202,44 @@ const EventSummaryCard = props => {
 						</div>
 						<div>{menuButton}</div>
 					</div>
-					<Grid  container spacing={0} alignItems="center">
+					<Grid container spacing={0} alignItems="center">
 						<Grid item xs={12} sm={12} md={5} lg={5} className={classes.bottomPadding}>
 							{tags}
 						</Grid>
 
 						<Grid item xs={12} sm={12} md={7} lg={7} className={classes.bottomPadding}>
-							{!isExternal ? (
-								<div className={classes.totalsContainer}>
-									<Total classes={classes} value={totalSold} color={"#707ced"}>
-										Sold
-									</Total>
+							{!isExternal ?
+								(
+									<div className={classes.totalsContainer}>
+										<Total classes={classes} value={totalSold} color={"#707ced"}>
+											Sold
+										</Total>
 
-									<div className={classes.totalsDivider}/>
+										<div className={classes.totalsDivider}/>
 
-									<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
-										Open
-									</Total>
+										<Total classes={classes} value={totalOpen} color={"#afc6d4"}>
+											Open
+										</Total>
 
-									<div className={classes.totalsDivider}/>
+										<div className={classes.totalsDivider}/>
 
-									<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
-										Held
-									</Total>
+										<Total classes={classes} value={totalHeld} color={"#ff22b2"}>
+											Held
+										</Total>
 
-									<div className={classes.totalsDivider}/>
+										<div className={classes.totalsDivider}/>
 
-									<Total classes={classes} value={totalCapacity}>
-										Capacity
-									</Total>
+										<Total classes={classes} value={totalCapacity}>
+											Capacity
+										</Total>
 
-									<div className={classes.totalsDivider}/>
+										<div className={classes.totalsDivider}/>
 
-									<Total classes={classes} value={`$${(totalSalesInCents / 100).toFixed(2)}`}>
-										Sales
-									</Total>
-								</div>
-							) :
+										<Total classes={classes} value={`$${(totalSalesInCents / 100).toFixed(2)}`}>
+											Sales
+										</Total>
+									</div>
+								) :
 								(
 									<div className={classes.totalsContainer}>
 										<Typography variant="caption">Externally Ticketed</Typography>
@@ -241,7 +247,7 @@ const EventSummaryCard = props => {
 								)
 							}
 						</Grid>
-						
+
 					</Grid>
 					<div>
 						{!isExternal ? (
@@ -258,16 +264,20 @@ const EventSummaryCard = props => {
 						) : null}
 						{isExternal ?
 							<div className={classes.expandIconRowPlaceholder}>&nbsp;</div> :
-							(!isExpanded ? (
-								<div
-									className={classes.expandIconRow}
-									onClick={() => onExpandClick(id)}
-								>
-									<img src={"/icons/down-active.svg"}/>
-								</div>
-							) : (
-								<div className={classes.expandIconRowPlaceholder}>&nbsp;</div>
-							)
+							(
+								!isExpanded
+									?
+									(
+										<div
+											className={classes.expandIconRow}
+											onClick={() => onExpandClick(id)}
+										>
+											<img src={"/icons/down-active.svg"}/>
+										</div>
+									) :
+									(
+										<div className={classes.expandIconRowPlaceholder}>&nbsp;</div>
+									)
 							)
 						}
 					</div>
@@ -277,22 +287,26 @@ const EventSummaryCard = props => {
 					<Collapse in={isExpanded}>
 						<div className={classes.expandedViewContent}>
 							<Grid container spacing={32}>
-								{ticketTypes.map((ticketType, index) => (
-									<Grid key={index} item xs={12} sm={12} md={6} lg={4}>
-										<TicketTypeSalesBarChart
-											name={ticketType.name}
-											totalRevenueInCents={ticketType.sales_total_in_cents}
-											values={[
-												{
-													label: "Sold",
-													value: ticketType.sold_held + ticketType.sold_unreserved
-												},
-												{ label: "Open", value: ticketType.open },
-												{ label: "Held", value: ticketType.held }
-											]}
-										/>
-									</Grid>
-								))}
+								{ticketTypes.map((ticketType, index) => {
+									const remainingHeld = ticketType.held - ticketType.sold_held;
+									// const valueDisplay = ticketType.held > 0 ? `${remainingHeld} / ${ticketType.held}` : "";
+									return (
+										<Grid key={index} item xs={12} sm={12} md={6} lg={4}>
+											<TicketTypeSalesBarChart
+												name={ticketType.name}
+												totalRevenueInCents={ticketType.sales_total_in_cents}
+												values={[
+													{
+														label: "Sold",
+														value: ticketType.sold_held + ticketType.sold_unreserved
+													},
+													{ label: "Open", value: ticketType.open },
+													{ label: "Held", value: remainingHeld }
+												]}
+											/>
+										</Grid>
+									);
+								})}
 							</Grid>
 							<div
 								className={classes.expandIconRow}
