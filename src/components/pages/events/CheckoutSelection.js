@@ -62,28 +62,31 @@ class CheckoutSelection extends Component {
 
 	componentDidMount() {
 		const code = getUrlParam("code");
-		code ? selectedEvent.currentlyAppliedCode = code : null;
-		
+		code ? (selectedEvent.currentlyAppliedCode = code) : null;
+
 		//If we have a current cart in the store already, load that right away
 		if (cart.items && cart.items.length > 0) {
 			this.setTicketSelectionFromExistingCart(cart.items);
 		} else {
 			//Else if we don't have any items in the cart, refresh to make sure
-			cart.refreshCart(() => {
-				this.setTicketSelectionFromExistingCart(cart.items);
-			}, error => {
-				//If they're not logged in, assume an empty cart
-				if (user.isAuthenticated) {
-					notifications.showFromErrorResponse({
-						defaultMessage: "Failed add to existing cart items.",
-						error
-					});
-				}
+			cart.refreshCart(
+				() => {
+					this.setTicketSelectionFromExistingCart(cart.items);
+				},
+				error => {
+					//If they're not logged in, assume an empty cart
+					if (user.isAuthenticated) {
+						notifications.showFromErrorResponse({
+							defaultMessage: "Failed add to existing cart items.",
+							error
+						});
+					}
 
-				if (!this.state.ticketSelection) {
-					this.setState({ ticketSelection: {} });
+					if (!this.state.ticketSelection) {
+						this.setState({ ticketSelection: {} });
+					}
 				}
-			});
+			);
 		}
 
 		if (
@@ -122,7 +125,11 @@ class CheckoutSelection extends Component {
 
 		//Auto add one ticket if there is only one
 		const { ticket_types } = selectedEvent;
-		if ((items === undefined || items.length === 0) && ticket_types && ticket_types.length === 1) {
+		if (
+			(items === undefined || items.length === 0) &&
+			ticket_types &&
+			ticket_types.length === 1
+		) {
 			const { id } = ticket_types[0];
 
 			if (!ticketSelection[id]) {
@@ -175,7 +182,7 @@ class CheckoutSelection extends Component {
 		//Remove codes from selected tickets to not apply them when adding to cart
 		this.setState(({ ticketSelection }) => {
 			if (ticketSelection) {
-				Object.keys(ticketSelection).forEach((id) => {
+				Object.keys(ticketSelection).forEach(id => {
 					if (ticketSelection[id]) {
 						delete ticketSelection[id].redemption_code;
 					}
@@ -198,12 +205,14 @@ class CheckoutSelection extends Component {
 		}
 
 		this.setState({ isSubmittingPromo: true }, () => {
-			selectedEvent.applyRedemptionCode(code, null,
-				(appliedCodes) => {
+			selectedEvent.applyRedemptionCode(
+				code,
+				null,
+				appliedCodes => {
 					//after applying, update redemption_code in ticketSelection
 					if (appliedCodes && Object.keys(appliedCodes).length > 0) {
 						this.setState(({ ticketSelection }) => {
-							Object.keys(appliedCodes).forEach((id) => {
+							Object.keys(appliedCodes).forEach(id => {
 								if (ticketSelection[id]) {
 									ticketSelection[id].redemption_code = appliedCodes[id];
 								}
@@ -212,10 +221,11 @@ class CheckoutSelection extends Component {
 							return { ticketSelection, isSubmittingPromo: false };
 						});
 					}
-
-				}, () => {
+				},
+				() => {
 					this.setState({ isSubmittingPromo: false });
-				});
+				}
+			);
 		});
 	}
 
@@ -292,70 +302,69 @@ class CheckoutSelection extends Component {
 		}
 
 		const ticketTypeRendered = ticket_types
-			.map(
-				(ticketType) => {
-					const {
-						id,
-						name,
-						ticket_pricing,
-						increment,
-						limit_per_person,
-						start_date,
-						end_date,
-						redemption_code,
-						available,
-						description,
-						discount_as_percentage
-					} = ticketType;
+			.map(ticketType => {
+				const {
+					id,
+					name,
+					ticket_pricing,
+					increment,
+					limit_per_person,
+					start_date,
+					end_date,
+					redemption_code,
+					available,
+					description,
+					discount_as_percentage
+				} = ticketType;
 
-					const nowIsValidTime = moment
-						.utc()
-						.isBetween(moment.utc(start_date), moment.utc(end_date));
-					//Not in a valid date for this ticket_type
-					if (!nowIsValidTime) {
-						return;
-					}
+				const nowIsValidTime = start_date
+					? moment.utc().isBetween(moment.utc(start_date), moment.utc(end_date))
+					: moment.utc().isBefore(moment.utc(end_date));
+				//Not in a valid date for this ticket_type
 
-					let price_in_cents = 0;
-					let ticketsAvailable = false;
-					let discount_in_cents = 0;
-					if (ticket_pricing) {
-						price_in_cents = ticket_pricing.price_in_cents;
-						ticketsAvailable = available > 0;
-						discount_in_cents = ticket_pricing.discount_in_cents || 0;
-					} else {
-						//description = "(Tickets currently unavailable)";
-					}
-					const limitPerPerson = Math.min(available, limit_per_person);
-
-					return (
-						<TicketSelection
-							key={id}
-							name={name}
-							description={description}
-							available={ticketsAvailable}
-							price_in_cents={price_in_cents}
-							error={errors[id]}
-							amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}
-							increment={increment}
-							limitPerPerson={limitPerPerson}
-							discount_in_cents={discount_in_cents}
-							discount_as_percentage={discount_as_percentage}
-							redemption_code={redemption_code}
-							onNumberChange={amount =>
-								this.setState(({ ticketSelection }) => {
-									ticketSelection[id] = {
-										quantity: Number(amount) < 0 ? 0 : amount,
-										redemption_code
-									};
-									return { ticketSelection };
-								})
-							}
-							validateFields={this.validateFields.bind(this)}
-						/>
-					);
+				if (!nowIsValidTime) {
+					return;
 				}
-			)
+
+				let price_in_cents = 0;
+				let ticketsAvailable = false;
+				let discount_in_cents = 0;
+				if (ticket_pricing) {
+					price_in_cents = ticket_pricing.price_in_cents;
+					ticketsAvailable = available > 0;
+					discount_in_cents = ticket_pricing.discount_in_cents || 0;
+				} else {
+					//description = "(Tickets currently unavailable)";
+				}
+				const limitPerPerson = Math.min(available, limit_per_person);
+
+				return (
+					<TicketSelection
+						key={id}
+						name={name}
+						description={description}
+						available={ticketsAvailable}
+						price_in_cents={price_in_cents}
+						error={errors[id]}
+						amount={ticketSelection[id] ? ticketSelection[id].quantity : 0}
+						increment={increment}
+						limitPerPerson={limitPerPerson}
+						discount_in_cents={discount_in_cents}
+						discount_as_percentage={discount_as_percentage}
+						redemption_code={redemption_code}
+						onNumberChange={amount =>
+							this.setState(({ ticketSelection }) => {
+								ticketSelection[id] = {
+									quantity: Number(amount) < 0 ? 0 : amount,
+									redemption_code
+								};
+								return { ticketSelection };
+							})
+						}
+						validateFields={this.validateFields.bind(this)}
+					/>
+				);
+			})
 			.filter(item => !!item);
 
 		if (!ticketTypeRendered.length) {
@@ -394,7 +403,9 @@ class CheckoutSelection extends Component {
 			eventStartDateMoment
 		} = event;
 
-		const promo_image_url = event.promo_image_url ? optimizedImageUrl(event.promo_image_url) : null;
+		const promo_image_url = event.promo_image_url
+			? optimizedImageUrl(event.promo_image_url)
+			: null;
 
 		const mobilePromoImageStyle = {};
 		if (promo_image_url) {
@@ -406,7 +417,11 @@ class CheckoutSelection extends Component {
 		let sharedContent;
 
 		if (ticketSelection === null) {
-			sharedContent = <Loader style={{ marginTop: 40, marginBottom: 40 }}>Loading cart...</Loader>;
+			sharedContent = (
+				<Loader style={{ marginTop: 40, marginBottom: 40 }}>
+					Loading cart...
+				</Loader>
+			);
 		} else {
 			sharedContent = (
 				<div>
@@ -450,7 +465,7 @@ class CheckoutSelection extends Component {
 
 		//On mobile we need to move the description and artist details down. But we don't know how much space the overlayed div will take.
 		const { overlayCardHeight } = this.state;
-		const overlayCardHeightAdjustment =  overlayCardHeight - 150;
+		const overlayCardHeightAdjustment = overlayCardHeight - 150;
 
 		return (
 			<div>
@@ -462,7 +477,11 @@ class CheckoutSelection extends Component {
 					<TwoColumnLayout
 						containerClass={classes.desktopContent}
 						containerStyle={{ minHeight: overlayCardHeightAdjustment }}
-						col1={<EventDescriptionBody artists={artists}>{additional_info}</EventDescriptionBody>}
+						col1={(
+							<EventDescriptionBody artists={artists}>
+								{additional_info}
+							</EventDescriptionBody>
+						)}
 						col2={(
 							<EventDetailsOverlayCard
 								style={{
@@ -483,9 +502,7 @@ class CheckoutSelection extends Component {
 
 				{/*MOBILE*/}
 				<Hidden mdUp>
-					<div className={classes.mobileContainer}>
-						{sharedContent}
-					</div>
+					<div className={classes.mobileContainer}>{sharedContent}</div>
 				</Hidden>
 			</div>
 		);
