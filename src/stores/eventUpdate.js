@@ -123,9 +123,8 @@ class EventUpdate {
 	addTicketType() {
 		//const endDate = this.event.eventDate ? this.event.eventDate : new Date(); //FIXME this will most certainly not work. If a user changes the event date this first ticket type date needs to change.
 		const ticketTypes = this.ticketTypes;
-		const startDate = moment().set({
-			hour: 12,
-			minute: 30,
+		const startDate = moment().tz("America/Los_Angeles").set({
+			minute: 0,
 			second: 0,
 			millisecond: 0
 		});
