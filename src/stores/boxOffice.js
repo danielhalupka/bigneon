@@ -106,7 +106,7 @@ class BoxOffice {
 					//if it doesn't then add it to the list marking it as hidden.
 					if (Object.keys(this.ticketTypes).filter(tt => tt === hold.ticket_type_id).length === 0) {
 						Bigneon()
-							.redemptionCodes.read({ code: hold.redemption_code })
+							.redemptionCodes.read({ code: hold.redemption_code, event_id: hold.event_id })
 							.then(
 								response => {
 									const { data } = response;
