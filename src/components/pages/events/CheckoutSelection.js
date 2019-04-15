@@ -336,7 +336,12 @@ class CheckoutSelection extends Component {
 				} else {
 					//description = "(Tickets currently unavailable)";
 				}
-				const limitPerPerson = Math.min(available, limit_per_person);
+
+				//0 is returned for limit_per_person when there is no limit
+				const limitPerPerson =
+					limit_per_person > 0
+						? Math.min(available, limit_per_person)
+						: available;
 
 				return (
 					<TicketSelection
