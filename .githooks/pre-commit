@@ -1,15 +1,17 @@
 #!/bin/bash
 
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".jsx\{0,1\}$")
-
+AUTO_FIX_FILES=$(git config custom.autofix)
+AUTO_FIX_FILES=true
 if [[ "$STAGED_FILES" = "" ]]; then
   echo -e "\nNo staged files to validate.\n"
   exit 0
 fi
 
-PASS=true
+ESLINTPASS=true
+CONSOLELOGPASS=true
 
-echo -e "\nValidating with ESLint:\n"
+echo -e "\nValidating files:\n"
 
 for FILE in $STAGED_FILES
 do
@@ -19,17 +21,45 @@ do
     echo -e "\t\033[32mESLint Passed: $FILE\033[0m"
   else
     echo -e "\t\033[41mESLint Failed: $FILE\033[0m"
-    PASS=false
+    ESLINTPASS=false
+  fi
+
+  if grep -q "console.log" "$FILE"; then
+    echo -e "\t\033[41mContains console.log: $FILE\033[0m"
+	CONSOLELOGPASS=false
   fi
 done
 
 echo -e "\nJavascript validation completed!\n"
 
-if ! $PASS; then
+if ! $ESLINTPASS; then
   echo -e "\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass ESLint but do not. Please fix the ESLint errors and try again.\n\n Try running: \n npm run eslint-fix \n"
-  exit 1
-else
-  echo -e "\033[42mCOMMIT SUCCEEDED\033[0m\n"
 fi
 
-exit $?
+if ! $CONSOLELOGPASS; then
+  echo -e "\033[41mCOMMIT FAILED:\033[0m Your commit contains files that have console.log(). \n"
+fi
+
+if ( ! $ESLINTPASS ) || ( ! $CONSOLELOGPASS ); then
+  exit 1
+else
+  echo -e "\033[42mAll files are valid\033[0m\n"
+
+  if [[ ! -z ${AUTO_FIX_FILES} ]]; then
+	  echo -e "\033[1;32mAutomatically fixing files, Run 'git config --unset custom.autofix' to stop\033[0m\n"
+
+	  for FILE in $STAGED_FILES
+	  do
+		node_modules/prettier/bin-prettier.js --write "$FILE"
+		node_modules/eslint/bin/eslint.js -c .eslintrc --fix "$FILE"
+		git add "$FILE"
+	  done
+
+  else
+ 	 echo -e "\033[0;33mTo automatically fix files, Run 'git config custom.autofix true;' to turn on\033[0m\n"
+  fi
+
+  echo -e "\033[42mCOMMIT SUCCEEDED\033[0m\n"
+  exit $?
+fi
+
