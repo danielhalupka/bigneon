@@ -341,6 +341,10 @@ class CheckoutConfirmation extends Component {
 			return <NotFound>Event not found.</NotFound>;
 		}
 
+		if (event.is_external) {
+			return <Redirect to={`/events/${id}`}/>;
+		}
+
 		const { promo_image_url, organization_id, additional_info } = event;
 
 		let cryptoIcons;
@@ -396,7 +400,7 @@ class CheckoutConfirmation extends Component {
 
 		//On mobile we need to move the description and artist details down. But we don't know how much space the overlayed div will take.
 		const { overlayCardHeight } = this.state;
-		const overlayCardHeightAdjustment =  overlayCardHeight - 250;
+		const overlayCardHeightAdjustment = overlayCardHeight - 250;
 
 		return (
 			<div className={classes.root}>
@@ -408,7 +412,11 @@ class CheckoutConfirmation extends Component {
 					<TwoColumnLayout
 						containerClass={classes.desktopContent}
 						containerStyle={{ minHeight: overlayCardHeightAdjustment }}
-						col1={<EventDescriptionBody artists={artists}>{additional_info}</EventDescriptionBody>}
+						col1={(
+							<EventDescriptionBody artists={artists}>
+								{additional_info}
+							</EventDescriptionBody>
+						)}
 						col2={(
 							<EventDetailsOverlayCard
 								style={{
@@ -429,9 +437,7 @@ class CheckoutConfirmation extends Component {
 
 				{/*MOBILE*/}
 				<Hidden mdUp>
-					<div className={classes.mobileContainer}>
-						{sharedContent}
-					</div>
+					<div className={classes.mobileContainer}>{sharedContent}</div>
 				</Hidden>
 			</div>
 		);

@@ -54,6 +54,9 @@ const styles = theme => ({
 	missingPromoImageError: {
 		color: "red",
 		textAlign: "center"
+	},
+	disabledExternalEvent: {
+		color: "gray"
 	}
 });
 
@@ -94,6 +97,8 @@ class Event extends Component {
 		if (this.timeout) {
 			clearTimeout(this.timeout);
 		}
+
+		eventUpdateStore.clearDetails();
 	}
 
 	setOrganizationId() {
@@ -492,7 +497,7 @@ class Event extends Component {
 			showImportPreviousEventDialog
 		} = this.state;
 
-		const { id, event, artists } = eventUpdateStore;
+		const { id, event, artists, disabledExternalEvent } = eventUpdateStore;
 		const {
 			status,
 			isExternal,
@@ -570,6 +575,7 @@ class Event extends Component {
 
 						<div className={classes.ticketOptions}>
 							<RadioButton
+								disabled={!!disabledExternalEvent}
 								active={!isExternal}
 								onClick={() =>
 									eventUpdateStore.updateEvent({ isExternal: false })
@@ -578,6 +584,7 @@ class Event extends Component {
 								Big Neon
 							</RadioButton>
 							<RadioButton
+								disabled={!!disabledExternalEvent}
 								active={!!isExternal}
 								onClick={() =>
 									eventUpdateStore.updateEvent({ isExternal: true })
@@ -586,6 +593,11 @@ class Event extends Component {
 								External event
 							</RadioButton>
 						</div>
+						{disabledExternalEvent === true ? (
+							<Typography className={classes.disabledExternalEvent}>
+								Ticket sales have already started.
+							</Typography>
+						) : null}
 					</div>
 
 					{isExternal ? (

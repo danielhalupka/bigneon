@@ -24,6 +24,7 @@ import Divider from "../../common/Divider";
 import TwoColumnLayout from "./TwoColumnLayout";
 import EventDescriptionBody from "./EventDescriptionBody";
 import getUrlParam from "../../../helpers/getUrlParam";
+import { Redirect } from "react-router-dom";
 
 const styles = theme => ({
 	root: {},
@@ -395,6 +396,10 @@ class CheckoutSelection extends Component {
 
 		if (event === false) {
 			return <Typography variant="subheading">Event not found.</Typography>;
+		}
+
+		if (event.is_external) {
+			return <Redirect to={`/events/${id}`}/>;
 		}
 
 		const {

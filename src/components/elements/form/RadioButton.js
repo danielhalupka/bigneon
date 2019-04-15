@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import classnames from "classnames";
 import { fontFamilyDemiBold, secondaryHex } from "../../../config/theme";
 
 const styles = theme => {
@@ -10,6 +11,9 @@ const styles = theme => {
 			cursor: "pointer",
 			marginRight: theme.spacing.unit * 2,
 			display: "flex"
+		},
+		disabledRoot: {
+			cursor: "default"
 		},
 		label: { color: "#868f9b" },
 		labelActive: {
@@ -32,16 +36,36 @@ const styles = theme => {
 			height: 16,
 			borderRadius: 10,
 			backgroundColor: secondaryHex
+		},
+		disabled: {
+			borderColor: "#d1d1d1"
+		},
+		disabledActive: {
+			borderColor: "#d1d1d1",
+			backgroundColor: "#d1d1d1"
 		}
 	};
 };
 
 const RadioButton = props => {
-	const { active, children, onClick, classes } = props;
-
+	const { active, children, onClick, disabled, classes } = props;
+	//classes[active ? "activeCircle" : "circle"]
 	return (
-		<div className={classes.root} onClick={onClick}>
-			<div className={classes[active ? "activeCircle" : "circle"]}/>
+		<div
+			className={classnames({
+				[classes.root]: true,
+				[classes.disabledRoot]: disabled
+			})}
+			onClick={disabled ? null : onClick}
+		>
+			<div
+				className={classnames({
+					[classes.circle]: !active,
+					[classes.activeCircle]: active,
+					[classes.disabled]: disabled && !active,
+					[classes.disabledActive]: disabled && active
+				})}
+			/>
 			{children ? (
 				<Typography className={classes[active ? "labelActive" : "label"]}>
 					{children}
@@ -53,6 +77,7 @@ const RadioButton = props => {
 
 RadioButton.propTypes = {
 	active: PropTypes.bool.isRequired,
+	disabled: PropTypes.bool,
 	children: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 	classes: PropTypes.object.isRequired,
 	onClick: PropTypes.func.isRequired

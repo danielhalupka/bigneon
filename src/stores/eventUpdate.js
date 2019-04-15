@@ -30,6 +30,9 @@ class EventUpdate {
 	event = freshEvent;
 
 	@observable
+	disabledExternalEvent = false;
+
+	@observable
 	organization = {};
 
 	@observable
@@ -69,6 +72,8 @@ class EventUpdate {
 				this.loadTicketTypes(formattedEventData, () =>
 					this.loadTimezone(venue.id)
 				);
+
+				this.checkIfSalesStarted(id);
 			})
 			.catch(error => {
 				console.error(error);
@@ -525,8 +530,28 @@ class EventUpdate {
 		this.ticketTypes = [];
 		this.ticketTypeActiveIndex = null;
 		this.timezone = "";
+		this.disabledExternalEvent = false;
 
 		//this.addTicketType();
+	}
+
+	//Check if tickets have been sold, if they have the user can't change to be externally ticketed
+	checkIfSalesStarted(id) {
+		Bigneon()
+			.events.dashboard({ id })
+			.then(response => {
+				const { sold_unreserved, sold_held } = response.data.event;
+				if (sold_unreserved || sold_held) {
+					this.disabledExternalEvent = true;
+				}
+			})
+			.catch(error => {
+				console.error(error);
+				notifications.showFromErrorResponse({
+					defaultMessage: "Check for ticket sales failed.",
+					error
+				});
+			});
 	}
 
 	loadTimezone(id) {
