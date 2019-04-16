@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Typography, withStyles } from "@material-ui/core";
 import { observer } from "mobx-react";
+import moment from "moment";
 
 import notifications from "../../../../stores/notifications";
 import PageHeading from "../../../elements/PageHeading";
@@ -66,7 +67,7 @@ class TicketSales extends Component {
 
 	async onCheckout() {
 		const { selectedTickets, selectedHolds } = this.state;
-		const { holds } = boxOffice;
+		const { holds, ticketTypes } = boxOffice;
 
 		this.setState({ isAddingToCart: true });
 
@@ -76,7 +77,12 @@ class TicketSales extends Component {
 		Object.keys(selectedTickets).forEach(ticket_type_id => {
 			const quantity = selectedTickets[ticket_type_id];
 			if (quantity > 0) {
-				items.push({ quantity, ticket_type_id });
+				if (ticketTypes[ticket_type_id] && ticketTypes[ticket_type_id].redemption_code) {
+					items.push({ quantity, ticket_type_id, redemption_code: ticketTypes[ticket_type_id].redemption_code });
+				} else {
+					items.push({ quantity, ticket_type_id });
+				}
+
 			}
 		});
 
@@ -122,14 +128,19 @@ class TicketSales extends Component {
 		}
 
 		return ticketTypeIds.map(id => {
-			const { name, available, ticket_pricing, hidden,  ...rest } = ticketTypes[id];
-
+			const { name, available, ticket_pricing, hidden, start_date, end_date, ...rest } = ticketTypes[id];
 			let disabled = false;
 			let price_in_cents = 0;
+			let ticketTypeAvailabilityTitle = null;
 			if (ticket_pricing && status === "Published") {
 				price_in_cents = ticket_pricing.price_in_cents;
 			} else {
 				disabled = true; //No pricing yet so ticket probably not available for sale yet
+				if (moment.utc().isAfter(start_date)) {
+					ticketTypeAvailabilityTitle = "Sales have not begun yet";
+				} else if (moment.utc().isBefore(end_date)) {
+					ticketTypeAvailabilityTitle = "Sales have ended";
+				}
 			}
 
 			if (hidden) {
@@ -137,21 +148,23 @@ class TicketSales extends Component {
 			}
 
 			return (
-				<TicketRow
-					key={id}
-					type={"ticket"}
-					iconUrl="/icons/tickets-gray.svg"
-					name={name}
-					available={available}
-					priceInCents={price_in_cents}
-					value={selectedTickets[id]}
-					disabled={disabled}
-					onChange={value => {
-						this.setState(({ selectedTickets }) => {
-							return { selectedTickets: { ...selectedTickets, [id]: value } };
-						});
-					}}
-				/>
+				<div key={id} title={ticketTypeAvailabilityTitle}>
+					<TicketRow
+						key={id}
+						type={"ticket"}
+						iconUrl="/icons/tickets-gray.svg"
+						name={name}
+						available={available}
+						priceInCents={price_in_cents}
+						value={selectedTickets[id]}
+						disabled={disabled}
+						onChange={value => {
+							this.setState(({ selectedTickets }) => {
+								return { selectedTickets: { ...selectedTickets, [id]: value } };
+							});
+						}}
+					/>
+				</div>
 			);
 		});
 	}
@@ -188,7 +201,7 @@ class TicketSales extends Component {
 				ticket_type_name,
 				...rest
 			} = holds[id];
-			
+
 			if (holdCode && holdCode !== redemption_code) {
 				return null;
 			}
@@ -210,7 +223,7 @@ class TicketSales extends Component {
 							return { selectedHolds: { ...selectedHolds, [id]: value } };
 						});
 					}}
-					disabled={disabled}
+					disabled={!price_in_cents} // If there is no valid ticket pricing this hold is unavailable
 				/>
 			);
 		});
@@ -302,19 +315,6 @@ class TicketSales extends Component {
 					<PageHeading style={{ flex: 1 }} iconUrl="/icons/sales-multi.svg">
 						Sell
 					</PageHeading>
-
-					<InputWithButton
-						style={{ maxWidth: 300, flex: 2 }}
-						name={"promoCode"}
-						placeholder="Enter a code"
-						buttonText={"Apply"}
-						onSubmit={newCode =>
-							this.setState({ holdCode: holdCode ? "" : newCode })
-						}
-						onClear={() => this.setState({ holdCode: "" })}
-						showClearButton={!!holdCode}
-						toUpperCase
-					/>
 				</div>
 
 				<PageHeading iconUrl="/icons/my-events-active.svg">
@@ -327,7 +327,7 @@ class TicketSales extends Component {
 				<br/>
 
 				<PageHeading iconUrl="/icons/tickets-active.svg">
-					Holds {holdCode ? `(for code '${holdCode}')` : ""}
+					Holds
 				</PageHeading>
 				{this.renderHolds()}
 
