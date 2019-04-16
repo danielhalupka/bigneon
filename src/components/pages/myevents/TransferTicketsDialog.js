@@ -1,13 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Radio from "@material-ui/core/Radio";
 import Typography from "@material-ui/core/Typography";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import QRCode from "qrcode.react";
 
-import { primaryHex } from "../../../config/theme";
 import Button from "../../elements/Button";
 import InputGroup from "../../common/form/InputGroup";
 import { validEmail, validPhone } from "../../../validators";
@@ -34,88 +29,11 @@ class TransferTicketsDialog extends Component {
 		this.defaultState = {
 			emailOrCellphoneNumber: "",
 			errors: {},
-			qrText: "",
 			isSubmitting: false
 		};
 
 		this.state = this.defaultState;
 		this.onClose = this.onClose.bind(this);
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		const { ticketIds } = this.props;
-
-		if (ticketIds) {
-			if (!prevProps.ticketIds) {
-				//No original state to compare just get the new QR text
-				this.refreshQrText();
-			} else if (ticketIds.length !== prevProps.ticketIds.length) {
-				this.refreshQrText();
-			} else {
-				//If the user changed the checked ticket IDs at all then we need to refresh the claiming QR text
-				let differentTicketIds = false;
-
-				for (let index = 0; index < ticketIds.length; index++) {
-					if (ticketIds[index] !== prevProps.ticketIds[index]) {
-						differentTicketIds = true;
-					}
-				}
-
-				if (differentTicketIds) {
-					this.refreshQrText();
-				}
-			}
-		}
-	}
-
-	refreshQrText() {
-		this.setState({ qrText: "" }, () => {
-			const { ticketIds } = this.props;
-
-			Bigneon()
-				.tickets.transfer.transfer({
-					ticket_ids: ticketIds,
-					validity_period_in_seconds: 60 * 60
-				}) //TODO make this config based
-				.then(response => {
-					const {
-						transfer_key,
-						signature,
-						sender_user_id,
-						num_tickets
-					} = response.data;
-
-					const qrObj = {
-						type: 1,
-						data: {
-							transfer_key,
-							signature,
-							sender_user_id,
-							num_tickets,
-							extra: ""
-						}
-					};
-
-					const qrText = JSON.stringify(qrObj);
-
-					this.setState({ qrText });
-				})
-				.catch(error => {
-					console.error(error);
-					let message = "Creating QR code failed failed.";
-					if (
-						error.response &&
-						error.response.data &&
-						error.response.data.error
-					) {
-						message = error.response.data.error;
-					}
-					notification.show({
-						message,
-						variant: "error"
-					});
-				});
-		});
 	}
 
 	onClose() {
@@ -140,14 +58,12 @@ class TransferTicketsDialog extends Component {
 		const errors = {};
 
 		if (!emailOrCellphoneNumber) {
-			errors.emailOrCellphoneNumber =
-				"Missing mobile number or email address.";
+			errors.emailOrCellphoneNumber = "Missing mobile number or email address.";
 		} else if (
 			!validEmail(emailOrCellphoneNumber) &&
 			!validPhone(emailOrCellphoneNumber)
 		) {
-			errors.emailOrCellphoneNumber =
-				"Invalid mobile number or email address.";
+			errors.emailOrCellphoneNumber = "Invalid mobile number or email address.";
 		}
 
 		this.setState({ errors });
@@ -200,27 +116,6 @@ class TransferTicketsDialog extends Component {
 			});
 	}
 
-	renderQRCode() {
-		const { ticketIds } = this.props;
-		const { qrText } = this.state;
-
-		if (!ticketIds || !qrText) {
-			return null;
-		}
-
-		return (
-			<div
-				style={{
-					display: "flex",
-					alignContent: "center",
-					justifyContent: "center"
-				}}
-			>
-				<QRCode size={350} fgColor={primaryHex} value={qrText}/>
-			</div>
-		);
-	}
-
 	renderEmailOrCellphoneNumber() {
 		const { ticketIds } = this.props;
 
@@ -265,12 +160,6 @@ class TransferTicketsDialog extends Component {
 				{...other}
 			>
 				<div className={classes.content}>
-					<Typography variant="subheading">Scan with the mobile app</Typography>
-
-					{this.renderQRCode()}
-
-					<Divider style={{ marginTop: 40, marginBottom: 0 }}>Or</Divider>
-
 					{this.renderEmailOrCellphoneNumber()}
 				</div>
 

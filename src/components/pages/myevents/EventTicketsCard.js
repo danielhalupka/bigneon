@@ -191,19 +191,25 @@ class EventTicketsCard extends Component {
 			tickets,
 			expanded,
 			onTicketSelect,
-			onShowTransferQR
+			onShowTransferQR,
+			showActions
 		} = this.props;
 		const { checkedTicketsIds } = this.state;
 
 		return (
 			<div className={classes.ticketContainer}>
 				<EventTicketRow>
-					<span>
-						{/*<CheckBox*/}
-						{/*active={this.allSelected()}*/}
-						{/*onClick={this.toggleAllTickets.bind(this)}*/}
-						{/*/>*/}
-					</span>
+					{showActions ? (
+						<span>
+							{/*<CheckBox*/}
+							{/*active={this.allSelected()}*/}
+							{/*onClick={this.toggleAllTickets.bind(this)}*/}
+							{/*/>*/}
+						</span>
+					) : (
+						<span/>
+					)}
+
 					<Typography className={classes.ticketDetailsText}>
 						Ticket #
 					</Typography>
@@ -239,46 +245,54 @@ class EventTicketsCard extends Component {
 						//TODO deal with the other statuses
 					}
 
+					let displayStatus = status;
+
+					//If an event is in the past, don't show any actions
+					if (!showActions) {
+						disabled = true;
+						displayStatus = "This event has ended";
+					}
+
 					return (
 						<EventTicketRow key={id} item>
-							<CheckBox
-								disabled={disabled}
-								active={checkedTicketsIds.indexOf(id) !== -1}
-								onClick={() => this.toggleTicketCheckbox(id)}
-							/>
+							{showActions ? (
+								<CheckBox
+									disabled={disabled}
+									active={checkedTicketsIds.indexOf(id) !== -1}
+									onClick={() => this.toggleTicketCheckbox(id)}
+								/>
+							) : (
+								<span/>
+							)}
 							<Typography className={classes.ticketDetailsText}>{`#${id.slice(
 								-8
 							)}`}</Typography>
-
 							<Typography className={classes.ticketDetailsText}>
 								<StyledLink underlined to={`/orders/${order_id}`}>
 									{orderNumber}
 								</StyledLink>
 							</Typography>
-
 							<Typography className={classes.ticketDetailsText}>
 								{`${ticket_type_name} (${index + 1})`}
 							</Typography>
-
 							<Typography className={classes.ticketDetailsText}>
 								$ {(price_in_cents / 100).toFixed(2)}
 							</Typography>
-
-							{disabled ?
-								<Typography className={classes.ticketDetailsDisabledText}>{status}</Typography>
-								:
-								(
-									<Typography className={classes.ticketDetailsText}>
-										<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
+							{disabled ? (
+								<Typography className={classes.ticketDetailsDisabledText}>
+									{displayStatus}
+								</Typography>
+							) : (
+								<Typography className={classes.ticketDetailsText}>
+									<StyledLink underlined onClick={() => onTicketSelect(ticket)}>
 										show qr
-										</StyledLink>
-										<span style={{ marginRight: 10 }}/>
-										<StyledLink underlined onClick={() => onShowTransferQR([id])}>
+									</StyledLink>
+									<span style={{ marginRight: 10 }}/>
+									<StyledLink underlined onClick={() => onShowTransferQR([id])}>
 										transfer
-										</StyledLink>
-									</Typography>
-								)}
-
+									</StyledLink>
+								</Typography>
+							)}
 						</EventTicketRow>
 					);
 				})}
@@ -360,7 +374,8 @@ class EventTicketsCard extends Component {
 			tickets,
 			expanded,
 			onTicketSelect,
-			onShowTransferQR
+			onShowTransferQR,
+			onExpand
 		} = this.props;
 		const { checkedTicketsIds } = this.state;
 
@@ -429,7 +444,7 @@ class EventTicketsCard extends Component {
 							<div>
 								{!expanded ? (
 									<Typography>
-										<StyledLink to={`/my-events/${id}`} underlined>
+										<StyledLink onClick={onExpand} underlined>
 											View my tickets
 										</StyledLink>
 									</Typography>
@@ -444,7 +459,7 @@ class EventTicketsCard extends Component {
 					<div className={classes.closeButtonRow}>
 						{expanded ? (
 							<Typography>
-								<StyledLink to={`/my-events`} underlined>
+								<StyledLink onClick={onExpand} underlined>
 									Close
 								</StyledLink>
 							</Typography>
@@ -461,10 +476,12 @@ EventTicketsCard.propTypes = {
 	classes: PropTypes.object.isRequired,
 	event: PropTypes.object.isRequired,
 	tickets: PropTypes.array.isRequired,
+	onExpand: PropTypes.func.isRequired,
 	expanded: PropTypes.bool.isRequired,
 	onTicketSelect: PropTypes.func.isRequired,
 	onShowTransferQR: PropTypes.func.isRequired,
-	history: PropTypes.object.isRequired
+	history: PropTypes.object.isRequired,
+	showActions: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(EventTicketsCard);

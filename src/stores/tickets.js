@@ -9,21 +9,39 @@ import user from "./user";
 
 class Tickets {
 	@observable
-	groups = null;
+	upcomingGroups = null;
+
+	@observable
+	pastGroups = null;
 
 	@action
-	refreshTickets() {
-		//Right now carts only work for authed users
+	refreshTickets(type = "upcoming") {
 		if (!user.isAuthenticated) {
 			this.emptyTickets();
 			return;
 		}
 
+		const params = {};
+
+		const nowUTC = moment.utc().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+		const longLongAgoUTC = moment
+			.utc()
+			.subtract(100, "y")
+			.format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
+
+		if (type === "upcoming") {
+			params.start_utc = nowUTC;
+			params.dir = "Asc";
+		} else if (type === "past") {
+			//params.start_utc = longLongAgoUTC;
+			params.end_utc = nowUTC;
+			params.dir = "Desc";
+		}
+
 		Bigneon()
-			.tickets.index()
+			.tickets.index(params)
 			.then(response => {
 				const { data, paging } = response.data; //TODO pagination
-
 				const ticketGroups = [];
 
 				//TODO api data structure will eventually change
@@ -43,7 +61,11 @@ class Tickets {
 					ticketGroups.push({ event, tickets });
 				});
 
-				this.groups = ticketGroups;
+				if (type === "upcoming") {
+					this.upcomingGroups = ticketGroups;
+				} else if (type === "past") {
+					this.pastGroups = ticketGroups;
+				}
 			})
 			.catch(error => {
 				console.error(error);
@@ -54,41 +76,19 @@ class Tickets {
 			});
 	}
 
+	@action
 	emptyTickets() {
-		this.groups = [];
-	}
-
-	@computed
-	get ticketGroupCount() {
-		//Ticket groups are tickets grouped by event
-		if (!this.groups) {
-			return 0;
-		}
-
-		return this.groups.length;
+		this.upcomingGroups = [];
+		this.pastGroups = [];
 	}
 
 	@computed
 	get upcomingEventCount() {
-		if (!this.groups) {
+		if (!this.upcomingGroups) {
 			return 0;
 		}
 
-		let upcomingCount = 0;
-		this.groups.forEach(({ event }) => {
-			const { event_start } = event;
-			const eventStartDateUTC = (event.eventDate = moment.utc(
-				event.event_start,
-				moment.HTML5_FMT.DATETIME_LOCAL_MS
-			));
-
-			const timeDifference = moment.utc().diff(eventStartDateUTC);
-			if (timeDifference < 0) {
-				upcomingCount++;
-			}
-		});
-
-		return upcomingCount;
+		return this.upcomingGroups.length;
 	}
 }
 

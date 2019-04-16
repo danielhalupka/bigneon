@@ -11,8 +11,20 @@ import PageHeading from "../../elements/PageHeading";
 import AppPromoCard from "../../elements/AppPromoCard";
 import tickets from "../../../stores/tickets";
 import Loader from "../../elements/loaders/Loader";
+import Card from "../../elements/Card";
+import StyledLink from "../../elements/StyledLink";
+import changeUrlParam from "../../../helpers/changeUrlParam";
+import getUrlParam from "../../../helpers/getUrlParam";
 
-const styles = theme => ({});
+const styles = theme => ({
+	menuContainer: {
+		display: "flex",
+		padding: theme.spacing.unit * 2.5
+	},
+	menuText: {
+		marginRight: theme.spacing.unit * 4
+	}
+});
 
 @observer
 class MyEvents extends Component {
@@ -20,40 +32,64 @@ class MyEvents extends Component {
 		super(props);
 
 		this.state = {
-			expandedEventId: null,
+			expandedEventId: "",
 			selectedTransferTicketIds: null,
-			selectedTicket: null
+			selectedTicket: null,
+			type: "upcoming"
 		};
 	}
 
 	componentDidMount() {
-		tickets.refreshTickets();
+		if (
+			this.props.match &&
+			this.props.match.params &&
+			this.props.match.params.eventId
+		) {
+			this.setState({ expandedEventId: this.props.match.params.eventId });
+		}
+
+		const expandedEventId = getUrlParam("event_id") || "";
+		const type = getUrlParam("type") || this.state.type;
+
+		this.setState({ type, expandedEventId });
+		tickets.refreshTickets(type);
 	}
 
-	componentDidUpdate(prevProps) {
-		let expandedEventId = null;
-		if (this.props.match && this.props.match.params) {
-			const { eventId } = this.props.match.params;
-			if (
-				prevProps.match &&
-				prevProps.match.params &&
-				prevProps.match.params.eventId === eventId
-			) {
-				if (!(prevProps.match.params.eventId && !this.state.expandedEventId)) {
-					return;
-				}
-			}
-			expandedEventId = eventId;
+	onExpandTickets(eventId) {
+		let expandedEventId = eventId;
+		//If it's already selected, close it
+		if (eventId === this.state.expandedEventId) {
+			expandedEventId = "";
 		}
+
 		this.setState({ expandedEventId });
+		changeUrlParam("event_id", expandedEventId);
+	}
+
+	changeListType(type) {
+		if (type !== this.state.type) {
+			changeUrlParam("event_id", "");
+		}
+
+		this.setState({ expandedEventId: null, type });
+		changeUrlParam("type", type);
+		tickets.refreshTickets(type);
 	}
 
 	renderTickets() {
-		const { expandedEventId } = this.state;
-		const { groups, ticketGroupCount } = tickets;
+		const { expandedEventId, type } = this.state;
 		const { history } = this.props;
 
-		if (groups === null) {
+		let groups;
+		let showActions = false;
+		if (!type || type === "upcoming") {
+			groups = tickets.upcomingGroups;
+			showActions = true;
+		} else if (type === "past") {
+			groups = tickets.pastGroups;
+		}
+
+		if (groups === null || groups === undefined) {
 			return (
 				<Grid item xs={12} sm={12} lg={12}>
 					<Loader/>
@@ -61,7 +97,7 @@ class MyEvents extends Component {
 			);
 		}
 
-		if (ticketGroupCount > 0) {
+		if (groups.length > 0) {
 			return groups.map(ticketGroup => {
 				const { event } = ticketGroup;
 				const { id, name } = event;
@@ -71,6 +107,7 @@ class MyEvents extends Component {
 						<EventTicketsCard
 							{...ticketGroup}
 							expanded={expandedEventId === id}
+							showActions={showActions}
 							onTicketSelect={selectedTicket =>
 								this.setState({ selectedTicket, selectedEventName: name })
 							}
@@ -78,6 +115,7 @@ class MyEvents extends Component {
 								this.setState({ selectedTransferTicketIds })
 							}
 							history={history}
+							onExpand={() => this.onExpandTickets(id)}
 						/>
 					</Grid>
 				);
@@ -95,13 +133,16 @@ class MyEvents extends Component {
 		const {
 			selectedEventName,
 			selectedTicket,
-			selectedTransferTicketIds
+			selectedTransferTicketIds,
+			type
 		} = this.state;
+
+		const { classes } = this.props;
 
 		return (
 			<div>
 				<PageHeading iconUrl="/icons/my-events-multi.svg">
-					Upcoming events
+					My events
 				</PageHeading>
 				<TicketDialog
 					open={!!selectedTicket}
@@ -116,6 +157,30 @@ class MyEvents extends Component {
 				/>
 
 				<Grid container spacing={24}>
+					<Grid item xs={12} sm={12} lg={12}>
+						<Card variant="block" style={{ borderRadius: "6px 6px 0 0" }}>
+							<div className={classes.menuContainer}>
+								<Typography className={classes.menuText}>
+									<StyledLink
+										underlined={type === "upcoming"}
+										onClick={() => this.changeListType("upcoming")}
+									>
+										Upcoming
+									</StyledLink>
+								</Typography>
+
+								<Typography className={classes.menuText}>
+									<StyledLink
+										underlined={type === "past"}
+										onClick={() => this.changeListType("past")}
+									>
+										Past
+									</StyledLink>
+								</Typography>
+							</div>
+						</Card>
+					</Grid>
+
 					{this.renderTickets()}
 				</Grid>
 

@@ -36,35 +36,83 @@ import MobileStripeAuth from "../pages/authentication/MobileStripeAuth";
 import ElementShowcase from "../pages/development/ElementShowCase";
 
 //Admin
-const AdminOrganizationsList = asyncComponent(() => import("../pages/admin/organizations/List"));
-const AdminOrganization = asyncComponent(() => import("../pages/admin/organizations/Organization"));
-const AdminVenuesList = asyncComponent(() => import("../pages/admin/venues/List"));
+const AdminOrganizationsList = asyncComponent(() =>
+	import("../pages/admin/organizations/List")
+);
+const AdminOrganization = asyncComponent(() =>
+	import("../pages/admin/organizations/Organization")
+);
+const AdminVenuesList = asyncComponent(() =>
+	import("../pages/admin/venues/List")
+);
 const AdminVenue = asyncComponent(() => import("../pages/admin/venues/Venue"));
-const AdminArtistsList = asyncComponent(() => import("../pages/admin/artists/List"));
-const AdminArtist = asyncComponent(() => import("../pages/admin/artists/Artist"));
-const AdminEventsList = asyncComponent(() => import("../pages/admin/events/List"));
-const AdminEventDashboardSummary = asyncComponent(() => import("../pages/admin/events/dashboard/Summary"));
-const AdminEventDashboardHolds = asyncComponent(() => import("../pages/admin/events/dashboard/holds/List"));
-const AdminEventDashboardCodes = asyncComponent(() => import("../pages/admin/events/dashboard/codes/List"));
-const AdminEventDashboardComps = asyncComponent(() => import("../pages/admin/events/dashboard/comps/List"));
-const AdminEventDashboardReports = asyncComponent(() => import("../pages/admin/events/dashboard/reports/Index"));
-const AdminEventDashboardMarketing = asyncComponent(() => import("../pages/admin/events/dashboard/marketing/Index"));
-const AdminEventExportGuestList = asyncComponent(() => import("../pages/admin/events/dashboard/guests/Export"));
-const AdminEventDashboardExternalAccess = asyncComponent(() => import("../pages/admin/events/dashboard/external/ExternalAccess"));
-const AdminEventUpdate = asyncComponent(() => import("../pages/admin/events/EventUpdate"));
+const AdminArtistsList = asyncComponent(() =>
+	import("../pages/admin/artists/List")
+);
+const AdminArtist = asyncComponent(() =>
+	import("../pages/admin/artists/Artist")
+);
+const AdminEventsList = asyncComponent(() =>
+	import("../pages/admin/events/List")
+);
+const AdminEventDashboardSummary = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/Summary")
+);
+const AdminEventDashboardHolds = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/holds/List")
+);
+const AdminEventDashboardCodes = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/codes/List")
+);
+const AdminEventDashboardComps = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/comps/List")
+);
+const AdminEventDashboardReports = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/reports/Index")
+);
+const AdminEventDashboardMarketing = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/marketing/Index")
+);
+const AdminEventExportGuestList = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/guests/Export")
+);
+const AdminEventDashboardExternalAccess = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/external/ExternalAccess")
+);
+const AdminEventUpdate = asyncComponent(() =>
+	import("../pages/admin/events/EventUpdate")
+);
 const AdminFanList = asyncComponent(() => import("../pages/admin/fans/Index"));
-const AdminFanDetails = asyncComponent(() => import("../pages/admin/fans/FanDetails"));
-const AdminMarketing = asyncComponent(() => import("../pages/admin/marketing/Index"));
-const AdminReports = asyncComponent(() => import("../pages/admin/reports/Index"));
-const AdminEventRefunds = asyncComponent(() => import("../pages/admin/events/dashboard/refunds/Refunds"));
-const AdminLastCall = asyncComponent(() => import("../pages/admin/events/dashboard/hospitality/LastCall"));
-const AdminReportExportPDF = asyncComponent(() => import("../pages/admin/reports/ExportPDF"));
+const AdminFanDetails = asyncComponent(() =>
+	import("../pages/admin/fans/FanDetails")
+);
+const AdminMarketing = asyncComponent(() =>
+	import("../pages/admin/marketing/Index")
+);
+const AdminReports = asyncComponent(() =>
+	import("../pages/admin/reports/Index")
+);
+const AdminEventRefunds = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/refunds/Refunds")
+);
+const AdminLastCall = asyncComponent(() =>
+	import("../pages/admin/events/dashboard/hospitality/LastCall")
+);
+const AdminReportExportPDF = asyncComponent(() =>
+	import("../pages/admin/reports/ExportPDF")
+);
 
 //Box office
-const BoxOfficeTicketSales = asyncComponent(() => import("../pages/boxoffice/sales/Index"));
+const BoxOfficeTicketSales = asyncComponent(() =>
+	import("../pages/boxoffice/sales/Index")
+);
 
-const InviteDecline = asyncComponent(() => import("../pages/admin/invites/Decline"));
-const InviteAccept = asyncComponent(() => import("../pages/admin/invites/Accept"));
+const InviteDecline = asyncComponent(() =>
+	import("../pages/admin/invites/Decline")
+);
+const InviteAccept = asyncComponent(() =>
+	import("../pages/admin/invites/Accept")
+);
 
 //Embedded widgets
 import EventQR from "../widgets/EventQR";
@@ -108,9 +156,8 @@ class Routes extends Component {
 
 		const startLoadTime = window.startLoadTime;
 		if (startLoadTime) {
-			analytics.trackPageLoadTime((Date.now() - startLoadTime));
+			analytics.trackPageLoadTime(Date.now() - startLoadTime);
 		}
-
 	}
 
 	componentWillUnmount() {
@@ -162,7 +209,7 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/my-events/:eventId?"
+									path="/my-events"
 									component={MyEvents}
 									isAuthenticated={isAuthenticated}
 								/>

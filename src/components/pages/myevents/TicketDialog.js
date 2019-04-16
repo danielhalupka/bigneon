@@ -23,7 +23,7 @@ class TicketDialog extends React.Component {
 		super(props);
 
 		this.state = {
-			qrText: ""
+			qrText: null
 		};
 	}
 
@@ -38,7 +38,7 @@ class TicketDialog extends React.Component {
 	}
 
 	refreshQrText() {
-		this.setState({ qrText: "" }, () => {
+		this.setState({ qrText: null }, () => {
 			const { ticket } = this.props;
 
 			Bigneon()
@@ -48,11 +48,12 @@ class TicketDialog extends React.Component {
 				.then(response => {
 					const { id, redeem_key } = response.data;
 
-					const qrObj = { type: 0, data: { redeem_key, id, extra: "" } };
-
-					const qrText = JSON.stringify(qrObj);
-
-					this.setState({ qrText });
+					if (!redeem_key) {
+						this.setState({ qrText: false });
+					} else {
+						const qrObj = { type: 0, data: { redeem_key, id, extra: "" } };
+						this.setState({ qrText: JSON.stringify(qrObj) });
+					}
 				})
 				.catch(error => {
 					console.error(error);
@@ -72,9 +73,46 @@ class TicketDialog extends React.Component {
 		});
 	}
 
+	renderQR() {
+		const { qrText } = this.state;
+
+		if (qrText === null) {
+			return <Loader/>;
+		}
+
+		if (qrText === false) {
+			//Redeem key is not available yet
+			return (
+				<div>
+					<Typography>
+						To protect you and your purchase against fraudulent activity the QR
+						code used to grant access to the event will be hidden until closer
+						to the event door time.
+					</Typography>
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				<Typography variant="subheading">
+					Scanning this redeems the ticket.
+				</Typography>
+				<div
+					style={{
+						display: "flex",
+						alignContent: "center",
+						justifyContent: "center"
+					}}
+				>
+					<QRCode size={300} fgColor={primaryHex} value={qrText}/>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { ticket, eventName, classes, onClose, ...other } = this.props;
-		const { qrText } = this.state;
 
 		const ticketName = ticket ? ticket.ticket_type_name : "";
 
@@ -87,24 +125,7 @@ class TicketDialog extends React.Component {
 				title={`${eventName} (${ticketName})`}
 				{...other}
 			>
-				<div className={classes.content}>
-					<Typography variant="subheading">
-						Scanning this redeems the ticket.
-					</Typography>
-					{qrText ? (
-						<div
-							style={{
-								display: "flex",
-								alignContent: "center",
-								justifyContent: "center"
-							}}
-						>
-							<QRCode size={300} fgColor={primaryHex} value={qrText}/>
-						</div>
-					) : (
-						<Loader/>
-					)}
-				</div>
+				<div className={classes.content}>{this.renderQR()}</div>
 			</Dialog>
 		);
 	}
