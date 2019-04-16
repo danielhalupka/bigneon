@@ -20,7 +20,7 @@ const styles = theme => ({
 
 let facebookInitialized = false;
 
-export const initFB = (onLoginStatus) => {
+export const initFB = onLoginStatus => {
 	//Setup facebook auth
 	window.fbAsyncInit = function() {
 		window.FB.init({
@@ -93,8 +93,6 @@ class FacebookButtonDisplay extends Component {
 
 						//Pull user data with our new token
 						user.refreshUser(({ email }) => {
-							console.log(email);
-
 							this.props.onSuccess();
 						});
 					} else {

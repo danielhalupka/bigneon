@@ -131,7 +131,12 @@ class User {
 						cart.refreshCart();
 						orders.refreshOrders();
 
-						errorReporting.configureScope({ userId: id, roles, organization_roles, organization_scopes });
+						errorReporting.configureScope({
+							userId: id,
+							roles,
+							organization_roles,
+							organization_scopes
+						});
 					})
 					.catch(error => {
 						console.error(error);
@@ -141,9 +146,9 @@ class User {
 							//TODO if we get a 401, try refresh the token and then try this all again. But don't create a recursive loop.
 							//If we get a 401, assume the token expired
 							if (error.response && error.response.status === 401) {
-								console.log("Unauthorized, logging out.");
+								errorReporting.captureMessage("Unauthorized, logging out.");
 								notifications.show({
-									message: "Session expired",
+									message: "Session expired.",
 									variant: "info"
 								});
 								this.onLogout();
@@ -345,7 +350,7 @@ class User {
 		if (this.isAuthenticated) {
 			return `${maskString(this.firstName)} ${maskString(this.lastName)}`;
 		} else {
-			"";
+			("");
 		}
 	}
 

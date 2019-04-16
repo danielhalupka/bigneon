@@ -2,9 +2,12 @@
 export default (error, defaultMessage = "An an error occurred.") => {
 	const result = { message: "", list: [] };
 
-	if (error && error.response && error.response.data && error.response.data.error) {
-		console.log(error.response.data);
-
+	if (
+		error &&
+		error.response &&
+		error.response.data &&
+		error.response.data.error
+	) {
 		const { fields } = error.response.data;
 		if (fields && Object.keys(fields).length > 0) {
 			Object.keys(fields).forEach(fieldKey => {
