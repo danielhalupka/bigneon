@@ -46,6 +46,9 @@ const AdminVenuesList = asyncComponent(() =>
 	import("../pages/admin/venues/List")
 );
 const AdminVenue = asyncComponent(() => import("../pages/admin/venues/Venue"));
+const AdminRegionsList = asyncComponent(() =>
+	import("../pages/admin/regions/List")
+);
 const AdminArtistsList = asyncComponent(() =>
 	import("../pages/admin/artists/List")
 );
@@ -209,7 +212,7 @@ class Routes extends Component {
 								/>
 								<PrivateRoute
 									exact
-									path="/my-events"
+									path="/my-events/:eventId?"
 									component={MyEvents}
 									isAuthenticated={isAuthenticated}
 								/>
@@ -305,6 +308,12 @@ class Routes extends Component {
 									exact
 									path="/admin/venues/:id"
 									component={AdminVenue}
+									isAuthenticated={isAuthenticated}
+								/>
+								<PrivateRoute
+									exact
+									path="/admin/regions"
+									component={AdminRegionsList}
 									isAuthenticated={isAuthenticated}
 								/>
 								<PrivateRoute
